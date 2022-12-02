@@ -1,0 +1,32 @@
+{
+  "name": "ontotext-yasgui",
+  "version": "0.0.1",
+  "description": "Base project of \"ontotext-yasgui-web-component\" component. It holds yasgui source code and ontotext-yasgui-web-component customization project for Ontotext.",
+  "scripts": {
+    "install": "sh scripts/install.sh",
+    "build": "sh scripts/build.sh",
+    "start": "cd ontotext-yasgui-web-component && npm run start",
+    "clean": "sh scripts/clean.sh",
+    "lint": "cd ontotext-yasgui-web-component && npm run lint",
+    "lint:fix": "cd ontotext-yasgui-web-component && npm run lint:fix",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ontotext-AD/ontotext-yasgui.git"
+  },
+  "keywords": [
+    "ontotext",
+    "yasgui",
+    "ontotext-yasgui"
+  ],
+  "bugs": {
+    "url": "https://github.com/Ontotext-AD/ontotext-yasgui/issues"
+  },
+  "homepage": "https://github.com/Ontotext-AD/ontotext-yasgui#readme",
+  "devDependencies": {
+    "cypress": "^11.2.0",
+    "typescript": "^4.9.3"
+  }
+}

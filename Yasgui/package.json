@@ -1,0 +1,139 @@
+{
+  "name": "yasgui",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "better-npm-run build",
+    "dev": "better-npm-run dev",
+    "link": "lerna link",
+    "postinstall": "yarn run link",
+    "util:lint": "ESLINT_STRICT=true eslint --ext .tsx --ext .ts $(ls -d ./packages/*/* | grep -E '(src|test|grammar)$')",
+    "util:buildWebpackConfig": "tsc -p tsconfig-webpack.json",
+    "util:validateTs": "tsc -p ./tsconfig-validate.json --noEmit",
+    "util:prettify": "prettier --parser typescript --write $(find ./packages/*/src -regex '.*\\.tsx?$') && prettier --parser css --write $(find ./packages/*/src -regex '.*\\.?scss$')",
+    "util:analyzeBundle": "ANALYZE_BUNDLE=true yarn run build",
+    "util:bundlesize": "bundlesize",
+    "pretest": "[ -z \"$(ls -A ./build 2> /dev/null)\" ] && echo Run \\\"yarn build\\\" before running a test && exit 1 || true",
+    "test:dev": "TEST_ON_DEV_BUILD=1 yarn run test",
+    "test": "yarn run puppeteer-test && yarn run unit-test",
+    "test-live": "TEST_ON_DEV_BUILD=1 yarn run test",
+    "unit-test": "tsc -p ./tsconfig-test.json && mocha $(find ./build/test -name '*-test.js') --require source-map-support/register || true",
+    "puppeteer-test": "tsc -p ./tsconfig-test.json && mocha --timeout 30000 ./build/test/test/run.js --require source-map-support/register",
+    "version": "lerna version"
+  },
+  "betterScripts": {
+    "dev": {
+      "command": "yarn run util:buildWebpackConfig && webpack-dev-server --public 0.0.0.0 --host 0.0.0.0 --port 4000 --config  ./webpack/config.js --disable-host-check",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "build": {
+      "command": "rm -rf ./build && yarn run util:buildWebpackConfig && webpack --colors --display-error-details --config ./webpack/config.js && ./webpack/distributeBuildFiles.sh",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "lint-staged": {
+    "*.ts?(x)": [
+      "prettier --parser typescript --write",
+      "eslint"
+    ],
+    "*.js": [
+      "prettier --write"
+    ],
+    "*.css": [
+      "prettier --parser css --write"
+    ],
+    "*.scss": [
+      "prettier --parser scss --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "./bin/checkPackageVersions.sh && lint-staged",
+      "post-merge": "./bin/hooks/postMerge"
+    }
+  },
+  "dependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/runtime": "^7.10.5",
+    "@types/autoprefixer": "^9.7.2",
+    "@types/chai": "^4.2.11",
+    "@types/fs-extra": "^9.0.1",
+    "@types/html-webpack-plugin": "^3.2.3",
+    "@types/mini-css-extract-plugin": "^0.9.1",
+    "@types/mocha": "^8.0.0",
+    "@types/node-static": "^0.7.5",
+    "@types/optimize-css-assets-webpack-plugin": "^5.0.1",
+    "@types/puppeteer": "^3.0.1",
+    "@types/webpack": "^4.41.21",
+    "@types/webpack-bundle-analyzer": "^3.8.0",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
+    "autoprefixer": "^9.7.4",
+    "babel-loader": "^8.0.6",
+    "better-npm-run": "^0.1.1",
+    "bundlesize": "^0.18.0",
+    "chai": "^4.2.0",
+    "css-loader": "^3.4.2",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-jest": "^23.8.1",
+    "eslint-plugin-lodash": "^7.1.0",
+    "fs-extra": "^9.0.1",
+    "html-webpack-plugin": "^4.3.0",
+    "husky": "^4.2.3",
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.0.8",
+    "mini-css-extract-plugin": "^0.9.0",
+    "mocha": "^8.0.1",
+    "nightmare": "^3.0.2",
+    "node-sass": "6",
+    "node-static": "^0.7.11",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss-bgimage": "2.1.3",
+    "postcss-loader": "^3.0.0",
+    "prettier": "^2.0.5",
+    "puppeteer": "^5.2.0",
+    "sass-loader": "10",
+    "source-map": "^0.7.3",
+    "source-map-loader": "^1.0.1",
+    "source-map-support": "^0.5.12",
+    "style-loader": "^1.1.3",
+    "terser-webpack-plugin": "^3.0.7",
+    "ts-loader": "^8.0.1",
+    "typescript": "^4.6.3",
+    "webpack": "^4.41.6",
+    "webpack-bundle-analyzer": "^3.3.2",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3",
+    "webpack-livereload-plugin": "^2.3.0"
+  },
+  "bundlesize": [
+    {
+      "compression": "none",
+      "path": "build/yasgui.min.js",
+      "maxSize": "1.10 mb"
+    },
+    {
+      "compression": "none",
+      "path": "build/yasr.min.js",
+      "maxSize": "660 kB"
+    },
+    {
+      "compression": "none",
+      "path": "build/yasqe.min.js",
+      "maxSize": "495 kB"
+    }
+  ],
+  "resolutions": {
+    "brotli-size": "4.0.0"
+  },
+  "packageManager": "yarn@3.2.2"
+}

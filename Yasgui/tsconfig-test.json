@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig-build.json",
+  "compilerOptions": {
+    "outDir": "./build/test",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "strict": false,
+    "incremental": true,
+    "declaration": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+  },
+  "files": ["./packages/yasgui/typings-custom/main.d.ts", "./test/run.ts"]
+}

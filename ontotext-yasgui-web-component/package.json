@@ -1,0 +1,41 @@
+{
+  "name": "ontotext-yasgui-web-component",
+  "version": "0.0.1",
+  "description": "Ontotext customized yasgui",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/ontotext-yasgui-web-component/ontotext-yasgui-web-component.esm.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ontotext-AD/ontotext-yasgui.git"
+  },
+  "files": [
+    "dist/",
+    "loader/"
+  ],
+  "scripts": {
+    "build": "stencil build --docs",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll",
+    "generate": "stencil generate",
+    "lint": "eslint 'src/**'",
+    "lint:fix": "eslint --fix 'src/**'"
+  },
+  "dependencies": {
+    "@stencil/core": "^2.13.0"
+  },
+  "devDependencies": {
+    "@stencil/sass": "^2.0.0",
+    "@types/jest": "^27.0.3",
+    "jest": "^27.4.5",
+    "jest-cli": "^27.4.5",
+    "puppeteer": "^10.0.0"
+  },
+  "license": "MIT"
+}
