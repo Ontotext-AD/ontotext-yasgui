@@ -13,4 +13,4 @@ cd ..
 echo ''
 echo '#######################  Building -- ontotext-yasgui-web-component --  ############################'
 cd ontotext-yasgui-web-component
-npm rum build
+npm run build

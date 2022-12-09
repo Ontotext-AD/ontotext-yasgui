@@ -1,12 +1,11 @@
-
 # ontotext-yasgui-web-component
 
-The "ontotext-yasgui-web-component" component extends and customizes [yasgui](https://triply.cc/docs/yasgui) for the projects of [Ontotext](https://www.ontotext.com).
+The `ontotext-yasgui-web-component` component extends and customizes the `Yasgui` component as well
+as providing a common interface for integration by component clients like the GraphDB workbench for
+example.
 
-
-
-"ontotext-yasgui-web-component" component is build with [Stencil](https://stenciljs.com/) compiler.
-Stencil is a compiler for building fast web apps using Web Components. Stencil components are just Web Components, so they work in any major framework or with no framework at all.
+The `ontotext-yasgui-web-component` component is implemented and build with the help of the 
+[Stencil](https://stenciljs.com/) framework.
 
 ## Installation
 
@@ -14,22 +13,27 @@ Stencil is a compiler for building fast web apps using Web Components. Stencil c
 npm install ontotext-yasgui-web-component
 ```
 
-If component will be used in project with angularjs framework version before 1.7.3 additional package [ng-custom-element
-](https://www.npmjs.com/package/ng-custom-element) will be needed.
+If the component will be used in an angularjs project where the angularjs version is `< 1.7.3` then
+an additional custom directive must be installed in the client application. The directive can be 
+found here [ng-custom-element](https://www.npmjs.com/package/ng-custom-element). Install it in the 
+client angularjs application like this:
 
 ```
 npm install ng-custom-element
 ```
 
-# Setup
+# Setup for different client applications
 
-## angularjs
-If angularjs is before 1.7.3 add ng-custom-element.umd.js into vendor.js file.
+## SPA with angularjs
+
+If angularjs version is less than 1.7.3, then import the `ng-custom-element.umd.js` into its main 
+file (for example `vendor.js`).
+
 ```
 import ng-custom-element/dist/ng-custom-element.umd';
 ```
 
-Import function "defineCustomElementOntotextYasgui" and call it in app.scss
+Import the `defineCustomElementOntotextYasgui` function and call it in the `app.js`
 
 ```
 import {defineCustomElementOntotextYasgui} from 'ontotext-yasgui-web-component/dist/components/index';
@@ -37,18 +41,7 @@ import {defineCustomElementOntotextYasgui} from 'ontotext-yasgui-web-component/d
 defineCustomElementOntotextYasgui();
 ```
 
-## angular
-
-Import function "defineCustomElements" and call it in main.js
-```
-import {defineCustomElements} from 'ontotext-yasgui-web-component/loader/index'
-
-defineCustomElements(window);
-```
-
-# Usage
-
-## angularjs version before 1.7.3
+Then the component can be used in html templates like this:
 
 ```
   <ontotext-yasgui
@@ -57,7 +50,17 @@ defineCustomElements(window);
   </ontotext-yasgui>
 ```
 
-## angular 2+
+## SPA with Angular
+
+Import the `defineCustomElements` function and call it in `main.js`
+
+```
+import {defineCustomElements} from 'ontotext-yasgui-web-component/loader/index'
+
+defineCustomElements(window);
+```
+
+Then the component can be used in html templates like this:
 
 ```
 <ontotext-yasgui
@@ -66,3 +69,4 @@ defineCustomElements(window);
 ```
 
 # License
+TODO:
