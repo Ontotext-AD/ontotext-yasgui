@@ -67,14 +67,14 @@ After execution of command the projects will be cleared as just cloned from repo
 > false of the optimization configuration in Yasgui/webpack/config.ts file.
 
 Read [Development guide](ontotext-yasgui-web-component/src/docs/development-guide.md) before 
-starting some development in this project.
+starting any development in this project.
 
-# Usage of the component
+## Usage of the component
 After the `ontotext-yasgui-web-component` is built, then it can be used in every supported by 
 `stenciljs` framework or in native javascript applications. Read 
 [Usage guide](ontotext-yasgui-web-component/README.md) for details how to use it.
 
-# Starting a development server
+## Starting a development server
 A development server can be run by executing the ``` npm run start ``` command. This will run a
 simple web server and deploy a sample web page with the `ontotext-yasgui-web-component` inside. 
 The server supports a watch mode, and a live reload of the web browser.
@@ -90,7 +90,7 @@ The automated tests can be run by executing one of the following commands: <br/>
 The code quality is monitored with eslint. Run `npm run lint` to execute code lint check.
 Run `npm run lint:fix` to execute code lint check and automatically fix problems.
 
-# Release and publish
+## Release and publish
 The `ontotext-yasgui-web-component` is regularly published as a package in the NPM registry.
 
 ```TODO: Describe the process in details``` 
