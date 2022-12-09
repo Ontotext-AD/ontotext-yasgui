@@ -28,7 +28,7 @@
     "lint:fix": "eslint --fix 'src/**'"
   },
   "dependencies": {
-    "@stencil/core": "^2.13.0"
+    "@stencil/core": "^2.20.0"
   },
   "devDependencies": {
     "@stencil/sass": "^2.0.0",

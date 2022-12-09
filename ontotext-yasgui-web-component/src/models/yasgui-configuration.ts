@@ -1,3 +1,6 @@
-export class YasguiConfiguration {
-  endpoint: string;
+import {Config} from '../../../Yasgui/packages/yasgui'
+
+export interface YasguiConfiguration {
+
+  yasguiConfig: Config
 }

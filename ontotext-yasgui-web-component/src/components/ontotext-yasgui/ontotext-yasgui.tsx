@@ -2,6 +2,8 @@ import {Component, h, Element, Prop, Event, EventEmitter, Watch, Listen, Method}
 import {YasguiConfiguration} from '../../models/yasgui-configuration';
 
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
+import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
+import {Yasgui} from '../../../../Yasgui/packages/yasgui'
 
 @Component({
   tag: 'ontotext-yasgui',
@@ -10,13 +12,19 @@ import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 })
 export class OntotextYasgui {
 
+  private yaguiBuilder: typeof YasguiBuilder;
+
   @Element() el: HTMLElement;
 
   @Prop() config: YasguiConfiguration;
 
   @Event() yasguiOutput: EventEmitter;
 
-  @Prop() yasgui;
+  @Prop() yasgui: Yasgui;
+
+  constructor() {
+    this.yaguiBuilder = YasguiBuilder;
+  }
 
   componentWillLoad() {
     // @ts-ignore
@@ -67,9 +75,7 @@ export class OntotextYasgui {
 
     // @ts-ignore
     if (window.Yasgui) {
-      // @ts-ignore
-      const yasgui = new Yasgui(this.el);
-      console.log(yasgui);
+      this.yasgui = this.yaguiBuilder.build(this.el, config);
     }
   }
 

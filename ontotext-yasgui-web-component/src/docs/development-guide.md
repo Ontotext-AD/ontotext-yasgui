@@ -53,3 +53,7 @@ When component is built it can be used everywhere but there are difference if it
     this.init(newConfig);
   }
 ```
+
+# Usefull References
+1.  [State Management with State Tunnel in StencilJS](https://www.joshmorony.com/state-management-with-state-tunnel-in-stencil-js/)
+2. [Using Services/Providers to Share Data in a StencilJS Application](https://www.joshmorony.com/using-services-providers-to-share-data-in-a-stencil-js-application/)
