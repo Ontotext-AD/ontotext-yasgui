@@ -6,11 +6,12 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { YasguiConfiguration } from "./models/yasgui-configuration";
+import { Yasgui } from "../../Yasgui/packages/yasgui";
 export namespace Components {
     interface OntotextYasgui {
         "config": YasguiConfiguration;
         "draw": () => Promise<string>;
-        "yasgui": any;
+        "yasgui": Yasgui;
     }
 }
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
@@ -32,7 +33,7 @@ declare namespace LocalJSX {
     interface OntotextYasgui {
         "config"?: YasguiConfiguration;
         "onYasguiOutput"?: (event: OntotextYasguiCustomEvent<any>) => void;
-        "yasgui"?: any;
+        "yasgui"?: Yasgui;
     }
     interface IntrinsicElements {
         "ontotext-yasgui": OntotextYasgui;

@@ -1,2 +1,2 @@
 let ontoElement = document.querySelector("ontotext-yasgui");
-ontoElement.config={endpoint: "https://dbpedia.org/sparql"};
+ontoElement.config = {yasguiConfig:{requestConfig: {endpoint: "/repositories/test-repo"}}};
