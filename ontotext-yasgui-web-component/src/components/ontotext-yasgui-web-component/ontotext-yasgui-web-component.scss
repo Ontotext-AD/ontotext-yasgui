@@ -4,6 +4,41 @@
   display: block;
 }
 
+.mode-yasqe {
+
+  .yasgui {
+
+    .yasr {
+      display: none;
+    }
+  }
+}
+
+.mode-yasr {
+
+  .yasgui {
+
+    .tabsList {
+      display: none;
+    }
+
+    .yasqe {
+      display: none;
+    }
+  }
+}
+
+.yasgui {
+
+  .autocompleteWrapper {
+    display: none !important;
+  }
+
+  .tabContextButton {
+    display: none;
+  }
+}
+
 .yasqe .yasqe_buttons svg {
   //fill: red;
 }
