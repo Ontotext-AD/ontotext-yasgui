@@ -9,7 +9,7 @@ import { YasguiConfiguration } from "./models/yasgui-configuration";
 export namespace Components {
     interface OntotextYasgui {
         "config": YasguiConfiguration;
-        "draw": () => Promise<string>;
+        "setQuery": (query: string) => Promise<void>;
     }
 }
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
@@ -30,7 +30,7 @@ declare global {
 declare namespace LocalJSX {
     interface OntotextYasgui {
         "config"?: YasguiConfiguration;
-        "onYasguiOutput"?: (event: OntotextYasguiCustomEvent<any>) => void;
+        "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<any>) => void;
     }
     interface IntrinsicElements {
         "ontotext-yasgui": OntotextYasgui;

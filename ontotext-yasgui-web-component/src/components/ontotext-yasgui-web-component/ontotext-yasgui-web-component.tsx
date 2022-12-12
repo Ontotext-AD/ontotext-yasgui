@@ -2,7 +2,7 @@ import {Component, h, Host, Element, Prop, Event, EventEmitter, Watch, Listen, M
 import {YasguiConfiguration} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
-import Yasgui from "../../../../Yasgui/packages/yasgui";
+import {OntotextYasgui} from '../../models/ontotext-yasgui';
 
 @Component({
   tag: 'ontotext-yasgui',
@@ -17,9 +17,9 @@ export class OntotextYasguiWebComponent {
 
   @Prop() config: YasguiConfiguration;
 
-  @Event() yasguiOutput: EventEmitter;
+  @Event() queryExecuted: EventEmitter;
 
-  yasgui: Yasgui;
+  yasgui: OntotextYasgui;
 
   constructor() {
     this.yasguiBuilder = YasguiBuilder;
@@ -52,8 +52,9 @@ export class OntotextYasguiWebComponent {
   }
 
   @Method()
-  draw() {
-    return Promise.resolve('Drawn');
+  setQuery(query: string): Promise<void> {
+    this.yasgui.setQuery(query);
+    return Promise.resolve();
   }
 
   disconnectedCallback() {
@@ -77,20 +78,19 @@ export class OntotextYasguiWebComponent {
     // @ts-ignore
     if (window.Yasgui) {
       this.yasgui = this.yasguiBuilder.build(this.el, config);
+      this.addOnQueryListener();
     }
   }
 
+  private addOnQueryListener(): void {
+    this.yasgui.addYasqeListener('query', () => {
+      this.queryExecuted.emit(this.yasgui.getQuery());
+    });
+  }
+
   private destroy() {
-    //TODO release all resource if needed
     if (this.yasgui) {
-      Object.keys(this.yasgui._tabs).forEach((tabId) => {
-        const tab = this.yasgui._tabs[tabId];
-        tab.getYasr() && tab.getYasr().destroy();
-      });
       this.yasgui.destroy();
-      // this.yasguiElement = null;
-      this.yasgui = null;
-      localStorage.removeItem('yasqe__query');
     }
   }
 }
