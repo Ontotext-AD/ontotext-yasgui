@@ -7,10 +7,10 @@ import {Yasgui} from '../../../../Yasgui/packages/yasgui'
 
 @Component({
   tag: 'ontotext-yasgui',
-  styleUrl: 'ontotext-yasgui.scss',
+  styleUrl: 'ontotext-yasgui-web-component.scss',
   shadow: false,
 })
-export class OntotextYasgui {
+export class OntotextYasguiWebComponent {
 
   private yaguiBuilder: typeof YasguiBuilder;
 
