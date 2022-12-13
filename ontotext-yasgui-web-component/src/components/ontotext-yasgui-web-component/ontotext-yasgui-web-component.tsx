@@ -63,7 +63,7 @@ export class OntotextYasguiWebComponent {
 
   render() {
     return (
-      <Host class={this.config.render}>
+      <Host>
       </Host>
     );
   }

@@ -28,6 +28,18 @@
   }
 }
 
+.orientation-horizontal {
+
+  .yasgui {
+    display: grid;
+
+    .tabPanel > div {
+      display: grid;
+      grid-template-columns: 0 1fr 1fr;
+    }
+  }
+}
+
 .yasgui {
 
   .autocompleteWrapper {

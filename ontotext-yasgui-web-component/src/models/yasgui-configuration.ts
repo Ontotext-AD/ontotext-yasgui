@@ -23,5 +23,13 @@ export interface YasguiConfiguration {
   showResultTabs: boolean;
 }
 
-export type RenderingMode = 'mode-yasgui' | 'mode-yasqe' | 'mode-yasr';
-export type Orientation = 'mode-vertical' | 'mode-horizontal';
+export enum RenderingMode {
+  YASGUI = 'mode-yasgui',
+  YASQE = 'mode-yasqe',
+  YASR = 'mode-yasr'
+}
+
+export enum Orientation {
+  VERTICAL = 'orientation-vertical',
+  HORIZONTAL = 'orientation-horizontal'
+}

@@ -6,9 +6,13 @@ ontoElement.config = {
     }
   },
   render: 'mode-yasgui',
-  orientation: 'mode-vertical'
+  orientation: 'orientation-vertical'
 };
 
 function renderMode(mode) {
-  ontoElement.config = {...ontoElement.config, render: mode}
+  ontoElement.config = {...ontoElement.config, render: mode};
+}
+
+function renderOrientation(mode) {
+  ontoElement.config = {...ontoElement.config, orientation: mode};
 }

@@ -1,4 +1,8 @@
 export class YasguiSteps {
+    static getYasguiTag() {
+        return cy.get('ontotext-yasgui');
+    }
+
     static getYasgui() {
         return cy.get('.yasgui');
     }
@@ -7,7 +11,7 @@ export class YasguiSteps {
         return cy.get('.tab');
     }
 
-   static openANewTab() {
-      cy.get('button.addTab').click();
-   }
+    static openANewTab() {
+        cy.get('button.addTab').click();
+    }
 }

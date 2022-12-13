@@ -1,12 +1,12 @@
 export default class PageSteps {
 
-   static visitDefaultViewPage() {
-      cy.visit('/pages/default-view');
-   }
+    static visitDefaultViewPage() {
+        cy.visit('/pages/default-view');
+    }
 
-   static visitViewModesPage() {
-       cy.visit('/pages/view-modes');
-   }
+    static visitViewModesPage() {
+        cy.visit('/pages/view-modes');
+    }
 
    static visitConfigurationPage() {
       cy.visit('/pages/view-configurations');
@@ -36,11 +36,23 @@ export default class PageSteps {
       cy.get('#setDefaultQuery').click();
    }
 
+    static switchToModeYasgui() {
+        cy.get('#renderModeYasgui').click();
+    }
+
    static switchToModeYasqe() {
        cy.get('#renderModeYasqe').click();
    }
 
-   static switchToModeYasr() {
-       cy.get('#renderModeYasr').click();
-   }
+    static switchToModeYasr() {
+        cy.get('#renderModeYasr').click();
+    }
+
+    static switchToHorizontalOrientation() {
+        cy.get('#renderHorizontal').click();
+    }
+
+    static switchToVerticalOrientation() {
+        cy.get('#renderVertical').click();
+    }
 }
