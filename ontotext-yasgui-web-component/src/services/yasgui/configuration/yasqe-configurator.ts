@@ -6,9 +6,9 @@ class YasqeConfiguratorDefinition implements Configurator {
 
   config(el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
     if (yasguiConfig.hasOwnProperty('showEditorTabs') && !yasguiConfig.showEditorTabs) {
-      el.classList.add('hidde-editor-tabs');
+      el.classList.add('hidden-editor-tabs');
     } else {
-      el.classList.remove('hidde-editor-tabs');
+      el.classList.remove('hidden-editor-tabs');
     }
 
     // @ts-ignore

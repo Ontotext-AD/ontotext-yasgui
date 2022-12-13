@@ -1,6 +1,7 @@
 import PageSteps from '../steps/page-steps';
 import {YasguiSteps} from '../steps/yasgui-steps';
 import {YasqeSteps} from '../steps/yasqe-steps';
+import {YasrSteps} from '../steps/yasr-steps';
 
 describe('View configurations', () => {
 
@@ -15,8 +16,8 @@ describe('View configurations', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // THEN: all components of yasgui, yasr, yasqe have to be visible.
-      cy.get('.tabsList').should('be.visible');
-      cy.get('.yasr_header').should('be.visible');
+      YasqeSteps.getQueryTabs().should('be.visible');
+      YasrSteps.getResultHeader().should('be.visible');
    });
 
    it('Should hide query tabs', () => {
@@ -26,15 +27,15 @@ describe('View configurations', () => {
       PageSteps.hideEditorTab();
 
       // THEN: only query tabs have to be invisible.
-      cy.get('.tabsList').should('not.be.visible');
-      cy.get('.yasr_header').should('be.visible');
+      YasqeSteps.getQueryTabs().should('not.be.visible');
+      YasrSteps.getResultHeader().should('be.visible');
 
       // WHEN: set configuration property "showEditorTabs" to true.
       PageSteps.showEditorTab();
 
       // THEN: all components of yasgui, yasr, yasqe have to be visible.
-      cy.get('.tabsList').should('be.visible');
-      cy.get('.yasr_header').should('be.visible');
+      YasqeSteps.getQueryTabs().should('be.visible');
+      YasrSteps.getResultHeader().should('be.visible');
    });
 
    it('Should hide result tabs', () => {
@@ -44,15 +45,15 @@ describe('View configurations', () => {
       PageSteps.hideResultTabs();
 
       // THEN: only result tabs have to be invisible.
-      cy.get('.tabsList').should('be.visible');
-      cy.get('.yasr_header').should('not.be.visible');
+      YasqeSteps.getQueryTabs().should('be.visible');
+      YasrSteps.getResultHeader().should('not.be.visible');
 
       // WHEN: set configuration property "showResultTabs" to true.
       PageSteps.showResultTabs();
 
       // THEN: all components of yasgui, yasr, yasqe have to be visible.
-      cy.get('.tabsList').should('be.visible');
-      cy.get('.yasr_header').should('be.visible');
+      YasqeSteps.getQueryTabs().should('be.visible');
+      YasrSteps.getResultHeader().should('be.visible');
    });
 
    it('Should set query passed through "initialQuery" configuration', () => {
@@ -62,7 +63,7 @@ describe('View configurations', () => {
       PageSteps.setInitialQuery();
 
       // THEN: 'initial_query' have to be set in the query editor.
-      cy.get(".yasqe").contains('initial_query');
+      YasqeSteps.getEditor().contains('initial_query');
    });
 
    it('Should set default query', () => {
@@ -74,7 +75,7 @@ describe('View configurations', () => {
       YasguiSteps.openANewTab();
 
       // THEN: 'default_query' have to be set in the query editor.
-      cy.get(".yasqe:visible").contains('default_query');
+      YasqeSteps.getEditor().contains('default_query');
    });
 
    it('Should fire event when query is executed', () => {

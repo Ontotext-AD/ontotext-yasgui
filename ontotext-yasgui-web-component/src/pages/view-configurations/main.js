@@ -15,48 +15,17 @@ ontoElement.addEventListener("queryExecuted", () => {
 });
 
 function setShowEditorTabs(hideEditorTab) {
-  ontoElement.config = {
-    showEditorTabs: hideEditorTab,
-    query: '',
-    yasguiConfig: {
-      requestConfig: {
-        endpoint: "/repositories/test-repo"
-      }
-    }
-  }
+  ontoElement.config = {...ontoElement.config, showEditorTabs: hideEditorTab}
 }
 
-function setHowResultTabs(showResultTabs) {
-  ontoElement.config = {
-    showResultTabs: showResultTabs,
-    query: '',
-    yasguiConfig: {
-      requestConfig: {
-        endpoint: "/repositories/test-repo"
-      }
-    }
-  }
+function setShowResultTabs(showResultTabs) {
+  ontoElement.config = {...ontoElement.config, showResultTabs: showResultTabs}
 }
 
 function setDefaultQuery(query) {
-  ontoElement.config = {
-    query: query,
-    yasguiConfig: {
-      requestConfig: {
-        endpoint: "/repositories/test-repo"
-      }
-    }
-  }
+  ontoElement.config = {...ontoElement.config, query: query}
 }
 
 function  setInitialQuery(initialQuery) {
-  ontoElement.config = {
-    initialQuery: initialQuery,
-    query: '',
-    yasguiConfig: {
-      requestConfig: {
-        endpoint: "/repositories/test-repo"
-      }
-    }
-  }
+  ontoElement.config = {...ontoElement.config, initialQuery: initialQuery}
 }

@@ -10,12 +10,5 @@ ontoElement.config = {
 };
 
 function renderMode(mode) {
-  ontoElement.config = {
-    yasguiConfig: {
-      requestConfig: {
-        endpoint: "/repositories/test-repo"
-      }
-    },
-    render: mode,
-  };
+  ontoElement.config = {...ontoElement.config, render: mode}
 }

@@ -6,9 +6,9 @@ class YasrConfiguratorDefinition implements Configurator {
 
   config(el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
     if (yasguiConfig.hasOwnProperty('showResultTabs') && !yasguiConfig.showResultTabs) {
-      el.classList.add('hidde-result-tabs');
+      el.classList.add('hidden-result-tabs');
     } else {
-      el.classList.remove('hidde-result-tabs');
+      el.classList.remove('hidden-result-tabs');
     }
     return config;
   }
