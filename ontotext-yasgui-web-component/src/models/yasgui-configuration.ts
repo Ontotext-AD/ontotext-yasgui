@@ -2,7 +2,6 @@ import {Config} from '../../../Yasgui/packages/yasgui'
 
 export interface YasguiConfiguration {
   yasguiConfig: Config,
-  endpoint: string;
   render: RenderingMode;
   orientation: Orientation;
 }
