@@ -14,20 +14,20 @@
 
 ## Events
 
-| Event          | Description | Type               |
-| -------------- | ----------- | ------------------ |
-| `yasguiOutput` |             | `CustomEvent<any>` |
+| Event           | Description | Type               |
+| --------------- | ----------- | ------------------ |
+| `queryExecuted` |             | `CustomEvent<any>` |
 
 
 ## Methods
 
-### `draw() => Promise<string>`
+### `setQuery(query: string) => Promise<void>`
 
 
 
 #### Returns
 
-Type: `Promise<string>`
+Type: `Promise<void>`
 
 
 

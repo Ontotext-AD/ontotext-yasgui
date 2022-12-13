@@ -6,4 +6,8 @@ export class YasguiSteps {
     static getTabs() {
         return cy.get('.tab');
     }
+
+   static openANewTab() {
+      cy.get('button.addTab').click();
+   }
 }

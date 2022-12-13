@@ -1,5 +1,6 @@
 import {YasguiConfiguration} from '../../models/yasgui-configuration';
 import {YasguiConfigurationBuilder} from './configuration/yasgui-configuration-builder';
+import {OntotextYasgui} from '../../models/ontotext-yasgui';
 
 /**
  * Builder yasgui instance.
@@ -20,13 +21,13 @@ class YasguiBuilderDefinition {
    * @param el - parent element of yasgui instance.
    * @param config - configuration passed from client of component. It overrides default values of yasgui component.
    */
-  build(el: HTMLElement, config: YasguiConfiguration) {
-    const yasguiConfig = this.yasguiConfigurationBuilder.build(config);
+  build(el: HTMLElement, config: YasguiConfiguration): OntotextYasgui {
+    const yasguiConfig = this.yasguiConfigurationBuilder.build(el, config);
     // @ts-ignore
     const yasgui = new Yasgui(el, yasguiConfig);
 
     // monkey patches have to be applied before return yasgui.
-    return yasgui;
+    return new OntotextYasgui(yasgui, config);
   }
 }
 

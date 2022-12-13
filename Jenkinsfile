@@ -15,6 +15,12 @@ pipeline {
             }
         }
 
+        stage('Building ontotext-yasgui component') {
+            steps {
+             sh 'npm run build'
+            }
+         }
+
         stage('Starting dev server') {
             steps {
                 sh 'npm run start &'

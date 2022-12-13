@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Stencil Component Starter</title>
+
+    <script type="module" src="/build/ontotext-yasgui-web-component.esm.js"></script>
+    <script nomodule src="/build/ontotext-yasgui-web-component.js"></script>
+    <script src="./view-configurations/main.js" defer></script>
+  </head>
+  <body>
+
+  <button id="showEditorTabs" onclick="setShowEditorTabs(true)">Show editor tab</button>
+  <button id="hideEditorTabs" onclick="setShowEditorTabs(false)">Hide editor tab</button>
+
+  <button id="showResultTabs" onclick="setShowResultTabs(true)">Show result tab</button>
+  <button id="hideResultTabs" onclick="setShowResultTabs(false)">Hide result tab</button>
+
+  <button id="setDefaultQuery" onclick="setDefaultQuery('default_query')">Set default query</button>
+  <button id="setInitialQuery" onclick="setInitialQuery('initial_query')">Set initial query</button>
+
+  <ontotext-yasgui data-cy="ontotext-yasgui-tag"></ontotext-yasgui>
+  </body>
+</html>

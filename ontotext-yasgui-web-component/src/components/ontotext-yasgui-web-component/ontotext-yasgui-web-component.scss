@@ -39,6 +39,14 @@
   }
 }
 
-.yasqe .yasqe_buttons svg {
-  //fill: red;
+.hidden-editor-tabs {
+  .tabsList {
+    display: none;
+  }
+}
+
+.hidden-result-tabs {
+  .yasr_header {
+    display: none;
+  }
 }

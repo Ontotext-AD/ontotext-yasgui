@@ -1,6 +1,7 @@
 import {Configurator} from './configurator';
 import {YasguiConfiguration} from '../../../models/yasgui-configuration';
 import {Config} from '../../../../../Yasgui/packages/yasgui'
+import deepmerge from 'deepmerge';
 
 /**
  * Manages all top configuration of yasgui.
@@ -23,8 +24,8 @@ class YasguiConfiguratorDefinition implements Configurator {
     }
   }
 
-  config(config: Config, yasguiConfig: YasguiConfiguration): Config {
-    return {... config, ... this.defaultYasguiConfig, ... yasguiConfig.yasguiConfig};
+  config(_el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
+    return deepmerge.all([config, this.defaultYasguiConfig, yasguiConfig.yasguiConfig ]) as Config;
   }
 }
 

@@ -10,7 +10,5 @@ ontoElement.config = {
 };
 
 function renderMode(mode) {
-  ontoElement.config = {
-    render: mode,
-  };
+  ontoElement.config = {...ontoElement.config, render: mode}
 }
