@@ -10,7 +10,6 @@
 | Property | Attribute | Description | Type                  | Default     |
 | -------- | --------- | ----------- | --------------------- | ----------- |
 | `config` | --        |             | `YasguiConfiguration` | `undefined` |
-| `yasgui` | --        |             | `Yasgui`              | `undefined` |
 
 
 ## Events

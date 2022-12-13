@@ -1,4 +1,4 @@
-import { Config } from '@stencil/core';
+import {Config} from '@stencil/core';
 import {sass} from '@stencil/sass';
 
 export const config: Config = {
@@ -19,7 +19,8 @@ export const config: Config = {
       type: 'www',
       serviceWorker: null, // disable service workers
       copy: [
-        { src: 'js' },
+        {src: 'js'},
+        {src: 'pages'}
       ]
     },
   ],
