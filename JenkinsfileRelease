@@ -76,7 +76,6 @@ pipeline {
         // Publish on npm
         script {
           if (params.PreRelease == false) {
-            sh echo "publishing to npm"
             sh "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm publish"
           }
         }
