@@ -54,9 +54,11 @@ pipeline {
     }
     stage ('Update version') {
         steps {
+          script {
             if (params.PreRelease == false) {
               sh 'npm run version ${ReleaseVersion}'
             }
+          }
         }
     }
     stage ("Installing ontotext-yasgui") {
