@@ -56,7 +56,7 @@ pipeline {
         steps {
           script {
             if (params.PreRelease == false) {
-              sh 'npm run version ${ReleaseVersion}'
+              sh 'npm run version-all ${ReleaseVersion}'
             }
           }
         }

@@ -6,7 +6,7 @@
     "install": "sh scripts/install.sh",
     "build": "sh scripts/build.sh",
     "start": "cd ontotext-yasgui-web-component && npm run start",
-    "version": "sh scripts/version.sh ${ReleaseVersion}",
+    "version-all": "sh scripts/version.sh ${ReleaseVersion}",
     "publish": "sh scripts/publish.sh ${NPM_TOKEN}",
     "clean": "sh scripts/clean.sh",
     "lint": "cd ontotext-yasgui-web-component && npm run lint",
