@@ -74,11 +74,10 @@ pipeline {
     stage ('Publishing ontotext-yasgui') {
       steps {
         // Publish on npm
-        script {
           if (params.PreRelease == false) {
-            sh "./scripts/publish.sh ${NPM_TOKEN}"
+            sh "cd ontotext-yasgui-web-component/"
+            sh "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm publish"
           }
-        }
       }
     }
   }
