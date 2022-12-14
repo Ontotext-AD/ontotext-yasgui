@@ -54,9 +54,9 @@ pipeline {
     }
     stage ('Update version') {
         steps {
-            sh "npm version --git-tag-version=false --allow-same-version=true ${ReleaseVersion}"
-            sh "cd ontotext-yasgui-web-component"
-            sh "npm version --git-tag-version=false --allow-same-version=true ${ReleaseVersion}"
+            if (params.PreRelease == false) {
+              sh 'npm run version ${ReleaseVersion}'
+            }
         }
     }
     stage ("Installing ontotext-yasgui") {
