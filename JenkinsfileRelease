@@ -67,11 +67,13 @@ pipeline {
     }
     stage ("Building ontotext-yasgui") {
         steps {
-            sh "#################################################"
+            sh "echo #################################################"
             sh "pwd"
             sh "npm run build"
-            sh "#################################################"
+            sh "ls"
+            dir("ontotext-yasgui/ontotext-yasgui-web-component/")
             sh "pwd"
+            sh "echo #################################################"
         }
     }
 
