@@ -67,7 +67,11 @@ pipeline {
     }
     stage ("Building ontotext-yasgui") {
         steps {
+            sh "#################################################"
+            sh "echo pwd"
             sh "npm run build"
+            sh "#################################################"
+            sh "echo pwd"
         }
     }
 
