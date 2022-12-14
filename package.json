@@ -1,6 +1,6 @@
 {
   "name": "ontotext-yasgui",
-  "version": "0.0.1",
+  "version": "0.0.1-TR1",
   "description": "Base project of \"ontotext-yasgui-web-component\" component. It holds yasgui source code and ontotext-yasgui-web-component customization project for Ontotext.",
   "scripts": {
     "install": "sh scripts/install.sh",
@@ -32,6 +32,7 @@
     "eslint-plugin-cypress": "^2.12.1"
   },
   "dependencies": {
-    "deepmerge": "^4.2.2"
+    "deepmerge": "^4.2.2",
+    "yarn": "^1.22.19"
   }
 }
