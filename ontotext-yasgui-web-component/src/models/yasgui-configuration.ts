@@ -1,9 +1,21 @@
 import {Config} from '../../../Yasgui/packages/yasgui'
 
 export interface YasguiConfiguration {
+  /**
+   * The default yasgui config.
+   */
   yasguiConfig: Config,
+
+  /**
+   * Configure what part of the yasgui should be rendered.
+   */
   render: RenderingMode;
+
+  /**
+   * Configure the yasgui layout orientation.
+   */
   orientation: Orientation;
+
   /**
    * Default query when a tab is opened.
    */
@@ -13,12 +25,14 @@ export interface YasguiConfiguration {
    * Initial query when yasgui is rendered if not set the default query will be set.
    */
   initialQuery?: string;
+
   /**
-   * if the yasgui tabs should be rendered or no
+   * If the yasgui tabs should be rendered or not.
    */
   showEditorTabs: boolean;
+
   /**
-   * if the yasr tabs should be rendered or not
+   * If the yasr tabs should be rendered or not.
    */
   showResultTabs: boolean;
 }
