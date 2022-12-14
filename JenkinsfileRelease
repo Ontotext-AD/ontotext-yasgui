@@ -76,7 +76,7 @@ pipeline {
         // Publish on npm
         script {
           if (params.PreRelease == false) {
-            sh 'npm run publish ${NPM_TOKEN}
+            sh 'npm run publish ${NPM_TOKEN}'
           }
         }
       }
