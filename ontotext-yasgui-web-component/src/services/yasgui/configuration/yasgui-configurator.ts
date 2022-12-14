@@ -33,7 +33,7 @@ class YasguiConfiguratorDefinition implements Configurator {
     this.setOrientation(yasguiConfig, _el);
     this.setRenderMode(yasguiConfig, _el);
 
-    return deepmerge.all([config, this.defaultYasguiConfig, yasguiConfig.yasguiConfig]) as Config;
+    return deepmerge.all([config, this.defaultYasguiConfig, yasguiConfig.yasguiConfig || {}]) as Config;
   }
 
   private setRenderMode(yasguiConfig: YasguiConfiguration, _el: HTMLElement): void {
