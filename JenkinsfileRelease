@@ -76,6 +76,7 @@ pipeline {
         // Publish on npm
         script {
           if (params.PreRelease == false) {
+           sh "cd ontotext-yasgui-web-component "
             sh "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm publish"
           }
         }
