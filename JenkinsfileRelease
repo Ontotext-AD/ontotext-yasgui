@@ -49,16 +49,13 @@ pipeline {
   stages {
     stage ('Checkout branch') {
         steps {
-            echo "Branch is ${branch}"
-            echo "-----------------------------------------------"
-
             sh "git checkout ${branch}"
         }
     }
     stage ('Update version') {
         steps {
             sh "npm version --git-tag-version=false --allow-same-version=true ${ReleaseVersion}"
-            sh cd ontotext-yasgui-web-component
+            sh "cd ontotext-yasgui-web-component"
             sh "npm version --git-tag-version=false --allow-same-version=true ${ReleaseVersion}"
         }
     }
@@ -80,7 +77,7 @@ pipeline {
         script {
           if (params.PreRelease == false) {
             sh echo "publishing to npm"
-            // sh "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm publish"
+            sh "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm publish"
           }
         }
       }
@@ -91,9 +88,9 @@ pipeline {
     success {
         if (params.PreRelease == false) {
           // Commit, tag and push the changes in Git
-          // sh "git commit -a -m 'Release ${ReleaseVersion}'"
-          // sh "git tag -a v${ReleaseVersion} -m 'Release v${ReleaseVersion}'"
-          // sh "git push --set-upstream origin ${branch} && git push --tags"
+           sh "git commit -a -m 'Release ${ReleaseVersion}'"
+           sh "git tag -a v${ReleaseVersion} -m 'Release v${ReleaseVersion}'"
+           sh "git push --set-upstream origin ${branch} && git push --tags"
 
           script {
             def latest = getLatestReleaseTagName()
@@ -103,8 +100,8 @@ pipeline {
             echo "Recent merge commit messages collected"
 
             def commitMessage = composeReleaseMessage(gitMessages)
-            // def result = postRelease(commitMessage)
-            // echo result
+            def result = postRelease(commitMessage)
+            echo result
           }
         }
     }
