@@ -86,23 +86,25 @@ pipeline {
 
   post {
     success {
-        if (params.PreRelease == false) {
-          // Commit, tag and push the changes in Git
-           sh "git commit -a -m 'Release ${ReleaseVersion}'"
-           sh "git tag -a v${ReleaseVersion} -m 'Release v${ReleaseVersion}'"
-           sh "git push --set-upstream origin ${branch} && git push --tags"
+         script {
+            if (params.PreRelease == false) {
+              // Commit, tag and push the changes in Git
+               sh "git commit -a -m 'Release ${ReleaseVersion}'"
+               sh "git tag -a v${ReleaseVersion} -m 'Release v${ReleaseVersion}'"
+               sh "git push --set-upstream origin ${branch} && git push --tags"
 
-          script {
-            def latest = getLatestReleaseTagName()
-            echo "Last revision ${latest}"
+              script {
+                def latest = getLatestReleaseTagName()
+                echo "Last revision ${latest}"
 
-            def gitMessages = getReleaseMessagesFromGit(latest)
-            echo "Recent merge commit messages collected"
+                def gitMessages = getReleaseMessagesFromGit(latest)
+                echo "Recent merge commit messages collected"
 
-            def commitMessage = composeReleaseMessage(gitMessages)
-            def result = postRelease(commitMessage)
-            echo result
-          }
+                def commitMessage = composeReleaseMessage(gitMessages)
+                def result = postRelease(commitMessage)
+                echo result
+              }
+            }
         }
     }
 
