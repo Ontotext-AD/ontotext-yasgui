@@ -67,13 +67,7 @@ pipeline {
     }
     stage ("Building ontotext-yasgui") {
         steps {
-            sh "echo #################################################"
-            sh "pwd"
             sh "npm run build"
-            sh "ls"
-            dir("ontotext-yasgui/ontotext-yasgui-web-component/")
-            sh "pwd"
-            sh "echo #################################################"
         }
     }
 
@@ -81,10 +75,8 @@ pipeline {
       steps {
         // Publish on npm
         script {
-          sh "------------------------------------------------------------"
-          sh "pwd"
           if (params.PreRelease == false) {
-            dir("ontotext-yasgui-web-component/")
+            dir("ontotext-yasgui/ontotext-yasgui-web-component/")
             sh "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm publish"
           }
         }
