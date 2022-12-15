@@ -1,13 +1,14 @@
-import PageSteps from '../steps/page-steps';
 import {YasguiSteps} from '../steps/yasgui-steps';
 import {YasqeSteps} from '../steps/yasqe-steps';
 import {YasrSteps} from '../steps/yasr-steps';
+import ViewConfigurationsPageSteps from "../steps/view-configurations-page-steps";
+import {QueryStubs} from "../stubs/query-stubs";
 
 describe('View configurations', () => {
 
    beforeEach(() => {
-      cy.intercept('/repositories/test-repo', {fixture: '/queries/default-query-response.json'}).as('getGuides');
-      PageSteps.visitConfigurationPage();
+      QueryStubs.stubDefaultQueryResponse();
+      ViewConfigurationsPageSteps.visit();
       cy.clearLocalStorage('yasgui_config');
       cy.clearLocalStorage('prefixes');
    });
@@ -24,14 +25,14 @@ describe('View configurations', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set configuration property "showEditorTabs" to false.
-      PageSteps.hideEditorTab();
+      ViewConfigurationsPageSteps.hideEditorTab();
 
       // THEN: only query tabs have to be invisible.
       YasqeSteps.getQueryTabs().should('not.be.visible');
       YasrSteps.getResultHeader().should('be.visible');
 
       // WHEN: set configuration property "showEditorTabs" to true.
-      PageSteps.showEditorTab();
+      ViewConfigurationsPageSteps.showEditorTab();
 
       // THEN: all components of yasgui, yasr, yasqe have to be visible.
       YasqeSteps.getQueryTabs().should('be.visible');
@@ -42,14 +43,14 @@ describe('View configurations', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set configuration property "showResultTabs" to false.
-      PageSteps.hideResultTabs();
+      ViewConfigurationsPageSteps.hideResultTabs();
 
       // THEN: only result tabs have to be invisible.
       YasqeSteps.getQueryTabs().should('be.visible');
       YasrSteps.getResultHeader().should('not.be.visible');
 
       // WHEN: set configuration property "showResultTabs" to true.
-      PageSteps.showResultTabs();
+      ViewConfigurationsPageSteps.showResultTabs();
 
       // THEN: all components of yasgui, yasr, yasqe have to be visible.
       YasqeSteps.getQueryTabs().should('be.visible');
@@ -60,7 +61,7 @@ describe('View configurations', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set 'initial_query' value to configuration "initialQuery"
-      PageSteps.setInitialQuery();
+      ViewConfigurationsPageSteps.setInitialQuery();
 
       // THEN: 'initial_query' have to be set in the query editor.
       YasqeSteps.getEditor().contains('initial_query');
@@ -70,7 +71,7 @@ describe('View configurations', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set 'default_query' value to configuration "query".
-      PageSteps.setDefaultQuery();
+      ViewConfigurationsPageSteps.setDefaultQuery();
       // AND: open a new tab.
       YasguiSteps.openANewTab();
 
@@ -86,6 +87,6 @@ describe('View configurations', () => {
 
       // THEN: an event "queryExecuted" have to be fired
       // AND: a new element in dom have to be added.
-      cy.get('#queryRan').should('be.visible');
+      ViewConfigurationsPageSteps.getQueryRanInfo().should('be.visible');
    });
 });
