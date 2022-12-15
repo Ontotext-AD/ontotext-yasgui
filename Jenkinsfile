@@ -21,6 +21,12 @@ pipeline {
             }
          }
 
+         stage('Starting eslint') {
+             steps {
+              sh 'npm run lint'
+             }
+          }
+
         stage('Starting dev server') {
             steps {
                 sh 'npm run start &'

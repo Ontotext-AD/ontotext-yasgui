@@ -40,7 +40,7 @@ class YasguiConfiguratorDefinition implements Configurator {
     // @ts-ignore
     const modes: string[] = Object.values(RenderingMode);
     _el.classList.remove(...modes);
-    const newMode: RenderingMode = !!yasguiConfig.render ? yasguiConfig.render : this.defaultYasguiConfig.render;
+    const newMode: RenderingMode = yasguiConfig.render ? yasguiConfig.render : this.defaultYasguiConfig.render;
     _el.classList.add(newMode);
   }
 
@@ -48,7 +48,7 @@ class YasguiConfiguratorDefinition implements Configurator {
     // @ts-ignore
     const orientations: string[] = Object.values(Orientation);
     _el.classList.remove(...orientations);
-    const newOrientation: Orientation = !!yasguiConfig.orientation ? yasguiConfig.orientation : this.defaultYasguiConfig.orientation;
+    const newOrientation: Orientation = yasguiConfig.orientation ? yasguiConfig.orientation : this.defaultYasguiConfig.orientation;
     _el.classList.add(newOrientation);
   }
 }
