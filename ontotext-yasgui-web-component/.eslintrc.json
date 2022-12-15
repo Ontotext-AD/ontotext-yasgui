@@ -25,7 +25,7 @@
     "src/pages/**"
   ],
   "rules": {
-    // Skips unused imports witch start with underscore.
+    // Skips unused imports which start witch underscore.
     "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "(^_*)", "argsIgnorePattern": "^_" }],
     "@typescript-eslint/ban-ts-comment": "off"
   }
