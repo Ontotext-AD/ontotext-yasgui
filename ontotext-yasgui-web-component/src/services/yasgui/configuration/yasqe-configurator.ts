@@ -5,7 +5,8 @@ import {Config} from '../../../../../Yasgui/packages/yasgui'
 class YasqeConfiguratorDefinition implements Configurator {
 
   config(el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
-    if (yasguiConfig.hasOwnProperty('showEditorTabs') && !yasguiConfig.showEditorTabs) {
+
+    if (this.haveToHiddeEditorTabs(yasguiConfig)) {
       el.classList.add('hidden-editor-tabs');
     } else {
       el.classList.remove('hidden-editor-tabs');
@@ -17,6 +18,13 @@ class YasqeConfiguratorDefinition implements Configurator {
       window.Yasgui.Yasqe.defaults.value = yasguiConfig.query;
     }
     return config;
+  }
+
+  private haveToHiddeEditorTabs(yasguiConfig: YasguiConfiguration) {
+    if (yasguiConfig.showEditorTabs === undefined || yasguiConfig.showEditorTabs === null) {
+      return false;
+    }
+    return !yasguiConfig.showEditorTabs;
   }
 }
 
