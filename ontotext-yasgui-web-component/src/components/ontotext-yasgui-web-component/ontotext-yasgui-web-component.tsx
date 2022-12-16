@@ -21,6 +21,7 @@ import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
 import {YasguiConfigurationBuilder} from "../../services/yasgui/configuration/yasgui-configuration-builder";
 import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
+import {TranslationService} from '../../services/translation.service';
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -54,6 +55,7 @@ export class OntotextYasguiWebComponent {
   private yasguiBuilder: typeof YasguiBuilder;
   private ontotextYasguiService: typeof OntotextYasguiService;
   private yasguiConfigurationBuilder: typeof YasguiConfigurationBuilder;
+  private translationService: typeof TranslationService;
 
   /**
    * The host html element for the yasgui.
@@ -64,6 +66,11 @@ export class OntotextYasguiWebComponent {
    * An input object property containing the yasgui configuration.
    */
   @Prop() config: ExternalYasguiConfiguration;
+
+  /**
+   * An input property containing the chosen translation language.
+   */
+  @Prop() language: string
 
   /**
    * Event emitted when before query to be executed.
@@ -97,6 +104,13 @@ export class OntotextYasguiWebComponent {
     this.init(newConfig);
   }
 
+  @Watch('language')
+  languageChanged(newLang: string) {
+    this.translationService.setLanguage(newLang);
+    this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
+    this.ontotextYasgui.refresh();
+  }
+
   @Method()
   setQuery(query: string): Promise<void> {
     this.ontotextYasgui.setQuery(query);
@@ -107,6 +121,7 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = YasguiBuilder;
     this.ontotextYasguiService = OntotextYasguiService;
     this.yasguiConfigurationBuilder = YasguiConfigurationBuilder;
+    this.translationService = TranslationService;
   }
 
   componentWillLoad() {
@@ -135,16 +150,16 @@ export class OntotextYasguiWebComponent {
       <Host class="yasgui-host-element">
         <div class="yasgui-toolbar">
           <button class="yasgui-btn btn-mode-yasqe"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor
-            only
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
+            {this.translationService.translate('btn.mode-yasqe')}
           </button>
           <button class="yasgui-btn btn-mode-yasgui"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>Editor
-            and results
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>
+            {this.translationService.translate('btn.mode-yasgui')}
           </button>
           <button class="yasgui-btn btn-mode-yasr"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>Results
-            only
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>
+            {this.translationService.translate('btn.mode-yasr')}
           </button>
           <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left"
                           show-on-click={true}>
@@ -180,9 +195,9 @@ export class OntotextYasguiWebComponent {
 
   private fetchButtonOrientationTooltip(): string {
     if (VisualisationUtils.isOrientationVertical(this.hostElement)) {
-      return "Switch to horizontal view";
+      return this.translationService.translate("tooltip.switch.orientation.horizontal");
     }
-    return "Switch to vertical view";
+    return this.translationService.translate("tooltip.switch.orientation.vertical");
   }
 
   private changeOrientation() {

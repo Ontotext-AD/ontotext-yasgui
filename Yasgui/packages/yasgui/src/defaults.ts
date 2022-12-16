@@ -5,6 +5,7 @@ import { CatalogueItem } from "./endpointSelect";
 
 export default function initialize(): Config<CatalogueItem> {
   return {
+    translate: (key: string, _parameters?: { key: string; value: string }[]) => key,
     autofocus: true,
     endpointInfo: undefined,
     persistenceId: function (yasgui) {

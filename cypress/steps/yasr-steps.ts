@@ -10,4 +10,8 @@ export class YasrSteps {
     static getResults() {
         return cy.get('.yasr_results tbody').find('tr');
     }
+
+    static getResultFilter() {
+        return cy.get('.tableFilter');
+    }
 }

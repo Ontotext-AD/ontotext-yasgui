@@ -4,6 +4,7 @@ import {
   YasguiConfiguration
 } from '../../../models/yasgui-configuration';
 import {ExternalYasguiConfiguration} from "../../../models/external-yasgui-configuration";
+import {TranslationService} from '../../translation.service';
 
 /**
  * Builder for yasgui configuration.
@@ -19,6 +20,7 @@ class YasguiConfigurationBuilderDefinition {
   }
 
   private defaultYasguiConfig: Record<string, any> = {
+    translate: (key, parameters) => TranslationService.translate(key, parameters),
     copyEndpointOnNewTab: true,
     endpoint: '',
     method: 'POST',
@@ -50,9 +52,11 @@ class YasguiConfigurationBuilderDefinition {
     config.showEditorTabs = externalConfiguration.showEditorTabs !== undefined ? externalConfiguration.showEditorTabs : this.defaultOntotextYasguiConfig.showEditorTabs;
     config.showResultTabs = externalConfiguration.showResultTabs !== undefined ? externalConfiguration.showResultTabs : this.defaultOntotextYasguiConfig.showResultTabs;
     config.showToolbar = externalConfiguration.showToolbar !== undefined ? externalConfiguration.showToolbar : this.defaultOntotextYasguiConfig.showToolbar;
+    config.i18n = externalConfiguration.i18n;
 
     // prepare the yasgui config
     config.yasguiConfig = {
+      translate: this.defaultYasguiConfig.translate,
       requestConfig: {}
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || this.defaultYasguiConfig.endpoint;

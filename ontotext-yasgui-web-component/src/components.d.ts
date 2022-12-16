@@ -13,6 +13,10 @@ export namespace Components {
           * An input object property containing the yasgui configuration.
          */
         "config": ExternalYasguiConfiguration;
+        /**
+          * An input property containing the chosen translation language.
+         */
+        "language": string;
         "setQuery": (query: string) => Promise<void>;
     }
     interface YasguiTooltip {
@@ -49,6 +53,10 @@ declare namespace LocalJSX {
           * An input object property containing the yasgui configuration.
          */
         "config"?: ExternalYasguiConfiguration;
+        /**
+          * An input property containing the chosen translation language.
+         */
+        "language"?: string;
         /**
           * Event emitted when before query to be executed.
          */

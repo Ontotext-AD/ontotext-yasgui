@@ -21,7 +21,8 @@ export const config: Config = {
       copy: [
         {src: 'js'},
         {src: 'pages'},
-        {src: 'css/fonts'}
+        {src: 'css/fonts'},
+        {src: 'i18n'}
       ]
     },
   ],
