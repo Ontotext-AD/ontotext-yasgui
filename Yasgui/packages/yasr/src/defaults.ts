@@ -1,6 +1,7 @@
 import { Config } from "./";
 export default function get(): Config {
   return {
+    translate: (key: string, _parameters?: { key: string; value: string }[]) => key,
     persistenceId: function (yasr) {
       //Traverse parents untl we've got an id
       // Get matching parent elements

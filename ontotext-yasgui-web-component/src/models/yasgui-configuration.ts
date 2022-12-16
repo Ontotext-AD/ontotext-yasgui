@@ -30,6 +30,26 @@ export interface YasguiConfiguration {
    */
   showToolbar?: boolean;
 
+  /**
+   * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.
+   * If pass a new language then all label's values have to be present, otherwise they will be translated to the default English language.
+   * Example:
+   * {
+   *   en: {
+   *     "tooltip.switch.orientation.horizontal": "Switch to horizontal view",
+   *     "tooltip.switch.orientation.vertical": "Switch to vertical view",
+   *     "btn.mode-yasqe": "Editor only",
+   *     "btn.mode-yasgui": "Editor and results",
+   *     "btn.mode-yasr": "Results only",
+   *   }
+   *   fr: {
+   *     "tooltip.switch.orientation.vertical": "Basculer vers verticale voir",
+   *     "btn.mode-yasqe": "Éditeur seulement",
+   *   }
+   * }
+   */
+  i18n?: {locale: {key: string, value: string}};
+
   // ***********************************************************
   //
   // All configurations related with the yasgui instance
@@ -40,6 +60,7 @@ export interface YasguiConfiguration {
    * The default yasgui config.
    */
   yasguiConfig: {
+    translate: (key: string, _parameters?: { key: string; value: string }[]) => string;
     requestConfig: {
       endpoint?: string;
       method?: 'POST' | 'GET';

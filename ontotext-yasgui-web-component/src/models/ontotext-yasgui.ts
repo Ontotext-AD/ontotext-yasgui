@@ -21,6 +21,10 @@ export class OntotextYasgui {
     this.init();
   }
 
+  refresh(): void {
+    this.yasgui.getTab().show();
+  }
+
   /**
    * Initializes the adapter.
    */

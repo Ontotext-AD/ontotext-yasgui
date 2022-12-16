@@ -15,8 +15,8 @@ export const analyzeBundle = process.env["ANALYZE_BUNDLE"] === "true";
 
 const plugins: any[] = [
   new webpack.DefinePlugin({
-    __DEVELOPMENT__: isDev
-  })
+    __DEVELOPMENT__: isDev,
+  }),
 ];
 const defaultEndpoint = "https://dbpedia.org/sparql";
 const corsProxy = "";
@@ -24,7 +24,7 @@ function getAliasFor(packageName: "yasgui" | "yasr" | "yasqe" | "utils") {
   const fullPackageName = packageName === "utils" ? "@triply/yasgui-utils" : `@triply/${packageName}`;
   const packagePath = path.resolve(__dirname, "../packages", packageName, "src");
   return {
-    [`${fullPackageName}$`]: path.resolve(packagePath, "index.ts")
+    [`${fullPackageName}$`]: path.resolve(packagePath, "index.ts"),
   };
 }
 
@@ -35,16 +35,16 @@ export const indexPage: HtmlWebpackPlugin.Options = {
     links: [
       { href: "yasgui.html", text: "Yasgui" },
       { href: "yasqe.html", text: "Yasqe" },
-      { href: "yasr.html", text: "Yasr" }
-    ]
+      { href: "yasr.html", text: "Yasr" },
+    ],
   },
-  inject: false
+  inject: false,
 };
 export function getLinks(active?: "Yasgui" | "Yasqe" | "Yasr") {
   return [
     { href: "yasgui.html", text: "Yasgui", className: active === "Yasgui" && "active" },
     { href: "yasqe.html", text: "Yasqe", className: active === "Yasqe" && "active" },
-    { href: "yasr.html", text: "Yasr", className: active === "Yasr" && "active" }
+    { href: "yasr.html", text: "Yasr", className: active === "Yasr" && "active" },
   ];
 }
 export const htmlConfigs: { [key: string]: HtmlWebpackPlugin.Options } = {
@@ -53,9 +53,9 @@ export const htmlConfigs: { [key: string]: HtmlWebpackPlugin.Options } = {
     template: path.resolve(__dirname, "pages/index.html"),
     templateParameters: {
       links: getLinks(),
-      endpoint: defaultEndpoint
+      endpoint: defaultEndpoint,
     },
-    inject: false
+    inject: false,
   } as HtmlWebpackPlugin.Options,
   yasgui: {
     filename: "yasgui.html",
@@ -63,31 +63,31 @@ export const htmlConfigs: { [key: string]: HtmlWebpackPlugin.Options } = {
     templateParameters: {
       links: getLinks("Yasgui"),
       endpoint: defaultEndpoint,
-      corsProxy: corsProxy
+      corsProxy: corsProxy,
     },
-    chunks: ["Yasqe", "Yasr", "Yasgui"]
+    chunks: ["Yasqe", "Yasr", "Yasgui"],
   } as HtmlWebpackPlugin.Options,
   yasqe: {
     filename: "yasqe.html",
     template: path.resolve(__dirname, "pages/yasqe.html"),
     templateParameters: {
       links: getLinks("Yasqe"),
-      endpoint: defaultEndpoint
+      endpoint: defaultEndpoint,
     },
-    chunks: ["Yasqe"]
+    chunks: ["Yasqe"],
   } as HtmlWebpackPlugin.Options,
   yasr: {
     filename: "yasr.html",
     template: path.resolve(__dirname, "pages/yasr.html"),
     templateParameters: {
       links: getLinks("Yasr"),
-      endpoint: defaultEndpoint
+      endpoint: defaultEndpoint,
     },
-    chunks: ["Yasqe", "Yasr"]
-  } as HtmlWebpackPlugin.Options
+    chunks: ["Yasqe", "Yasr"],
+  } as HtmlWebpackPlugin.Options,
 };
 
-plugins.push(...Object.values(htmlConfigs).map(c => new HtmlWebpackPlugin(c)));
+plugins.push(...Object.values(htmlConfigs).map((c) => new HtmlWebpackPlugin(c)));
 if (isDev) {
   //ignore these, to avoid infinite loops while watching
   plugins.push(new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]));
@@ -96,7 +96,7 @@ if (isDev) {
 } else {
   plugins.push(
     new MiniCssExtractPlugin({
-      moduleFilename: ({ name }: { name: string }) => `${name.toLowerCase()}.min.css`
+      moduleFilename: ({ name }: { name: string }) => `${name.toLowerCase()}.min.css`,
     } as any)
   );
 }
@@ -114,14 +114,14 @@ export const genericConfig: webpack.Configuration = {
       ? []
       : [
           new TerserPlugin({
-            sourceMap: true
+            sourceMap: true,
           }),
-          new OptimizeCSSAssetsPlugin({})
-        ]
+          new OptimizeCSSAssetsPlugin({}),
+        ],
   },
   performance: {
     maxEntrypointSize: 3000000,
-    maxAssetSize: 3000000
+    maxAssetSize: 3000000,
   },
   mode: isDev ? "development" : "production",
   module: {
@@ -137,20 +137,20 @@ export const genericConfig: webpack.Configuration = {
                 [
                   "@babel/preset-env",
                   {
-                    targets: ["last 3 versions", "> 1%"]
-                  }
-                ]
+                    targets: ["last 3 versions", "> 1%"],
+                  },
+                ],
               ],
-              plugins: ["@babel/plugin-transform-runtime"]
-            }
+              plugins: ["@babel/plugin-transform-runtime"],
+            },
           },
           {
             loader: "ts-loader",
             options: {
-              configFile: `tsconfig-build.json`
-            }
-          }
-        ]
+              configFile: `tsconfig-build.json`,
+            },
+          },
+        ],
       },
       {
         test: /\.js$/,
@@ -163,13 +163,13 @@ export const genericConfig: webpack.Configuration = {
                 [
                   "@babel/preset-env",
                   {
-                    targets: ["last 3 versions", "> 1%"]
-                  }
-                ]
-              ]
-            }
-          }
-        ]
+                    targets: ["last 3 versions", "> 1%"],
+                  },
+                ],
+              ],
+            },
+          },
+        ],
       },
       {
         test: /\.scss$/,
@@ -178,10 +178,10 @@ export const genericConfig: webpack.Configuration = {
           { loader: "css-loader", options: { importLoaders: 2 } },
           {
             loader: "postcss-loader",
-            options: { plugins: [autoprefixer()] }
+            options: { plugins: [autoprefixer()] },
           },
-          "sass-loader"
-        ]
+          "sass-loader",
+        ],
       },
       {
         test: /\.js$/,
@@ -189,10 +189,10 @@ export const genericConfig: webpack.Configuration = {
           //Exclude source maps for this package. They are incorrect
           /node_modules\/column-resizer/g,
           //rdf-string is missing source maps. Exclude to avoid warnings
-          /\/rdf-string\//g
+          /\/rdf-string\//g,
         ],
         use: ["source-map-loader"],
-        enforce: "pre"
+        enforce: "pre",
       },
       {
         test: /\.css$/,
@@ -201,12 +201,12 @@ export const genericConfig: webpack.Configuration = {
           { loader: "css-loader", options: { importLoaders: 1 } },
           {
             loader: "postcss-loader",
-            options: { plugins: () => [bgImage({ mode: "cutter" })] }
+            options: { plugins: () => [bgImage({ mode: "cutter" })] },
             // options: { }
-          }
-        ]
-      }
-    ]
+          },
+        ],
+      },
+    ],
   },
   resolve: {
     modules: [
@@ -214,17 +214,17 @@ export const genericConfig: webpack.Configuration = {
       path.resolve(__dirname, "./../packages/yasgui/node_modules"),
       path.resolve(__dirname, "./../packages/yasqe/node_modules"),
       path.resolve(__dirname, "./../packages/yasr/node_modules"),
-      path.resolve(__dirname, "./../packages/utils/node_modules")
+      path.resolve(__dirname, "./../packages/utils/node_modules"),
     ],
     alias: {
       ...getAliasFor("yasgui"),
       ...getAliasFor("yasr"),
       ...getAliasFor("yasqe"),
-      ...getAliasFor("utils")
+      ...getAliasFor("utils"),
     },
-    extensions: [".json", ".js", ".ts", ".scss"]
+    extensions: [".json", ".js", ".ts", ".scss"],
   },
-  plugins: plugins
+  plugins: plugins,
 };
 
 const config: webpack.Configuration = {
@@ -232,20 +232,20 @@ const config: webpack.Configuration = {
   output: {
     path: path.resolve("build"),
     publicPath: "/",
-    filename: function(chunkData: any) {
+    filename: function (chunkData: any) {
       const ext = `${isDev ? "" : ".min"}.js`;
       return `${chunkData.chunk.name.toLowerCase()}${ext}`;
     } as any,
     library: "[name]",
     libraryExport: "default",
     libraryTarget: "umd",
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
   entry: {
     Yasgui: [path.resolve(__dirname, "./../packages/yasgui/src/index.ts")],
     Yasqe: path.resolve(__dirname, "./../packages/yasqe/src/index.ts"),
-    Yasr: path.resolve(__dirname, "./../packages/yasr/src/index.ts")
-  }
+    Yasr: path.resolve(__dirname, "./../packages/yasr/src/index.ts"),
+  },
 };
 
 export default config;
