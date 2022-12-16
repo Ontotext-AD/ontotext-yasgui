@@ -31,8 +31,8 @@ export class OntotextYasgui {
 
   addYasqeListener(eventName, callback): void {
     // @ts-ignore
-    this.yasgui.getTab().yasqe.on(eventName, (_instance: Yasgui, _tab: Tab) => {
-      callback();
+    this.yasgui.getTab().yasqe.on(eventName, (...args) => {
+      callback(args);
     });
   }
 
@@ -47,5 +47,9 @@ export class OntotextYasgui {
       this.yasgui = null;
       localStorage.removeItem('yasqe__query');
     }
+  }
+
+  getInstance(): Yasgui {
+    return this.yasgui;
   }
 }

@@ -11,7 +11,11 @@ export class YasqeSteps {
         return cy.get(".yasqe:visible");
     }
 
+    static getExecuteQueryButton() {
+        return cy.get('.yasqe_queryButton');
+    }
+
     static executeQuery() {
-        cy.get('.yasqe_queryButton').click();
+        this.getExecuteQueryButton().click();
     }
 }

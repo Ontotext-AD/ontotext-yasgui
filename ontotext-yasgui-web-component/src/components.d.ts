@@ -6,8 +6,12 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { YasguiConfiguration } from "./models/yasgui-configuration";
+import { QueryEvent, QueryResponseEvent } from "./models/event";
 export namespace Components {
     interface OntotextYasgui {
+        /**
+          * An input object property containing the yasgui configuration.
+         */
         "config": YasguiConfiguration;
         "setQuery": (query: string) => Promise<void>;
     }
@@ -29,8 +33,18 @@ declare global {
 }
 declare namespace LocalJSX {
     interface OntotextYasgui {
+        /**
+          * An input object property containing the yasgui configuration.
+         */
         "config"?: YasguiConfiguration;
-        "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<any>) => void;
+        /**
+          * Event emitted when before query to be executed.
+         */
+        "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<QueryEvent>) => void;
+        /**
+          * Event emitted when after query response is returned.
+         */
+        "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
     }
     interface IntrinsicElements {
         "ontotext-yasgui": OntotextYasgui;
