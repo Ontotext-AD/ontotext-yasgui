@@ -9,9 +9,9 @@ export interface Configurator {
 
   /**
    * Apply configuration to <code>yasguiConfig</code> from <code>clientYasguiConfig</code>
-   * @param el - hte ontotext-yasgui element.
+   * @param hostElement - hte ontotext-yasgui element.
    * @param config - configuration which is passing to yasgui constructor.
    * @param yasguiConfig - configuration passed by client.
    */
-  config(el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config;
+  config(hostElement: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config;
 }

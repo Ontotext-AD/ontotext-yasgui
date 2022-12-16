@@ -6,13 +6,14 @@ import {
 } from '../../../models/yasgui-configuration';
 import {Config} from '../../../../../Yasgui/packages/yasgui'
 import deepmerge from 'deepmerge';
+import {VisualisationUtils} from '../../utils/visualisation-utils';
 
 /**
  * Manages all top configuration of yasgui.
  */
 class YasguiConfiguratorDefinition implements Configurator {
 
-  private defaultYasguiConfig = {
+  public static readonly defaultYasguiConfig = {
     render: RenderingMode.YASGUI,
     orientation: Orientation.VERTICAL,
     copyEndpointOnNewTab: true,
@@ -29,28 +30,19 @@ class YasguiConfiguratorDefinition implements Configurator {
     }
   }
 
-  config(_el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
-    this.setOrientation(yasguiConfig, _el);
-    this.setRenderMode(yasguiConfig, _el);
+  config(hostElement: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
+    VisualisationUtils.setOrientation(hostElement, getOrientation(yasguiConfig));
+    VisualisationUtils.setRenderMode(hostElement, getRenderingMode(yasguiConfig));
 
-    return deepmerge.all([config, this.defaultYasguiConfig, yasguiConfig.yasguiConfig || {}]) as Config;
-  }
-
-  private setRenderMode(yasguiConfig: YasguiConfiguration, _el: HTMLElement): void {
-    // @ts-ignore
-    const modes: string[] = Object.values(RenderingMode);
-    _el.classList.remove(...modes);
-    const newMode: RenderingMode = yasguiConfig.render ? yasguiConfig.render : this.defaultYasguiConfig.render;
-    _el.classList.add(newMode);
-  }
-
-  private setOrientation(yasguiConfig: YasguiConfiguration, _el: HTMLElement): void {
-    // @ts-ignore
-    const orientations: string[] = Object.values(Orientation);
-    _el.classList.remove(...orientations);
-    const newOrientation: Orientation = yasguiConfig.orientation ? yasguiConfig.orientation : this.defaultYasguiConfig.orientation;
-    _el.classList.add(newOrientation);
+    return deepmerge.all([config, YasguiConfiguratorDefinition.defaultYasguiConfig, yasguiConfig.yasguiConfig || {}]) as Config;
   }
 }
 
 export const YasguiConfigurator = new YasguiConfiguratorDefinition();
+export function getOrientation(yasguiConfig: YasguiConfiguration): Orientation {
+  return yasguiConfig.orientation ? yasguiConfig.orientation : YasguiConfiguratorDefinition.defaultYasguiConfig.orientation;
+}
+
+export function  getRenderingMode(yasguiConfig: YasguiConfiguration): RenderingMode {
+  return yasguiConfig.render ? yasguiConfig.render : YasguiConfiguratorDefinition.defaultYasguiConfig.render;
+}

@@ -1,14 +1,16 @@
 import {Configurator} from './configurator';
 import {YasguiConfiguration} from '../../../models/yasgui-configuration';
 import {Config} from '../../../../../Yasgui/packages/yasgui'
+import {HtmlElementsUtil} from '../../utils/html-elements-util';
 
 class YasrConfiguratorDefinition implements Configurator {
 
-  config(el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
+  config(hostElement: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
+    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (this.haveToHiddeResultTabs(yasguiConfig)) {
-      el.classList.add('hidden-result-tabs');
+      ontotextYasgui.classList.add('hidden-result-tabs');
     } else {
-      el.classList.remove('hidden-result-tabs');
+      ontotextYasgui.classList.remove('hidden-result-tabs');
     }
     return config;
   }

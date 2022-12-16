@@ -64,6 +64,21 @@ before 1.7.3, then additional custom directive must be installed on the client a
   }
 ```
 
+# Components
+## YasguiTooltip
+ ### Usage
+```
+<yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
+  <div class="btn-orientation icon-columns red" onClick={() => this.changeOrientation()}></div>
+</yasgui-tooltip>
+```
+yasgui-tooltip tag have to wrap the element to which tooltip have to be appeared.
+### Configuration
+- <b>data-tooltip</b>: value of this property will be the content of the tooltip;
+- <b>placement</b>: where tooltip to be appeared. default is top:
+- <b>show-on-click</b>: if tooltip have to be shown when wrapped element is clicked. Default behaviour is when mouse is over the element.
+
+
 # Usefull References
 1. [State Management with State Tunnel in StencilJS](https://www.joshmorony.com/state-management-with-state-tunnel-in-stencil-js/)
 2. [Using Services/Providers to Share Data in a StencilJS Application](https://www.joshmorony.com/using-services-providers-to-share-data-in-a-stencil-js-application/)

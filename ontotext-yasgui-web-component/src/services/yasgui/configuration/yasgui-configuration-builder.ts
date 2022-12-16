@@ -18,12 +18,12 @@ class YasguiConfigurationBuilderDefinition {
 
   /**
    * Builds a yasgui configuration.
-   * @param el - hte ontotext-yasgui element.
+   * @param hostElement - hte ontotext-yasgui element.
    * @param config - custom configuration passed by client of component.
    */
-  build(el: HTMLElement, config: YasguiConfiguration): Config {
+  build(hostElement: HTMLElement, config: YasguiConfiguration): Config {
     return this.configurators
-      .reduce((result, configurator) => configurator.config(el, result, config), {} as Config);
+      .reduce((result, configurator) => configurator.config(hostElement, result, config), {} as Config);
   }
 
   private initConfigurators() {

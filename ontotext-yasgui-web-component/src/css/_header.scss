@@ -1,0 +1,32 @@
+.yasgui-host {
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .btn-mode-yasqe, .btn-mode-yasgui, .btn-mode-yasr {
+    border: none;
+    background-color: #ebebeb;
+    color: black;
+  }
+
+  .btn-selected {
+    background-color: #e84e0f;
+    color: #fff;
+  }
+
+  .ontotext-yasgui-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+.btn-orientation {
+  color: $color-ontotext-red;
+}
+
+.btn-orientation:hover, button:hover {
+  cursor: pointer;
+}

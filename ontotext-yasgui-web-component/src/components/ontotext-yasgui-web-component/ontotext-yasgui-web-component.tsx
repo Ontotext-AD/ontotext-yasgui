@@ -1,10 +1,13 @@
-import {Component, Element, Event, EventEmitter, h, Host, Method, Prop, Watch} from '@stencil/core';
-import {YasguiConfiguration} from '../../models/yasgui-configuration';
+import {Component, Element, Event, EventEmitter, h, Host, Method, Prop, State, Watch} from '@stencil/core';
+import {RenderingMode, YasguiConfiguration} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {QueryEvent, QueryResponseEvent} from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
+import {VisualisationUtils} from '../../services/utils/visualisation-utils';
+import {getRenderingMode, getOrientation} from '../../services/yasgui/configuration/yasgui-configurator';
+import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -20,7 +23,7 @@ export class OntotextYasguiWebComponent {
   /**
    * The host html element for the yasgui.
    */
-  @Element() el: HTMLElement;
+  @Element() hostElement: HTMLElement;
 
   /**
    * An input object property containing the yasgui configuration.
@@ -52,6 +55,8 @@ export class OntotextYasguiWebComponent {
    */
   queryDuration = 0;
 
+  @State() orientationButtonTooltip;
+
   constructor() {
     this.yasguiBuilder = YasguiBuilder;
   }
@@ -69,6 +74,7 @@ export class OntotextYasguiWebComponent {
     // will be most case of the component usage. So we call the method manually when component is
     // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
     this.init(this.config);
+    this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
   }
 
   @Watch('config')
@@ -82,15 +88,42 @@ export class OntotextYasguiWebComponent {
     return Promise.resolve();
   }
 
+  render() {
+    return (
+      <Host class="yasgui-host">
+        <div class="ontotext-yasgui-header">
+          <button class="btn-mode-yasqe"
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor only
+          </button>
+          <button class="btn-mode-yasgui"
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>Editor and results
+          </button>
+          <button class="btn-mode-yasr"
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>Results only
+          </button>
+          <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
+            <div class="btn-orientation icon-columns red" onClick={() => this.changeOrientation()}></div>
+          </yasgui-tooltip>
+        </div>
+        <div class="ontotext-yasgui"></div>
+      </Host>
+    );
+  }
+
   disconnectedCallback() {
     this.destroy();
   }
 
-  render() {
-    return (
-      <Host>
-      </Host>
-    );
+  private fetchButtonOrientationTooltip(): string {
+    if (VisualisationUtils.isOrientationVertical(this.hostElement)) {
+      return "Switch to horizontal view";
+    }
+    return "Switch to vertical view";
+  }
+
+  private changeOrientation() {
+    VisualisationUtils.toggleOrientation(this.hostElement);
+    this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
   }
 
   private init(config: YasguiConfiguration) {
@@ -102,10 +135,30 @@ export class OntotextYasguiWebComponent {
 
     // @ts-ignore
     if (window.Yasgui) {
-      this.yasgui = this.yasguiBuilder.build(this.el, config);
+      this.yasgui = this.yasguiBuilder.build(this.hostElement, config);
       this.yasgui.addYasqeListener('query', this.onQuery.bind(this));
       this.yasgui.addYasqeListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
+
+      // Initialize render buttons styling.
+      VisualisationUtils.changeRenderMode(this.hostElement, getRenderingMode(config));
+
+      // Initialize orientation button styling.
+      const orientation = getOrientation(config);
+      VisualisationUtils.setOrientation(this.hostElement, orientation);
+      VisualisationUtils.changeOrientation(this.hostElement, orientation);
+      if (this.haveToHiddeHeader(config)) {
+        HtmlElementsUtil.getHeader(this.hostElement).classList.add('hidden');
+      } else {
+        HtmlElementsUtil.getHeader(this.hostElement).classList.remove('hidden');
+      }
     }
+  }
+
+  private haveToHiddeHeader(yasguiConfig: YasguiConfiguration) {
+    if (yasguiConfig.showHeader === undefined || yasguiConfig.showHeader === null) {
+      return false;
+    }
+    return !yasguiConfig.showHeader;
   }
 
   private onQuery(): void {
@@ -122,6 +175,10 @@ export class OntotextYasguiWebComponent {
   private destroy() {
     if (this.yasgui) {
       this.yasgui.destroy();
+      const yasgui = HtmlElementsUtil.getOntotextYasgui(this.hostElement);
+      while (yasgui.firstChild) {
+        yasgui.firstChild.remove();
+      }
     }
   }
 }

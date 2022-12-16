@@ -1,15 +1,17 @@
 import {Configurator} from './configurator';
 import {YasguiConfiguration} from '../../../models/yasgui-configuration';
 import {Config} from '../../../../../Yasgui/packages/yasgui'
+import {HtmlElementsUtil} from '../../utils/html-elements-util';
 
 class YasqeConfiguratorDefinition implements Configurator {
 
-  config(el: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
+  config(hostElement: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
 
+    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (this.haveToHiddeEditorTabs(yasguiConfig)) {
-      el.classList.add('hidden-editor-tabs');
+      ontotextYasgui.classList.add('hidden-editor-tabs');
     } else {
-      el.classList.remove('hidden-editor-tabs');
+      ontotextYasgui.classList.remove('hidden-editor-tabs');
     }
 
     // @ts-ignore

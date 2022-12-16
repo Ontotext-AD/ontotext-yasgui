@@ -1,6 +1,6 @@
 export class YasguiSteps {
     static getYasguiTag() {
-        return cy.get('ontotext-yasgui');
+        return cy.get('.ontotext-yasgui');
     }
 
     static getYasgui() {

@@ -35,6 +35,11 @@ export interface YasguiConfiguration {
    * If the yasr tabs should be rendered or not.
    */
   showResultTabs: boolean;
+
+  /**
+   * If the header with render mode buttons should be rendered or not.
+   */
+  showHeader: boolean;
 }
 
 export enum RenderingMode {

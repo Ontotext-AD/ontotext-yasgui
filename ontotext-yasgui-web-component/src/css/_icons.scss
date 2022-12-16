@@ -1,0 +1,483 @@
+/*-------------------------------------------------------------
+	Icons
+-------------------------------------------------------------*/
+[class^="icon-"], [class*=" icon-"], .icon-any {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon', sans-serif !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: middle;
+  display: inline-block;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-up-off:before {
+  content: "\e948";
+}
+
+.icon-collapse:before {
+  content: "\e949";
+}
+
+.icon-eye-off:before {
+  content: "\e94a";
+}
+
+.icon-expand:before {
+  content: "\e94c";
+}
+
+.icon-focus:before {
+  content: "\e94d";
+}
+
+.icon-rotate-left:before {
+  content: "\e94e";
+}
+
+.icon-rotate-right:before {
+  content: "\e94f";
+}
+
+.icon-info-alt:before {
+  content: "\e950";
+}
+
+.icon-facebook:before {
+  content: "\e942";
+}
+
+.icon-google-plus:before {
+  content: "\e943";
+}
+
+.icon-google:before {
+  content: "\e944";
+}
+
+.icon-linkedin:before {
+  content: "\e945";
+}
+
+.icon-twitter:before {
+  content: "\e946";
+}
+
+.icon-youtube:before {
+  content: "\e947";
+}
+
+.icon-play:before {
+  content: "\e941";
+}
+
+.icon-email:before {
+  content: "\e93e";
+}
+
+.icon-sameas-on:before {
+  content: "\e93f";
+}
+
+.icon-sameas-off:before {
+  content: "\e940";
+}
+
+.icon-repo-contour1:before {
+  content: "\e906";
+}
+
+.icon-repo-contour2:before {
+  content: "\e90b";
+}
+
+.icon-repo-contour3:before {
+  content: "\e910";
+}
+
+/* Don't change the names of the repo icons, we rely on them being called master, worker, se, free, system */
+.icon-repo-master-ro-mute:before {
+  content: "\e913";
+}
+
+.icon-repo-free:before {
+  content: "\e936";
+}
+
+.icon-repo-master-mute:before {
+  content: "\e937";
+}
+
+.icon-repo-master-ro:before {
+  content: "\e938";
+}
+
+.icon-repo-master:before {
+  content: "\e939";
+}
+
+.icon-repo-se:before {
+  content: "\e93a";
+}
+
+.icon-repo-system:before {
+  content: "\e93b";
+}
+
+.icon-repo-worker:before {
+  content: "\e93c";
+}
+
+.icon-repo:before {
+  content: "\e93d";
+}
+
+.icon-copy:before {
+  content: "\e934";
+}
+
+.icon-eye:before {
+  content: "\e935";
+}
+
+.icon-connection-off:before {
+  content: "\e931";
+}
+
+.icon-connection-on:before {
+  content: "\e932";
+}
+
+.icon-key:before {
+  content: "\e933";
+}
+
+.icon-comment:before {
+  content: "\e930";
+}
+
+.icon-arrow-down:before {
+  content: "\e900";
+}
+
+.icon-arrow-left:before {
+  content: "\e901";
+}
+
+.icon-arrow-right:before {
+  content: "\e902";
+}
+
+.icon-arrow-up:before {
+  content: "\e903";
+}
+
+.icon-exchange:before {
+  content: "\e904";
+}
+
+.icon-columns:before {
+  content: "\e905";
+}
+
+.icon-inferred-off:before {
+  content: "\e907";
+}
+
+.icon-inferred-on:before {
+  content: "\e908";
+}
+
+.icon-save:before {
+  content: "\e909";
+}
+
+.icon-tag:before {
+  content: "\e90a";
+}
+
+.icon-file:before {
+  content: "\e90c";
+}
+
+.icon-folder:before {
+  content: "\e90d";
+}
+
+.icon-heartbeat:before {
+  content: "\e90e";
+}
+
+.icon-pin:before {
+  content: "\e90f";
+}
+
+.icon-zoom-in:before {
+  content: "\e911";
+}
+
+.icon-zoom-out:before {
+  content: "\e912";
+}
+
+.icon-check:before {
+  content: "\e914";
+}
+
+.icon-download:before {
+  content: "\e915";
+}
+
+.icon-external:before {
+  content: "\e916";
+}
+
+.icon-lock:before {
+  content: "\e917";
+}
+
+.icon-search:before {
+  content: "\e918";
+}
+
+.icon-upload:before {
+  content: "\e919";
+}
+
+.icon-caret-left:before {
+  content: "\e91a";
+}
+
+.icon-caret-right:before {
+  content: "\e91b";
+}
+
+.icon-caret-up:before {
+  content: "\e91c";
+}
+
+.icon-minus:before {
+  content: "\e91d";
+}
+
+.icon-reload:before {
+  content: "\e91e";
+}
+
+.icon-trash:before {
+  content: "\e91f";
+}
+
+.icon-warning:before {
+  content: "\e920";
+}
+
+.icon-caret-down:before {
+  content: "\e921";
+}
+
+.icon-close:before {
+  content: "\e922";
+}
+
+.icon-edit:before {
+  content: "\e923";
+}
+
+.icon-info:before {
+  content: "\e924";
+}
+
+.icon-link:before {
+  content: "\e925";
+}
+
+.icon-more:before {
+  content: "\e926";
+}
+
+.icon-plus:before {
+  content: "\e927";
+}
+
+.icon-data:before {
+  content: "\e928";
+}
+
+.icon-help:before {
+  content: "\e929";
+}
+
+.icon-monitoring:before {
+  content: "\e92a";
+}
+
+.icon-settings:before {
+  content: "\e92b";
+}
+
+.icon-sparql:before {
+  content: "\e92c";
+}
+
+.icon-user-alt:before {
+  content: "\e92d";
+}
+
+.icon-export-alt:before {
+  content: "\e92e";
+}
+
+.icon-import:before {
+  content: "\e92f";
+}
+
+.icon-tick:before {
+  content: "\e956";
+}
+
+.icon-repo-ontop-alt:before {
+  content: "\e958";
+}
+
+.icon-repo-fedx-alt:before {
+  content: "\e959";
+}
+
+.icon-repo-graphdb-alt:before {
+  content: "\e95a";
+}
+
+.icon-export:before {
+  content: "\e95b";
+}
+
+.icon-readonly:before {
+  content: "\e95c";
+}
+
+.icon-repo-fedx:before {
+  content: "\e95d";
+}
+
+.icon-repo-graphdb:before {
+  content: "\e95e";
+}
+
+.icon-repo-ontop:before {
+  content: "\e95f";
+}
+
+.icon-repo-unknown:before {
+  content: "\e960";
+}
+
+.icon-translation:before {
+  content: "\e961";
+}
+
+.icon-user:before {
+  content: "\e962";
+}
+
+.icon-follower:before {
+  content: "\e962";
+}
+
+/*-------------------------------------------------------------
+	Alerts
+-------------------------------------------------------------*/
+.alert {
+  border-radius: 0;
+  border: 1px solid transparent;
+  position: relative;
+  padding: 1em;
+}
+
+.alert-warning, .alert-info, .alert-help, .alert-danger, .alert-success {
+  color: #000000A8;
+}
+
+.alert-warning {
+  background-color: #f9e6c0;
+}
+
+.alert-info {
+  background-color: #cfefec;
+}
+
+.alert-help {
+  background-color: #e7f7f5;
+}
+
+.alert-success {
+  background-color: #dff0d8;
+}
+
+.alert-danger {
+  background-color: #fbdbd5;
+}
+
+.alert-info, .alert-warning, .alert-help, .alert-danger, .alert-success {
+  padding-left: 3em;
+}
+
+.alert-info:before,
+.alert-warning:before,
+.alert-help:before,
+.alert-danger:before,
+.alert-success:before {
+  font-family: 'icomoon', sans-serif !important;
+  font-size: 1.6em;
+  vertical-align: middle;
+  line-height: 1;
+  position: absolute;
+  left: 0.6em;
+  top: 0.6em;
+  color: #00000080;
+}
+
+.alert-info:before {
+  content: "\e924";
+}
+
+.alert-warning:before {
+  content: "\e930";
+}
+
+.alert-help:before {
+  content: "\e929";
+}
+
+.alert-danger:before {
+  content: "\e920";
+}
+
+.alert-success:before {
+  content: "\e914";
+}
+
+.no-icon {
+  padding-left: 1em;
+}
+
+.no-icon:before {
+  display: none;
+}
+
+.alert .alert {
+  background-color: transparent;
+}
+
+.icon-rotate-90:before {
+  display: inline-block;
+  -webkit-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
