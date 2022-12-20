@@ -41,10 +41,10 @@ export class HtmlElementsUtil {
   }
 
   /**
-   * Fetches the header.
+   * Fetches the toolbar element.
    * @param hostElement - the host element of "ontotext-yasgui-web-component".
    */
-  static getHeader(hostElement: HTMLElement): HTMLElement {
-    return hostElement.querySelector('.ontotext-yasgui-header');
+  static getToolbar(hostElement: HTMLElement): HTMLElement {
+    return hostElement.querySelector('.ontotext-yasgui-toolbar');
   }
 }

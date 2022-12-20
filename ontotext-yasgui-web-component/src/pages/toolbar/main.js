@@ -7,10 +7,10 @@ ontoElement.config = {
   },
 };
 
-function showHeader() {
-  ontoElement.config = {...ontoElement.config, showHeader: true};
+function showToolbar() {
+  ontoElement.config = {...ontoElement.config, showToolbar: true};
 }
 
-function hideHeader() {
-  ontoElement.config = {...ontoElement.config, showHeader: false};
+function hideToolbar() {
+  ontoElement.config = {...ontoElement.config, showToolbar: false};
 }

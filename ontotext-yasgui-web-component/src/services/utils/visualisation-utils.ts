@@ -11,7 +11,7 @@ export class VisualisationUtils {
   }
 
   static changeRenderMode(hostElement: HTMLElement, neMode: RenderingMode): void {
-    VisualisationUtils.unselectAllHeaderButtons(hostElement);
+    VisualisationUtils.unselectAllToolbarButtons(hostElement);
     let button;
     switch (neMode) {
       case RenderingMode.YASQE:
@@ -65,7 +65,7 @@ export class VisualisationUtils {
    * @param hostElement - the host element of "ontotext-yasgui-web-component".
    * @private
    */
-  private static unselectAllHeaderButtons(hostElement: HTMLElement): void {
+  private static unselectAllToolbarButtons(hostElement: HTMLElement): void {
     hostElement.querySelectorAll('button').forEach(button => {
       button.classList.remove('btn-selected');
     });

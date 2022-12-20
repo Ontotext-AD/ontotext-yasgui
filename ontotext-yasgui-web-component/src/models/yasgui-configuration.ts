@@ -37,9 +37,9 @@ export interface YasguiConfiguration {
   showResultTabs: boolean;
 
   /**
-   * If the header with render mode buttons should be rendered or not.
+   * If the toolbar with render mode buttons should be rendered or not.
    */
-  showHeader: boolean;
+  showToolbar: boolean;
 }
 
 export enum RenderingMode {

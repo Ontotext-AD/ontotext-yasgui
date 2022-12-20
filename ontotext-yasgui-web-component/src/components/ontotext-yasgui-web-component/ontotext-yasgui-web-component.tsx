@@ -91,7 +91,7 @@ export class OntotextYasguiWebComponent {
   render() {
     return (
       <Host class="yasgui-host">
-        <div class="ontotext-yasgui-header">
+        <div class="ontotext-yasgui-toolbar">
           <button class="btn-mode-yasqe"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor only
           </button>
@@ -146,19 +146,19 @@ export class OntotextYasguiWebComponent {
       const orientation = getOrientation(config);
       VisualisationUtils.setOrientation(this.hostElement, orientation);
       VisualisationUtils.changeOrientation(this.hostElement, orientation);
-      if (this.haveToHiddeHeader(config)) {
-        HtmlElementsUtil.getHeader(this.hostElement).classList.add('hidden');
+      if (this.haveToHideToolbar(config)) {
+        HtmlElementsUtil.getToolbar(this.hostElement).classList.add('hidden');
       } else {
-        HtmlElementsUtil.getHeader(this.hostElement).classList.remove('hidden');
+        HtmlElementsUtil.getToolbar(this.hostElement).classList.remove('hidden');
       }
     }
   }
 
-  private haveToHiddeHeader(yasguiConfig: YasguiConfiguration) {
-    if (yasguiConfig.showHeader === undefined || yasguiConfig.showHeader === null) {
+  private haveToHideToolbar(yasguiConfig: YasguiConfiguration) {
+    if (yasguiConfig.showToolbar === undefined || yasguiConfig.showToolbar === null) {
       return false;
     }
-    return !yasguiConfig.showHeader;
+    return !yasguiConfig.showToolbar;
   }
 
   private onQuery(): void {

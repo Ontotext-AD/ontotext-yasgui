@@ -82,7 +82,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - <b>initialQuery?</b>: Initial query when yasgui is rendered if not set the default query will be set;
 - <b>showEditorTabs</b>: If the query editor tabs should be rendered or not;
 - <b>showResultTabs</b>: If the results tabs should be rendered or not;
-- <b>showHeader</b>: If the header with render mode buttons should be rendered or not.
+- <b>showToolbar</b>: If the toolbar with render mode buttons should be rendered or not.
 
 # License
 TODO:

@@ -1,6 +1,6 @@
-export class HeaderPageSteps {
+export class ToolbarPageSteps {
     static visit() {
-        cy.visit('/pages/header');
+        cy.visit('/pages/toolbar');
     }
 
     static getYasguiElement() {
@@ -51,11 +51,19 @@ export class HeaderPageSteps {
         this.getOrientationButton().click();
     }
 
-    static getHideHeaderButton() {
-        return cy.get('#hideHeader');
+    static getHideToolbarButton() {
+        return cy.get('#hideToolbar');
     }
 
-    static getShowHeaderButton() {
-        return cy.get('#showHeader');
+    static getShowToolbarButton() {
+        return cy.get('#showToolbar');
+    }
+
+    static getToolbar() {
+        return cy.get('.ontotext-yasgui-toolbar');
+    }
+
+    static triggerEvent(event: string) {
+        ToolbarPageSteps.getOrientationButton().trigger(event);
     }
 }
