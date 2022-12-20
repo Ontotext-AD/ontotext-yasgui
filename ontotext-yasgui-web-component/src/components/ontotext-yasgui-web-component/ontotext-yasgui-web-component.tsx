@@ -94,13 +94,13 @@ export class OntotextYasguiWebComponent {
     return (
       <Host class="yasgui-host-element">
         <div class="yasgui-toolbar">
-          <button class="btn-mode-yasqe"
+          <button class="yasgui-btn btn-mode-yasqe"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor only
           </button>
-          <button class="btn-mode-yasgui"
+          <button class="yasgui-btn btn-mode-yasgui"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>Editor and results
           </button>
-          <button class="btn-mode-yasr"
+          <button class="yasgui-btn btn-mode-yasr"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>Results only
           </button>
           <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>

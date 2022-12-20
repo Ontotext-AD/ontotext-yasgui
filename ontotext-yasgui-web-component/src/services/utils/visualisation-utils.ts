@@ -3,38 +3,22 @@ import {HtmlElementsUtil} from './html-elements-util';
 
 export class VisualisationUtils {
 
-  static setRenderMode(hostElement: HTMLElement, newMode: RenderingMode): void {
+  static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode): void {
+    VisualisationUtils.unselectAllToolbarButtons(hostElement);
+    let button;
+    if (RenderingMode.YASQE === newMode) {
+      button = HtmlElementsUtil.getYasqeButton(hostElement);
+    } else if (RenderingMode.YASR === newMode) {
+      button = HtmlElementsUtil.getYasrButton(hostElement);
+    } else {
+      button = HtmlElementsUtil.getYasguiButton(hostElement);
+    }
+    button.classList.add('btn-selected');
+
     const modes: string[] = Object.values(RenderingMode);
     const yasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     yasgui.classList.remove(...modes);
     yasgui.classList.add(newMode);
-  }
-
-  static changeRenderMode(hostElement: HTMLElement, neMode: RenderingMode): void {
-    VisualisationUtils.unselectAllToolbarButtons(hostElement);
-    let button;
-    switch (neMode) {
-      case RenderingMode.YASQE:
-        button = HtmlElementsUtil.getYasqeButton(hostElement);
-        VisualisationUtils.setRenderMode(hostElement, RenderingMode.YASQE);
-        break;
-      case RenderingMode.YASR:
-        button = HtmlElementsUtil.getYasrButton(hostElement);
-        VisualisationUtils.setRenderMode(hostElement, RenderingMode.YASR);
-        break;
-      default:
-        button = HtmlElementsUtil.getYasguiButton(hostElement);
-        VisualisationUtils.setRenderMode(hostElement, RenderingMode.YASGUI);
-
-    }
-    button.classList.add('btn-selected');
-  }
-
-  static setOrientation(hostElement: HTMLElement, newOrientation: Orientation): void {
-    const orientations: string[] = Object.values(Orientation);
-    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
-    ontotextYasgui.classList.remove(...orientations);
-    ontotextYasgui.classList.add(newOrientation);
   }
 
   static  changeOrientation(hostElement: HTMLElement, newOrientation: Orientation): void {
@@ -44,6 +28,11 @@ export class VisualisationUtils {
     } else {
       buttonOrientation.classList.remove('icon-rotate-90');
     }
+
+    const orientations: string[] = Object.values(Orientation);
+    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
+    ontotextYasgui.classList.remove(...orientations);
+    ontotextYasgui.classList.add(newOrientation);
   }
 
   static toggleOrientation(hostElement: HTMLElement): void {
@@ -52,7 +41,6 @@ export class VisualisationUtils {
     if (yasgui.classList.contains(Orientation.VERTICAL)) {
       orientation = Orientation.HORIZONTAL;
     }
-    VisualisationUtils.setOrientation(hostElement, orientation);
     VisualisationUtils.changeOrientation(hostElement, orientation);
   }
 
@@ -66,7 +54,7 @@ export class VisualisationUtils {
    * @private
    */
   private static unselectAllToolbarButtons(hostElement: HTMLElement): void {
-    hostElement.querySelectorAll('button').forEach(button => {
+    hostElement.querySelectorAll('.yasgui-btn').forEach(button => {
       button.classList.remove('btn-selected');
     });
   }

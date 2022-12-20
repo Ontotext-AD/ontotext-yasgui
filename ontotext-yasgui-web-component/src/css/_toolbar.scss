@@ -6,10 +6,10 @@
   flex-direction: column;
   gap: 10px;
 
-  .btn-mode-yasqe, .btn-mode-yasgui, .btn-mode-yasr {
+  .yasgui-btn {
     border: none;
     background-color: #ebebeb;
-    color: black;
+    color: #000000;
   }
 
   .btn-selected {
@@ -29,8 +29,4 @@
   color: $color-ontotext-red;
   background-color: white;
   border: none;
-}
-
-.btn-orientation:hover, button:hover {
-  //cursor: pointer;
 }

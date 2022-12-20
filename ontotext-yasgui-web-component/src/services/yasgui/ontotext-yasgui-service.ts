@@ -5,19 +5,9 @@ import {HtmlElementsUtil} from '../utils/html-elements-util';
 class OntotextYasguiServiceDefinition {
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    this.initOrientation(hostElement, config);
-    this.initRenerMode(hostElement, config);
     this.initEditorTabs(hostElement, config);
     this.initResultTabs(hostElement, config);
     this.initButtonsStyling(hostElement, config);
-  }
-
-  private initOrientation(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    VisualisationUtils.setOrientation(hostElement, config.orientation);
-  }
-
-  private initRenerMode(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    VisualisationUtils.setRenderMode(hostElement, config.render);
   }
 
   private initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
@@ -44,7 +34,6 @@ class OntotextYasguiServiceDefinition {
 
     // Initialize orientation button styling.
     const orientation = config.orientation;
-    VisualisationUtils.setOrientation(hostElement, orientation);
     VisualisationUtils.changeOrientation(hostElement, orientation);
     if (config.showToolbar) {
       HtmlElementsUtil.getToolbar(hostElement).classList.remove('hidden');
