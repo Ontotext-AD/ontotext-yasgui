@@ -67,6 +67,22 @@ Then the component can be used in html templates like this:
   [config]="config">
 </ontotext-yasgui>
 ```
+## Configuration
+
+The "config" value of "ngce-prop-config" or "[config]" is an object with following options:
+- <b>yasguiConfig</b>: this is yasgui original configuration as it is. [See how can be used it](https://triply.cc/docs/yasgui-api#yasgui-config)
+- <b>render</b>: Configure what part of the yasgui should be rendered. Supported values are:
+   - mode-yasgui: default configuration. Shows the query editor and the results;
+   - mode-yasqe: shows the query editor only;
+   - mode-yasr: shows the results only.
+- <b>orientation</b>: Configure the yasgui layout orientation. Supported values are:
+   - orientation-vertical - the results will be appeared under the query editor;
+   - orientation-horizontal - the results will be appeared next to the query editor.
+- <b>query</b>: Default query when a tab is opened;
+- <b>initialQuery?</b>: Initial query when yasgui is rendered if not set the default query will be set;
+- <b>showEditorTabs</b>: If the query editor tabs should be rendered or not;
+- <b>showResultTabs</b>: If the results tabs should be rendered or not;
+- <b>showToolbar</b>: If the toolbar with render mode buttons should be rendered or not.
 
 # License
 TODO:

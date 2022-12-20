@@ -1,9 +1,10 @@
 import {Configurator} from './configurator';
 import {YasguiConfiguration} from '../../../models/yasgui-configuration';
 import {YasguiConfigurator} from './yasgui-configurator';
-import {Config} from '../../../../../Yasgui/packages/yasgui'
 import {YasqeConfigurator} from './yasqe-configurator';
 import {YasrConfigurator} from './yasr-configurator';
+import {OntotextYasguiConfigurator} from './ontotext-yasgui-configurator';
+import deepmerge from 'deepmerge';
 
 /**
  * Builder for yasgui configuration.
@@ -18,16 +19,20 @@ class YasguiConfigurationBuilderDefinition {
 
   /**
    * Builds a yasgui configuration.
-   * @param el - hte ontotext-yasgui element.
-   * @param config - custom configuration passed by client of component.
+   * @param externalConfiguration - custom configuration passed by the component client.
    */
-  build(el: HTMLElement, config: YasguiConfiguration): Config {
-    return this.configurators
-      .reduce((result, configurator) => configurator.config(el, result, config), {} as Config);
+  build(externalConfiguration: YasguiConfiguration): YasguiConfiguration {
+    // @ts-ignore
+    let filledYasguiConfig: YasguiConfiguration = {};
+    this.configurators.forEach(configurator => {
+      filledYasguiConfig = deepmerge.all([filledYasguiConfig, configurator.config(externalConfiguration)]) as YasguiConfiguration;
+    })
+    return filledYasguiConfig;
   }
 
   private initConfigurators() {
     this.configurators = [
+      OntotextYasguiConfigurator,
       YasguiConfigurator,
       YasqeConfigurator,
       YasrConfigurator

@@ -1,12 +1,40 @@
 import {Yasgui} from '../../../Yasgui/packages/yasgui'
 import {YasguiConfiguration} from './yasgui-configuration';
 
+/**
+ * An adapter around the actual yasgui instance.
+ */
 export class OntotextYasgui {
+  /**
+   * The yasgui instance.
+   */
   private yasgui: Yasgui
+
+  /**
+   * The yasgui configuration.
+   */
+  private readonly config: YasguiConfiguration;
 
   constructor(yasgui: Yasgui, config: YasguiConfiguration) {
     this.yasgui = yasgui;
-    this.init(config);
+    this.config = config;
+    this.init();
+  }
+
+  /**
+   * Initializes the adapter.
+   */
+  private init(): void {
+    if (this.config.initialQuery) {
+      this.setQuery(this.config.initialQuery);
+    }
+  }
+
+  registerYasqeEventListener(eventName, callback): void {
+    // @ts-ignore
+    this.yasgui.getTab().yasqe.on(eventName, (...args) => {
+      callback(args);
+    });
   }
 
   setQuery(query: string): void {
@@ -17,23 +45,12 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getValue();
   }
 
-  /**
-   * Initializes ontotext-yasgui component.
-   *
-   * @param config
-   * @private
-   */
-  private init(config): void {
-    if (config.initialQuery) {
-      this.setQuery(config.initialQuery);
-    }
+  getConfig() {
+    return this.config;
   }
 
-  addYasqeListener(eventName, callback): void {
-    // @ts-ignore
-    this.yasgui.getTab().yasqe.on(eventName, (...args) => {
-      callback(args);
-    });
+  getInstance(): Yasgui {
+    return this.yasgui;
   }
 
   destroy() {
@@ -47,9 +64,5 @@ export class OntotextYasgui {
       this.yasgui = null;
       localStorage.removeItem('yasqe__query');
     }
-  }
-
-  getInstance(): Yasgui {
-    return this.yasgui;
   }
 }

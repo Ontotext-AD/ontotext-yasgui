@@ -20,7 +20,8 @@ export const config: Config = {
       serviceWorker: null, // disable service workers
       copy: [
         {src: 'js'},
-        {src: 'pages'}
+        {src: 'pages'},
+        {src: 'css/fonts'}
       ]
     },
   ],

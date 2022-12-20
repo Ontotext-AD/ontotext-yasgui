@@ -15,6 +15,11 @@ export namespace Components {
         "config": YasguiConfiguration;
         "setQuery": (query: string) => Promise<void>;
     }
+    interface YasguiTooltip {
+        "dataTooltip": string;
+        "placement": string;
+        "showOnClick": false;
+    }
 }
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -27,8 +32,15 @@ declare global {
         prototype: HTMLOntotextYasguiElement;
         new (): HTMLOntotextYasguiElement;
     };
+    interface HTMLYasguiTooltipElement extends Components.YasguiTooltip, HTMLStencilElement {
+    }
+    var HTMLYasguiTooltipElement: {
+        prototype: HTMLYasguiTooltipElement;
+        new (): HTMLYasguiTooltipElement;
+    };
     interface HTMLElementTagNameMap {
         "ontotext-yasgui": HTMLOntotextYasguiElement;
+        "yasgui-tooltip": HTMLYasguiTooltipElement;
     }
 }
 declare namespace LocalJSX {
@@ -46,8 +58,14 @@ declare namespace LocalJSX {
          */
         "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
     }
+    interface YasguiTooltip {
+        "dataTooltip"?: string;
+        "placement"?: string;
+        "showOnClick"?: false;
+    }
     interface IntrinsicElements {
         "ontotext-yasgui": OntotextYasgui;
+        "yasgui-tooltip": YasguiTooltip;
     }
 }
 export { LocalJSX as JSX };
@@ -55,6 +73,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
+            "yasgui-tooltip": LocalJSX.YasguiTooltip & JSXBase.HTMLAttributes<HTMLYasguiTooltipElement>;
         }
     }
 }

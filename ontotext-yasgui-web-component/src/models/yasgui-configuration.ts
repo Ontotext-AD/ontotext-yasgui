@@ -4,7 +4,7 @@ export interface YasguiConfiguration {
   /**
    * The default yasgui config.
    */
-  yasguiConfig: Config,
+  defaultYasguiConfiguration: Config,
 
   /**
    * Configure what part of the yasgui should be rendered.
@@ -35,6 +35,11 @@ export interface YasguiConfiguration {
    * If the yasr tabs should be rendered or not.
    */
   showResultTabs: boolean;
+
+  /**
+   * If the toolbar with render mode buttons should be rendered or not.
+   */
+  showToolbar: boolean;
 }
 
 export enum RenderingMode {

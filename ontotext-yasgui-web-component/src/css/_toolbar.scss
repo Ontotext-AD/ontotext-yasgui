@@ -1,0 +1,32 @@
+@import "src/css/variables";
+
+.yasgui-host-element {
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .yasgui-btn {
+    border: none;
+    background-color: #ebebeb;
+    color: #000000;
+  }
+
+  .btn-selected {
+    background-color: #e84e0f;
+    color: #fff;
+  }
+
+  .yasgui-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+.btn-orientation {
+  color: $color-ontotext-red;
+  background-color: white;
+  border: none;
+}
