@@ -23,12 +23,12 @@ class YasguiBuilderDefinition {
    * @param config - configuration passed from client of component. It overrides default values of yasgui component.
    */
   build(hostElement: HTMLElement, config: YasguiConfiguration): OntotextYasgui {
-    const yasguiConfig = this.yasguiConfigurationBuilder.build(hostElement, config);
+    const filledConfiguration = this.yasguiConfigurationBuilder.build(config);
     // @ts-ignore
-    const yasgui = new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfig);
+    const yasgui = new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), filledConfiguration.yasguiConfig);
 
     // monkey patches have to be applied before return yasgui.
-    return new OntotextYasgui(yasgui, config);
+    return new OntotextYasgui(yasgui, filledConfiguration);
   }
 }
 

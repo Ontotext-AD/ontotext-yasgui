@@ -3,10 +3,12 @@ import {YasguiConfiguration} from './yasgui-configuration';
 
 export class OntotextYasgui {
   private yasgui: Yasgui
+  private readonly config: YasguiConfiguration;
 
   constructor(yasgui: Yasgui, config: YasguiConfiguration) {
     this.yasgui = yasgui;
-    this.init(config);
+    this.config = config;
+    this.init();
   }
 
   setQuery(query: string): void {
@@ -20,12 +22,11 @@ export class OntotextYasgui {
   /**
    * Initializes ontotext-yasgui component.
    *
-   * @param config
    * @private
    */
-  private init(config): void {
-    if (config.initialQuery) {
-      this.setQuery(config.initialQuery);
+  private init(): void {
+    if (this.config.initialQuery) {
+      this.setQuery(this.config.initialQuery);
     }
   }
 
@@ -47,6 +48,10 @@ export class OntotextYasgui {
       this.yasgui = null;
       localStorage.removeItem('yasqe__query');
     }
+  }
+
+  getConfig() {
+    return this.config;
   }
 
   getInstance(): Yasgui {

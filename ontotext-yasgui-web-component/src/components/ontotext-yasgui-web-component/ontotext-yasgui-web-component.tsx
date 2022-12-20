@@ -6,8 +6,8 @@ import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {QueryEvent, QueryResponseEvent} from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
-import {getRenderingMode, getOrientation} from '../../services/yasgui/configuration/yasgui-configurator';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
+import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -19,6 +19,7 @@ type EventArguments = [Yasqe, Request, number];
 export class OntotextYasguiWebComponent {
 
   private yasguiBuilder: typeof YasguiBuilder;
+  private ontotextYasguiService: typeof OntotextYasguiService;
 
   /**
    * The host html element for the yasgui.
@@ -59,6 +60,7 @@ export class OntotextYasguiWebComponent {
 
   constructor() {
     this.yasguiBuilder = YasguiBuilder;
+    this.ontotextYasguiService = OntotextYasguiService;
   }
 
   componentWillLoad() {
@@ -136,29 +138,10 @@ export class OntotextYasguiWebComponent {
     // @ts-ignore
     if (window.Yasgui) {
       this.yasgui = this.yasguiBuilder.build(this.hostElement, config);
+      this.ontotextYasguiService.postConstruct(this.hostElement, this.yasgui.getConfig());
       this.yasgui.addYasqeListener('query', this.onQuery.bind(this));
       this.yasgui.addYasqeListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
-
-      // Initialize render buttons styling.
-      VisualisationUtils.changeRenderMode(this.hostElement, getRenderingMode(config));
-
-      // Initialize orientation button styling.
-      const orientation = getOrientation(config);
-      VisualisationUtils.setOrientation(this.hostElement, orientation);
-      VisualisationUtils.changeOrientation(this.hostElement, orientation);
-      if (this.haveToHideToolbar(config)) {
-        HtmlElementsUtil.getToolbar(this.hostElement).classList.add('hidden');
-      } else {
-        HtmlElementsUtil.getToolbar(this.hostElement).classList.remove('hidden');
-      }
     }
-  }
-
-  private haveToHideToolbar(yasguiConfig: YasguiConfiguration) {
-    if (yasguiConfig.showToolbar === undefined || yasguiConfig.showToolbar === null) {
-      return false;
-    }
-    return !yasguiConfig.showToolbar;
   }
 
   private onQuery(): void {

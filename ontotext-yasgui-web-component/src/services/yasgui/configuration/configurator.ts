@@ -1,5 +1,4 @@
 import {YasguiConfiguration} from '../../../models/yasgui-configuration';
-import {Config} from '../../../../../Yasgui/packages/yasgui'
 
 /**
  * The configuration of the yasgui component is divided into many configurators for easy maintenance and extension of yasgui.
@@ -9,9 +8,8 @@ export interface Configurator {
 
   /**
    * Apply configuration to <code>yasguiConfig</code> from <code>clientYasguiConfig</code>
-   * @param hostElement - hte ontotext-yasgui element.
-   * @param config - configuration which is passing to yasgui constructor.
-   * @param yasguiConfig - configuration passed by client.
+   * @param config - configuration passed by client.
+   * @return configuration - populated with default values of concrete configuration.
    */
-  config(hostElement: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config;
+  config(config: YasguiConfiguration): YasguiConfiguration;
 }

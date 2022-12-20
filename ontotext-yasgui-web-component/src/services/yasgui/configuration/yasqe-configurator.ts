@@ -1,32 +1,17 @@
 import {Configurator} from './configurator';
 import {YasguiConfiguration} from '../../../models/yasgui-configuration';
-import {Config} from '../../../../../Yasgui/packages/yasgui'
-import {HtmlElementsUtil} from '../../utils/html-elements-util';
+import deepmerge from 'deepmerge';
 
 class YasqeConfiguratorDefinition implements Configurator {
 
-  config(hostElement: HTMLElement, config: Config, yasguiConfig: YasguiConfiguration): Config {
-
-    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
-    if (this.haveToHiddeEditorTabs(yasguiConfig)) {
-      ontotextYasgui.classList.add('hidden-editor-tabs');
-    } else {
-      ontotextYasgui.classList.remove('hidden-editor-tabs');
-    }
+  config(config: YasguiConfiguration): YasguiConfiguration {
 
     // @ts-ignore
-    if (yasguiConfig.query && window.Yasgui) {
+    if (config.query && window.Yasgui) {
       // @ts-ignore
-      window.Yasgui.Yasqe.defaults.value = yasguiConfig.query;
+      window.Yasgui.Yasqe.defaults.value = config.query;
     }
-    return config;
-  }
-
-  private haveToHiddeEditorTabs(yasguiConfig: YasguiConfiguration) {
-    if (yasguiConfig.showEditorTabs === undefined || yasguiConfig.showEditorTabs === null) {
-      return false;
-    }
-    return !yasguiConfig.showEditorTabs;
+    return deepmerge.all([{}, config]) as YasguiConfiguration;
   }
 }
 
