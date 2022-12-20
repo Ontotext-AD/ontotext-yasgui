@@ -3,10 +3,10 @@ import tippy, {Instance, Placement} from 'tippy.js';
 
 @Component({
   tag: 'yasgui-tooltip',
-  styleUrl: 'yasgui-tooltip.scss',
+  styleUrl: 'ontotext-tooltip-web-component.scss',
   shadow: false,
 })
-export class YasguiTooltip {
+export class OntotextTooltipWebComponent {
 
   @Element() el: HTMLElement;
 
@@ -27,10 +27,6 @@ export class YasguiTooltip {
   private hideFunction;
 
   componentDidLoad() {
-    // As documentation said "The @Watch() decorator does not fire when a component initially loads."
-    // yasgui instance will not be created if we set configuration when component is loaded, which
-    // will be most case of the component usage. So we call the method manually when component is
-    // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
     this.init();
   }
 

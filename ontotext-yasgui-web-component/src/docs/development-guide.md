@@ -65,7 +65,7 @@ before 1.7.3, then additional custom directive must be installed on the client a
 ```
 
 # Components
-## YasguiTooltip
+## OntotextTooltipWebComponent
  ### Usage
 ```
 <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
