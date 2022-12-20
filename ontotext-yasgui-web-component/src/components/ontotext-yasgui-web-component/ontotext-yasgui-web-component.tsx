@@ -1,4 +1,15 @@
-import {Component, Element, Event, EventEmitter, h, Host, Method, Prop, State, Watch} from '@stencil/core';
+import {
+  Component,
+  Element,
+  Event,
+  EventEmitter,
+  h,
+  Host,
+  Method,
+  Prop,
+  State,
+  Watch
+} from '@stencil/core';
 import {RenderingMode, YasguiConfiguration} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
@@ -11,6 +22,26 @@ import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-servi
 
 type EventArguments = [Yasqe, Request, number];
 
+/**
+ * This is the custom web component which is adapter for the yasgui library. It allows as to
+ * configure and extend the library without potentially breaking the component clients.
+ *
+ * The component have some sane defaults for most of its configurations. So, in practice, it can be
+ * used as is by providing just the sparql endpoint config.
+ * For other customizations, the default configurations can be overridden by providing a
+ * configuration object to the component.
+ *
+ * There is a configuration watcher which triggers the initialization again after a change is
+ * detected.
+ *
+ * During the component initialization, the provided configuration is passed down to a bunch of
+ * configuration helpers which use it to override and extend the defaults.
+ *
+ * After the configuration is ready, then a yasgui instance is created with it.
+ *
+ * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
+ * yasgui can be tweaked using the values from the configuration.
+ */
 @Component({
   tag: 'ontotext-yasgui',
   styleUrl: 'ontotext-yasgui-web-component.scss',
@@ -42,9 +73,9 @@ export class OntotextYasguiWebComponent {
   @Event() queryResponse: EventEmitter<QueryResponseEvent>;
 
   /**
-   * The yasgui instance.
+   * The instance of our adapter around the actual yasgui instance.
    */
-  yasgui: OntotextYasgui;
+  ontotextYasgui: OntotextYasgui;
 
   /**
    * A flag showing that a query is running.
@@ -58,6 +89,17 @@ export class OntotextYasguiWebComponent {
 
   @State() orientationButtonTooltip;
 
+  @Watch('config')
+  configurationChanged(newConfig: YasguiConfiguration) {
+    this.init(newConfig);
+  }
+
+  @Method()
+  setQuery(query: string): Promise<void> {
+    this.ontotextYasgui.setQuery(query);
+    return Promise.resolve();
+  }
+
   constructor() {
     this.yasguiBuilder = YasguiBuilder;
     this.ontotextYasguiService = OntotextYasguiService;
@@ -66,6 +108,7 @@ export class OntotextYasguiWebComponent {
   componentWillLoad() {
     // @ts-ignore
     if (!window.Yasgui) {
+      // Load the yasgui script once.
       YASGUI_MIN_SCRIPT();
     }
   }
@@ -79,15 +122,8 @@ export class OntotextYasguiWebComponent {
     this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
   }
 
-  @Watch('config')
-  configurationChanged(newConfig: YasguiConfiguration) {
-    this.init(newConfig);
-  }
-
-  @Method()
-  setQuery(query: string): Promise<void> {
-    this.yasgui.setQuery(query);
-    return Promise.resolve();
+  disconnectedCallback() {
+    this.destroy();
   }
 
   render() {
@@ -95,16 +131,21 @@ export class OntotextYasguiWebComponent {
       <Host class="yasgui-host-element">
         <div class="yasgui-toolbar">
           <button class="yasgui-btn btn-mode-yasqe"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor only
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor
+            only
           </button>
           <button class="yasgui-btn btn-mode-yasgui"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>Editor and results
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>Editor
+            and results
           </button>
           <button class="yasgui-btn btn-mode-yasr"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>Results only
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>Results
+            only
           </button>
-          <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
-            <button class="btn-orientation icon-columns red" onClick={() => this.changeOrientation()}></button>
+          <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left"
+                          show-on-click={true}>
+            <button class="btn-orientation icon-columns red"
+                    onClick={() => this.changeOrientation()}></button>
           </yasgui-tooltip>
         </div>
         <div class="ontotext-yasgui"></div>
@@ -112,8 +153,22 @@ export class OntotextYasguiWebComponent {
     );
   }
 
-  disconnectedCallback() {
+  private init(externalConfiguration: YasguiConfiguration) {
     this.destroy();
+
+    if (!externalConfiguration) {
+      return;
+    }
+
+    // @ts-ignore
+    if (window.Yasgui) {
+      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, externalConfiguration);
+
+      this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+
+      this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
+      this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
+    }
   }
 
   private fetchButtonOrientationTooltip(): string {
@@ -128,24 +183,8 @@ export class OntotextYasguiWebComponent {
     this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
   }
 
-  private init(config: YasguiConfiguration) {
-    this.destroy();
-
-    if (!config) {
-      return;
-    }
-
-    // @ts-ignore
-    if (window.Yasgui) {
-      this.yasgui = this.yasguiBuilder.build(this.hostElement, config);
-      this.ontotextYasguiService.postConstruct(this.hostElement, this.yasgui.getConfig());
-      this.yasgui.addYasqeListener('query', this.onQuery.bind(this));
-      this.yasgui.addYasqeListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
-    }
-  }
-
   private onQuery(): void {
-    this.queryExecuted.emit({query: this.yasgui.getQuery()});
+    this.queryExecuted.emit({query: this.ontotextYasgui.getQuery()});
     this.showQueryProgress = true;
   }
 
@@ -156,8 +195,8 @@ export class OntotextYasguiWebComponent {
   }
 
   private destroy() {
-    if (this.yasgui) {
-      this.yasgui.destroy();
+    if (this.ontotextYasgui) {
+      this.ontotextYasgui.destroy();
       const yasgui = HtmlElementsUtil.getOntotextYasgui(this.hostElement);
       while (yasgui.firstChild) {
         yasgui.firstChild.remove();

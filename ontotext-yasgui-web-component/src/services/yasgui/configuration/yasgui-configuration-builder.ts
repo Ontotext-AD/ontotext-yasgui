@@ -19,7 +19,7 @@ class YasguiConfigurationBuilderDefinition {
 
   /**
    * Builds a yasgui configuration.
-   * @param config - custom configuration passed by client of component.
+   * @param config - custom configuration passed by the component client.
    */
   build(config: YasguiConfiguration): YasguiConfiguration {
     // @ts-ignore

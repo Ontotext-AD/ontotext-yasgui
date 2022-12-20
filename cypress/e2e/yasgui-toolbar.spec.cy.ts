@@ -3,10 +3,20 @@ import {YasqeSteps} from '../steps/yasqe-steps';
 import {YasrSteps} from '../steps/yasr-steps';
 import {QueryStubs} from "../stubs/query-stubs";
 import {ToolbarPageSteps} from '../steps/toolbar-page-steps';
+import PageSteps from "../steps/page-steps";
 
-describe('Toolbar', () => {
+describe('Yasgui Toolbar', () => {
     beforeEach(() => {
         QueryStubs.stubDefaultQueryResponse();
+    });
+
+    it.skip('Should be hidden by default', () => {
+        // Given I haven configured the toolbar
+        // When I open a page with the yasgui
+        PageSteps.visitDefaultViewPage();
+        // Then I expect that the toolbar should be hidden
+        // TODO: Seems like cypress always returns true for the visibility check of the toolbar, be it visible or hidden which should be fixed!!!
+        ToolbarPageSteps.getToolbar().should('be.hidden');
     });
 
     it('Should toolbar with render mode buttons be visible', () => {
