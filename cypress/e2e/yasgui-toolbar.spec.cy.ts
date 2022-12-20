@@ -19,17 +19,17 @@ describe('Yasgui Toolbar', () => {
         ToolbarPageSteps.getToolbar().should('be.hidden');
     });
 
-    it('Should toolbar with render mode buttons be visible', () => {
+    it('Should be able to configure the toolbar visibility', () => {
         // When I visit a page with ontotext-yasgui
         ToolbarPageSteps.visit();
         // I expect toolbar with buttons to be visible If configuration "showToolbar" is undefined
         ToolbarPageSteps.getToolbar().should('be.visible');
         // When I create ontotext-yasgui with configuration "showToolbar" set to false
-        ToolbarPageSteps.getHideToolbarButton().click();
+        ToolbarPageSteps.hideToolbar();
         // Then I expect toolbar to not be visible.
         ToolbarPageSteps.getToolbar().should('not.be.visible');
         // When I create ontotext-yasgui with configuration "showToolbar" set to true
-        ToolbarPageSteps.getShowToolbarButton().click();
+        ToolbarPageSteps.showToolbar();
         // Then I expect toolbar to not be visible.
         ToolbarPageSteps.getToolbar().should('be.visible');
     });
@@ -101,13 +101,13 @@ describe('Yasgui Toolbar', () => {
     it('Should show tooltip when mouse enter into orientation button', () => {
         ToolbarPageSteps.visit();
         // When The mouse is over button orientation.
-        ToolbarPageSteps.triggerEvent('mouseover');
+        ToolbarPageSteps.showLayoutOrientationButtonTooltip();
         //Then I expect to see tooltip with value "Switch to horizontal view".
         cy.contains('Switch to horizontal view');
         // When The mouse leave button orientation.
-        ToolbarPageSteps.triggerEvent('mouseleave');
+        ToolbarPageSteps.hideLayoutOrientationButtonTooltip();
         // Then I expect tooltip to not exist.
-        cy.contains('Switch to horizontal view').should("not.exist");
+        cy.contains('Switch to horizontal view').should('not.exist');
     });
 
     it('Should show tooltip when click on button orientation', () => {
@@ -121,8 +121,8 @@ describe('Yasgui Toolbar', () => {
         //Then I expect to see tooltip with value "Switch to horizontal view".
         cy.contains('Switch to horizontal view');
         // When I move mouse outside of button orientation.
-        ToolbarPageSteps.triggerEvent('mouseleave');
+        ToolbarPageSteps.hideLayoutOrientationButtonTooltip();
         // Then I expect tooltip to not exist.
-        cy.contains('Switch to horizontal view').should("not.exist");
+        cy.contains('Switch to horizontal view').should('not.exist');
     });
 })

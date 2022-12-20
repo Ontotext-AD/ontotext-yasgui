@@ -55,15 +55,27 @@ export class ToolbarPageSteps {
         return cy.get('#hideToolbar');
     }
 
+    static hideToolbar() {
+        this.getHideToolbarButton().click();
+    }
+
     static getShowToolbarButton() {
         return cy.get('#showToolbar');
+    }
+
+    static showToolbar() {
+        this.getShowToolbarButton().click();
     }
 
     static getToolbar() {
         return cy.get('.yasgui-toolbar');
     }
 
-    static triggerEvent(event: string) {
-        ToolbarPageSteps.getOrientationButton().trigger(event);
+    static showLayoutOrientationButtonTooltip() {
+        ToolbarPageSteps.getOrientationButton().trigger('mouseover');
+    }
+
+    static hideLayoutOrientationButtonTooltip() {
+        ToolbarPageSteps.getOrientationButton().trigger('mouseleave');
     }
 }
