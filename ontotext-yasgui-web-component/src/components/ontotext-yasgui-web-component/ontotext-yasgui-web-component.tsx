@@ -102,7 +102,7 @@ export class OntotextYasguiWebComponent {
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>Results only
           </button>
           <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
-            <div class="btn-orientation icon-columns red" onClick={() => this.changeOrientation()}></div>
+            <button class="btn-orientation icon-columns red" onClick={() => this.changeOrientation()}></button>
           </yasgui-tooltip>
         </div>
         <div class="ontotext-yasgui"></div>
