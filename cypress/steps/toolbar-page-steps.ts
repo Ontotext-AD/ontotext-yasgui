@@ -60,7 +60,7 @@ export class ToolbarPageSteps {
     }
 
     static getToolbar() {
-        return cy.get('.ontotext-yasgui-toolbar');
+        return cy.get('.yasgui-toolbar');
     }
 
     static triggerEvent(event: string) {

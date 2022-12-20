@@ -38,7 +38,7 @@ export class VisualisationUtils {
   }
 
   static  changeOrientation(hostElement: HTMLElement, newOrientation: Orientation): void {
-    const buttonOrientation = hostElement.querySelector('.btn-orientation');
+    const buttonOrientation = HtmlElementsUtil.getOrientationButton(hostElement);
     if (Orientation.HORIZONTAL === newOrientation) {
       buttonOrientation.classList.add('icon-rotate-90');
     } else {

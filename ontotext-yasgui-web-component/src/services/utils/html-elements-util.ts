@@ -45,6 +45,6 @@ export class HtmlElementsUtil {
    * @param hostElement - the host element of "ontotext-yasgui-web-component".
    */
   static getToolbar(hostElement: HTMLElement): HTMLElement {
-    return hostElement.querySelector('.ontotext-yasgui-toolbar');
+    return hostElement.querySelector('.yasgui-toolbar');
   }
 }
