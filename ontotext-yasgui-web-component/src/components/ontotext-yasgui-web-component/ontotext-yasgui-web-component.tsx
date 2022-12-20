@@ -92,7 +92,7 @@ export class OntotextYasguiWebComponent {
 
   render() {
     return (
-      <Host class="yasgui-host">
+      <Host class="yasgui-host-element">
         <div class="ontotext-yasgui-toolbar">
           <button class="btn-mode-yasqe"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>Editor only
