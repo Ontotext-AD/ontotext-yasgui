@@ -19,13 +19,13 @@ class YasguiConfigurationBuilderDefinition {
 
   /**
    * Builds a yasgui configuration.
-   * @param config - custom configuration passed by the component client.
+   * @param externalConfiguration - custom configuration passed by the component client.
    */
-  build(config: YasguiConfiguration): YasguiConfiguration {
+  build(externalConfiguration: YasguiConfiguration): YasguiConfiguration {
     // @ts-ignore
     let filledYasguiConfig: YasguiConfiguration = {};
     this.configurators.forEach(configurator => {
-      filledYasguiConfig = deepmerge.all([filledYasguiConfig, configurator.config(config)]) as YasguiConfiguration;
+      filledYasguiConfig = deepmerge.all([filledYasguiConfig, configurator.config(externalConfiguration)]) as YasguiConfiguration;
     })
     return filledYasguiConfig;
   }

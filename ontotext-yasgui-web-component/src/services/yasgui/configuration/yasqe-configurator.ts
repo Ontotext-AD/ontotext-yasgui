@@ -4,14 +4,14 @@ import deepmerge from 'deepmerge';
 
 class YasqeConfiguratorDefinition implements Configurator {
 
-  config(config: YasguiConfiguration): YasguiConfiguration {
+  config(externalConfiguration: YasguiConfiguration): YasguiConfiguration {
 
     // @ts-ignore
-    if (config.query && window.Yasgui) {
+    if (externalConfiguration.query && window.Yasgui) {
       // @ts-ignore
-      window.Yasgui.Yasqe.defaults.value = config.query;
+      window.Yasgui.Yasqe.defaults.value = externalConfiguration.query;
     }
-    return deepmerge.all([{}, config]) as YasguiConfiguration;
+    return deepmerge.all([{}, externalConfiguration]) as YasguiConfiguration;
   }
 }
 

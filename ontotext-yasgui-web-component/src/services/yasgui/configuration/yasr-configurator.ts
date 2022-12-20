@@ -4,8 +4,8 @@ import deepmerge from 'deepmerge';
 
 class YasrConfiguratorDefinition implements Configurator {
 
-  config(config: YasguiConfiguration): YasguiConfiguration {
-    return deepmerge.all([{}, config]) as YasguiConfiguration;
+  config(externalConfiguration: YasguiConfiguration): YasguiConfiguration {
+    return deepmerge.all([{}, externalConfiguration]) as YasguiConfiguration;
   }
 }
 

@@ -5,7 +5,7 @@ import {Configurator} from './configurator';
 class OntotextYasguiConfiguratorDefinition implements Configurator {
 
   private defaultOntotextYasguiWebComponentConfig: YasguiConfiguration = {
-    yasguiConfig: undefined,
+    defaultYasguiConfiguration: undefined,
     render: RenderingMode.YASGUI,
     orientation: Orientation.VERTICAL,
     showEditorTabs: true,
@@ -13,8 +13,8 @@ class OntotextYasguiConfiguratorDefinition implements Configurator {
     showToolbar:true
   }
 
-  config(config: YasguiConfiguration): YasguiConfiguration {
-    return deepmerge.all([{}, this.defaultOntotextYasguiWebComponentConfig, config]) as YasguiConfiguration;
+  config(externalConfiguration: YasguiConfiguration): YasguiConfiguration {
+    return deepmerge.all([{}, this.defaultOntotextYasguiWebComponentConfig, externalConfiguration]) as YasguiConfiguration;
   }
 }
 
