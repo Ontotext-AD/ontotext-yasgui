@@ -25,8 +25,8 @@ export class OntotextYasgui {
    * Initializes the adapter.
    */
   private init(): void {
-    if (this.config.initialQuery) {
-      this.setQuery(this.config.initialQuery);
+    if (this.config.yasqeConfig.initialQuery) {
+      this.setQuery(this.config.yasqeConfig.initialQuery);
     }
   }
 

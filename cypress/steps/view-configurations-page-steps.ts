@@ -3,11 +3,11 @@ export default class ViewConfigurationsPageSteps {
         cy.visit('/pages/view-configurations');
     }
 
-    static showEditorTab() {
+    static showEditorTabs() {
         cy.get('#showEditorTabs').click();
     }
 
-    static hideEditorTab() {
+    static hideEditorTabs() {
         cy.get('#hideEditorTabs').click();
     }
 

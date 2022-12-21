@@ -10,7 +10,7 @@ import {
   State,
   Watch
 } from '@stencil/core';
-import {RenderingMode, YasguiConfiguration} from '../../models/yasgui-configuration';
+import {RenderingMode} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -19,6 +19,8 @@ import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
+import {YasguiConfigurationBuilder} from "../../services/yasgui/configuration/yasgui-configuration-builder";
+import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -28,14 +30,15 @@ type EventArguments = [Yasqe, Request, number];
  *
  * The component have some sane defaults for most of its configurations. So, in practice, it can be
  * used as is by providing just the sparql endpoint config.
- * For other customizations, the default configurations can be overridden by providing a
- * configuration object to the component.
+ * For other customizations, the default configurations can be overridden by providing an external
+ * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
+ * component.
  *
  * There is a configuration watcher which triggers the initialization again after a change is
  * detected.
  *
- * During the component initialization, the provided configuration is passed down to a bunch of
- * configuration helpers which use it to override and extend the defaults.
+ * During the component initialization, the provided external configuration is passed down to a
+ * configuration builder which use it to override and extend the the yasgui library defaults.
  *
  * After the configuration is ready, then a yasgui instance is created with it.
  *
@@ -48,9 +51,9 @@ type EventArguments = [Yasqe, Request, number];
   shadow: false,
 })
 export class OntotextYasguiWebComponent {
-
   private yasguiBuilder: typeof YasguiBuilder;
   private ontotextYasguiService: typeof OntotextYasguiService;
+  private yasguiConfigurationBuilder: typeof YasguiConfigurationBuilder;
 
   /**
    * The host html element for the yasgui.
@@ -60,7 +63,7 @@ export class OntotextYasguiWebComponent {
   /**
    * An input object property containing the yasgui configuration.
    */
-  @Prop() config: YasguiConfiguration;
+  @Prop() config: ExternalYasguiConfiguration;
 
   /**
    * Event emitted when before query to be executed.
@@ -90,7 +93,7 @@ export class OntotextYasguiWebComponent {
   @State() orientationButtonTooltip;
 
   @Watch('config')
-  configurationChanged(newConfig: YasguiConfiguration) {
+  configurationChanged(newConfig: ExternalYasguiConfiguration) {
     this.init(newConfig);
   }
 
@@ -103,6 +106,7 @@ export class OntotextYasguiWebComponent {
   constructor() {
     this.yasguiBuilder = YasguiBuilder;
     this.ontotextYasguiService = OntotextYasguiService;
+    this.yasguiConfigurationBuilder = YasguiConfigurationBuilder;
   }
 
   componentWillLoad() {
@@ -145,15 +149,15 @@ export class OntotextYasguiWebComponent {
           <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left"
                           show-on-click={true}>
             <button class="btn-orientation icon-columns red"
-                    onClick={() => this.changeOrientation()}></button>
+                    onClick={() => this.changeOrientation()}> </button>
           </yasgui-tooltip>
         </div>
-        <div class="ontotext-yasgui"></div>
+        <div class="ontotext-yasgui"> </div>
       </Host>
     );
   }
 
-  private init(externalConfiguration: YasguiConfiguration) {
+  private init(externalConfiguration: ExternalYasguiConfiguration) {
     this.destroy();
 
     if (!externalConfiguration) {
@@ -162,10 +166,13 @@ export class OntotextYasguiWebComponent {
 
     // @ts-ignore
     if (window.Yasgui) {
-      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, externalConfiguration);
-
+      // 1. Build the internal yasgui configuration using the provided external configuration
+      const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
+      // 2. Build a yasgui instance using the configuration
+      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
+      // 3. Configure the web component
       this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
-
+      // 4. Register any needed event handler
       this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
       this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
     }

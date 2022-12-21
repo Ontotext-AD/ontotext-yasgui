@@ -1,11 +1,7 @@
 const ontoElement = document.querySelector("ontotext-yasgui");
 ontoElement.config = {
   query: '',
-  yasguiConfig: {
-    requestConfig: {
-      endpoint: "/repositories/test-repo"
-    }
-  }
+  endpoint: "/repositories/test-repo"
 };
 
 ontoElement.addEventListener("queryExecuted", () => {
@@ -26,6 +22,6 @@ function setDefaultQuery(query) {
   ontoElement.config = {...ontoElement.config, query: query}
 }
 
-function  setInitialQuery(initialQuery) {
+function setInitialQuery(initialQuery) {
   ontoElement.config = {...ontoElement.config, initialQuery: initialQuery}
 }

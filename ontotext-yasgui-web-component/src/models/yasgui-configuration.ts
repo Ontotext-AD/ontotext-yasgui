@@ -1,45 +1,64 @@
-import {Config} from '../../../Yasgui/packages/yasgui'
-
 export interface YasguiConfiguration {
-  /**
-   * The default yasgui config.
-   */
-  yasguiConfig: Config,
+  // ***********************************************************
+  //
+  // All configurations related with our yasgui adapter
+  //
+  // ***********************************************************
 
   /**
    * Configure what part of the yasgui should be rendered.
    */
-  render: RenderingMode;
+  render?: RenderingMode;
 
   /**
    * Configure the yasgui layout orientation.
    */
-  orientation: Orientation;
-
-  /**
-   * Default query when a tab is opened.
-   */
-  query?: string;
-
-  /**
-   * Initial query when yasgui is rendered if not set the default query will be set.
-   */
-  initialQuery?: string;
+  orientation?: Orientation;
 
   /**
    * If the yasgui tabs should be rendered or not.
    */
-  showEditorTabs: boolean;
+  showEditorTabs?: boolean;
 
   /**
    * If the yasr tabs should be rendered or not.
    */
-  showResultTabs: boolean;
+  showResultTabs?: boolean;
 
   /**
    * If the toolbar with render mode buttons should be rendered or not.
    */
-  showToolbar: boolean;
+  showToolbar?: boolean;
+
+  // ***********************************************************
+  //
+  // All configurations related with the yasgui instance
+  //
+  // ***********************************************************
+
+  /**
+   * The default yasgui config.
+   */
+  yasguiConfig: {
+    requestConfig: {
+      endpoint?: string;
+      method?: 'POST' | 'GET';
+      headers?: () => Record<string, string>;
+    },
+    copyEndpointOnNewTab?: boolean;
+  };
+
+  yasqeConfig: {
+    /**
+     * Default query when a tab is opened.
+     */
+    query?: string;
+
+    /**
+     * Initial query when yasgui is rendered if not set the default query will be set.
+     */
+    initialQuery?: string;
+  }
 }
 
 export enum RenderingMode {
