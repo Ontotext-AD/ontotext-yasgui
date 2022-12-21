@@ -12,7 +12,7 @@ import deepmerge from 'deepmerge';
 class YasguiConfiguratorDefinition implements Configurator {
 
   public static readonly defaultYasguiConfig: YasguiConfiguration = {
-    defaultYasguiConfiguration: {
+    yasguiConfig: {
       render: RenderingMode.YASGUI,
       orientation: Orientation.VERTICAL,
       copyEndpointOnNewTab: true,

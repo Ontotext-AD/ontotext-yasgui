@@ -5,7 +5,7 @@ import {Configurator} from './configurator';
 class OntotextYasguiConfiguratorDefinition implements Configurator {
 
   private defaultOntotextYasguiWebComponentConfig: YasguiConfiguration = {
-    defaultYasguiConfiguration: undefined,
+    yasguiConfig: undefined,
     render: RenderingMode.YASGUI,
     orientation: Orientation.VERTICAL,
     showEditorTabs: true,
