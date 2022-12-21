@@ -1,6 +1,6 @@
 let ontoElement = document.querySelector('ontotext-yasgui');
 ontoElement.config = {
-  yasguiConfig: {
+  defaultYasguiConfiguration: {
     requestConfig: {
       endpoint: '/repositories/test-repo'
     }

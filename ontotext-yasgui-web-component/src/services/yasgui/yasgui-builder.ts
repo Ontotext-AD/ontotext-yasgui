@@ -28,7 +28,7 @@ class YasguiBuilderDefinition {
     const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
 
     // @ts-ignore
-    const yasgui = new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfiguration.yasguiConfig);
+    const yasgui = new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfiguration.defaultYasguiConfiguration);
 
     // monkey patches have to be applied before return yasgui.
     return new OntotextYasgui(yasgui, yasguiConfiguration);
