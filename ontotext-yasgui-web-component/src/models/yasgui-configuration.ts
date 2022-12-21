@@ -4,7 +4,7 @@ export interface YasguiConfiguration {
   /**
    * The default yasgui config.
    */
-  defaultYasguiConfiguration: Config,
+  yasguiConfig: Config,
 
   /**
    * Configure what part of the yasgui should be rendered.
