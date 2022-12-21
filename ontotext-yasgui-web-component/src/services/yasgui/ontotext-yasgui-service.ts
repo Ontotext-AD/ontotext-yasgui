@@ -5,12 +5,12 @@ import {HtmlElementsUtil} from '../utils/html-elements-util';
 class OntotextYasguiServiceDefinition {
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    this.initEditorTabs(hostElement, config);
-    this.initResultTabs(hostElement, config);
-    this.initButtonsStyling(hostElement, config);
+    OntotextYasguiServiceDefinition.initEditorTabs(hostElement, config);
+    OntotextYasguiServiceDefinition.initResultTabs(hostElement, config);
+    OntotextYasguiServiceDefinition.initButtonsStyling(hostElement, config);
   }
 
-  private initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showEditorTabs) {
       ontotextYasgui.classList.remove('hidden-editor-tabs');
@@ -19,7 +19,7 @@ class OntotextYasguiServiceDefinition {
     }
   }
 
-  private initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showResultTabs) {
       ontotextYasgui.classList.remove('hidden-result-tabs');
@@ -28,7 +28,7 @@ class OntotextYasguiServiceDefinition {
     }
   }
 
-  private initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
     // Initialize render buttons styling.
     VisualisationUtils.changeRenderMode(hostElement, config.render);
 

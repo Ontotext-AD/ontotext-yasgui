@@ -5,14 +5,14 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { YasguiConfiguration } from "./models/yasgui-configuration";
+import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
 export namespace Components {
     interface OntotextYasgui {
         /**
           * An input object property containing the yasgui configuration.
          */
-        "config": YasguiConfiguration;
+        "config": ExternalYasguiConfiguration;
         "setQuery": (query: string) => Promise<void>;
     }
     interface YasguiTooltip {
@@ -48,7 +48,7 @@ declare namespace LocalJSX {
         /**
           * An input object property containing the yasgui configuration.
          */
-        "config"?: YasguiConfiguration;
+        "config"?: ExternalYasguiConfiguration;
         /**
           * Event emitted when before query to be executed.
          */

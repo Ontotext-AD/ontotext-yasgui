@@ -31,6 +31,7 @@
   "rules": {
     // Skips unused imports which start witch underscore.
     "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "(^_*)", "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

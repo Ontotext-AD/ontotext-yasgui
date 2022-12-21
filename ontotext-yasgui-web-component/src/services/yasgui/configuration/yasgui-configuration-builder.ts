@@ -1,42 +1,73 @@
-import {Configurator} from './configurator';
-import {YasguiConfiguration} from '../../../models/yasgui-configuration';
-import {YasguiConfigurator} from './yasgui-configurator';
-import {YasqeConfigurator} from './yasqe-configurator';
-import {YasrConfigurator} from './yasr-configurator';
-import {OntotextYasguiConfigurator} from './ontotext-yasgui-configurator';
-import deepmerge from 'deepmerge';
+import {
+  Orientation,
+  RenderingMode,
+  YasguiConfiguration
+} from '../../../models/yasgui-configuration';
+import {ExternalYasguiConfiguration} from "../../../models/external-yasgui-configuration";
 
 /**
  * Builder for yasgui configuration.
  */
 class YasguiConfigurationBuilderDefinition {
 
-  private configurators: Configurator[];
+  private defaultOntotextYasguiConfig: Record<string, any> = {
+    render: RenderingMode.YASGUI,
+    orientation: Orientation.VERTICAL,
+    showEditorTabs: true,
+    showResultTabs: true,
+    showToolbar:true
+  }
 
-  constructor() {
-    this.initConfigurators();
+  private defaultYasguiConfig: Record<string, any> = {
+    copyEndpointOnNewTab: true,
+    endpoint: '',
+    method: 'POST',
+    headers: () => {
+      return {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/sparql-results+json',
+        'X-GraphDB-Local-Consistency': 'updating'
+      };
+    }
+  }
+
+  private defaultYasqeConfig: Record<string, any> = {
+    query: '',
+    initialQuery: ''
   }
 
   /**
    * Builds a yasgui configuration.
+   *
    * @param externalConfiguration - custom configuration passed by the component client.
    */
-  build(externalConfiguration: YasguiConfiguration): YasguiConfiguration {
+  build(externalConfiguration: ExternalYasguiConfiguration): YasguiConfiguration {
     // @ts-ignore
-    let filledYasguiConfig: YasguiConfiguration = {};
-    this.configurators.forEach(configurator => {
-      filledYasguiConfig = deepmerge.all([filledYasguiConfig, configurator.config(externalConfiguration)]) as YasguiConfiguration;
-    })
-    return filledYasguiConfig;
-  }
+    const config: YasguiConfiguration = {};
+    // prepare the adapter config
+    config.render = externalConfiguration.render || this.defaultOntotextYasguiConfig.render;
+    config.orientation = externalConfiguration.orientation || this.defaultOntotextYasguiConfig.orientation;
+    config.showEditorTabs = externalConfiguration.showEditorTabs !== undefined ? externalConfiguration.showEditorTabs : this.defaultOntotextYasguiConfig.showEditorTabs;
+    config.showResultTabs = externalConfiguration.showResultTabs !== undefined ? externalConfiguration.showResultTabs : this.defaultOntotextYasguiConfig.showResultTabs;
+    config.showToolbar = externalConfiguration.showToolbar !== undefined ? externalConfiguration.showToolbar : this.defaultOntotextYasguiConfig.showToolbar;
 
-  private initConfigurators() {
-    this.configurators = [
-      OntotextYasguiConfigurator,
-      YasguiConfigurator,
-      YasqeConfigurator,
-      YasrConfigurator
-    ]
+    // prepare the yasgui config
+    config.yasguiConfig = {
+      requestConfig: {}
+    };
+    config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || this.defaultYasguiConfig.endpoint;
+    config.yasguiConfig.requestConfig.method = externalConfiguration.method || this.defaultYasguiConfig.method;
+    config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || this.defaultYasguiConfig.headers;
+    config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : this.defaultYasguiConfig.copyEndpointOnNewTab;
+
+    // prepare the yasqe config
+    config.yasqeConfig = {};
+    config.yasqeConfig.query = externalConfiguration.query || this.defaultYasqeConfig.query;
+    config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || this.defaultYasqeConfig.initialQuery;
+
+    // prepare the yasr config
+
+    return config;
   }
 }
 

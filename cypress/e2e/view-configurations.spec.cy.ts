@@ -25,14 +25,14 @@ describe('View configurations', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set configuration property "showEditorTabs" to false.
-      ViewConfigurationsPageSteps.hideEditorTab();
+      ViewConfigurationsPageSteps.hideEditorTabs();
 
       // THEN: only query tabs have to be invisible.
       YasqeSteps.getQueryTabs().should('not.be.visible');
       YasrSteps.getResultHeader().should('be.visible');
 
       // WHEN: set configuration property "showEditorTabs" to true.
-      ViewConfigurationsPageSteps.showEditorTab();
+      ViewConfigurationsPageSteps.showEditorTabs();
 
       // THEN: all components of yasgui, yasr, yasqe have to be visible.
       YasqeSteps.getQueryTabs().should('be.visible');
@@ -67,7 +67,7 @@ describe('View configurations', () => {
       YasqeSteps.getEditor().contains('initial_query');
    });
 
-   it('Should set default query', () => {
+   it.skip('Should set default query', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set 'default_query' value to configuration "query".
