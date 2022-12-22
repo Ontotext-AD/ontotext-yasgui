@@ -22,4 +22,20 @@ export class ViewModePageSteps {
     static switchToVerticalOrientation() {
         cy.get('#renderVertical').click();
     }
+
+    static getHideToolbarButton() {
+        return cy.get('#hideToolbar');
+    }
+
+    static hideToolbar() {
+        this.getHideToolbarButton().click();
+    }
+
+    static getShowToolbarButton() {
+        return cy.get('#showToolbar');
+    }
+
+    static showToolbar() {
+        this.getShowToolbarButton().click();
+    }
 }

@@ -1,15 +1,15 @@
 @import "src/css/variables";
 
-.yasgui-host-element {
-
+.yasgui-toolbar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: flex-end;
   gap: 10px;
 
   .yasgui-btn {
     border: none;
     background-color: #ebebeb;
-    color: #000000;
+    color: #000;
   }
 
   .btn-selected {
@@ -17,16 +17,9 @@
     color: #fff;
   }
 
-  .yasgui-toolbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
+  .btn-orientation {
+    color: $color-ontotext-red;
+    background-color: #fff;
+    border: none;
   }
-}
-
-.btn-orientation {
-  color: $color-ontotext-red;
-  background-color: white;
-  border: none;
 }

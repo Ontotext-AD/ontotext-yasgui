@@ -1,6 +1,7 @@
 let ontoElement = document.querySelector("ontotext-yasgui");
 ontoElement.config = {
-  endpoint: "/repositories/test-repo"
+  endpoint: "/repositories/test-repo",
+  showToolbar: true
 };
 
 function showToolbar() {

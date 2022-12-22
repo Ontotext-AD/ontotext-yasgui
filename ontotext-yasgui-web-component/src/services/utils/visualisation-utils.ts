@@ -5,47 +5,30 @@ export class VisualisationUtils {
 
   static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode): void {
     VisualisationUtils.unselectAllToolbarButtons(hostElement);
-    let button;
-    if (RenderingMode.YASQE === newMode) {
-      button = HtmlElementsUtil.getYasqeButton(hostElement);
-    } else if (RenderingMode.YASR === newMode) {
-      button = HtmlElementsUtil.getYasrButton(hostElement);
-    } else {
-      button = HtmlElementsUtil.getYasguiButton(hostElement);
-    }
+    const button = HtmlElementsUtil.getRenderModeButton(hostElement, newMode);
     button.classList.add('btn-selected');
 
     const modes: string[] = Object.values(RenderingMode);
-    const yasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
-    yasgui.classList.remove(...modes);
-    yasgui.classList.add(newMode);
+    hostElement.classList.remove(...modes);
+    hostElement.classList.add(newMode);
   }
 
-  static  changeOrientation(hostElement: HTMLElement, newOrientation: Orientation): void {
+  static toggleLayoutOrientationButton(hostElement: HTMLElement, newOrientation: Orientation): void {
     const buttonOrientation = HtmlElementsUtil.getOrientationButton(hostElement);
     if (Orientation.HORIZONTAL === newOrientation) {
       buttonOrientation.classList.add('icon-rotate-90');
     } else {
       buttonOrientation.classList.remove('icon-rotate-90');
     }
+  }
 
+  static toggleLayoutOrientation(hostElement: HTMLElement, isVerticalOrientation: boolean): void {
+    const newOrienation = isVerticalOrientation ? Orientation.VERTICAL : Orientation.HORIZONTAL;
     const orientations: string[] = Object.values(Orientation);
-    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
-    ontotextYasgui.classList.remove(...orientations);
-    ontotextYasgui.classList.add(newOrientation);
-  }
+    hostElement.classList.remove(...orientations);
+    hostElement.classList.add(newOrienation);
 
-  static toggleOrientation(hostElement: HTMLElement): void {
-    const yasgui: HTMLElement = HtmlElementsUtil.getOntotextYasgui(hostElement);
-    let orientation = Orientation.VERTICAL;
-    if (yasgui.classList.contains(Orientation.VERTICAL)) {
-      orientation = Orientation.HORIZONTAL;
-    }
-    VisualisationUtils.changeOrientation(hostElement, orientation);
-  }
-
-  static isOrientationVertical(hostElement: HTMLElement) {
-    return HtmlElementsUtil.getOntotextYasgui(hostElement).classList.contains(Orientation.VERTICAL);
+    VisualisationUtils.toggleLayoutOrientationButton(hostElement, newOrienation);
   }
 
   /**

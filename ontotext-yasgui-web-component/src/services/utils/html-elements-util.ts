@@ -1,3 +1,5 @@
+import {RenderingMode} from "../../models/yasgui-configuration";
+
 export class HtmlElementsUtil {
 
   /**
@@ -8,28 +10,8 @@ export class HtmlElementsUtil {
     return hostElement.querySelector('.ontotext-yasgui');
   }
 
-  /**
-   * Fetches the yasqe mode button.
-   * @param hostElement - the host element of "ontotext-yasgui-web-component".
-   */
-  static getYasqeButton(hostElement: HTMLElement): HTMLElement {
-    return hostElement.querySelector('.btn-mode-yasqe');
-  }
-
-  /**
-   * Fetches the yasr mode button.
-   * @param hostElement - the host element of "ontotext-yasgui-web-component".
-   */
-  static getYasrButton(hostElement: HTMLElement): HTMLElement {
-    return hostElement.querySelector('.btn-mode-yasr');
-  }
-
-  /**
-   * Fetches the yasr mode button.
-   * @param hostElement - the host element of "ontotext-yasgui-web-component".
-   */
-  static getYasguiButton(hostElement: HTMLElement): HTMLElement {
-    return hostElement.querySelector('.btn-mode-yasgui');
+  static getRenderModeButton(hostElement: HTMLElement, mode: RenderingMode): HTMLElement {
+    return hostElement.querySelector(`.btn-${mode}`);
   }
 
   /**

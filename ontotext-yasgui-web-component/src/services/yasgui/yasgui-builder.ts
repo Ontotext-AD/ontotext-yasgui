@@ -3,14 +3,13 @@ import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {HtmlElementsUtil} from '../utils/html-elements-util';
 
 /**
- * A builder for yasgui instance.
- * It configures, creates an instance of yasgui and applies patches to created instance.
+ * A builder for Yasgui and its wrapper OntotextYasgui instance. It creates an instance of yasgui
+ * and applies patches to created instance. Then the instance is wrapped in a OntotextYasgui adapter
+ * instance.
  */
 class YasguiBuilderDefinition {
   /**
-   * Builds an instance of yasgui. The building of instances is a two-step process.
-   * A yasgui configuration is created on first step.
-   * The created instance is patched on second step.
+   * Builds an instance of Yasgui and wraps it in an OntotextYasgui adapter instance.
    *
    * @param hostElement - parent element of yasgui instance.
    * @param yasguiConfiguration - the yasgui configuration merged with the external one.

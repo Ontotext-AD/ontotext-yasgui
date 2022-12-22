@@ -23,16 +23,48 @@ export class ToolbarPageSteps {
         return cy.get('.btn-mode-yasgui');
     }
 
+    static isYasguiModeSelected() {
+        return this.getYasguiModeButton().should('have.class', 'btn-selected');
+    }
+
+    static isYasguiModeDeselected() {
+        return this.getYasguiModeButton().should('not.have.class', 'btn-selected');
+    }
+
     static getYasqeModeButton() {
         return cy.get('.btn-mode-yasqe');
+    }
+
+    static isYasqeModeSelected() {
+        return this.getYasqeModeButton().should('have.class', 'btn-selected');
+    }
+
+    static isYasqeModeDeselected() {
+        return this.getYasqeModeButton().should('not.have.class', 'btn-selected');
     }
 
     static getYasrModeButton() {
         return cy.get('.btn-mode-yasr');
     }
 
+    static isYasrModeSelected() {
+        return this.getYasrModeButton().should('have.class', 'btn-selected');
+    }
+
+    static isYasrModeDeselected() {
+        return this.getYasrModeButton().should('not.have.class', 'btn-selected');
+    }
+
     static getOrientationButton() {
         return cy.get('.btn-orientation');
+    }
+
+    static isVerticalOrientation() {
+        this.getOrientationButton().should('not.have.class', 'icon-rotate-90')
+    }
+
+    static isHorizontalOrientation() {
+        this.getOrientationButton().should('have.class', 'icon-rotate-90')
     }
 
     static switchToModeYasgui() {
