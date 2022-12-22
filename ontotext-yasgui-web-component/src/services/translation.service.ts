@@ -9,7 +9,12 @@ class TranslationServiceDefinition {
   private bundle = {en, fr}
 
   setLanguage(lang: string) {
-    this.currentLang = lang;
+    if (!this.bundle || !this.bundle[this.currentLang]) {
+      console.warn('Missing locale file for [' + this.currentLang + ']');
+      this.currentLang = DEFAULT_LANG;
+    } else {
+      this.currentLang = lang;
+    }
   }
 
   /**
@@ -45,13 +50,7 @@ class TranslationServiceDefinition {
   }
 
   translate(key: string, parameters?: TranslationParameter[]): string {
-    let selectedLang = this.currentLang;
-    if (!this.bundle || !this.bundle[this.currentLang]) {
-      console.warn('Missing locale file for [' + this.currentLang + ']');
-      selectedLang = DEFAULT_LANG;
-    }
-
-    let translation = this.bundle[selectedLang][key];
+    let translation = this.bundle[this.currentLang][key];
     if (!translation) {
       // Fallback to English
       translation = this.bundle[DEFAULT_LANG][key];
@@ -62,7 +61,7 @@ class TranslationServiceDefinition {
       return translation;
     }
 
-    console.warn('Missing translation for [' + key + '] key in [' + selectedLang + '] locale');
+    console.warn('Missing translation for [' + key + '] key in [' + this.currentLang + '] locale');
     return key;
   }
 

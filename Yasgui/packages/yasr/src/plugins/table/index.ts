@@ -61,14 +61,12 @@ export default class Table implements Plugin<PluginConfig> {
   public helpReference = "https://triply.cc/docs/yasgui#table";
   public label = "Table";
   public priority = 10;
-  private readonly translate;
   public getIcon() {
     return drawSvgStringAsElement(drawFontAwesomeIconAsSvg(faTableIcon));
   }
   constructor(yasr: Yasr) {
     this.yasr = yasr;
     //TODO read options from constructor
-    this.translate = this.yasr.config.translate;
     this.config = Table.defaults;
   }
   public static defaults: PluginConfig = {
@@ -350,9 +348,8 @@ export default class Table implements Plugin<PluginConfig> {
     // Create table filter
     this.tableFilterField = document.createElement("input");
     this.tableFilterField.className = "tableFilter";
-    let filterQueryLabel = this.translate("yasr.table.filter");
-    this.tableFilterField.placeholder = filterQueryLabel;
-    this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
+    this.tableFilterField.placeholder = "Filter query results";
+    this.tableFilterField.setAttribute("aria-label", "Filter query results");
     this.tableControls.appendChild(this.tableFilterField);
     this.tableFilterField.addEventListener("keyup", this.handleTableSearch);
 

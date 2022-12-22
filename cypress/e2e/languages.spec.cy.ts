@@ -19,10 +19,6 @@ describe('Languages', () => {
       ToolbarPageSteps.showLayoutOrientationButtonTooltip();
       // Then I expect to see the tooltip to be translated to the default English language.
       cy.contains('Switch to horizontal view');
-      // When I run a query
-      YasqeSteps.executeQuery();
-      // Then I expect yasr to be translated to French.
-      YasrSteps.getResultFilter().invoke('attr', 'placeholder').should('contain', 'Filter query results');
 
       // When change the language to be French
       LanguagesSteps.switchToFr();
@@ -34,20 +30,6 @@ describe('Languages', () => {
       ToolbarPageSteps.showLayoutOrientationButtonTooltip();
       // Then I expect to see the tooltip to be translated to French language.
       cy.contains('Basculer vers horizontal voir');
-
-      // When I run a query
-      YasqeSteps.executeQuery();
-
-      // Then I expect yasr to be translated to French.
-      YasrSteps.getResultFilter().invoke('attr', 'placeholder').should('contain', 'Filtrer les résultats des requêtes');
-
-      // When I open a new Tab
-      YasguiSteps.openANewTab();
-      // And I run a query
-      YasqeSteps.executeQuery();
-
-      // Then I expect yasr to be translated to French.
-      YasrSteps.getResultFilter().invoke('attr', 'placeholder').should('contain', 'Filtrer les résultats des requêtes');
    });
 
    it('Should translate with translation passed as configuration', () => {

@@ -44,7 +44,6 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   requestConfig: YasguiRequestConfig;
   contextMenuContainer: HTMLElement | undefined;
   nonSslDomain?: string;
-  translate: (key: string, _parameters?: Record<string, string>[]) => string;
 }
 export type PartialConfig = {
   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
