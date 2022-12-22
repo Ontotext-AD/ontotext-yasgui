@@ -576,7 +576,6 @@ export interface Config {
   defaultPlugin: string;
 
   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
-  translate: (key: string, _parameters?: Record<string, string>[]) => string;
 
   /**
    * Custom renderers for errors.

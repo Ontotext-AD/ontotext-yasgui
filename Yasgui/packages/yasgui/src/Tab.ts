@@ -451,7 +451,6 @@ export class Tab extends EventEmitter {
     if (yasrConf.getDownloadFileName === undefined) {
       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
     }
-    yasrConf.translate = this.yasgui.config.translate;
 
     this.yasr = new Yasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
 
