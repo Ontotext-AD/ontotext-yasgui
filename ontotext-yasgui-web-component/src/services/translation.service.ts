@@ -32,7 +32,7 @@ class TranslationServiceDefinition {
    *   }
    * }
    */
-  addTranslations(translations: { locale: { key: string, value: string } }) {
+  addTranslations(translations: { locale: Record<string, string> }) {
     Object.keys(translations).forEach((language) => {
       // If is new language add it all
       if (!this.bundle[language]) {

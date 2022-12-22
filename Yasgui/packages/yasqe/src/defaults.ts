@@ -12,7 +12,7 @@ export default function get() {
     (window.location.protocol.indexOf("http") === 0 ? "//" : "http://") + "prefix.cc/popular/all.file.json";
   const CodeMirror = require("codemirror");
   const config: Omit<Config, "requestConfig"> = {
-    translate(key: string, _parameters?: { key: string; value: string }[]): string {
+    translate(key: string, _parameters?: Record<string, string>[]): string {
       return key;
     },
     mode: "sparql11",
