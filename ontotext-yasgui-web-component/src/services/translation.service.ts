@@ -18,7 +18,7 @@ class TranslationServiceDefinition {
   }
 
   /**
-   * Merges external i18e configuration with bundled one.
+   * Merges external i18e  configuration with bundled one.
    * * @param translations - external i18e configuration.
    * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.
    * If pass a new language then all label's values have to be present, otherwise they will be translated to the default English language.
