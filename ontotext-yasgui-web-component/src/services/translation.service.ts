@@ -45,12 +45,6 @@ class TranslationServiceDefinition {
   }
 
   translate(key: string, parameters?: TranslationParameter[]): string {
-    let translation = this.getTranslation(key);
-    translation = this.applyParameters(translation, parameters);
-    return translation ? translation : key;
-  }
-
-  private getTranslation(key: string): string {
     let selectedLang = this.currentLang;
     if (!this.bundle || !this.bundle[this.currentLang]) {
       console.warn('Missing locale file for [' + this.currentLang + ']');
@@ -64,14 +58,16 @@ class TranslationServiceDefinition {
     }
 
     if (translation) {
+      translation = this.applyParameters(translation, parameters);
       return translation;
     }
 
     console.warn('Missing translation for [' + key + '] key in [' + selectedLang + '] locale');
+    return key;
   }
 
   private applyParameters(translation: string, parameters: TranslationParameter[]): string {
-    if (translation && parameters) {
+    if (parameters) {
       return parameters.reduce(
         // replace all occurrence of parameter key with parameter value.
         (translation, parameter) => this.replaceAll(translation, parameter),
