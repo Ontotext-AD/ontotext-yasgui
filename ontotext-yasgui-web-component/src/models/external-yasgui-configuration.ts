@@ -59,7 +59,7 @@ export interface ExternalYasguiConfiguration {
    *   }
    * }
    */
-  i18n?: {locale: {key: string, value: string}};
+  i18n?: {locale: Record<string, string>};
 
   /**
    * The request type.

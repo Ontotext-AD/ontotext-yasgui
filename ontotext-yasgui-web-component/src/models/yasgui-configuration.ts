@@ -48,7 +48,7 @@ export interface YasguiConfiguration {
    *   }
    * }
    */
-  i18n?: {locale: {key: string, value: string}};
+  i18n?: {locale: Record<string, string>};
 
   // ***********************************************************
   //
