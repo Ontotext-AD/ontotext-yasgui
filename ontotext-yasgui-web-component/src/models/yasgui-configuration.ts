@@ -59,7 +59,7 @@ export interface YasguiConfiguration {
   /**
    * The default yasgui config.
    */
-  yasguiConfig: {
+  yasguiConfig?: {
     translate: (key: string, _parameters?: Record<string, string>[]) => string;
     requestConfig: {
       endpoint?: string;
@@ -69,7 +69,7 @@ export interface YasguiConfiguration {
     copyEndpointOnNewTab?: boolean;
   };
 
-  yasqeConfig: {
+  yasqeConfig?: {
     /**
      * Default query when a tab is opened.
      */
@@ -95,3 +95,29 @@ export enum Orientation {
 
 export type Location = Record<string, string>;
 export type Translations = Record<string, Location>;
+
+export const defaultOntotextYasguiConfig: Record<string, any> = {
+  render: RenderingMode.YASGUI,
+  orientation: Orientation.VERTICAL,
+  showEditorTabs: true,
+  showResultTabs: true,
+  showToolbar: false
+}
+
+export const defaultYasguiConfig: Record<string, any> = {
+  copyEndpointOnNewTab: true,
+  endpoint: '',
+  method: 'POST',
+  headers: () => {
+    return {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/sparql-results+json',
+      'X-GraphDB-Local-Consistency': 'updating'
+    };
+  }
+}
+
+export const defaultYasqeConfig: Record<string, any> = {
+  query: '',
+  initialQuery: ''
+}

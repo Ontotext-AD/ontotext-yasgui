@@ -1,7 +1,6 @@
 @import "src/components/yasgui/yasgui.min";
 @import "src/css/variables";
 @import 'src/css/common';
-@import "src/css/visualization";
 @import "src/css/toolbar";
 @import "src/css/icons";
 @import 'src/css/external/tippy';
@@ -10,44 +9,69 @@
   display: block;
 }
 
-.red {
-  color: $color-ontotext-red;
-}
+.yasgui-host-element {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
-@font-face {
-  font-family: 'icomoon';
-  src: url('../../css/fonts/icons.eot?z4jeba');
-  src: url('../../css/fonts/icons.eot?z4jeba#iefix') format('embedded-opentype'),
-  url('../../css/fonts/icons.ttf?z4jeba') format('truetype'),
-  url('../../css/fonts/icons.woff?z4jeba') format('woff'),
-  url('../../css/fonts/icons.svg?z4jeba#icons') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
+  .yasgui {
 
-.yasgui {
+    .autocompleteWrapper {
+      display: none !important;
+    }
 
-  .autocompleteWrapper {
-    display: none !important;
+    .tabContextButton {
+      display: none;
+    }
   }
 
-  .tabContextButton {
-    display: none;
+  &.hidden-editor-tabs {
+
+    .tabsList {
+      display: none;
+    }
   }
-}
 
-.hidden {
-  display: none !important;
-}
+  &.hidden-result-tabs {
 
-.hidden-editor-tabs {
-  .tabsList {
-    display: none;
+    .yasr_header {
+      display: none;
+    }
   }
-}
 
-.hidden-result-tabs {
-  .yasr_header {
-    display: none;
+  &.mode-yasqe {
+
+    .yasgui {
+
+      .yasr {
+        display: none;
+      }
+    }
+  }
+
+  &.mode-yasr {
+
+    .yasgui {
+
+      .tabsList {
+        display: none;
+      }
+
+      .yasqe {
+        display: none;
+      }
+    }
+  }
+
+  &.orientation-horizontal {
+
+    .yasgui {
+      display: grid;
+
+      .tabPanel > div {
+        display: grid;
+        grid-template-columns: 0 1fr 1fr;
+      }
+    }
   }
 }

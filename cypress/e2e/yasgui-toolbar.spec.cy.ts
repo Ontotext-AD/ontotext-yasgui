@@ -10,13 +10,36 @@ describe('Yasgui Toolbar', () => {
         QueryStubs.stubDefaultQueryResponse();
     });
 
-    it.skip('Should be hidden by default', () => {
-        // Given I haven configured the toolbar
-        // When I open a page with the yasgui
-        PageSteps.visitDefaultViewPage();
-        // Then I expect that the toolbar should be hidden
-        // TODO: Seems like cypress always returns true for the visibility check of the toolbar, be it visible or hidden which should be fixed!!!
-        ToolbarPageSteps.getToolbar().should('be.hidden');
+    describe('By default', () => {
+        it('Should be hidden', () => {
+            // Given I haven configured the toolbar visibility
+            // When I open a page with the yasgui
+            PageSteps.visitDefaultViewPage();
+            // Then I expect that the toolbar should be hidden
+            // TODO: Seems like the toolbar is initially visible and cypress sees that before the app to have the chance to hide it!!!
+            // Find a way to remove this wait here.
+            cy.wait(1000);
+            ToolbarPageSteps.getToolbar().should('be.hidden');
+        });
+
+        it('Should render mode-yasgui', () => {
+            // When I visit a page with ontotext-yasgui
+            ToolbarPageSteps.visit();
+            // Then YASQE should be visible
+            YasqeSteps.getYasqe().should('be.visible');
+            // When I execute a query.
+            YasqeSteps.executeQuery();
+            // Then YASR should be visible
+            YasrSteps.getYasr().should('be.visible');
+            // And YASGUI tabs should be visible
+            YasguiSteps.getTabs().should('have.length', 1);
+            // And only yasgui button have to be selected
+            ToolbarPageSteps.isYasqeModeDeselected();
+            ToolbarPageSteps.isYasguiModeSelected();
+            ToolbarPageSteps.isYasrModeDeselected();
+            ToolbarPageSteps.isVerticalOrientation();
+            ToolbarPageSteps.getOrientationButton().should('have.class', 'red');
+        });
     });
 
     it('Should be able to configure the toolbar visibility', () => {
@@ -34,25 +57,6 @@ describe('Yasgui Toolbar', () => {
         ToolbarPageSteps.getToolbar().should('be.visible');
     });
 
-    it('Should render mode-yasgui by default', () => {
-        // When I visit a page with ontotext-yasgui
-        ToolbarPageSteps.visit();
-        // Then YASQE should be visible
-        YasqeSteps.getYasqe().should('be.visible');
-        // When I execute a query.
-        YasqeSteps.executeQuery();
-        // Then YASR should be visible
-        YasrSteps.getYasr().should('be.visible');
-        // And YASGUI tabs should be visible
-        YasguiSteps.getTabs().should('have.length', 1);
-        // And only yasgui button have to be selected
-        ToolbarPageSteps.getYasqeModeButton().should('not.have.class', 'btn-selected');
-        ToolbarPageSteps.getYasguiModeButton().should('have.class', 'btn-selected');
-        ToolbarPageSteps.getYasrModeButton().should('not.have.class', 'btn-selected');
-        ToolbarPageSteps.getOrientationButton().should('not.have.class', 'icon-rotate-90');
-        ToolbarPageSteps.getOrientationButton().should('have.class', 'red');
-    });
-
     it('Should render mode-yasqe', () => {
         ToolbarPageSteps.visit();
         // When I switch to mode-yasqe
@@ -64,9 +68,9 @@ describe('Yasgui Toolbar', () => {
         // And yasr should be not visible
         YasrSteps.getYasr().should('not.be.visible');
         // And only yasqe button have to be selected
-        ToolbarPageSteps.getYasqeModeButton().should('have.class', 'btn-selected');
-        ToolbarPageSteps.getYasguiModeButton().should('not.have.class', 'btn-selected');
-        ToolbarPageSteps.getYasrModeButton().should('not.have.class', 'btn-selected');
+        ToolbarPageSteps.isYasqeModeSelected();
+        ToolbarPageSteps.isYasguiModeDeselected();
+        ToolbarPageSteps.isYasrModeDeselected();
     });
 
     it('Should render mode-yasr', () => {
@@ -78,24 +82,24 @@ describe('Yasgui Toolbar', () => {
         YasguiSteps.getTabs().should('not.be.visible');
         YasrSteps.getYasr().should('be.visible');
         // And only yasr button have to be selected
-        ToolbarPageSteps.getYasqeModeButton().should('not.have.class', 'btn-selected');
-        ToolbarPageSteps.getYasguiModeButton().should('not.have.class', 'btn-selected');
-        ToolbarPageSteps.getYasrModeButton().should('have.class', 'btn-selected');
+        ToolbarPageSteps.isYasqeModeDeselected();
+        ToolbarPageSteps.isYasguiModeDeselected();
+        ToolbarPageSteps.isYasrModeSelected();
     });
 
     it('Should change orientation to horizontal and vertical', () => {
         // When I visit a page with ontotext-yasgui
         ToolbarPageSteps.visit();
         // Then Orientation should be vertical by default
-        ToolbarPageSteps.getYasguiElement().should('have.class', 'orientation-vertical');
+        YasguiSteps.isVerticalOrientation();
         // When I switch orientation to horizontal
         ToolbarPageSteps.toggleOrientation();
         // Then I expect yasqe and yasr to be placed side by side
-        ToolbarPageSteps.getYasguiElement().should('have.class', 'orientation-horizontal');
+        YasguiSteps.isHorizontalOrientation();
         // When I switch to vertical orientation
         ToolbarPageSteps.toggleOrientation();
         // Then I expect yasqe and yasr to be placed on top of each other
-        ToolbarPageSteps.getYasguiElement().should('have.class', 'orientation-vertical');
+        YasguiSteps.isVerticalOrientation();
     });
 
     it('Should show tooltip when mouse enter into orientation button', () => {

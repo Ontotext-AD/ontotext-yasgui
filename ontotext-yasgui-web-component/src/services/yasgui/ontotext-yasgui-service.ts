@@ -26,20 +26,18 @@ class OntotextYasguiServiceDefinition {
   }
 
   private static initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showEditorTabs) {
-      ontotextYasgui.classList.remove('hidden-editor-tabs');
+      hostElement.classList.remove('hidden-editor-tabs');
     } else {
-      ontotextYasgui.classList.add('hidden-editor-tabs');
+      hostElement.classList.add('hidden-editor-tabs');
     }
   }
 
   private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showResultTabs) {
-      ontotextYasgui.classList.remove('hidden-result-tabs');
+      hostElement.classList.remove('hidden-result-tabs');
     } else {
-      ontotextYasgui.classList.add('hidden-result-tabs');
+      hostElement.classList.add('hidden-result-tabs');
     }
   }
 
@@ -49,7 +47,7 @@ class OntotextYasguiServiceDefinition {
 
     // Initialize orientation button styling.
     const orientation = config.orientation;
-    VisualisationUtils.changeOrientation(hostElement, orientation);
+    VisualisationUtils.toggleLayoutOrientationButton(hostElement, orientation);
     if (config.showToolbar) {
       HtmlElementsUtil.getToolbar(hostElement).classList.remove('hidden');
     } else {

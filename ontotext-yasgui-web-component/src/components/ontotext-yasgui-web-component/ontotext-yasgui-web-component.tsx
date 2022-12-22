@@ -10,7 +10,7 @@ import {
   State,
   Watch
 } from '@stencil/core';
-import {RenderingMode} from '../../models/yasgui-configuration';
+import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -97,7 +97,7 @@ export class OntotextYasguiWebComponent {
    */
   queryDuration = 0;
 
-  @State() orientationButtonTooltip;
+  @State() isVerticalOrientation = true;
 
   @Watch('config')
   configurationChanged(newConfig: ExternalYasguiConfiguration) {
@@ -138,7 +138,6 @@ export class OntotextYasguiWebComponent {
     // will be most case of the component usage. So we call the method manually when component is
     // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
     this.init(this.config);
-    this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
   }
 
   disconnectedCallback() {
@@ -146,8 +145,11 @@ export class OntotextYasguiWebComponent {
   }
 
   render() {
+    const orientation = this.config.orientation || defaultOntotextYasguiConfig.orientation;
+    const render = this.config.render || defaultOntotextYasguiConfig.render;
+    const classList = `yasgui-host-element ${orientation} ${render}`;
     return (
-      <Host class="yasgui-host-element">
+      <Host class={classList}>
         <div class="yasgui-toolbar">
           <button class="yasgui-btn btn-mode-yasqe"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
@@ -161,13 +163,15 @@ export class OntotextYasguiWebComponent {
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>
             {this.translationService.translate('btn.mode-yasr')}
           </button>
-          <yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left"
-                          show-on-click={true}>
+          <yasgui-tooltip
+            data-tooltip={this.isVerticalOrientation ? 'Switch to horizontal view' : 'Switch to vertical view'}
+            placement="left"
+            show-on-click={true}>
             <button class="btn-orientation icon-columns red"
-                    onClick={() => this.changeOrientation()}> </button>
+                    onClick={() => this.changeOrientation()}>&nbsp;</button>
           </yasgui-tooltip>
         </div>
-        <div class="ontotext-yasgui"> </div>
+        <div class="ontotext-yasgui">&nbsp;</div>
       </Host>
     );
   }
@@ -181,13 +185,16 @@ export class OntotextYasguiWebComponent {
 
     // @ts-ignore
     if (window.Yasgui) {
-      // 1. Build the internal yasgui configuration using the provided external configuration
+      // * Build the internal yasgui configuration using the provided external configuration
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
-      // 2. Build a yasgui instance using the configuration
+
+      // * Build a yasgui instance using the configuration
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-      // 3. Configure the web component
+
+      // * Configure the web component
       this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
-      // 4. Register any needed event handler
+
+      // * Register any needed event handler
       this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
       this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
     }
@@ -201,8 +208,8 @@ export class OntotextYasguiWebComponent {
   }
 
   private changeOrientation() {
-    VisualisationUtils.toggleOrientation(this.hostElement);
-    this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
+    this.isVerticalOrientation = !this.isVerticalOrientation;
+    VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation);
   }
 
   private onQuery(): void {

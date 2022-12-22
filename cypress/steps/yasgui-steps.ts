@@ -1,6 +1,6 @@
 export class YasguiSteps {
     static getYasguiTag() {
-        return cy.get('.ontotext-yasgui');
+        return cy.get('ontotext-yasgui');
     }
 
     static getYasgui() {
@@ -13,5 +13,13 @@ export class YasguiSteps {
 
     static openANewTab() {
         cy.get('button.addTab').click();
+    }
+
+    static isVerticalOrientation() {
+        this.getYasguiTag().should('have.class', 'orientation-vertical');
+    }
+
+    static isHorizontalOrientation() {
+        this.getYasguiTag().should('have.class', 'orientation-horizontal');
     }
 }
