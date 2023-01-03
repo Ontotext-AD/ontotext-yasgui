@@ -1,9 +1,6 @@
 import {LanguagesSteps} from '../steps/languages-steps';
 import {ToolbarPageSteps} from '../steps/toolbar-page-steps';
 import {QueryStubs} from '../stubs/query-stubs';
-import {YasqeSteps} from '../steps/yasqe-steps';
-import {YasrSteps} from '../steps/yasr-steps';
-import {YasguiSteps} from '../steps/yasgui-steps';
 
 describe('Languages', () => {
 
