@@ -1,6 +1,7 @@
 import en from '../i18n/locale-en.json'
 import fr from '../i18n/locale-fr.json'
 import {DEFAULT_LANG} from '../configurations/constants';
+import {Translations} from '../models/yasgui-configuration';
 
 class TranslationServiceDefinition {
 
@@ -37,7 +38,7 @@ class TranslationServiceDefinition {
    *   }
    * }
    */
-  addTranslations(translations: { locale: Record<string, string> }) {
+  addTranslations(translations: Translations) {
     Object.keys(translations).forEach((language) => {
       // If is new language add it all
       if (!this.bundle[language]) {

@@ -48,7 +48,7 @@ export interface YasguiConfiguration {
    *   }
    * }
    */
-  i18n?: {locale: Record<string, string>};
+  i18n?: Translations;
 
   // ***********************************************************
   //
@@ -92,3 +92,6 @@ export enum Orientation {
   VERTICAL = 'orientation-vertical',
   HORIZONTAL = 'orientation-horizontal'
 }
+
+export type Location = Record<string, string>;
+export type Translations = Record<string, Location>;

@@ -1,3 +1,5 @@
+import {Translations} from './yasgui-configuration';
+
 export interface ExternalYasguiConfiguration {
   // ***********************************************************
   //
@@ -59,7 +61,7 @@ export interface ExternalYasguiConfiguration {
    *   }
    * }
    */
-  i18n?: {locale: Record<string, string>};
+  i18n?: Translations;
 
   /**
    * The request type.
