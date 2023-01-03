@@ -69,14 +69,15 @@ export interface YasguiConfiguration {
       headers?: () => Record<string, string>;
     },
     copyEndpointOnNewTab?: boolean;
+    yasqe?: {
+      /**
+       * Default query when a tab is opened.
+       */
+      value?: string;
+    }
   };
 
   yasqeConfig?: {
-    /**
-     * Default query when a tab is opened.
-     */
-    query?: string;
-
     /**
      * Initial query when yasgui is rendered if not set the default query will be set.
      */
