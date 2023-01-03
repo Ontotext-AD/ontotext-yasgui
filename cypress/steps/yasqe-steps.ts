@@ -12,7 +12,7 @@ export class YasqeSteps {
     }
 
     static getExecuteQueryButton() {
-        return cy.get('.yasqe_queryButton:visible');
+        return cy.get('.yasqe_queryButton');
     }
 
     static executeQuery() {
