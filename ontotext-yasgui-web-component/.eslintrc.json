@@ -5,8 +5,7 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "google"
+    "plugin:@typescript-eslint/recommended"
   ],
   "overrides": [
   ],
