@@ -60,7 +60,7 @@ export interface YasguiConfiguration {
    * The default yasgui config.
    */
   yasguiConfig: {
-    translate: (key: string, _parameters?: { key: string; value: string }[]) => string;
+    translate: (key: string, _parameters?: Record<string, string>[]) => string;
     requestConfig: {
       endpoint?: string;
       method?: 'POST' | 'GET';
