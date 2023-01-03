@@ -1,3 +1,5 @@
+import {TranslationService} from '../services/translation.service';
+
 export interface YasguiConfiguration {
   // ***********************************************************
   //
@@ -105,6 +107,7 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
 }
 
 export const defaultYasguiConfig: Record<string, any> = {
+  translate: (key, parameters) => TranslationService.translate(key, parameters),
   copyEndpointOnNewTab: true,
   endpoint: '',
   method: 'POST',
@@ -118,6 +121,6 @@ export const defaultYasguiConfig: Record<string, any> = {
 }
 
 export const defaultYasqeConfig: Record<string, any> = {
-  query: '',
+  query: 'select * where {  ?s ?p ?o . } limit 100',
   initialQuery: ''
 }

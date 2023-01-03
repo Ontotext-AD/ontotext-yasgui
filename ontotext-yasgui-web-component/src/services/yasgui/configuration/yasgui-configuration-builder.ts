@@ -5,7 +5,6 @@ import {
   YasguiConfiguration
 } from '../../../models/yasgui-configuration';
 import {ExternalYasguiConfiguration} from "../../../models/external-yasgui-configuration";
-import {TranslationService} from '../../translation.service';
 
 /**
  * Builder for yasgui configuration.
@@ -29,7 +28,7 @@ class YasguiConfigurationBuilderDefinition {
 
     // prepare the yasgui config
     config.yasguiConfig = {
-      translate: this.defaultYasguiConfig.translate,
+      translate: defaultYasguiConfig.translate,
       requestConfig: {}
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
