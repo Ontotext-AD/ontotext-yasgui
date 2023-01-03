@@ -29,16 +29,17 @@ class YasguiConfigurationBuilderDefinition {
     // prepare the yasgui config
     config.yasguiConfig = {
       translate: defaultYasguiConfig.translate,
-      requestConfig: {}
+      requestConfig: {},
+      yasqe: {}
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
+    config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
 
     // prepare the yasqe config
     config.yasqeConfig = {};
-    config.yasqeConfig.query = externalConfiguration.query || defaultYasqeConfig.query;
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
 
     // prepare the yasr config

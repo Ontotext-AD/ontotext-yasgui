@@ -67,7 +67,7 @@ describe('View configurations', () => {
       YasqeSteps.getEditor().contains('initial_query');
    });
 
-   it.skip('Should set default query', () => {
+   it('Should set default query', () => {
       // GIVEN: "view-configurations" page is visited.
 
       // WHEN: set 'default_query' value to configuration "query".

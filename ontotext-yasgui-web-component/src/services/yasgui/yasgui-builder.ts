@@ -18,12 +18,6 @@ class YasguiBuilderDefinition {
     // @ts-ignore
     const yasgui = new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfiguration.yasguiConfig);
 
-    // @ts-ignore
-    if (yasguiConfiguration.yasqeConfig.query && window.Yasgui) {
-      // @ts-ignore
-      window.Yasgui.Yasqe.defaults.value = yasguiConfiguration.yasqeConfig.query;
-    }
-
     // monkey patches have to be applied before return yasgui.
     return new OntotextYasgui(yasgui, yasguiConfiguration);
   }
