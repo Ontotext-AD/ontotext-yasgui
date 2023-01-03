@@ -107,7 +107,6 @@ export class OntotextYasguiWebComponent {
   @Watch('language')
   languageChanged(newLang: string) {
     this.translationService.setLanguage(newLang);
-    this.orientationButtonTooltip = this.fetchButtonOrientationTooltip();
     this.ontotextYasgui.refresh();
   }
 
@@ -148,6 +147,7 @@ export class OntotextYasguiWebComponent {
     const orientation = this.config.orientation || defaultOntotextYasguiConfig.orientation;
     const render = this.config.render || defaultOntotextYasguiConfig.render;
     const classList = `yasgui-host-element ${orientation} ${render}`;
+    const orientationTooltip = this.resolveOrientationButtonTooltip();
     return (
       <Host class={classList}>
         <div class="yasgui-toolbar">
@@ -164,7 +164,7 @@ export class OntotextYasguiWebComponent {
             {this.translationService.translate('btn.mode-yasr')}
           </button>
           <yasgui-tooltip
-            data-tooltip={this.isVerticalOrientation ? 'Switch to horizontal view' : 'Switch to vertical view'}
+            data-tooltip={orientationTooltip}
             placement="left"
             show-on-click={true}>
             <button class="btn-orientation icon-columns red"
@@ -200,11 +200,10 @@ export class OntotextYasguiWebComponent {
     }
   }
 
-  private fetchButtonOrientationTooltip(): string {
-    if (VisualisationUtils.isOrientationVertical(this.hostElement)) {
-      return this.translationService.translate("tooltip.switch.orientation.horizontal");
-    }
-    return this.translationService.translate("tooltip.switch.orientation.vertical");
+  private resolveOrientationButtonTooltip(): string {
+    return this.isVerticalOrientation ?
+      this.translationService.translate("tooltip.switch.orientation.horizontal") :
+      this.translationService.translate("tooltip.switch.orientation.vertical");
   }
 
   private changeOrientation() {

@@ -23,12 +23,12 @@ export class VisualisationUtils {
   }
 
   static toggleLayoutOrientation(hostElement: HTMLElement, isVerticalOrientation: boolean): void {
-    const newOrienation = isVerticalOrientation ? Orientation.VERTICAL : Orientation.HORIZONTAL;
+    const newOrientation = isVerticalOrientation ? Orientation.VERTICAL : Orientation.HORIZONTAL;
     const orientations: string[] = Object.values(Orientation);
     hostElement.classList.remove(...orientations);
-    hostElement.classList.add(newOrienation);
+    hostElement.classList.add(newOrientation);
 
-    VisualisationUtils.toggleLayoutOrientationButton(hostElement, newOrienation);
+    VisualisationUtils.toggleLayoutOrientationButton(hostElement, newOrientation);
   }
 
   /**
