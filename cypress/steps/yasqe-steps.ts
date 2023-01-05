@@ -18,4 +18,64 @@ export class YasqeSteps {
     static executeQuery() {
         this.getExecuteQueryButton().click();
     }
+
+    static getCreateSavedQueryButton() {
+        return cy.get('.yasqe_createSavedQueryButton');
+    }
+
+    static createSavedQuery() {
+        this.getCreateSavedQueryButton().click();
+    }
+
+    static getSaveQueryDialog() {
+        return cy.get('.dialog');
+    }
+
+    static closeSaveQueryDialog() {
+        this.getSaveQueryDialog().find('.close-button').click();
+    }
+
+    static cancelSaveQuery() {
+        this.getSaveQueryDialog().find('.cancel-button').click();
+    }
+
+    static getSaveQueryButton() {
+        return this.getSaveQueryDialog().find('.ok-button');
+    }
+
+    static saveQuery() {
+        this.getSaveQueryButton().click();
+    }
+
+    static getQueryField() {
+        return this.getSaveQueryDialog().find('#query');
+    }
+
+    static writeQuery(query: string) {
+        this.getQueryField().type(query, {parseSpecialCharSequences: false});
+    }
+
+    static clearQueryField() {
+        this.getQueryField().clear();
+    }
+
+    static getQueryFieldError() {
+        return this.getSaveQueryDialog().find('.query-field .alert-danger');
+    }
+
+    static getQueryNameField() {
+        return this.getSaveQueryDialog().find('#queryName');
+    }
+
+    static writeQueryName(queryName: string) {
+        this.getQueryNameField().type(queryName);
+    }
+
+    static clearQueryNameField() {
+        this.getQueryNameField().clear();
+    }
+
+    static toggleIsPublic() {
+        this.getSaveQueryDialog().find('#publicQuery').click();
+    }
 }

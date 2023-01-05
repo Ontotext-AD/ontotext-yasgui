@@ -78,7 +78,105 @@ yasgui-tooltip tag have to wrap the element to which tooltip have to be appeared
 - <b>placement</b>: where tooltip to be appeared. default is top:
 - <b>show-on-click</b>: if tooltip have to be shown when wrapped element is clicked. Default behaviour is when mouse is over the element.
 
+# Services
 
-# Usefull References
+Services are just plain javascript classes.
+
+Services should be implemented as singletons. For example:
+
+```javascript
+export class YasqeService {
+  private static _instance: YasqeService;
+  
+  static get Instance(): YasqeService {
+    if (!this._instance) {
+      this._instance = new YasqeService();
+    }
+    return this._instance;
+  }
+}
+```
+
+And injecting it like this:
+
+```javascript
+export class SomeComponentOrService {
+  private yasqeService: YasqeService;
+
+  constructor() {
+    this.yasqeService = YasqeService.Instance;
+  } 
+}
+```
+
+# Custom YASQE actions
+
+YASQE editor exposes an extension point
+
+```
+yasqe.pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
+```
+
+which allows custom action buttons to be plugged in the editor. This component employs the extension point and plugs in a couple of buttons
+implementing actions like: save query, load saved queries, expand query results, etc.
+
+Custom action buttons can be plugged in by providing a `PluginButtonDefinition` to the `yasqePluginButtons` config on the component client.
+
+```
+{
+  yasqePluginButtons: [
+    {
+      name: 'createSavedQuery',
+      visible: true
+    }
+  ]
+}
+```
+
+If the plugin button has implementation in the component, then it will be added in the editor toolbar during the initialization.
+If any action button has to be hidden, then pass `visible: false` in the plugin definition.
+
+The plugin buttons have following example implementation:
+
+```javascript
+const createSavedQueryButton = document.createElement("button");
+createSavedQueryButton.className = "yasqe_createSavedQueryButton custom-button icon-save";
+createSavedQueryButton.title = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
+createSavedQueryButton.setAttribute("aria-label", this.translationService.translate('yasqe.actions.save_query.button.tooltip'));
+createSavedQueryButton.addEventListener("click",
+  () => this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent()));
+```
+
+## Recommendations for implementing custom action buttons
+
+* Buttons are implemented in TODO:
+* Every button must have as a minimum following css class names:
+  * `yasqe_[actionName]Button` - unique class name to identify the button
+  * `custom-button` - a marker class used for generic buttons styling in the editor
+  * `icon-save` - an icon as font applied with a css class (see: ontotext-yasgui-web-component/src/css/_icons.scss)
+* Every button must have a title and aria-label. The title must be translated in all supported languages.
+* In the button's click handler can be emitted a named internal event through the `EventService` if necessary. This event can be 
+  handled in the web component and eventually propagated further to the outside world.
+  
+# Internal events
+
+Events emitted by some child component or service are considered internal if they are not propagated to outside world.
+
+> Any internal event must be prefixed with `internal`, e.g. `internalSaveQueryEvent`.
+
+If an event should be fired by a service class, then it's recommended the `EventService` to be used due
+to a bug in the stencil core which prevents using the builtin event emitter.
+
+```javascript
+export class ServiceName {
+  private eventService: EventService;
+  
+  serviceMethod() {
+    this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent())
+  }
+}
+```
+
+# Useful References
 1. [State Management with State Tunnel in StencilJS](https://www.joshmorony.com/state-management-with-state-tunnel-in-stencil-js/)
 2. [Using Services/Providers to Share Data in a StencilJS Application](https://www.joshmorony.com/using-services-providers-to-share-data-in-a-stencil-js-application/)

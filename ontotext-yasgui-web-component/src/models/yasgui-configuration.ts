@@ -74,6 +74,7 @@ export interface YasguiConfiguration {
        * Default query when a tab is opened.
        */
       value?: string;
+      pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
     }
   };
 
@@ -108,7 +109,7 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
 }
 
 export const defaultYasguiConfig: Record<string, any> = {
-  translate: (key, parameters) => TranslationService.translate(key, parameters),
+  translate: (key, parameters) => TranslationService.Instance.translate(key, parameters),
   copyEndpointOnNewTab: true,
   endpoint: '',
   method: 'POST',
@@ -123,5 +124,8 @@ export const defaultYasguiConfig: Record<string, any> = {
 
 export const defaultYasqeConfig: Record<string, any> = {
   query: 'select * where {  ?s ?p ?o . } limit 100',
-  initialQuery: ''
+  initialQuery: '',
+  yasqePluginButtons: [
+    {name: 'createSavedQuery', visible: true}
+  ]
 }

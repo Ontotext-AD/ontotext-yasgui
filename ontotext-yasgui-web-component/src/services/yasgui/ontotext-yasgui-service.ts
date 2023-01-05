@@ -5,10 +5,10 @@ import {TranslationService} from '../translation.service';
 
 class OntotextYasguiServiceDefinition {
 
-  private static translationService: typeof TranslationService;
+  private static translationService: TranslationService;
 
   constructor() {
-    OntotextYasguiServiceDefinition.translationService = TranslationService;
+    OntotextYasguiServiceDefinition.translationService = TranslationService.Instance;
   }
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {

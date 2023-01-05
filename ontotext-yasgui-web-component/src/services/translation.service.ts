@@ -3,11 +3,19 @@ import fr from '../i18n/locale-fr.json'
 import {DEFAULT_LANG} from '../configurations/constants';
 import {Translations} from '../models/yasgui-configuration';
 
-class TranslationServiceDefinition {
+export class TranslationService {
+  private static _instance: TranslationService;
 
   private currentLang = DEFAULT_LANG;
 
   private bundle = {en, fr}
+
+  static get Instance(): TranslationService {
+    if (!this._instance) {
+      this._instance = new TranslationService();
+    }
+    return this._instance;
+  }
 
   setLanguage(lang: string) {
     if (!this.bundle || !this.bundle[this.currentLang]) {
@@ -80,8 +88,6 @@ class TranslationServiceDefinition {
     return parameter ? translation.split(`{{${parameter.key}}}`).join(parameter.value) : translation;
   }
 }
-
-export const TranslationService = new TranslationServiceDefinition();
 
 interface TranslationParameter {
   key: string;
