@@ -8,7 +8,7 @@ describe('Execute query action', () => {
         QueryStubs.stubDefaultQueryResponse();
     });
 
-    it('Should be to execute a query', () => {
+    it('Should be able to execute a query', () => {
         ActionsPageSteps.visit();
         YasqeSteps.getExecuteQueryButton().should('be.visible');
         YasqeSteps.executeQuery();

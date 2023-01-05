@@ -5,6 +5,7 @@ import {
   EventEmitter,
   h,
   Host,
+  Listen,
   Method,
   Prop,
   State,
@@ -19,9 +20,12 @@ import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
-import {YasguiConfigurationBuilder} from "../../services/yasgui/configuration/yasgui-configuration-builder";
+import {YasguiConfigurationBuilderDefinition} from "../../services/yasgui/configuration/yasgui-configuration-builder";
 import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
 import {TranslationService} from '../../services/translation.service';
+import {EventService} from "../../services/event-service";
+import {SaveQueryData} from "../../models/model";
+import {YasqeService} from "../../services/yasqe/yasqe-service";
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -54,8 +58,28 @@ type EventArguments = [Yasqe, Request, number];
 export class OntotextYasguiWebComponent {
   private yasguiBuilder: typeof YasguiBuilder;
   private ontotextYasguiService: typeof OntotextYasguiService;
-  private yasguiConfigurationBuilder: typeof YasguiConfigurationBuilder;
-  private translationService: typeof TranslationService;
+  private yasguiConfigurationBuilder: YasguiConfigurationBuilderDefinition;
+  private translationService: TranslationService;
+
+  constructor() {
+    const eventService = EventService.Instance;
+    eventService.hostElement = this.hostElement;
+
+    this.translationService = TranslationService.Instance;
+
+    this.yasguiBuilder = YasguiBuilder;
+
+    this.ontotextYasguiService = OntotextYasguiService;
+
+    const yasqeService = YasqeService.Instance;
+    yasqeService.eventService = eventService;
+    yasqeService.translationService = this.translationService;
+    yasqeService.init();
+
+    this.yasguiConfigurationBuilder = YasguiConfigurationBuilderDefinition.Instance;
+    this.yasguiConfigurationBuilder.eventService = eventService;
+    this.yasguiConfigurationBuilder.yasqeService = yasqeService;
+  }
 
   /**
    * The host html element for the yasgui.
@@ -81,6 +105,12 @@ export class OntotextYasguiWebComponent {
    * Event emitted when after query response is returned.
    */
   @Event() queryResponse: EventEmitter<QueryResponseEvent>;
+
+  /**
+   * Event emitted when saved query payload is collected and the query should be saved by the
+   * component client.
+   */
+  @Event() createSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -116,11 +146,46 @@ export class OntotextYasguiWebComponent {
     return Promise.resolve();
   }
 
-  constructor() {
-    this.yasguiBuilder = YasguiBuilder;
-    this.ontotextYasguiService = OntotextYasguiService;
-    this.yasguiConfigurationBuilder = YasguiConfigurationBuilder;
-    this.translationService = TranslationService;
+  /**
+   * Flag controlling the visibility of the save query dialog.
+   */
+  @State() showSaveQueryDialog = false;
+
+  /**
+   * The data for the new saved query. The save query dialog binds to this field.
+   */
+  saveQueryData: SaveQueryData;
+
+  /**
+   * Handler for the event fired when the button in the yasqe is triggered.
+   */
+  @Listen('internalCreateSavedQueryEvent')
+  saveQueryHandler() {
+    const queryName = this.ontotextYasgui.getInstance().getTab().getName();
+    const query = this.ontotextYasgui.getInstance().getTab().getQuery();
+    this.showSaveQueryDialog = true;
+    this.saveQueryData = {
+      queryName,
+      query,
+      isPublic: false
+    };
+  }
+
+  /**
+   * Handler for the event fired when the query should be saved by the component client.
+   */
+  @Listen('internalSaveQueryEvent')
+  createSavedQueryHandler(event: CustomEvent<SaveQueryData>) {
+    this.showSaveQueryDialog = false;
+    this.createSavedQuery.emit(event.detail);
+  }
+
+  /**
+   * Handler for the event fired when the saveQueryDialog gets closed.
+   */
+  @Listen('internalSaveQueryDialogClosedEvent')
+  closeSaveDialogHandler() {
+    this.showSaveQueryDialog = false;
   }
 
   componentWillLoad() {
@@ -141,39 +206,6 @@ export class OntotextYasguiWebComponent {
 
   disconnectedCallback() {
     this.destroy();
-  }
-
-  render() {
-    const orientation = this.config.orientation || defaultOntotextYasguiConfig.orientation;
-    const render = this.config.render || defaultOntotextYasguiConfig.render;
-    const classList = `yasgui-host-element ${orientation} ${render}`;
-    const orientationTooltip = this.resolveOrientationButtonTooltip();
-    return (
-      <Host class={classList}>
-        <div class="yasgui-toolbar">
-          <button class="yasgui-btn btn-mode-yasqe"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
-            {this.translationService.translate('btn.mode-yasqe')}
-          </button>
-          <button class="yasgui-btn btn-mode-yasgui"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>
-            {this.translationService.translate('btn.mode-yasgui')}
-          </button>
-          <button class="yasgui-btn btn-mode-yasr"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>
-            {this.translationService.translate('btn.mode-yasr')}
-          </button>
-          <yasgui-tooltip
-            data-tooltip={orientationTooltip}
-            placement="left"
-            show-on-click={true}>
-            <button class="btn-orientation icon-columns red"
-                    onClick={() => this.changeOrientation()}>&nbsp;</button>
-          </yasgui-tooltip>
-        </div>
-        <div class="ontotext-yasgui">&nbsp;</div>
-      </Host>
-    );
   }
 
   private init(externalConfiguration: ExternalYasguiConfiguration) {
@@ -230,5 +262,40 @@ export class OntotextYasguiWebComponent {
         yasgui.firstChild.remove();
       }
     }
+  }
+
+  render() {
+    const orientation = this.config.orientation || defaultOntotextYasguiConfig.orientation;
+    const render = this.config.render || defaultOntotextYasguiConfig.render;
+    const classList = `yasgui-host-element ${orientation} ${render}`;
+    const orientationTooltip = this.resolveOrientationButtonTooltip();
+    return (
+      <Host class={classList}>
+        <div class="yasgui-toolbar">
+          <button class="yasgui-btn btn-mode-yasqe"
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
+            {this.translationService.translate('btn.mode-yasqe')}
+          </button>
+          <button class="yasgui-btn btn-mode-yasgui"
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>
+            {this.translationService.translate('btn.mode-yasgui')}
+          </button>
+          <button class="yasgui-btn btn-mode-yasr"
+                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>
+            {this.translationService.translate('btn.mode-yasr')}
+          </button>
+          <yasgui-tooltip
+            data-tooltip={orientationTooltip}
+            placement="left"
+            show-on-click={true}>
+            <button class="btn-orientation icon-columns red"
+                    onClick={() => this.changeOrientation()}>&nbsp;</button>
+          </yasgui-tooltip>
+        </div>
+        <div class="ontotext-yasgui">&nbsp;</div>
+
+        {this.showSaveQueryDialog && <save-query-dialog data={this.saveQueryData}>&nbsp;</save-query-dialog>}
+      </Host>
+    );
   }
 }

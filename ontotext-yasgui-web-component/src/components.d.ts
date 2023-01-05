@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
+import { SaveQueryData } from "./models/model";
 export namespace Components {
     interface OntotextYasgui {
         /**
@@ -19,6 +20,12 @@ export namespace Components {
         "language": string;
         "setQuery": (query: string) => Promise<void>;
     }
+    interface SaveQueryDialog {
+        /**
+          * Input holding the saved query data if available. This data is used to initialize the form.
+         */
+        "data": SaveQueryData;
+    }
     interface YasguiTooltip {
         "dataTooltip": string;
         "placement": string;
@@ -29,12 +36,22 @@ export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextYasguiElement;
 }
+export interface SaveQueryDialogCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLSaveQueryDialogElement;
+}
 declare global {
     interface HTMLOntotextYasguiElement extends Components.OntotextYasgui, HTMLStencilElement {
     }
     var HTMLOntotextYasguiElement: {
         prototype: HTMLOntotextYasguiElement;
         new (): HTMLOntotextYasguiElement;
+    };
+    interface HTMLSaveQueryDialogElement extends Components.SaveQueryDialog, HTMLStencilElement {
+    }
+    var HTMLSaveQueryDialogElement: {
+        prototype: HTMLSaveQueryDialogElement;
+        new (): HTMLSaveQueryDialogElement;
     };
     interface HTMLYasguiTooltipElement extends Components.YasguiTooltip, HTMLStencilElement {
     }
@@ -44,6 +61,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ontotext-yasgui": HTMLOntotextYasguiElement;
+        "save-query-dialog": HTMLSaveQueryDialogElement;
         "yasgui-tooltip": HTMLYasguiTooltipElement;
     }
 }
@@ -58,6 +76,10 @@ declare namespace LocalJSX {
          */
         "language"?: string;
         /**
+          * Event emitted when saved query payload is collected and the query should be saved by the component client.
+         */
+        "onCreateSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
+        /**
           * Event emitted when before query to be executed.
          */
         "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<QueryEvent>) => void;
@@ -66,6 +88,20 @@ declare namespace LocalJSX {
          */
         "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
     }
+    interface SaveQueryDialog {
+        /**
+          * Input holding the saved query data if available. This data is used to initialize the form.
+         */
+        "data"?: SaveQueryData;
+        /**
+          * Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button.
+         */
+        "onInternalSaveQueryDialogClosedEvent"?: (event: SaveQueryDialogCustomEvent<any>) => void;
+        /**
+          * Event fired when the create button in the dialog is triggered. The event payload holds the new saved query data.
+         */
+        "onInternalSaveQueryEvent"?: (event: SaveQueryDialogCustomEvent<SaveQueryData>) => void;
+    }
     interface YasguiTooltip {
         "dataTooltip"?: string;
         "placement"?: string;
@@ -73,6 +109,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "ontotext-yasgui": OntotextYasgui;
+        "save-query-dialog": SaveQueryDialog;
         "yasgui-tooltip": YasguiTooltip;
     }
 }
@@ -81,6 +118,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
+            "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "yasgui-tooltip": LocalJSX.YasguiTooltip & JSXBase.HTMLAttributes<HTMLYasguiTooltipElement>;
         }
     }

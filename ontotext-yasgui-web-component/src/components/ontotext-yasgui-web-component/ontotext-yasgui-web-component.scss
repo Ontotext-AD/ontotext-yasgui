@@ -23,6 +23,29 @@
     .tabContextButton {
       display: none;
     }
+
+    .yasqe {
+
+      .yasqe_buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .custom-button {
+          border: none;
+          background-color: #fff;
+          color: $color-ontotext-orange;
+          font-size: 2.5em;
+          cursor: pointer;
+          transition: all .15s ease-out;
+
+          &:hover {
+            color: $color-ontotext-orange-dark;
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
   }
 
   &.hidden-editor-tabs {

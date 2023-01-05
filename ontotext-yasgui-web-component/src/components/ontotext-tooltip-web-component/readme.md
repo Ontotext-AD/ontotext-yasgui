@@ -19,11 +19,13 @@
 ### Used by
 
  - [ontotext-yasgui](../ontotext-yasgui-web-component)
+ - [save-query-dialog](../save-query-dialog)
 
 ### Graph
 ```mermaid
 graph TD;
   ontotext-yasgui --> yasgui-tooltip
+  save-query-dialog --> yasgui-tooltip
   style yasgui-tooltip fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -1,0 +1,113 @@
+import {YasqeSteps} from "../../steps/yasqe-steps";
+import {QueryStubs} from "../../stubs/query-stubs";
+import ActionsPageSteps from "../../steps/actions-page-steps";
+
+describe('Save query action', () => {
+    beforeEach(() => {
+        QueryStubs.stubDefaultQueryResponse();
+        // Given I have opened a page with the yasgui
+        // And there is an open tab with sparql query in it
+        ActionsPageSteps.visit();
+    });
+
+    it('Should be able to open and close the save query dialog', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // Then I should see the save query dialog
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        // When I close the dialog
+        YasqeSteps.closeSaveQueryDialog();
+        // Then save query dialog should hide
+        YasqeSteps.getSaveQueryDialog().should('not.exist');
+    });
+
+    it('Should be able to cancel the save query operation', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // Then I should see the save query dialog
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        // When I cancel operation
+        YasqeSteps.cancelSaveQuery();
+        // Then save query dialog should hide
+        YasqeSteps.getSaveQueryDialog().should('not.exist');
+    });
+
+    it('Should not allow saving with missing query', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // Then save query dialog opens
+        // And the create query button should be enabled
+        YasqeSteps.getSaveQueryButton().should('be.enabled');
+        // When I clear the query field
+        YasqeSteps.clearQueryField();
+        // Then create query button should become disabled
+        YasqeSteps.getSaveQueryButton().should('be.disabled');
+        // And there should be an error message
+        YasqeSteps.getQueryFieldError().should('be.visible');
+        // And the field should be invalid
+        YasqeSteps.getQueryField().should('have.class', 'invalid');
+        // When I write a query
+        YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100');
+        // Then the field should become valid
+        YasqeSteps.getSaveQueryButton().should('be.enabled');
+        YasqeSteps.getQueryFieldError().should('not.exist');
+        YasqeSteps.getQueryField().should('not.have.class', 'invalid');
+    });
+
+    it('Should not allow saving with missing query name', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // Then save query dialog opens
+        // And the create query button should be enabled
+        YasqeSteps.getSaveQueryButton().should('be.enabled');
+        // When I clear the query name field
+        YasqeSteps.clearQueryNameField();
+        // Then create query button should become disabled
+        YasqeSteps.getSaveQueryButton().should('be.disabled');
+        // And the field should be invalid
+        YasqeSteps.getQueryNameField().should('have.class', 'invalid');
+        // When I write a query name
+        YasqeSteps.writeQueryName('saved query');
+        // Then the field should become valid
+        YasqeSteps.getSaveQueryButton().should('be.enabled');
+        YasqeSteps.getQueryNameField().should('not.have.class', 'invalid');
+    });
+
+    it('Should be able to save private query', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // And the query name should be same as the tab name
+        YasqeSteps.getQueryNameField().should('have.value', 'Query');
+        // And the query should be same as the one in the current tab
+        YasqeSteps.getQueryField().should('have.value', 'select * where {  ?s ?p ?o . } limit 100');
+        // And I click on save button
+        YasqeSteps.saveQuery();
+        // Then the dialog is closed
+        YasqeSteps.getSaveQueryDialog().should('not.exist');
+        // And query is saved
+        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"Query","query":"select * where {  ?s ?p ?o . } limit 100","isPublic":false}');
+    });
+
+    it('Should be able to edit query and save it', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // When I change the query and query name
+        YasqeSteps.clearQueryNameField();
+        YasqeSteps.writeQueryName('new query');
+        YasqeSteps.clearQueryField();
+        YasqeSteps.writeQuery('select *');
+        YasqeSteps.toggleIsPublic();
+        // And I click on save button
+        YasqeSteps.saveQuery();
+        // Then the dialog is closed
+        YasqeSteps.getSaveQueryDialog().should('not.exist');
+        // And query is saved
+        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"new query","query":"select *","isPublic":true}');
+    });
+});
