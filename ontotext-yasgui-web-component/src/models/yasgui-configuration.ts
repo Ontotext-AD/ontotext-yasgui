@@ -33,20 +33,25 @@ export interface YasguiConfiguration {
   showToolbar?: boolean;
 
   /**
+   * If the control bar should be rendered or not.
+   */
+  showControlBar?: boolean;
+
+  /**
    * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.
    * If pass a new language then all label's values have to be present, otherwise they will be translated to the default English language.
    * Example:
    * {
    *   en: {
-   *     "tooltip.switch.orientation.horizontal": "Switch to horizontal view",
+   *     "yasgui.toolbar.orientation.btn.tooltip.switch_orientation_horizontal": "Switch to horizontal view",
    *     "tooltip.switch.orientation.vertical": "Switch to vertical view",
-   *     "btn.mode-yasqe": "Editor only",
-   *     "btn.mode-yasgui": "Editor and results",
-   *     "btn.mode-yasr": "Results only",
+   *     "yasgui.toolbar.mode_yasqe.btn.label": "Editor only",
+   *     "yasgui.toolbar.mode_yasgui.btn.label": "Editor and results",
+   *     "yasgui.toolbar.mode_yasr.btn.label": "Results only",
    *   }
    *   fr: {
    *     "tooltip.switch.orientation.vertical": "Basculer vers verticale voir",
-   *     "btn.mode-yasqe": "Éditeur seulement",
+   *     "yasgui.toolbar.mode_yasqe.btn.label": "Éditeur seulement",
    *   }
    * }
    */
@@ -62,6 +67,7 @@ export interface YasguiConfiguration {
    * The default yasgui config.
    */
   yasguiConfig?: {
+    tabName?: string,
     translate: (key: string, _parameters?: Record<string, string>[]) => string;
     requestConfig: {
       endpoint?: string;
@@ -108,11 +114,13 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
   orientation: Orientation.VERTICAL,
   showEditorTabs: true,
   showResultTabs: true,
-  showToolbar: false
+  showToolbar: false,
+  showControlBar: false
 }
 
 export const defaultYasguiConfig: Record<string, any> = {
   translate: (key, parameters) => TranslationService.Instance.translate(key, parameters),
+  defaultTabName: TranslationService.translate('yasgui.tab_list.tab.default.name'),
   copyEndpointOnNewTab: true,
   endpoint: '',
   method: 'POST',

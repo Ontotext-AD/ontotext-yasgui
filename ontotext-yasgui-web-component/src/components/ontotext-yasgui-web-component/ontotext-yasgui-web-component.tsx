@@ -219,8 +219,8 @@ export class OntotextYasguiWebComponent {
 
   private resolveOrientationButtonTooltip(): string {
     return this.isVerticalOrientation ?
-      this.translationService.translate("tooltip.switch.orientation.horizontal") :
-      this.translationService.translate("tooltip.switch.orientation.vertical");
+      this.translationService.translate('yasgui.toolbar.orientation.btn.tooltip.switch_orientation_horizontal') :
+      this.translationService.translate('yasgui.toolbar.orientation.btn.tooltip.switch_orientation_vertical');
   }
 
   private changeOrientation() {
@@ -289,15 +289,15 @@ export class OntotextYasguiWebComponent {
         <div class="yasgui-toolbar">
           <button class="yasgui-btn btn-mode-yasqe"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
-            {this.translationService.translate('btn.mode-yasqe')}
+            {this.translationService.translate('yasgui.toolbar.mode_yasqe.btn.label')}
           </button>
           <button class="yasgui-btn btn-mode-yasgui"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>
-            {this.translationService.translate('btn.mode-yasgui')}
+            {this.translationService.translate('yasgui.toolbar.mode_yasgui.btn.label')}
           </button>
           <button class="yasgui-btn btn-mode-yasr"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>
-            {this.translationService.translate('btn.mode-yasr')}
+            {this.translationService.translate('yasgui.toolbar.mode_yasr.btn.label')}
           </button>
           <yasgui-tooltip
             data-tooltip={this.resolveOrientationButtonTooltip()}

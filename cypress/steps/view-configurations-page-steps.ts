@@ -11,6 +11,14 @@ export default class ViewConfigurationsPageSteps {
         cy.get('#hideEditorTabs').click();
     }
 
+    static showControlBar() {
+        cy.get('#showControlBar').click();
+    }
+
+    static hideControlBar() {
+        cy.get('#hideControlBar').click();
+    }
+
     static showResultTabs() {
         cy.get('#showResultTabs').click();
     }

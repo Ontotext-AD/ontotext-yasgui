@@ -14,6 +14,7 @@ class OntotextYasguiServiceDefinition {
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
 
     OntotextYasguiServiceDefinition.initEditorTabs(hostElement, config);
+    OntotextYasguiServiceDefinition.initControlBar(hostElement, config);
     OntotextYasguiServiceDefinition.initResultTabs(hostElement, config);
     OntotextYasguiServiceDefinition.initButtonsStyling(hostElement, config);
     OntotextYasguiServiceDefinition.updateTranslation(config);
@@ -30,6 +31,15 @@ class OntotextYasguiServiceDefinition {
       hostElement.classList.remove('hidden-editor-tabs');
     } else {
       hostElement.classList.add('hidden-editor-tabs');
+    }
+  }
+
+  private static initControlBar(hostElement: HTMLElement, config: YasguiConfiguration): void {
+    const controlBar = HtmlElementsUtil.getControlBar(hostElement);
+    if (config.showControlBar) {
+      controlBar.classList.remove('hidden');
+    } else {
+      controlBar.classList.add('hidden');
     }
   }
 

@@ -89,4 +89,32 @@ describe('View configurations', () => {
       // AND: a new element in dom have to be added.
       ViewConfigurationsPageSteps.getQueryRanInfo().should('be.visible');
    });
+
+   it('Should control bar not be visible with default configuration', () => {
+      // WHEN: "view-configurations" page is visited.
+
+      // THEN: an event "queryExecuted" have to be fired
+      // AND: a new element in dom have to be added.
+      YasqeSteps.getControlBar().should('not.be.visible');
+   });
+
+   it('Should control bar be visible', () => {
+      // When I configure control panel to be visible.
+      ViewConfigurationsPageSteps.showControlBar();
+
+      // Then I expected control panel to not be visible.
+      YasqeSteps.getControlBar().should('be.visible');
+
+   });
+
+   it('Should control bar not be visible', () => {
+      // When I configure control panel to be visible.
+      ViewConfigurationsPageSteps.showControlBar();
+
+      // And I change configuration of control panel to not be visible.
+      ViewConfigurationsPageSteps.hideControlBar();
+
+      // Then I expected control panel to be visible.
+      YasqeSteps.getControlBar().should('not.be.visible');
+   });
 });

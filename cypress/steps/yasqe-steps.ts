@@ -82,4 +82,8 @@ export class YasqeSteps {
     static toggleIsPublic() {
         this.getSaveQueryDialog().find('#publicQuery').click();
     }
+
+    static getControlBar() {
+        return cy.get('.controlbar');
+    }
 }

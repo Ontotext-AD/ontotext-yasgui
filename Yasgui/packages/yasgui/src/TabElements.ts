@@ -11,9 +11,11 @@ export class TabListEl {
   private renameEl?: HTMLInputElement;
   private nameEl?: HTMLSpanElement;
   public tabEl?: HTMLDivElement;
+  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
   constructor(yasgui: Yasgui, tabList: TabList, tabId: string) {
     this.tabList = tabList;
     this.yasgui = yasgui;
+    this.translate = this.yasgui.translate;
     this.tabId = tabId;
   }
   public delete() {
@@ -111,7 +113,7 @@ export class TabListEl {
     //tab close btn
     const closeBtn = document.createElement("div");
     closeBtn.innerHTML = "&#x2716;";
-    closeBtn.title = "Close tab";
+    closeBtn.title = this.translate("yasgui.tab_list.close_tab.btn.label");
     closeBtn.setAttribute("tabindex", "-1");
     closeBtn.setAttribute("aria-hidden", "true");
     addClass(closeBtn, "closeTab");
