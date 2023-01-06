@@ -127,7 +127,10 @@ export class Completer extends EventEmitter {
       return false;
     }
     if (!this.config.autoShow) {
-      this.yasqe.showNotification(this.config.name, "Press CTRL - <spacebar> to autocomplete");
+      this.yasqe.showNotification(
+        this.config.name,
+        this.yasqe.translate("yasqe.autocomplete.notification.info.help_info_message")
+      );
     }
     this.emit("validPosition", this);
     return true;
@@ -306,7 +309,10 @@ export const fetchFromLov = (
   var reqProtocol = window.location.protocol.indexOf("http") === 0 ? "https://" : "http://";
   const notificationKey = "autocomplete_" + type;
   if (!token || !token.string || token.string.trim().length == 0) {
-    yasqe.showNotification(notificationKey, "Nothing to autocomplete yet!");
+    yasqe.showNotification(
+      notificationKey,
+      yasqe.translate("yasqe.autocomplete.notification.info.nothing_to_autocomplete")
+    );
     return Promise.resolve([]);
   }
   // //if notification bar is there, show a loader
@@ -331,7 +337,10 @@ export const fetchFromLov = (
         return [];
       },
       (_e) => {
-        yasqe.showNotification(notificationKey, "Failed fetching suggestions");
+        yasqe.showNotification(
+          notificationKey,
+          yasqe.translate("yasqe.autocomplete.notification.error.failed_fetching_suggestions")
+        );
       }
     );
 };

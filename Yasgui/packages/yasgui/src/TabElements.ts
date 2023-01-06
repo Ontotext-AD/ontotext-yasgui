@@ -254,8 +254,9 @@ export class TabList {
     const addTabLink = document.createElement("button");
     addTabLink.className = "addTab";
     addTabLink.textContent = "+";
-    addTabLink.title = "Add tab";
-    addTabLink.setAttribute("aria-label", "Add a new tab");
+    const addTabLabel = this.yasgui.translate("yasgui.tab_list.add_tab.btn.label");
+    addTabLink.title = addTabLabel;
+    addTabLink.setAttribute("aria-label", addTabLabel);
     addTabLink.addEventListener("click", this.handleAddNewTab);
     addTabLink.addEventListener("focus", () => {
       // sets aria tabEntryIndex to active tab

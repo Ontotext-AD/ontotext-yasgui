@@ -8,8 +8,10 @@ require("./index.scss");
 
 export default class Error implements Plugin<never> {
   private yasr: Yasr;
+  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
   constructor(yasr: Yasr) {
     this.yasr = yasr;
+    this.translate = this.yasr.config.translate;
   }
   canHandleResults() {
     return !!this.yasr.results && !!this.yasr.results.getError();
@@ -20,31 +22,31 @@ export default class Error implements Plugin<never> {
     tryBtn.rel = "noopener noreferrer";
     tryBtn.target = "_blank";
     tryBtn.className = "yasr_tryQuery";
-    tryBtn.textContent = "Try query in a new browser window";
+    tryBtn.textContent = this.translate("yasr.plugin.error.new_window.btn.label");
     return tryBtn;
   }
   private getCorsMessage() {
     const corsEl = document.createElement("div");
     corsEl.className = "redOutline";
     const mainMsg = document.createElement("p");
-    mainMsg.textContent = "Unable to get response from endpoint. Possible reasons:";
+    mainMsg.textContent = this.translate("yasr.plugin.error.no_response_possible_reason.error.label");
     corsEl.appendChild(mainMsg);
 
     const list = document.createElement("ul");
     const incorrectEndpoint = document.createElement("li");
-    incorrectEndpoint.textContent = "Incorrect endpoint URL";
+    incorrectEndpoint.textContent = this.translate("yasr.plugin.error.incorrect_endpoint.error.label");
     list.appendChild(incorrectEndpoint);
 
     const endpointDown = document.createElement("li");
-    endpointDown.textContent = "Endpoint is down";
+    endpointDown.textContent = this.translate("yasr.plugin.error.endpoint_down.error.label");
     list.appendChild(endpointDown);
 
     const cors = document.createElement("li");
     const firstPart = document.createElement("span");
-    firstPart.textContent = "Endpoint is not accessible from the YASGUI server and website, and the endpoint is not ";
+    firstPart.textContent = this.translate("yasr.plugin.error.endpoint_not_accessible.error.label");
     cors.appendChild(firstPart);
     const secondPart = document.createElement("a");
-    secondPart.textContent = "CORS-enabled";
+    secondPart.textContent = this.translate("yasr.plugin.error.cors_enabled.link.label");
     secondPart.href = "http://enable-cors.org/";
     secondPart.target = "_blank";
     secondPart.rel = "noopener noreferrer";

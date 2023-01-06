@@ -44,6 +44,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   requestConfig: YasguiRequestConfig;
   contextMenuContainer: HTMLElement | undefined;
   nonSslDomain?: string;
+  translate: (key: string, _parameters?: Record<string, string>[]) => string;
 }
 export type PartialConfig = {
   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
@@ -89,6 +90,8 @@ export class Yasgui extends EventEmitter {
   public config: Config;
   public persistentConfig: PersistentConfig;
   public static Tab = Tab;
+
+  public readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
   constructor(parent: HTMLElement, config: PartialConfig) {
     super();
     this.rootEl = document.createElement("div");
@@ -96,6 +99,7 @@ export class Yasgui extends EventEmitter {
     parent.appendChild(this.rootEl);
 
     this.config = merge({}, Yasgui.defaults, config);
+    this.translate = this.config.translate;
     this.persistentConfig = new PersistentConfig(this);
 
     this.tabElements = new TabElements(this);

@@ -15,8 +15,10 @@ export default class Boolean implements Plugin<PluginConfig> {
   private yasr: Yasr;
   public priority = 10;
   hideFromSelection = true;
+  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
   constructor(yasr: Yasr) {
     this.yasr = yasr;
+    this.translate = this.yasr.config.translate;
   }
   draw() {
     const el = document.createElement("div");
@@ -25,7 +27,9 @@ export default class Boolean implements Plugin<PluginConfig> {
     const boolVal = this.yasr.results?.getBoolean();
     el.appendChild(drawSvgStringAsElement(boolVal ? check : cross));
     const textEl = document.createElement("span");
-    textEl.textContent = boolVal ? "True" : "False";
+    textEl.textContent = boolVal
+      ? this.translate("yasr.boolean.alert.true")
+      : this.translate("yasr.boolean.alert.false");
     el.appendChild(textEl);
 
     this.yasr.resultsEl.appendChild(el);

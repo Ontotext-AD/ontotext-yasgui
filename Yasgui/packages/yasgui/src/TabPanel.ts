@@ -27,33 +27,27 @@ export default class TabPanel {
   rootEl: HTMLElement;
   isOpen: boolean;
 
+  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  private updateLabelFunctions: Function[] = [];
+
   constructor(tab: Tab, rootEl: HTMLElement, controlBarEl: HTMLElement) {
     this.tab = tab;
+    this.translate = this.tab.yasgui.translate;
     this.rootEl = rootEl;
     this.isOpen = false;
 
     this.init(controlBarEl);
   }
+
+  public update(): void {
+    this.updateLabelFunctions.forEach((updateLabelFunction) => updateLabelFunction());
+  }
+
   private init(controlBarEl: HTMLElement) {
     this.settingsButton = document.createElement("button");
     this.toggleAriaSettings();
-    this.settingsButton.appendChild(
-      drawSvgStringAsElement(
-        `<svg width="100.06" height="100.05" data-name="Layer 1" version="1.1" viewBox="0 0 100.06 100.05" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-        <metadata>
-         <rdf:RDF>
-          <cc:Work rdf:about="">
-           <dc:format>image/svg+xml</dc:format>
-           <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-           <dc:title>Settings</dc:title>
-          </cc:Work>
-         </rdf:RDF>
-        </metadata>
-        <title>Settings</title>
-        <path d="m95.868 58.018-3-3.24a42.5 42.5 0 0 0 0-9.43l3-3.22c1.79-1.91 5-4.44 4-6.85l-4.11-10c-1-2.41-5.08-1.91-7.69-2l-4.43-0.16a43.24 43.24 0 0 0-6.64-6.66l-0.14-4.43c-0.08-2.6 0.43-6.69-2-7.69l-10-4.15c-2.4-1-4.95 2.25-6.85 4l-3.23 3a42.49 42.49 0 0 0-9.44 0l-3.21-3c-1.9-1.78-4.44-5-6.85-4l-10 4.11c-2.41 1-1.9 5.09-2 7.69l-0.16 4.42a43.24 43.24 0 0 0-6.67 6.65l-4.42 0.14c-2.6 0.08-6.69-0.43-7.69 2l-4.15 10c-1 2.4 2.25 4.94 4 6.84l3 3.23a42.49 42.49 0 0 0 0 9.44l-3 3.22c-1.78 1.9-5 4.43-4 6.84l4.11 10c1 2.41 5.09 1.91 7.7 2l4.41 0.15a43.24 43.24 0 0 0 6.66 6.68l0.13 4.41c0.08 2.6-0.43 6.7 2 7.7l10 4.15c2.4 1 4.94-2.25 6.84-4l3.24-3a42.5 42.5 0 0 0 9.42 0l3.22 3c1.91 1.79 4.43 5 6.84 4l10-4.11c2.41-1 1.91-5.08 2-7.7l0.15-4.42a43.24 43.24 0 0 0 6.68-6.65l4.42-0.14c2.6-0.08 6.7 0.43 7.7-2l4.15-10c1.04-2.36-2.22-4.9-3.99-6.82zm-45.74 15.7c-12.66 0-22.91-10.61-22.91-23.7s10.25-23.7 22.91-23.7 22.91 10.61 22.91 23.7-10.25 23.7-22.91 23.7z"/>
-       </svg>`
-      )
-    );
+    this.settingsButton.appendChild(this.getSettingButtonElement());
+    this.updateLabelFunctions.push(this.updateSettingButtonLabel.bind(this));
     addClass(this.settingsButton, "tabContextButton");
     controlBarEl.appendChild(this.settingsButton);
     this.settingsButton.onclick = (ev) => {
@@ -67,6 +61,24 @@ export default class TabPanel {
       return false;
     };
     this.drawBody();
+  }
+
+  private getSettingButtonElement(): HTMLDivElement {
+    return drawSvgStringAsElement(
+      `<svg width="100.06" height="100.05" data-name="Layer 1" version="1.1" viewBox="0 0 100.06 100.05" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        <metadata>
+         <rdf:RDF>
+          <cc:Work rdf:about="">
+           <dc:format>image/svg+xml</dc:format>
+           <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+           <dc:title>${this.translate("yasgui.control_bar.settings.btn.label")}</dc:title>
+          </cc:Work>
+         </rdf:RDF>
+        </metadata>
+        <title>${this.translate("yasgui.control_bar.settings.btn.label")}</title>
+        <path d="m95.868 58.018-3-3.24a42.5 42.5 0 0 0 0-9.43l3-3.22c1.79-1.91 5-4.44 4-6.85l-4.11-10c-1-2.41-5.08-1.91-7.69-2l-4.43-0.16a43.24 43.24 0 0 0-6.64-6.66l-0.14-4.43c-0.08-2.6 0.43-6.69-2-7.69l-10-4.15c-2.4-1-4.95 2.25-6.85 4l-3.23 3a42.49 42.49 0 0 0-9.44 0l-3.21-3c-1.9-1.78-4.44-5-6.85-4l-10 4.11c-2.41 1-1.9 5.09-2 7.69l-0.16 4.42a43.24 43.24 0 0 0-6.67 6.65l-4.42 0.14c-2.6 0.08-6.69-0.43-7.69 2l-4.15 10c-1 2.4 2.25 4.94 4 6.84l3 3.23a42.49 42.49 0 0 0 0 9.44l-3 3.22c-1.78 1.9-5 4.43-4 6.84l4.11 10c1 2.41 5.09 1.91 7.7 2l4.41 0.15a43.24 43.24 0 0 0 6.66 6.68l0.13 4.41c0.08 2.6-0.43 6.7 2 7.7l10 4.15c2.4 1 4.94-2.25 6.84-4l3.24-3a42.5 42.5 0 0 0 9.42 0l3.22 3c1.91 1.79 4.43 5 6.84 4l10-4.11c2.41-1 1.91-5.08 2-7.7l0.15-4.42a43.24 43.24 0 0 0 6.68-6.65l4.42-0.14c2.6-0.08 6.7 0.43 7.7-2l4.15-10c1.04-2.36-2.22-4.9-3.99-6.82zm-45.74 15.7c-12.66 0-22.91-10.61-22.91-23.7s10.25-23.7 22.91-23.7 22.91 10.61 22.91 23.7-10.25 23.7-22.91 23.7z"/>
+       </svg>`
+    );
   }
   private updateBody() {
     const reqConfig = this.tab.getRequestConfig();
@@ -124,22 +136,33 @@ export default class TabPanel {
     }
   }
   private toggleAriaSettings() {
-    this.settingsButton.setAttribute("aria-label", this.isOpen ? "Close settings" : "Open settings");
+    this.settingsButton.setAttribute(
+      "aria-label",
+      this.isOpen
+        ? this.translate("yasgui.control_bar.settings.btn.close_settings.aria_label")
+        : this.translate("yasgui.control_bar.settings.btn.open_settings.aria_label")
+    );
     this.settingsButton.setAttribute("aria-expanded", `${this.isOpen}`);
   }
   private setRequestMethod!: (method: Exclude<RequestConfig<any>["method"], Function>) => void;
+
   private drawRequestMethodSelector() {
     const requestTypeWrapper = document.createElement("div");
     addClass(requestTypeWrapper, "requestConfigWrapper");
-    createLabel("Request method", requestTypeWrapper);
+    const requestTypeLabel = createLabel(this.translate("yasgui.control_bar.request_method.label"), requestTypeWrapper);
+    this.updateLabelFunctions.push(
+      () => (requestTypeLabel.innerText = this.translate("yasgui.control_bar.request_method.label"))
+    );
 
     // Create Button
     const getButton = document.createElement("button");
-    addClass(getButton, "selectorButton");
-    getButton.innerText = "GET";
+    addClass(getButton, "selectorButton", "selectorGetButton");
+    getButton.innerText = this.translate("yasgui.control_bar.get.btn.label");
+    this.updateLabelFunctions.push(() => (getButton.innerText = this.translate("yasgui.control_bar.get.btn.label")));
     const postButton = document.createElement("button");
-    addClass(postButton, "selectorButton");
-    postButton.innerText = "POST";
+    addClass(postButton, "selectorButton", "selectorPostButton");
+    postButton.innerText = this.translate("yasgui.control_bar.post.btn.label");
+    this.updateLabelFunctions.push(() => (postButton.innerText = this.translate("yasgui.control_bar.get.btn.label")));
     addClass(this.tab.getRequestConfig().method === "GET" ? getButton : postButton, "selected");
 
     this.setRequestMethod = (method) => {
@@ -171,15 +194,25 @@ export default class TabPanel {
   private drawAcceptSelector() {
     const acceptWrapper = document.createElement("div");
     addClass(acceptWrapper, "requestConfigWrapper", "acceptWrapper");
-    createLabel("Accept Headers", acceptWrapper);
+    const acceptWrapperLabel = createLabel(this.translate("yasgui.control_bar.accept_headers.label"), acceptWrapper);
+    this.updateLabelFunctions.push(
+      () => (acceptWrapperLabel.innerText = this.translate("yasgui.control_bar.accept_headers.label"))
+    );
+
+    const registerUpdateLabelFunction = (labelElement: HTMLElement, labelKey: string) => {
+      this.updateLabelFunctions.push(() => (labelElement.innerText = this.translate(labelKey)));
+    };
+
     // Request type
     this.setAcceptHeader_select = createSelector(
       AcceptOptionsMap,
       (ev) => {
         this.tab.setRequestConfig({ acceptHeaderSelect: (<HTMLOptionElement>ev.target).value });
       },
-      "Ask / Select",
-      acceptWrapper
+      "yasgui.control_bar.ask_select.label",
+      acceptWrapper,
+      this.translate,
+      registerUpdateLabelFunction
     );
 
     this.setAcceptHeader_graph = createSelector(
@@ -187,8 +220,10 @@ export default class TabPanel {
       (ev) => {
         this.tab.setRequestConfig({ acceptHeaderGraph: (<HTMLOptionElement>ev.target).value });
       },
-      "Construct / Describe",
-      acceptWrapper
+      "yasgui.control_bar.construct_describe.label",
+      acceptWrapper,
+      this.translate,
+      registerUpdateLabelFunction
     );
 
     this.menuElement.appendChild(acceptWrapper);
@@ -209,7 +244,10 @@ export default class TabPanel {
     const argumentsWrapper = document.createElement("div");
     addClass(argumentsWrapper, "requestConfigWrapper", "textSetting");
 
-    createLabel("Arguments", argumentsWrapper);
+    const argumentsLabel = createLabel(this.translate("yasgui.control_bar.arguments.label"), argumentsWrapper);
+    this.updateLabelFunctions.push(
+      () => (argumentsLabel.innerText = this.translate("yasgui.control_bar.arguments.label"))
+    );
 
     this.menuElement.appendChild(argumentsWrapper);
 
@@ -245,7 +283,10 @@ export default class TabPanel {
     const headerWrapper = document.createElement("div");
     addClass(headerWrapper, "requestConfigWrapper", "textSetting");
 
-    const URLArgLabel = createLabel("Header Arguments");
+    const URLArgLabel = createLabel(this.translate("yasgui.control_bar.header_arguments.label"));
+    this.updateLabelFunctions.push(
+      () => (URLArgLabel.innerText = this.translate("yasgui.control_bar.header_arguments.label"))
+    );
     headerWrapper.appendChild(URLArgLabel);
 
     this.menuElement.appendChild(headerWrapper);
@@ -273,7 +314,10 @@ export default class TabPanel {
     const defaultGraphWrapper = document.createElement("div");
     addClass(defaultGraphWrapper, "requestConfigWrapper", "textSetting");
 
-    const defaultGraphLabel = createLabel("Default Graphs");
+    const defaultGraphLabel = createLabel(this.translate("yasgui.control_bar.default_graphs.label"));
+    this.updateLabelFunctions.push(
+      () => (defaultGraphLabel.innerText = this.translate("yasgui.control_bar.default_graphs.label"))
+    );
     defaultGraphWrapper.appendChild(defaultGraphLabel);
 
     this.menuElement.appendChild(defaultGraphWrapper);
@@ -305,7 +349,10 @@ export default class TabPanel {
     const namedGraphWrapper = document.createElement("div");
     addClass(namedGraphWrapper, "requestConfigWrapper", "textSetting");
 
-    const namedGraphLabel = createLabel("Named Graphs");
+    const namedGraphLabel = createLabel(this.translate("yasgui.control_bar.named_graph.label"));
+    this.updateLabelFunctions.push(
+      () => (namedGraphLabel.innerText = this.translate("yasgui.control_bar.named_graph.label"))
+    );
     namedGraphWrapper.appendChild(namedGraphLabel);
     this.menuElement.appendChild(namedGraphWrapper);
 
@@ -358,6 +405,14 @@ export default class TabPanel {
     this.menuElement.onclick = null;
     while (this.menuElement.firstChild) this.menuElement.firstChild.remove();
     this.menuElement.remove();
+    this.updateLabelFunctions = [];
+  }
+  private updateSettingButtonLabel() {
+    while (this.settingsButton.firstChild) {
+      this.settingsButton.removeChild(this.settingsButton.firstChild);
+    }
+    this.settingsButton.appendChild(this.getSettingButtonElement());
+    this.toggleAriaSettings();
   }
 }
 
@@ -367,13 +422,16 @@ export default class TabPanel {
 function createSelector(
   options: { key: string; value: string }[],
   changeHandler: (event: Event) => void,
-  label: string,
-  parent: HTMLElement
+  labelKey: string,
+  parent: HTMLElement,
+  translate: (key: string, _parameters?: Record<string, string>[]) => string,
+  registerUpdateLabelFunction: (labelElement: HTMLElement, labelKey: string) => void
 ): (selected: string) => void {
   const selectorWrapper = document.createElement("div");
   addClass(selectorWrapper, "selector");
 
-  const selectorLabel = createLabel(label, selectorWrapper);
+  const selectorLabel = createLabel(translate(labelKey), selectorWrapper);
+  registerUpdateLabelFunction(selectorLabel, labelKey);
   addClass(selectorLabel, "selectorLabel");
 
   const selectElement = document.createElement("select");
