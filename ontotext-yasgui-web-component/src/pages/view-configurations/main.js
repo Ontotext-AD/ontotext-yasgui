@@ -25,3 +25,7 @@ function setDefaultQuery(query) {
 function setInitialQuery(initialQuery) {
   ontoElement.config = {...ontoElement.config, initialQuery: initialQuery}
 }
+
+function setShowControlBar(showControlBar) {
+  ontoElement.config = {...ontoElement.config, showControlBar: showControlBar}
+}

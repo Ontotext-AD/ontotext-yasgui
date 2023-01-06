@@ -4,7 +4,11 @@ export class YasrSteps {
     }
 
     static getResultHeader() {
-        return cy.get('.yasr_header')
+        return cy.get('.yasr_header');
+    }
+
+    static getErrorHeader() {
+        return YasrSteps.getResultHeader().get('.errorHeader');
     }
 
     static getResults() {

@@ -34,15 +34,15 @@ export class TranslationService {
    * Example:
    * {
    *   en: {
-   *     "tooltip.switch.orientation.horizontal": "Switch to horizontal view",
-   *     "tooltip.switch.orientation.vertical": "Switch to vertical view",
-   *     "btn.mode-yasqe": "Editor only",
-   *     "btn.mode-yasgui": "Editor and results",
-   *     "btn.mode-yasr": "Results only",
+   *     "yasgui.toolbar.orientation.btn.tooltip.switch_orientation_horizontal": "Switch to horizontal view",
+   *     "yasgui.toolbar.orientation.btn.tooltip.switch_orientation_vertical": "Switch to vertical view",
+   *     "yasgui.toolbar.mode_yasqe.btn.label": "Editor only",
+   *     "yasgui.toolbar.mode_yasgui.btn.label": "Editor and results",
+   *     "yasgui.toolbar.mode_yasr.btn.label": "Results only",
    *   }
    *   fr: {
-   *     "tooltip.switch.orientation.vertical": "Basculer vers verticale voir",
-   *     "btn.mode-yasqe": "Éditeur seulement",
+   *     "yasgui.toolbar.orientation.btn.tooltip.switch_orientation_vertical": "Basculer vers verticale voir",
+   *     "yasgui.toolbar.mode_yasqe.btn.label": "Éditeur seulement",
    *   }
    * }
    */

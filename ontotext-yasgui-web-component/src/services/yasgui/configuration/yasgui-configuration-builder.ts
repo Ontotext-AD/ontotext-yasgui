@@ -41,6 +41,7 @@ export class YasguiConfigurationBuilderDefinition {
     config.render = externalConfiguration.render || defaultOntotextYasguiConfig.render;
     config.orientation = externalConfiguration.orientation || defaultOntotextYasguiConfig.orientation;
     config.showEditorTabs = externalConfiguration.showEditorTabs !== undefined ? externalConfiguration.showEditorTabs : defaultOntotextYasguiConfig.showEditorTabs;
+    config.showControlBar = externalConfiguration.showControlBar !== undefined ? externalConfiguration.showControlBar : defaultOntotextYasguiConfig.showControlBar;
     config.showResultTabs = externalConfiguration.showResultTabs !== undefined ? externalConfiguration.showResultTabs : defaultOntotextYasguiConfig.showResultTabs;
     config.showToolbar = externalConfiguration.showToolbar !== undefined ? externalConfiguration.showToolbar : defaultOntotextYasguiConfig.showToolbar;
     config.i18n = externalConfiguration.i18n;
@@ -53,6 +54,7 @@ export class YasguiConfigurationBuilderDefinition {
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
+    config.yasguiConfig.tabName = externalConfiguration.defaultTabName || defaultYasguiConfig.defaultTabName;
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;

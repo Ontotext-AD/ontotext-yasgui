@@ -80,6 +80,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
    - orientation-horizontal - the results will be appeared next to the query editor.
 - <b>query</b>: Default query when a tab is opened;
 - <b>initialQuery?</b>: Initial query when yasgui is rendered if not set the default query will be set;
+- <b>defaultTabName?</b>: The default tab name when a new tab is created;
 - <b>showEditorTabs</b>: If the query editor tabs should be rendered or not;
 - <b>showResultTabs</b>: If the results tabs should be rendered or not;
 - <b>showToolbar</b>: If the toolbar with render mode buttons should be rendered or not.

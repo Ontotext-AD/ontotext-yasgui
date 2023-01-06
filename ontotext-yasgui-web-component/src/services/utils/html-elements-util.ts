@@ -29,4 +29,12 @@ export class HtmlElementsUtil {
   static getToolbar(hostElement: HTMLElement): HTMLElement {
     return hostElement.querySelector('.yasgui-toolbar');
   }
+
+  /**
+   * Fetches the toolbar element.
+   * @param hostElement - the host element of "ontotext-yasgui-web-component".
+   */
+  static getControlBar(hostElement: HTMLElement): HTMLElement {
+    return hostElement.querySelector('.yasgui .controlbar');
+  }
 }
