@@ -47,6 +47,8 @@ export class Yasr extends EventEmitter {
   private drawnPlugin: string | undefined;
   private selectedPlugin: string | undefined;
 
+  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+
   // Utils
   public utils = { addScript: addScript, addCSS: addCss, sanitize: sanitize };
 
@@ -59,6 +61,7 @@ export class Yasr extends EventEmitter {
     this.config = merge({}, Yasr.defaults, conf);
 
     //Do some post processing
+    this.translate = this.config.translate;
     this.storage = new YStorage(Yasr.storageNamespace);
     this.getConfigFromStorage();
     this.headerEl = document.createElement("div");
@@ -181,6 +184,7 @@ export class Yasr extends EventEmitter {
   public draw() {
     this.updateHelpButton();
     this.updateResponseInfo();
+    this.updatePluginSelectorNames();
     if (!this.results) return;
     const compatiblePlugins = this.getCompatiblePlugins();
     if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
@@ -284,12 +288,15 @@ export class Yasr extends EventEmitter {
 
       if (!plugin) continue; //plugin not loaded
       if (plugin.hideFromSelection) continue;
-      const name = plugin.label || pluginName;
+      const name = this.translate(`yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase());
       const button = document.createElement("button");
       addClass(button, "yasr_btn", "select_" + pluginName);
       button.title = name;
       button.type = "button";
-      button.setAttribute("aria-label", `Shows ${name} view`);
+      button.setAttribute(
+        "aria-label",
+        this.translate("yasr.plugin_control.shows_view.btn.aria_label", [{ key: "name", value: name }])
+      );
       if (plugin.getIcon) {
         const icon = plugin.getIcon();
         if (icon) {
@@ -318,22 +325,28 @@ export class Yasr extends EventEmitter {
 
     const selectedPlugin = this.getSelectedPlugin();
     const fallbackPluginLabel =
-      this.plugins[fallbackElement || this.drawnPlugin || ""]?.label || fallbackElement || this.drawnPlugin;
+      this.plugins[fallbackElement || this.drawnPlugin || ""]?.label || fallbackElement || this.drawnPlugin || "";
     const selectedPluginLabel = selectedPlugin?.label || this.getSelectedPluginName();
+    const selectedPluginName = this.translate(`yasr.plugin_control.plugin.name.${selectedPluginLabel}`.toLowerCase());
 
     const textElement = document.createElement("p");
-    textElement.innerText = `Could not render results with the ${selectedPluginLabel} plugin, the results currently are rendered with the ${fallbackPluginLabel} plugin. ${
-      this.getSelectedPlugin()?.helpReference ? "See " : ""
-    }`;
+    textElement.innerText = this.translate("yasr.fallback.box.info.info_message", [
+      { key: "selectedPluginName", value: fallbackPluginLabel },
+    ]);
+    textElement.innerText += this.getSelectedPlugin()?.helpReference
+      ? this.translate("yasr.plugin_control.info.see")
+      : "";
 
     if (selectedPlugin?.helpReference) {
       const linkElement = document.createElement("a");
-      linkElement.innerText = `${selectedPluginLabel} documentation`;
+      linkElement.innerText = this.translate("yasr.plugin_control.plugin_documentation.link.label", [
+        { key: "selectedPluginName", value: selectedPluginName },
+      ]);
       linkElement.href = selectedPlugin.helpReference;
       linkElement.rel = "noopener noreferrer";
       linkElement.target = "_blank";
       textElement.append(linkElement);
-      textElement.innerHTML += " for more information.";
+      textElement.innerHTML += " " + this.translate("yasr.fallback.box.info.for_more_info");
     }
 
     this.fallbackInfoEl.appendChild(textElement);
@@ -361,7 +374,7 @@ export class Yasr extends EventEmitter {
     this.downloadBtn = document.createElement("a");
     addClass(this.downloadBtn, "yasr_btn", "yasr_downloadIcon", "btn_icon");
     this.downloadBtn.download = ""; // should default to the file name of the blob
-    this.downloadBtn.setAttribute("aria-label", "Download Results");
+    this.downloadBtn.setAttribute("aria-label", this.translate("yasr.plugin_control.download_results.btn.label"));
     this.downloadBtn.setAttribute("tabindex", "0"); // anchor elements with no href are not automatically included in the tabindex
     this.downloadBtn.setAttribute("role", "button");
     const iconEl = drawSvgStringAsElement(drawFontAwesomeIconAsSvg(faDownload));
@@ -394,13 +407,25 @@ export class Yasr extends EventEmitter {
       removeClass(this.dataElement, "empty");
       const bindings = this.results.getBindings();
       if (bindings) {
-        innerText += `${bindings.length} result${bindings.length === 1 ? "" : "s"}`; // Set amount of results
+        // Set amount of results
+        const params = [{ key: "countResults", value: `${bindings.length}` }];
+        innerText +=
+          bindings.length === 1
+            ? this.translate("yasr.plugin_control.info.count_result", params)
+            : this.translate("yasr.plugin_control.info.count_results", params);
       }
+
       const responseTime = this.results.getResponseTime();
       if (responseTime) {
-        if (!innerText) innerText = "Response";
+        if (!innerText) {
+          innerText = this.translate("yasr.response");
+        }
         const time = responseTime / 1000;
-        innerText += ` in ${time} second${time === 1 ? "" : "s"}`;
+        const params = [{ key: "timeInSeconds", value: `${time}` }];
+        innerText +=
+          time === 1
+            ? this.translate("yasr.plugin_control.info.result_in_second", params)
+            : this.translate("yasr.plugin_control.info.result_in_seconds", params);
       }
     } else {
       addClass(this.dataElement, "empty");
@@ -410,17 +435,44 @@ export class Yasr extends EventEmitter {
   private updateHelpButton() {
     const selectedPlugin = this.getSelectedPlugin();
     if (selectedPlugin?.helpReference) {
-      const titleLabel = `View documentation of ${selectedPlugin.label || this.getSelectedPluginName()}`;
+      const titleLabel = this.translate("yasr.plugin_control.plugin_documentation.link.tooltip", [
+        { key: "pluginName", value: selectedPlugin.label || this.getSelectedPluginName() },
+      ]);
       this.documentationLink.href = selectedPlugin.helpReference;
       this.documentationLink.title = titleLabel;
       this.documentationLink.setAttribute("aria-label", titleLabel);
       removeClass(this.documentationLink, "disabled");
     } else {
       addClass(this.documentationLink, "disabled");
-      this.documentationLink.title =
-        "This plugin doesn't have a help reference yet. Please contact the maintainer to fix this";
+      this.documentationLink.title = this.translate("yasr.plugin_control.missing_help.link.tooltip");
     }
   }
+
+  updatePluginSelectorNames() {
+    const pluginOrder = this.config.pluginOrder;
+    for (const pluginName of pluginOrder) {
+      if (!this.config.plugins[pluginName] || !this.config.plugins[pluginName].enabled) {
+        continue;
+      }
+      const plugin = this.plugins[pluginName];
+      if (plugin && !plugin.hideFromSelection) {
+        let button = this.pluginSelectorsEl.querySelector(".select_" + pluginName);
+        if (button) {
+          const name = this.translate(`yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase());
+          button.setAttribute("title", name);
+          button.setAttribute(
+            "aria-label",
+            this.translate("yasr.plugin_control.shows_view.btn.aria_label", [{ key: "name", value: name }])
+          );
+          let nameEl = button.querySelector("span");
+          if (nameEl) {
+            nameEl.innerText = name;
+          }
+        }
+      }
+    }
+  }
+
   updateExportHeaders() {
     if (this.downloadBtn && this.drawnPlugin) {
       this.downloadBtn.title = "";
@@ -433,7 +485,7 @@ export class Yasr extends EventEmitter {
           return;
         }
       }
-      this.downloadBtn.title = "Download not supported";
+      this.downloadBtn.title = this.translate("yasr.plugin_control.disabled.btn.tooltip");
       addClass(this.downloadBtn, "disabled");
     }
   }
@@ -576,6 +628,7 @@ export interface Config {
   defaultPlugin: string;
 
   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
+  translate: (key: string, _parameters?: Record<string, string>[]) => string;
 
   /**
    * Custom renderers for errors.

@@ -73,7 +73,13 @@ export class Tab extends EventEmitter {
     return this.persistentJson.id;
   }
   private draw() {
-    if (this.rootEl) return; //aready drawn
+    if (this.rootEl) {
+      //already drawn
+      this.yasqe?.update();
+      this.tabPanel?.update();
+      return;
+    }
+
     this.rootEl = document.createElement("div");
     this.rootEl.className = "tabPanel";
     this.rootEl.id = this.persistentJson.id;
@@ -347,6 +353,7 @@ export class Tab extends EventEmitter {
     if (!this.yasqeWrapperEl) {
       throw new Error("Expected a wrapper element before instantiating yasqe");
     }
+    yasqeConf.translate = this.yasgui.config.translate;
     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
 
     this.yasqe.on("blur", this.handleYasqeBlur);
@@ -451,6 +458,7 @@ export class Tab extends EventEmitter {
     if (yasrConf.getDownloadFileName === undefined) {
       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
     }
+    yasrConf.translate = this.yasgui.config.translate;
 
     this.yasr = new Yasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
 

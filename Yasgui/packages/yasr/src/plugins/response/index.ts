@@ -31,9 +31,11 @@ export default class Response implements Plugin<PluginConfig> {
   private config: DeepReadonly<PluginConfig>;
   private overLay: HTMLDivElement | undefined;
   private cm: CodeMirror.Editor | undefined;
+  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
   constructor(yasr: Yasr) {
     this.yasr = yasr;
     this.config = Response.defaults;
+    this.translate = yasr.config.translate;
     if (yasr.config.plugins["response"] && yasr.config.plugins["response"].dynamicConfig) {
       this.config = {
         ...this.config,
@@ -63,7 +65,7 @@ export default class Response implements Plugin<PluginConfig> {
       },
       filename: `${filename || "queryResults"}${extension ? "." + extension : ""}`,
       contentType: contentType ? contentType : "text/plain",
-      title: "Download result",
+      title: this.translate("yasr.plugin.response.download_result.btn.tooltip"),
     };
   }
   draw(persistentConfig: PluginConfig) {
@@ -127,18 +129,18 @@ export default class Response implements Plugin<PluginConfig> {
     addClass(overlayContent, "overlay_content");
 
     const showMoreButton = document.createElement("button");
-    showMoreButton.title = "Show all";
+    showMoreButton.title = this.translate("yasr.plugin.response.show_all.btn.label");
     addClass(showMoreButton, "yasr_btn", "overlay_btn");
-    showMoreButton.textContent = "Show all";
+    showMoreButton.textContent = this.translate("yasr.plugin.response.show_all.btn.label");
     showMoreButton.addEventListener("click", () => this.showMore());
     overlayContent.append(showMoreButton);
 
     const downloadButton = document.createElement("button");
-    downloadButton.title = "Download result";
+    downloadButton.title = this.translate("yasr.plugin.response.download_result.btn.tooltip");
     addClass(downloadButton, "yasr_btn", "overlay_btn");
 
     const text = document.createElement("span");
-    text.innerText = "Download result";
+    text.innerText = this.translate("yasr.plugin.response.download_result.btn.label");
     downloadButton.appendChild(text);
     downloadButton.appendChild(drawSvgStringAsElement(imgs.download));
     downloadButton.addEventListener("click", () => this.yasr.download());
