@@ -39,11 +39,12 @@
   "yasr.loading.label": "Loading...",
   "yasqe.actions.save_query.button.tooltip": "Create saved query",
   "yasqe.actions.save_query.dialog.title": "Create New Saved Query",
-  "yasqe.actions.save_query.dialog.query_name.label": "Enter title",
   "yasqe.actions.save_query.dialog.query.label": "Create your sample query",
+  "yasqe.actions.save_query.dialog.query.empty_error": "Query cannot be empty!",
+  "yasqe.actions.save_query.dialog.query_name.label": "Enter title",
+  "yasqe.actions.save_query.dialog.query_name.empty_error": "Query name cannot be empty!",
   "yasqe.actions.save_query.dialog.public_query.label": "Share query with other users",
   "yasqe.actions.save_query.dialog.public_query.tooltip": "If checked other users will be able to see the query but not delete or edit it",
-  "yasqe.actions.save_query.dialog.public_query.empty_error": "Query cannot be empty!",
   "yasqe.actions.save_query.dialog.create.button": "Create",
   "yasqe.actions.save_query.dialog.cancel.button": "Cancel"
 }

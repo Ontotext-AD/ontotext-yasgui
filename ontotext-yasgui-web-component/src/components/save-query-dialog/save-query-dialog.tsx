@@ -94,7 +94,29 @@ export class SaveQueryDialog {
     this.isPublic = event.target.checked;
   }
 
+  private getMissingFieldsMessage(): string[] {
+    const missingFieldWarningMessage = [];
+    if (this.hasMissingQueryName()) {
+      missingFieldWarningMessage.push(this.translationService.translate('yasqe.actions.save_query.dialog.query_name.empty_error'));
+    }
+    if (this.hasMissingQuery()) {
+      missingFieldWarningMessage.push(this.translationService.translate('yasqe.actions.save_query.dialog.query.empty_error'));
+    }
+    return missingFieldWarningMessage;
+  }
+
+  private hasMissingQueryName() {
+    return !this.queryName.trim().length;
+  }
+
+  private hasMissingQuery() {
+    return !this.query.trim().length;
+  }
+
   render() {
+    const hasMissingFields = this.hasMissingQuery() || this.hasMissingQueryName();
+    const missingFieldWarningMessage = this.getMissingFieldsMessage();
+
     return (
       <Host>
         <div class="dialog-overlay" onClick={(evt) => this.onClose(evt)}>
@@ -132,9 +154,8 @@ export class SaveQueryDialog {
                             value={this.query}
                             onInput={(evt) => this.handleQueryChange(evt)}>
                   </textarea>
-                  {!this.query.trim().length && <Alert
-                    message={this.translationService.translate('yasqe.actions.save_query.dialog.public_query.empty_error')}>&nbsp;</Alert>}
                 </div>
+                {hasMissingFields && <Alert messages={missingFieldWarningMessage}>&nbsp;</Alert>}
               </div>
 
             </div>
@@ -152,9 +173,11 @@ export class SaveQueryDialog {
 }
 
 interface ErrorMessageProps {
-  message: string;
+  messages: string[];
 }
 
-const Alert: FunctionalComponent<ErrorMessageProps> = ({message}) => (
-  <div class="alert alert-danger">{message}</div>
+const Alert: FunctionalComponent<ErrorMessageProps> = ({messages}) => (
+  <div class="alert alert-danger">{
+    messages.map((message) => (<div class="error-message">{message}</div>))
+  }</div>
 );
