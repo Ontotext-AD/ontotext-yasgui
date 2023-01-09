@@ -46,14 +46,15 @@ describe('Save query action', () => {
         // Then create query button should become disabled
         YasqeSteps.getSaveQueryButton().should('be.disabled');
         // And there should be an error message
-        YasqeSteps.getQueryFieldError().should('be.visible');
+        YasqeSteps.getErrorsPane().should('be.visible');
+        YasqeSteps.getErrors().should('have.length', 1);
         // And the field should be invalid
         YasqeSteps.getQueryField().should('have.class', 'invalid');
         // When I write a query
         YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100');
         // Then the field should become valid
         YasqeSteps.getSaveQueryButton().should('be.enabled');
-        YasqeSteps.getQueryFieldError().should('not.exist');
+        YasqeSteps.getErrorsPane().should('not.exist');
         YasqeSteps.getQueryField().should('not.have.class', 'invalid');
     });
 
@@ -66,12 +67,39 @@ describe('Save query action', () => {
         YasqeSteps.getSaveQueryButton().should('be.enabled');
         // When I clear the query name field
         YasqeSteps.clearQueryNameField();
+        // And there should be an error message
+        YasqeSteps.getErrorsPane().should('be.visible');
+        YasqeSteps.getErrors().should('have.length', 1);
         // Then create query button should become disabled
         YasqeSteps.getSaveQueryButton().should('be.disabled');
         // And the field should be invalid
         YasqeSteps.getQueryNameField().should('have.class', 'invalid');
         // When I write a query name
         YasqeSteps.writeQueryName('saved query');
+        // Then the field should become valid
+        YasqeSteps.getSaveQueryButton().should('be.enabled');
+        YasqeSteps.getQueryNameField().should('not.have.class', 'invalid');
+    });
+
+    it('Should not allow saving with missing either query or query name', () => {
+        // When I click on the save query button
+        YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+        YasqeSteps.createSavedQuery();
+        // Then save query dialog opens
+        // And the create query button should be enabled
+        YasqeSteps.getSaveQueryButton().should('be.enabled');
+        // When I clear the query name field
+        YasqeSteps.clearQueryNameField();
+        YasqeSteps.clearQueryField();
+        // And there should be an error message
+        YasqeSteps.getErrors().should('have.length', 2);
+        // Then create query button should become disabled
+        YasqeSteps.getSaveQueryButton().should('be.disabled');
+        // And the field should be invalid
+        YasqeSteps.getQueryNameField().should('have.class', 'invalid');
+        // When I write a query and query name
+        YasqeSteps.writeQueryName('saved query');
+        YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100');
         // Then the field should become valid
         YasqeSteps.getSaveQueryButton().should('be.enabled');
         YasqeSteps.getQueryNameField().should('not.have.class', 'invalid');

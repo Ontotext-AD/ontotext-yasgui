@@ -59,8 +59,12 @@ export class YasqeSteps {
         this.getQueryField().clear();
     }
 
-    static getQueryFieldError() {
-        return this.getSaveQueryDialog().find('.query-field .alert-danger');
+    static getErrorsPane() {
+        return this.getSaveQueryDialog().find('.alert-danger');
+    }
+
+    static getErrors() {
+        return this.getErrorsPane().find('.error-message');
     }
 
     static getQueryNameField() {
