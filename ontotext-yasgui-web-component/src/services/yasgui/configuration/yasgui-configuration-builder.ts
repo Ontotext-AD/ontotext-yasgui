@@ -6,9 +6,8 @@ import {
 } from '../../../models/yasgui-configuration';
 import {
   ExternalYasguiConfiguration,
-  PluginButtonDefinition
+  YasqeActionButtonDefinition
 } from "../../../models/external-yasgui-configuration";
-import {EventService} from "../../event-service";
 import {YasqeService} from "../../yasqe/yasqe-service";
 
 /**
@@ -17,8 +16,12 @@ import {YasqeService} from "../../yasqe/yasqe-service";
 export class YasguiConfigurationBuilderDefinition {
   private static _instance: YasguiConfigurationBuilderDefinition;
 
-  private _eventService: EventService;
-  private _yasqeService: YasqeService;
+  private yasqeService: YasqeService;
+
+  constructor() {
+    this.yasqeService = YasqeService.Instance;
+  }
+
 
   static get Instance(): YasguiConfigurationBuilderDefinition {
     if (!this._instance) {
@@ -58,7 +61,7 @@ export class YasguiConfigurationBuilderDefinition {
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
     config.yasguiConfig.yasqe.pluginButtons = () => {
-      return this.getYasqePluginButtons(externalConfiguration, defaultYasqeConfig);
+      return this.getYasqeActionButtons(externalConfiguration, defaultYasqeConfig);
     }
 
     // prepare the yasr config
@@ -66,16 +69,16 @@ export class YasguiConfigurationBuilderDefinition {
     return config;
   }
 
-  getYasqePluginButtons(externalConfiguration: ExternalYasguiConfiguration, defaultYasqeConfig: Record<string, any>): HTMLElement[] {
+  getYasqeActionButtons(externalConfiguration: ExternalYasguiConfiguration, defaultYasqeConfig: Record<string, any>): HTMLElement[] {
     const buttonsMap: Map<string, HTMLElement> = new Map<string, HTMLElement>();
-    defaultYasqeConfig.yasqePluginButtons
-      .filter((buttonDefinition: PluginButtonDefinition) => buttonDefinition.visible)
-      .forEach((buttonDefinition: PluginButtonDefinition) => {
+    defaultYasqeConfig.yasqeActionButtons
+      .filter((buttonDefinition: YasqeActionButtonDefinition) => buttonDefinition.visible)
+      .forEach((buttonDefinition: YasqeActionButtonDefinition) => {
         buttonsMap.set(buttonDefinition.name, this.yasqeService.getButtonInstance(buttonDefinition));
       });
 
-    if (externalConfiguration.yasqePluginButtons && externalConfiguration.yasqePluginButtons.length) {
-      externalConfiguration.yasqePluginButtons.forEach((buttonDefinition) => {
+    if (externalConfiguration.yasqeActionButtons && externalConfiguration.yasqeActionButtons.length) {
+      externalConfiguration.yasqeActionButtons.forEach((buttonDefinition) => {
         if (buttonDefinition.visible) {
           buttonsMap.set(buttonDefinition.name, this.yasqeService.getButtonInstance(buttonDefinition));
         } else {
@@ -84,21 +87,5 @@ export class YasguiConfigurationBuilderDefinition {
       });
     }
     return Array.from(buttonsMap.values());
-  }
-
-  get eventService(): EventService {
-    return this._eventService;
-  }
-
-  set eventService(value: EventService) {
-    this._eventService = value;
-  }
-
-  get yasqeService(): YasqeService {
-    return this._yasqeService;
-  }
-
-  set yasqeService(value: YasqeService) {
-    this._yasqeService = value;
   }
 }

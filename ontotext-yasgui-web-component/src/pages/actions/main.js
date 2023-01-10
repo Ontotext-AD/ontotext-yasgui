@@ -1,7 +1,7 @@
 let ontoElement = document.querySelector('ontotext-yasgui');
 ontoElement.config = {
   endpoint: '/repositories/test-repo',
-  yasqePluginButtons: []
+  yasqeActionButtons: []
 };
 
 let textAreaElement = document.createElement('textarea');
@@ -11,7 +11,7 @@ document.body.appendChild(textAreaElement);
 function hideSaveQueryAction() {
   ontoElement.config = {
     ...ontoElement.config,
-    yasqePluginButtons: [
+    yasqeActionButtons: [
       {
         name: 'createSavedQuery',
         visible: false
@@ -23,7 +23,7 @@ function hideSaveQueryAction() {
 function showSaveQueryAction() {
   ontoElement.config = {
     ...ontoElement.config,
-    yasqePluginButtons: [
+    yasqeActionButtons: [
       {
         name: 'createSavedQuery',
         visible: true

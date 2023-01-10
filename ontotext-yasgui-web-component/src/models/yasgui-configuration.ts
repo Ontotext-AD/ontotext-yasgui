@@ -74,6 +74,9 @@ export interface YasguiConfiguration {
        * Default query when a tab is opened.
        */
       value?: string;
+      /**
+       * Button implementations for the yasqe actions.
+       */
       pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
     }
   };
@@ -125,7 +128,7 @@ export const defaultYasguiConfig: Record<string, any> = {
 export const defaultYasqeConfig: Record<string, any> = {
   query: 'select * where {  ?s ?p ?o . } limit 100',
   initialQuery: '',
-  yasqePluginButtons: [
+  yasqeActionButtons: [
     {name: 'createSavedQuery', visible: true}
   ]
 }

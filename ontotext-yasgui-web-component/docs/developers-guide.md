@@ -132,11 +132,12 @@ yasqe.pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
 which allows custom action buttons to be plugged in the editor. This component employs the extension point and plugs in a couple of buttons
 implementing actions like: save query, load saved queries, expand query results, etc.
 
-Custom action buttons can be plugged in by providing a `PluginButtonDefinition` to the `yasqePluginButtons` config on the component client.
+Custom action buttons can be plugged in the yasqe editor by providing a `YasqeActionButtonDefinition` to the `yasqeActionButtons` config in 
+the component client.
 
 ```
 {
-  yasqePluginButtons: [
+  yasqeActionButtons: [
     {
       name: 'createSavedQuery',
       visible: true
@@ -145,10 +146,10 @@ Custom action buttons can be plugged in by providing a `PluginButtonDefinition` 
 }
 ```
 
-If the plugin button has implementation in the component, then it will be added in the editor toolbar during the initialization.
-If any action button has to be hidden, then pass `visible: false` in the plugin definition.
+If the action button has implementation in the component, then it will be added in the editor toolbar during the initialization.
+If any action button has to be hidden, then pass the `visible: false` property in the button definition.
 
-The plugin buttons have following example implementation:
+The action buttons can have the following example implementation:
 
 ```javascript
 const createSavedQueryButton = document.createElement("button");

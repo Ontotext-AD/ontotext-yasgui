@@ -100,7 +100,7 @@ export interface ExternalYasguiConfiguration {
   //
   // ***********************************************************
 
-  yasqePluginButtons: PluginButtonDefinition[]
+  yasqeActionButtons: YasqeActionButtonDefinition[]
 }
 
 export enum RenderingMode {
@@ -114,7 +114,7 @@ export enum Orientation {
   HORIZONTAL = 'orientation-horizontal'
 }
 
-export type PluginButtonDefinition = {
+export type YasqeActionButtonDefinition = {
   name: string;
   visible: boolean;
 }
