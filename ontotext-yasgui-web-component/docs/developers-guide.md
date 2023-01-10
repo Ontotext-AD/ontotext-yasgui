@@ -25,12 +25,14 @@ In cypress component tests, for any particular feature the respective page is vi
 actions and verifications are applied.
 
 > Testing the component integration in the GraphDB workbench locally without publishing in NPM:
-> * Build the component: `npm run build`
+> * Build the component `npm run build`
 > * Create a simlink to the component's source code in the root of the GraphDB workbench project
-> by executing ```npx link /path/to/ontotext-yasgui/ontotext-yasgui-web-component```. You must
+> by executing `npx link /path/to/ontotext-yasgui/ontotext-yasgui-web-component`. You must
 > have `npx` installed. Otherwise consider some of the other options [here](https://hirok.io/posts/avoid-npm-link).
 > * Start GgraphDB instance. Check GDB documentation how to do this.
-> * Start the GDB workbench.
+> * Start the GDB workbench in dev mode `npm run start` and you can test the component integration.
+> While the GDB workbench is running in dev mode you can rebuild the yasgui web component and thw workbench
+> will automatically reload itself with the latest changes.
 > 
 > After this the component's source code should be linked like it's been installed via NPM.
 > 
