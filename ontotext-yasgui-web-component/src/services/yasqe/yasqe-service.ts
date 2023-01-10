@@ -5,10 +5,15 @@ import {TranslationService} from "../translation.service";
 export class YasqeService {
   private static _instance: YasqeService;
 
-  private _eventService: EventService;
-  private _translationService: TranslationService;
+  private eventService: EventService;
+  private translationService: TranslationService;
 
   buttonInstances: Map<string, HTMLElement> = new Map<string, HTMLElement>();
+
+  constructor() {
+    this.eventService = EventService.Instance;
+    this.translationService = TranslationService.Instance;
+  }
 
   static get Instance(): YasqeService {
     if (!this._instance) {
@@ -36,21 +41,5 @@ export class YasqeService {
     createSavedQueryButton.addEventListener("click",
       () => this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent()));
     return createSavedQueryButton;
-  }
-
-  get eventService(): EventService {
-    return this._eventService;
-  }
-
-  set eventService(value: EventService) {
-    this._eventService = value;
-  }
-
-  get translationService(): TranslationService {
-    return this._translationService;
-  }
-
-  set translationService(value: TranslationService) {
-    this._translationService = value;
   }
 }

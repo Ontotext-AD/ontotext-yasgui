@@ -76,10 +76,6 @@ export class SaveQueryDialog {
     this.internalSaveQueryEvent.emit(new SaveQueryData(queryName, query, isPublic));
   }
 
-  resolveIsSaveAllowed(): void {
-    this.isSaveAllowed = !!(this.queryName.trim().length && this.query.trim().length);
-  }
-
   handleQueryNameChange(event): void {
     this.queryName = event.target.value;
     this.resolveIsSaveAllowed();
@@ -92,6 +88,10 @@ export class SaveQueryDialog {
 
   handleIsPublicChange(event): void {
     this.isPublic = event.target.checked;
+  }
+
+  private resolveIsSaveAllowed(): void {
+    this.isSaveAllowed = !!(this.queryName.trim().length && this.query.trim().length);
   }
 
   private getMissingFieldsMessage(): string[] {
@@ -113,10 +113,11 @@ export class SaveQueryDialog {
     return !this.query.trim().length;
   }
 
-  render() {
-    const hasMissingFields = this.hasMissingQuery() || this.hasMissingQueryName();
-    const missingFieldWarningMessage = this.getMissingFieldsMessage();
+  private hasMissingFields() {
+    return this.hasMissingQuery() || this.hasMissingQueryName();
+  }
 
+  render() {
     return (
       <Host>
         <div class="dialog-overlay" onClick={(evt) => this.onClose(evt)}>
@@ -155,7 +156,7 @@ export class SaveQueryDialog {
                             onInput={(evt) => this.handleQueryChange(evt)}>
                   </textarea>
                 </div>
-                {hasMissingFields && <Alert messages={missingFieldWarningMessage}>&nbsp;</Alert>}
+                {this.hasMissingFields() && <Alert messages={this.getMissingFieldsMessage()}>&nbsp;</Alert>}
               </div>
 
             </div>

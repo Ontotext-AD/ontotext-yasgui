@@ -72,13 +72,9 @@ export class OntotextYasguiWebComponent {
     this.ontotextYasguiService = OntotextYasguiService;
 
     const yasqeService = YasqeService.Instance;
-    yasqeService.eventService = eventService;
-    yasqeService.translationService = this.translationService;
     yasqeService.init();
 
     this.yasguiConfigurationBuilder = YasguiConfigurationBuilderDefinition.Instance;
-    this.yasguiConfigurationBuilder.eventService = eventService;
-    this.yasguiConfigurationBuilder.yasqeService = yasqeService;
   }
 
   /**
@@ -152,23 +148,11 @@ export class OntotextYasguiWebComponent {
   @State() showSaveQueryDialog = false;
 
   /**
-   * The data for the new saved query. The save query dialog binds to this field.
-   */
-  saveQueryData: SaveQueryData;
-
-  /**
    * Handler for the event fired when the button in the yasqe is triggered.
    */
   @Listen('internalCreateSavedQueryEvent')
   saveQueryHandler() {
-    const queryName = this.ontotextYasgui.getInstance().getTab().getName();
-    const query = this.ontotextYasgui.getInstance().getTab().getQuery();
     this.showSaveQueryDialog = true;
-    this.saveQueryData = {
-      queryName,
-      query,
-      isPublic: false
-    };
   }
 
   /**
@@ -254,6 +238,24 @@ export class OntotextYasguiWebComponent {
     this.queryResponse.emit({duration});
   }
 
+  private getSaveQueryData(): SaveQueryData {
+    const queryName = this.ontotextYasgui.getInstance().getTab().getName();
+    const query = this.ontotextYasgui.getInstance().getTab().getQuery();
+    return {
+      queryName,
+      query,
+      isPublic: false
+    };
+  }
+
+  private getRenderMode() {
+    return this.config.render || defaultOntotextYasguiConfig.render;
+  }
+
+  private getOrientationMode() {
+    return this.config.orientation || defaultOntotextYasguiConfig.orientation;
+  }
+
   private destroy() {
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
@@ -265,10 +267,7 @@ export class OntotextYasguiWebComponent {
   }
 
   render() {
-    const orientation = this.config.orientation || defaultOntotextYasguiConfig.orientation;
-    const render = this.config.render || defaultOntotextYasguiConfig.render;
-    const classList = `yasgui-host-element ${orientation} ${render}`;
-    const orientationTooltip = this.resolveOrientationButtonTooltip();
+    const classList = `yasgui-host-element ${this.getOrientationMode()} ${this.getRenderMode()}`;
     return (
       <Host class={classList}>
         <div class="yasgui-toolbar">
@@ -285,7 +284,7 @@ export class OntotextYasguiWebComponent {
             {this.translationService.translate('btn.mode-yasr')}
           </button>
           <yasgui-tooltip
-            data-tooltip={orientationTooltip}
+            data-tooltip={this.resolveOrientationButtonTooltip()}
             placement="left"
             show-on-click={true}>
             <button class="btn-orientation icon-columns red"
@@ -294,7 +293,8 @@ export class OntotextYasguiWebComponent {
         </div>
         <div class="ontotext-yasgui">&nbsp;</div>
 
-        {this.showSaveQueryDialog && <save-query-dialog data={this.saveQueryData}>&nbsp;</save-query-dialog>}
+        {this.showSaveQueryDialog &&
+        <save-query-dialog data={this.getSaveQueryData()}>&nbsp;</save-query-dialog>}
       </Host>
     );
   }
