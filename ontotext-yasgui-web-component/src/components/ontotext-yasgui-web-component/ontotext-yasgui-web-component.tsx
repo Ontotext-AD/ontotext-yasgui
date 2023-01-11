@@ -177,6 +177,7 @@ export class OntotextYasguiWebComponent {
       // Load the yasgui script once.
       YASGUI_MIN_SCRIPT();
     }
+    this.translationService.setLanguage(this.language);
   }
 
   componentDidLoad() {
@@ -197,7 +198,7 @@ export class OntotextYasguiWebComponent {
     if (!externalConfiguration) {
       return;
     }
-    this.translationService.setLanguage(this.language);
+
     // @ts-ignore
     if (window.Yasgui) {
       // * Build the internal yasgui configuration using the provided external configuration

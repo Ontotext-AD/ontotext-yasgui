@@ -28,7 +28,7 @@
     "lint:fix": "eslint --fix 'src/**'"
   },
   "dependencies": {
-    "@stencil/core": "^2.20.0",
+    "@stencil/core": "^2.21.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
