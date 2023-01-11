@@ -32,6 +32,12 @@ export interface ExternalYasguiConfiguration {
    */
   showToolbar: boolean;
 
+  /**
+   * Configuration which should be set when query saving request has
+   * failed for some reason. This is taken into account when the visibility
+   * of the save query dialog is resolved and what messages are rendered
+   * inside it.
+   */
   savedQuery?: SavedQueryControlConfig;
 
   // ***********************************************************
