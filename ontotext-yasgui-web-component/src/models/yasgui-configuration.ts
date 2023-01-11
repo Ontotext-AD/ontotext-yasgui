@@ -120,7 +120,7 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
 
 export const defaultYasguiConfig: Record<string, any> = {
   translate: (key, parameters) => TranslationService.Instance.translate(key, parameters),
-  defaultTabName: TranslationService.translate('yasgui.tab_list.tab.default.name'),
+  defaultTabName: TranslationService.Instance.translate('yasgui.tab_list.tab.default.name'),
   copyEndpointOnNewTab: true,
   endpoint: '',
   method: 'POST',

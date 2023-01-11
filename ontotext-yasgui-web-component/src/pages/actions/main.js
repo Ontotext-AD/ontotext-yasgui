@@ -1,7 +1,8 @@
 let ontoElement = document.querySelector('ontotext-yasgui');
 ontoElement.config = {
   endpoint: '/repositories/test-repo',
-  yasqeActionButtons: []
+  yasqeActionButtons: [],
+  defaultTabName: 'Query'
 };
 
 let textAreaElement = document.createElement('textarea');
