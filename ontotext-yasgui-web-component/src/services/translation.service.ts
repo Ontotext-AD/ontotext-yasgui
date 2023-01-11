@@ -17,7 +17,7 @@ export class TranslationService {
     return this._instance;
   }
 
-  setLanguage(lang: string) {
+  setLanguage(lang: string = DEFAULT_LANG) {
     if (!this.bundle || !this.bundle[this.currentLang]) {
       console.warn('Missing locale file for [' + this.currentLang + ']');
       this.currentLang = DEFAULT_LANG;
