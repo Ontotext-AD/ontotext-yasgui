@@ -8,6 +8,7 @@
 
   .yasgui-btn {
     border: none;
+    outline: none;
     background-color: #ebebeb;
     color: #000;
   }
@@ -21,5 +22,6 @@
     color: $color-ontotext-orange;
     background-color: #fff;
     border: none;
+    outline: none;
   }
 }
