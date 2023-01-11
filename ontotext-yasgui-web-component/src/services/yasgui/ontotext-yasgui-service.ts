@@ -35,11 +35,11 @@ class OntotextYasguiServiceDefinition {
   }
 
   private static initControlBar(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    const controlBar = HtmlElementsUtil.getControlBar(hostElement);
+    const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showControlBar) {
-      controlBar.classList.remove('hidden');
+      ontotextYasgui.classList.remove('hidden-control-bar');
     } else {
-      controlBar.classList.add('hidden');
+      ontotextYasgui.classList.add('hidden-control-bar');
     }
   }
 
