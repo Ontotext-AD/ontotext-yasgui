@@ -57,6 +57,15 @@ export class OntotextYasgui {
     return this.yasgui;
   }
 
+  getTabName(): string {
+    return this.getInstance().getTab().getName();
+  }
+
+  // TODO: What's the difference between getQuery() and this method?
+  getTabQuery(): string {
+    return this.getInstance().getTab().getQuery();
+  }
+
   destroy() {
     if (this.yasgui) {
       Object.keys(this.yasgui._tabs).forEach((tabId) => {

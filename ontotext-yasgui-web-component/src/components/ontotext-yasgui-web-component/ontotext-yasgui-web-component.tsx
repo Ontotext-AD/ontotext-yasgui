@@ -160,7 +160,6 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalSaveQueryEvent')
   createSavedQueryHandler(event: CustomEvent<SaveQueryData>) {
-    this.showSaveQueryDialog = false;
     this.createSavedQuery.emit(event.detail);
   }
 
@@ -210,6 +209,8 @@ export class OntotextYasguiWebComponent {
       // * Configure the web component
       this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
+      this.shouldShowSaveQueryDialog();
+
       // * Register any needed event handler
       this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
       this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
@@ -239,13 +240,20 @@ export class OntotextYasguiWebComponent {
   }
 
   private getSaveQueryData(): SaveQueryData {
-    const queryName = this.ontotextYasgui.getInstance().getTab().getName();
-    const query = this.ontotextYasgui.getInstance().getTab().getQuery();
-    return {
-      queryName,
-      query,
+    const data: SaveQueryData = {
+      queryName: '',
+      query: '',
       isPublic: false
     };
+    if (this.ontotextYasgui) {
+      data.queryName = this.ontotextYasgui.getTabName();
+      data.query = this.ontotextYasgui.getTabQuery();
+      data.isPublic = false;
+    }
+    if (this.config.savedQuery && !this.isSavedQuerySaved()) {
+      data.messages = this.config.savedQuery.errorMessage;
+    }
+    return data;
   }
 
   private getRenderMode() {
@@ -254,6 +262,14 @@ export class OntotextYasguiWebComponent {
 
   private getOrientationMode() {
     return this.config.orientation || defaultOntotextYasguiConfig.orientation;
+  }
+
+  private shouldShowSaveQueryDialog(): void {
+    this.showSaveQueryDialog = this.showSaveQueryDialog && (!this.config.savedQuery || !this.isSavedQuerySaved());
+  }
+
+  private isSavedQuerySaved() {
+    return this.config.savedQuery && this.config.savedQuery.saveSuccess;
   }
 
   private destroy() {
