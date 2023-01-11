@@ -60,11 +60,11 @@ export class ToolbarPageSteps {
     }
 
     static isVerticalOrientation() {
-        this.getOrientationButton().should('not.have.class', 'icon-rotate-90')
+        this.getOrientationButton().should('not.have.class', 'icon-rotate-quarter')
     }
 
     static isHorizontalOrientation() {
-        this.getOrientationButton().should('have.class', 'icon-rotate-90')
+        this.getOrientationButton().should('have.class', 'icon-rotate-quarter')
     }
 
     static switchToModeYasgui() {

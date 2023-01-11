@@ -16,9 +16,9 @@ export class VisualisationUtils {
   static toggleLayoutOrientationButton(hostElement: HTMLElement, newOrientation: Orientation): void {
     const buttonOrientation = HtmlElementsUtil.getOrientationButton(hostElement);
     if (Orientation.HORIZONTAL === newOrientation) {
-      buttonOrientation.classList.add('icon-rotate-90');
+      buttonOrientation.classList.add('icon-rotate-quarter');
     } else {
-      buttonOrientation.classList.remove('icon-rotate-90');
+      buttonOrientation.classList.remove('icon-rotate-quarter');
     }
   }
 
