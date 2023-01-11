@@ -44,7 +44,29 @@ ontoElement.addEventListener('queryResponse', () => {
   document.body.appendChild(div);
 });
 
+const savedQueryStorage = {};
+
 ontoElement.addEventListener('createSavedQuery', (event) => {
-  textAreaElement.value = JSON.stringify(event.detail);
+  let data = event.detail;
+  textAreaElement.value = JSON.stringify(data);
+
+  // emulate duplicated query name error
+  if (savedQueryStorage[data.queryName]) {
+    ontoElement.config = {
+      ...ontoElement.config,
+      savedQuery: {
+        saveSuccess: false,
+        errorMessage: ['Query name already exist!']
+      }
+    };
+  } else {
+    savedQueryStorage[data.queryName] = data;
+    ontoElement.config = {
+      ...ontoElement.config,
+      savedQuery: {
+        saveSuccess: true
+      }
+    };
+  }
 });
 

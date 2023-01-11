@@ -102,6 +102,9 @@ export class SaveQueryDialog {
     if (this.hasMissingQuery()) {
       missingFieldWarningMessage.push(this.translationService.translate('yasqe.actions.save_query.dialog.query.empty_error'));
     }
+    if (this.data.messages) {
+      missingFieldWarningMessage.push(...this.data.messages);
+    }
     return missingFieldWarningMessage;
   }
 
@@ -115,6 +118,10 @@ export class SaveQueryDialog {
 
   private hasMissingFields() {
     return this.hasMissingQuery() || this.hasMissingQueryName();
+  }
+
+  private showErrorMessage() {
+    return this.hasMissingFields() || this.data.messages?.length;
   }
 
   render() {
@@ -156,7 +163,7 @@ export class SaveQueryDialog {
                             onInput={(evt) => this.handleQueryChange(evt)}>
                   </textarea>
                 </div>
-                {this.hasMissingFields() && <Alert messages={this.getMissingFieldsMessage()}>&nbsp;</Alert>}
+                {this.showErrorMessage() && <Alert messages={this.getMissingFieldsMessage()}>&nbsp;</Alert>}
               </div>
 
             </div>

@@ -32,6 +32,8 @@ export interface ExternalYasguiConfiguration {
    */
   showToolbar: boolean;
 
+  savedQuery?: SavedQueryControlConfig;
+
   // ***********************************************************
   //
   // All configurations related with the yasgui instance
@@ -117,4 +119,9 @@ export enum Orientation {
 export type YasqeActionButtonDefinition = {
   name: string;
   visible: boolean;
+}
+
+export type SavedQueryControlConfig = {
+  saveSuccess: boolean;
+  errorMessage: string[];
 }
