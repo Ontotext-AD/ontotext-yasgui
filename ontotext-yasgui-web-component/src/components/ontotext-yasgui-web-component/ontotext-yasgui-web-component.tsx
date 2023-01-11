@@ -197,7 +197,7 @@ export class OntotextYasguiWebComponent {
     if (!externalConfiguration) {
       return;
     }
-
+    this.translationService.setLanguage(this.language);
     // @ts-ignore
     if (window.Yasgui) {
       // * Build the internal yasgui configuration using the provided external configuration
