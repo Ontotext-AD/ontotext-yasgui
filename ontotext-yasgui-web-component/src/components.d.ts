@@ -9,6 +9,22 @@ import { ExternalYasguiConfiguration } from "./models/external-yasgui-configurat
 import { QueryEvent, QueryResponseEvent } from "./models/event";
 import { SaveQueryData } from "./models/model";
 export namespace Components {
+    /**
+     * This is the custom web component which is adapter for the yasgui library. It allows as to
+     * configure and extend the library without potentially breaking the component clients.
+     * The component have some sane defaults for most of its configurations. So, in practice, it can be
+     * used as is by providing just the sparql endpoint config.
+     * For other customizations, the default configurations can be overridden by providing an external
+     * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
+     * component.
+     * There is a configuration watcher which triggers the initialization again after a change is
+     * detected.
+     * During the component initialization, the provided external configuration is passed down to a
+     * configuration builder which use it to override and extend the the yasgui library defaults.
+     * After the configuration is ready, then a yasgui instance is created with it.
+     * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
+     * yasgui can be tweaked using the values from the configuration.
+     */
     interface OntotextYasgui {
         /**
           * An input object property containing the yasgui configuration.
@@ -41,6 +57,22 @@ export interface SaveQueryDialogCustomEvent<T> extends CustomEvent<T> {
     target: HTMLSaveQueryDialogElement;
 }
 declare global {
+    /**
+     * This is the custom web component which is adapter for the yasgui library. It allows as to
+     * configure and extend the library without potentially breaking the component clients.
+     * The component have some sane defaults for most of its configurations. So, in practice, it can be
+     * used as is by providing just the sparql endpoint config.
+     * For other customizations, the default configurations can be overridden by providing an external
+     * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
+     * component.
+     * There is a configuration watcher which triggers the initialization again after a change is
+     * detected.
+     * During the component initialization, the provided external configuration is passed down to a
+     * configuration builder which use it to override and extend the the yasgui library defaults.
+     * After the configuration is ready, then a yasgui instance is created with it.
+     * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
+     * yasgui can be tweaked using the values from the configuration.
+     */
     interface HTMLOntotextYasguiElement extends Components.OntotextYasgui, HTMLStencilElement {
     }
     var HTMLOntotextYasguiElement: {
@@ -66,6 +98,22 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    /**
+     * This is the custom web component which is adapter for the yasgui library. It allows as to
+     * configure and extend the library without potentially breaking the component clients.
+     * The component have some sane defaults for most of its configurations. So, in practice, it can be
+     * used as is by providing just the sparql endpoint config.
+     * For other customizations, the default configurations can be overridden by providing an external
+     * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
+     * component.
+     * There is a configuration watcher which triggers the initialization again after a change is
+     * detected.
+     * During the component initialization, the provided external configuration is passed down to a
+     * configuration builder which use it to override and extend the the yasgui library defaults.
+     * After the configuration is ready, then a yasgui instance is created with it.
+     * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
+     * yasgui can be tweaked using the values from the configuration.
+     */
     interface OntotextYasgui {
         /**
           * An input object property containing the yasgui configuration.
@@ -117,6 +165,22 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            /**
+             * This is the custom web component which is adapter for the yasgui library. It allows as to
+             * configure and extend the library without potentially breaking the component clients.
+             * The component have some sane defaults for most of its configurations. So, in practice, it can be
+             * used as is by providing just the sparql endpoint config.
+             * For other customizations, the default configurations can be overridden by providing an external
+             * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
+             * component.
+             * There is a configuration watcher which triggers the initialization again after a change is
+             * detected.
+             * During the component initialization, the provided external configuration is passed down to a
+             * configuration builder which use it to override and extend the the yasgui library defaults.
+             * After the configuration is ready, then a yasgui instance is created with it.
+             * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
+             * yasgui can be tweaked using the values from the configuration.
+             */
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "yasgui-tooltip": LocalJSX.YasguiTooltip & JSXBase.HTMLAttributes<HTMLYasguiTooltipElement>;
