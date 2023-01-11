@@ -41,6 +41,19 @@
     }
   }
 
+  .hidden-control-bar {
+    .yasgui {
+
+      .autocompleteWrapper {
+        display: none !important;
+      }
+
+      .tabContextButton {
+        display: none;
+      }
+    }
+  }
+
   &.hidden-editor-tabs {
 
     .tabsList {
