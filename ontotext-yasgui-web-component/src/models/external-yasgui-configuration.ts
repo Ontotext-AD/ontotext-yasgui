@@ -91,6 +91,20 @@ export interface ExternalYasguiConfiguration {
    */
   copyEndpointOnNewTab: boolean;
 
+  /**
+   * Yasgui use browser local storage to persist its state. In its state, yasgui holds information about:
+   * 1. default query when a tab is opened;
+   * 2. YASR plugins configuration;
+   * 3. selected plugin;
+   * 4. request configuration: endpoint, headers, method and so on;
+   * 5. opened tabs;
+   * 5. which tab is active.
+   * The <code>componentId</code> configuration options defines uniqueness of this persistent state. Passed value will be used to generate
+   * the key which will be used into browser local store. For example if value is "123" then the key will be "yasgui__123".
+   * Default value is "ontotext-yasgui-config".
+   */
+  componentId: string;
+
   // ***********************************************************
   //
   // All configurations related with the yasqe instance

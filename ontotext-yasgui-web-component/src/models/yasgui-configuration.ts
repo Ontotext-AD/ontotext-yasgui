@@ -75,6 +75,7 @@ export interface YasguiConfiguration {
       headers?: () => Record<string, string>;
     },
     copyEndpointOnNewTab?: boolean;
+    persistenceLabelConfig?: string;
     yasqe?: {
       /**
        * Default query when a tab is opened.
@@ -122,6 +123,7 @@ export const defaultYasguiConfig: Record<string, any> = {
   translate: (key, parameters) => TranslationService.Instance.translate(key, parameters),
   defaultTabName: TranslationService.Instance.translate('yasgui.tab_list.tab.default.name'),
   copyEndpointOnNewTab: true,
+  persistenceLabelConfig: "ontotext-yasgui-config",
   endpoint: '',
   method: 'POST',
   headers: () => {
