@@ -67,6 +67,20 @@ Then the component can be used in html templates like this:
   [config]="config">
 </ontotext-yasgui>
 ```
+'ontotext-yasgui' is a web component, so it needs to configure NgModule to allow custom element schema.
+Add "CUSTOM_ELEMENTS_SCHEMA" to "@NgModule.schemas" in the module where component is used.
+```
+@NgModule({
+  declarations: [
+    ...
+  ],
+  imports: [
+    ...
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+```
+
 ## Configuration
 
 The "config" value of "ngce-prop-config" or "[config]" is an object with following options:
