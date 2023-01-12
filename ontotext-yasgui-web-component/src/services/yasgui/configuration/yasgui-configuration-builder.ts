@@ -57,6 +57,7 @@ export class YasguiConfigurationBuilderDefinition {
     config.yasguiConfig.tabName = externalConfiguration.defaultTabName || defaultYasguiConfig.defaultTabName;
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
+    config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
 
     // prepare the yasqe config
