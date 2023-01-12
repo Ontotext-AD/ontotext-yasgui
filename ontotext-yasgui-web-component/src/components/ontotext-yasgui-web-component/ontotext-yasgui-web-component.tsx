@@ -284,6 +284,9 @@ export class OntotextYasguiWebComponent {
   }
 
   render() {
+    if (!this.config) {
+      return (<Host></Host>);
+    }
     const classList = `yasgui-host-element ${this.getOrientationMode()} ${this.getRenderMode()}`;
     return (
       <Host class={classList}>
