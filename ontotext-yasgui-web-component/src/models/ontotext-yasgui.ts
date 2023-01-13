@@ -66,6 +66,13 @@ export class OntotextYasgui {
     return this.getInstance().getTab().getQuery();
   }
 
+  createNewTab(queryName: string, query: string): void {
+    const tabInstance = this.getInstance().addTab(true, {
+      name: queryName
+    });
+    tabInstance.setQuery(query);
+  }
+
   destroy() {
     if (this.yasgui) {
       Object.keys(this.yasgui._tabs).forEach((tabId) => {

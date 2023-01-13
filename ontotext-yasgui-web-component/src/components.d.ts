@@ -7,7 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
-import { SaveQueryData } from "./models/model";
+import { SavedQueriesData, SaveQueryData } from "./models/model";
 export namespace Components {
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -42,6 +42,9 @@ export namespace Components {
          */
         "data": SaveQueryData;
     }
+    interface SavedQueriesPopup {
+        "data": SavedQueriesData;
+    }
     interface YasguiTooltip {
         "dataTooltip": string;
         "placement": string;
@@ -55,6 +58,10 @@ export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
 export interface SaveQueryDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLSaveQueryDialogElement;
+}
+export interface SavedQueriesPopupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLSavedQueriesPopupElement;
 }
 declare global {
     /**
@@ -85,6 +92,12 @@ declare global {
         prototype: HTMLSaveQueryDialogElement;
         new (): HTMLSaveQueryDialogElement;
     };
+    interface HTMLSavedQueriesPopupElement extends Components.SavedQueriesPopup, HTMLStencilElement {
+    }
+    var HTMLSavedQueriesPopupElement: {
+        prototype: HTMLSavedQueriesPopupElement;
+        new (): HTMLSavedQueriesPopupElement;
+    };
     interface HTMLYasguiTooltipElement extends Components.YasguiTooltip, HTMLStencilElement {
     }
     var HTMLYasguiTooltipElement: {
@@ -94,6 +107,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
+        "saved-queries-popup": HTMLSavedQueriesPopupElement;
         "yasgui-tooltip": HTMLYasguiTooltipElement;
     }
 }
@@ -128,6 +142,10 @@ declare namespace LocalJSX {
          */
         "onCreateSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
         /**
+          * Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
+         */
+        "onLoadSavedQueries"?: (event: OntotextYasguiCustomEvent<boolean>) => void;
+        /**
           * Event emitted when before query to be executed.
          */
         "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<QueryEvent>) => void;
@@ -150,6 +168,17 @@ declare namespace LocalJSX {
          */
         "onInternalSaveQueryEvent"?: (event: SaveQueryDialogCustomEvent<SaveQueryData>) => void;
     }
+    interface SavedQueriesPopup {
+        "data"?: SavedQueriesData;
+        /**
+          * Event fired when the saved queries popup should be closed.
+         */
+        "onInternalCloseSavedQueriesPopupEvent"?: (event: SavedQueriesPopupCustomEvent<any>) => void;
+        /**
+          * Event fired when a saved query is selected from the list.
+         */
+        "onInternalSaveQuerySelectedEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
+    }
     interface YasguiTooltip {
         "dataTooltip"?: string;
         "placement"?: string;
@@ -158,6 +187,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
+        "saved-queries-popup": SavedQueriesPopup;
         "yasgui-tooltip": YasguiTooltip;
     }
 }
@@ -183,6 +213,7 @@ declare module "@stencil/core" {
              */
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
+            "saved-queries-popup": LocalJSX.SavedQueriesPopup & JSXBase.HTMLAttributes<HTMLSavedQueriesPopupElement>;
             "yasgui-tooltip": LocalJSX.YasguiTooltip & JSXBase.HTMLAttributes<HTMLYasguiTooltipElement>;
         }
     }

@@ -33,6 +33,30 @@ function showSaveQueryAction() {
   };
 }
 
+function hideLoadSavedQueriesAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'showSavedQueries',
+        visible: false
+      }
+    ]
+  };
+}
+
+function showLoadSavedQueriesAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'showSavedQueries',
+        visible: true
+      }
+    ]
+  };
+}
+
 ontoElement.addEventListener("queryExecuted", () => {
   const div = document.createElement('div');
   div.innerHTML = '<div id="queryRan">Query was Executed</div>';
@@ -71,3 +95,38 @@ ontoElement.addEventListener('createSavedQuery', (event) => {
   }
 });
 
+const savedQueries = [
+  {
+    "name": "Add statements",
+    "body": "PREFIX dc: <http://purl.org/dc/elements/1.1/>\nINSERT DATA\n      {\n      GRAPH <http://example> {\n          <http://example/book1> dc:title \"A new book\" ;\n                                 dc:creator \"A.N.Other\" .\n          }\n      }",
+    "shared": false,
+    "owner": "admin"
+  },
+  {
+    "name": "Clear graph",
+    "body": "CLEAR GRAPH <http://example>",
+    "shared": false,
+    "owner": "admin"
+  },
+  {
+    "name": "new query",
+    "body": "select *",
+    "shared": true,
+    "owner": "admin"
+  },
+  {
+    "name": "q1",
+    "body": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "shared": false,
+    "owner": "admin"
+  }
+];
+ontoElement.addEventListener('loadSavedQueries', (event) => {
+  console.log('loadSavedQueries event', event);
+  ontoElement.config = {
+    ...ontoElement.config,
+    savedQueries: {
+      data: savedQueries
+    }
+  };
+});

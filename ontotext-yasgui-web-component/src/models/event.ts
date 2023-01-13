@@ -9,3 +9,7 @@ export type QueryResponseEvent = {
 export class InternalCreateSavedQueryEvent {
   static readonly TYPE = 'internalCreateSavedQueryEvent';
 }
+
+export class InternalShowSavedQueriesEvent {
+  static readonly TYPE = 'internalShowSavedQueriesEvent';
+}
