@@ -1,3 +1,5 @@
+@import "src/css/variables";
+
 :host {
   display: block;
 }
@@ -9,8 +11,11 @@
   border: 1px solid #ccc;
   font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 300;
+  background-color: #fff;
 
   .saved-queries-popup {
+    height: 250px;
+    overflow-y: scroll;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 
     ul {
@@ -19,9 +24,13 @@
 
       .saved-query {
         list-style-type: none;
+        padding: 5px 0;
 
         a {
+          display: block;
           text-decoration: none;
+          cursor: pointer;
+          color: $color-onto-blue;
 
           &:hover {
             text-decoration: underline;

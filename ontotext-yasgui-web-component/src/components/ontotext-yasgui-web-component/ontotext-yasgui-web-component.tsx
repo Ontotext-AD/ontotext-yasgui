@@ -196,7 +196,6 @@ export class OntotextYasguiWebComponent {
   @Listen('internalSaveQuerySelectedEvent')
   savedQuerySelectedHandler(event: CustomEvent<SaveQueryData>) {
     const queryData: SaveQueryData = event.detail;
-    this.config.savedQueries.data = [];
     this.showSavedQueriesPopup = false;
     this.ontotextYasgui.createNewTab(queryData.queryName, queryData.query);
   }
@@ -303,9 +302,9 @@ export class OntotextYasguiWebComponent {
     if (this.config.savedQueries) {
       data.savedQueriesList = this.config.savedQueries.data.map((savedQuery) => {
         return {
-          queryName: savedQuery.name,
-          query: savedQuery.body,
-          isPublic: savedQuery.shared,
+          queryName: savedQuery.queryName,
+          query: savedQuery.query,
+          isPublic: savedQuery.isPublic,
           owner: savedQuery.owner
         }
       });

@@ -95,32 +95,6 @@ ontoElement.addEventListener('createSavedQuery', (event) => {
   }
 });
 
-const savedQueries = [
-  {
-    "name": "Add statements",
-    "body": "PREFIX dc: <http://purl.org/dc/elements/1.1/>\nINSERT DATA\n      {\n      GRAPH <http://example> {\n          <http://example/book1> dc:title \"A new book\" ;\n                                 dc:creator \"A.N.Other\" .\n          }\n      }",
-    "shared": false,
-    "owner": "admin"
-  },
-  {
-    "name": "Clear graph",
-    "body": "CLEAR GRAPH <http://example>",
-    "shared": false,
-    "owner": "admin"
-  },
-  {
-    "name": "new query",
-    "body": "select *",
-    "shared": true,
-    "owner": "admin"
-  },
-  {
-    "name": "q1",
-    "body": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
-    "shared": false,
-    "owner": "admin"
-  }
-];
 ontoElement.addEventListener('loadSavedQueries', (event) => {
   console.log('loadSavedQueries event', event);
   ontoElement.config = {
@@ -130,3 +104,78 @@ ontoElement.addEventListener('loadSavedQueries', (event) => {
     }
   };
 });
+
+const savedQueries = [
+  {
+    "queryName": "Add statements",
+    "query": "PREFIX dc: <http://purl.org/dc/elements/1.1/>\nINSERT DATA\n      {\n      GRAPH <http://example> {\n          <http://example/book1> dc:title \"A new book\" ;\n                                 dc:creator \"A.N.Other\" .\n          }\n      }",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "Clear graph",
+    "query": "CLEAR GRAPH <http://example>",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "new query",
+    "query": "select *",
+    "isPublic": true,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q1",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q2",
+    "query": "slect * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q3",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q4",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q5",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q6",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q7",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q8",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+  {
+    "queryName": "q9",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "isPublic": false,
+    "owner": "admin"
+  },
+];

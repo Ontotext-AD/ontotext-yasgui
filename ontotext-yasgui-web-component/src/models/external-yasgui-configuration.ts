@@ -163,9 +163,9 @@ export type SavedQueryControlConfig = {
 }
 
 type SavedQuery = {
-  name: string;
-  body: string;
-  shared: boolean;
+  queryName: string;
+  query: string;
+  isPublic: boolean;
   owner: string;
 }
 

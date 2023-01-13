@@ -58,7 +58,7 @@ export class SavedQueriesPopup {
           <ul>
           {this.data.savedQueriesList.map((savedQuery) => (
             <li class="saved-query">
-              <a href="#" onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
+              <a onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
             </li>
           ))}
           </ul>

@@ -192,6 +192,44 @@ export class ServiceName {
 }
 ```
 
+# Integration events - Actions
+
+In result of certain operations in the yasgui component are raised events that are responsibility
+of the client to handle properly and to respond in the expected way.
+
+* **queryExecuted: EventEmitter\<QueryEvent>**: 
+  * Description: Event emitted when before query to be executed.
+  * Response: None
+* **queryResponse: EventEmitter\<QueryResponseEvent>**
+  * Description: Event emitted when after query response is returned.
+  * Response: None
+* **createSavedQuery: EventEmitter\<SaveQueryData>**:
+  * Description: Event emitted when saved query payload is collected and the query should be saved by the component client. 
+  * Response: The client must set in the config following data.
+  ```
+    {
+      savedQuery: {
+        saveSuccess: boolean; // if save was successful or not
+        errorMessage: string[]; // if any error happen then messages must be passed back
+      }
+    };
+  ```
+* **loadSavedQueries: EventEmitter\<boolean>**:
+  * Description: Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
+  * Response: The client must set in the config following data:
+  ```
+  {
+    savedQueries: {
+      data: {
+        queryName: string;
+        query: string;
+        owner: string;
+        isPublic: boolean;
+      }[]
+    }
+  }
+  ```
+
 # Useful References
 1. [State Management with State Tunnel in StencilJS](https://www.joshmorony.com/state-management-with-state-tunnel-in-stencil-js/)
 2. [Using Services/Providers to Share Data in a StencilJS Application](https://www.joshmorony.com/using-services-providers-to-share-data-in-a-stencil-js-application/)

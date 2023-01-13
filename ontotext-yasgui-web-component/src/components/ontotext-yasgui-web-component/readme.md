@@ -37,11 +37,12 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Events
 
-| Event              | Description                                                                                                | Type                                 |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `createSavedQuery` | Event emitted when saved query payload is collected and the query should be saved by the component client. | `CustomEvent<SaveQueryData>`         |
-| `queryExecuted`    | Event emitted when before query to be executed.                                                            | `CustomEvent<{ query: string; }>`    |
-| `queryResponse`    | Event emitted when after query response is returned.                                                       | `CustomEvent<{ duration: number; }>` |
+| Event              | Description                                                                                                                   | Type                                 |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `createSavedQuery` | Event emitted when saved query payload is collected and the query should be saved by the component client.                    | `CustomEvent<SaveQueryData>`         |
+| `loadSavedQueries` | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed. | `CustomEvent<boolean>`               |
+| `queryExecuted`    | Event emitted when before query to be executed.                                                                               | `CustomEvent<{ query: string; }>`    |
+| `queryResponse`    | Event emitted when after query response is returned.                                                                          | `CustomEvent<{ duration: number; }>` |
 
 
 ## Methods
@@ -63,12 +64,14 @@ Type: `Promise<void>`
 
 - [yasgui-tooltip](../ontotext-tooltip-web-component)
 - [save-query-dialog](../save-query-dialog)
+- [saved-queries-popup](../saved-queries-popup)
 
 ### Graph
 ```mermaid
 graph TD;
   ontotext-yasgui --> yasgui-tooltip
   ontotext-yasgui --> save-query-dialog
+  ontotext-yasgui --> saved-queries-popup
   save-query-dialog --> yasgui-tooltip
   style ontotext-yasgui fill:#f9f,stroke:#333,stroke-width:4px
 ```
