@@ -16,12 +16,20 @@ describe('Show saved queries action', () => {
         YasqeSteps.showSavedQueries();
         // Then I expect that a popup with a saved queries list to be opened
         YasqeSteps.getSavedQueriesPopup().should('be.visible');
-        YasqeSteps.getSavedQueries().should('have.length', 4);
+        YasqeSteps.getSavedQueries().should('have.length', 12);
         YasqeSteps.verifySavedQueries([
             {queryName: 'Add statements'},
             {queryName: 'Clear graph'},
             {queryName: 'new query'},
-            {queryName: 'q1'}
+            {queryName: 'q1'},
+            {queryName: 'q2'},
+            {queryName: 'q3'},
+            {queryName: 'q4'},
+            {queryName: 'q5'},
+            {queryName: 'q6'},
+            {queryName: 'q7'},
+            {queryName: 'q8'},
+            {queryName: 'q9'}
         ]);
     });
 
