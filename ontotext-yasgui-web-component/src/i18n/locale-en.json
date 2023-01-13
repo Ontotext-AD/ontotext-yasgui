@@ -78,5 +78,6 @@
   "yasqe.actions.save_query.dialog.public_query.label": "Share query with other users",
   "yasqe.actions.save_query.dialog.public_query.tooltip": "If checked other users will be able to see the query but not delete or edit it",
   "yasqe.actions.save_query.dialog.create.button": "Create",
-  "yasqe.actions.save_query.dialog.cancel.button": "Cancel"
+  "yasqe.actions.save_query.dialog.cancel.button": "Cancel",
+  "yasqe.actions.show_saved_queries.button.tooltip": "Show saved queries"
 }

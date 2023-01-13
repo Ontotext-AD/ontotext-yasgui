@@ -14,4 +14,12 @@ export default class ActionsPageSteps {
     static showSaveQueryAction() {
         cy.get('#showSaveQueryAction').click();
     }
+
+    static hideShowSavedQueriesAction() {
+        cy.get('#hideLoadSavedQueriesAction').click();
+    }
+
+    static showShowSavedQueriesAction() {
+        cy.get('#showLoadSavedQueriesAction').click();
+    }
 }

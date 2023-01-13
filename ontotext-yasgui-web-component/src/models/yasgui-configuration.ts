@@ -139,6 +139,7 @@ export const defaultYasqeConfig: Record<string, any> = {
   query: 'select * where {  ?s ?p ?o . } limit 100',
   initialQuery: '',
   yasqeActionButtons: [
-    {name: 'createSavedQuery', visible: true}
+    {name: 'createSavedQuery', visible: true},
+    {name: 'showSavedQueries', visible: true}
   ]
 }

@@ -11,6 +11,18 @@ export class YasqeSteps {
         return cy.get(".yasqe:visible");
     }
 
+    static getActionsToolbar() {
+        return this.getEditor().find('.yasqe_buttons');
+    }
+
+    static getActionButtons() {
+        return this.getActionsToolbar().find('.custom-button');
+    }
+
+    static getActionButton(index: number) {
+        return this.getActionButtons().eq(index);
+    }
+
     static getExecuteQueryButton() {
         return cy.get('.yasqe_queryButton');
     }
@@ -85,5 +97,37 @@ export class YasqeSteps {
 
     static getControlBar() {
         return cy.get('.controlbar');
+    }
+
+    static getShowSavedQueriesButton() {
+        return cy.get('.yasqe_showSavedQueriesButton');
+    }
+
+    static showSavedQueries() {
+        this.getShowSavedQueriesButton().click();
+    }
+
+    static getSavedQueriesPopup() {
+        return cy.get('.saved-queries-popup');
+    }
+
+    static getSavedQueries() {
+        return this.getSavedQueriesPopup().find('.saved-query');
+    }
+
+    static verifySavedQueries(data: {queryName: string}[]) {
+        this.getSavedQueries().each((el, index) => {
+            cy.wrap(el).should('contain', data[index].queryName);
+        })
+    }
+
+    static selectSavedQuery(index: number) {
+        this.getSavedQueries().eq(index).find('a').click();
+    }
+
+    static getTabQuery(tabIndex: number) {
+        return cy.get('.yasqe .CodeMirror').then((el) => {
+            return el[tabIndex].CodeMirror.getValue();
+        });
     }
 }

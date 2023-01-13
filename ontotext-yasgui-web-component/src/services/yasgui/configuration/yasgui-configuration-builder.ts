@@ -73,22 +73,29 @@ export class YasguiConfigurationBuilderDefinition {
   }
 
   getYasqeActionButtons(externalConfiguration: ExternalYasguiConfiguration, defaultYasqeConfig: Record<string, any>): HTMLElement[] {
-    const buttonsMap: Map<string, HTMLElement> = new Map<string, HTMLElement>();
-    defaultYasqeConfig.yasqeActionButtons
-      .filter((buttonDefinition: YasqeActionButtonDefinition) => buttonDefinition.visible)
-      .forEach((buttonDefinition: YasqeActionButtonDefinition) => {
-        buttonsMap.set(buttonDefinition.name, this.yasqeService.getButtonInstance(buttonDefinition));
-      });
+    const visibleDefaultButtonDefinitions: YasqeActionButtonDefinition[] = defaultYasqeConfig.yasqeActionButtons
+      .filter((buttonDefinition: YasqeActionButtonDefinition) => buttonDefinition.visible);
 
     if (externalConfiguration.yasqeActionButtons && externalConfiguration.yasqeActionButtons.length) {
       externalConfiguration.yasqeActionButtons.forEach((buttonDefinition) => {
+        const buttonIndex = visibleDefaultButtonDefinitions.findIndex(
+          (defaultButtonDefinition) => defaultButtonDefinition.name === buttonDefinition.name
+        );
         if (buttonDefinition.visible) {
-          buttonsMap.set(buttonDefinition.name, this.yasqeService.getButtonInstance(buttonDefinition));
+          // add new or replace existing definition
+          if (buttonIndex == -1) {
+            visibleDefaultButtonDefinitions.push(buttonDefinition);
+          } else {
+            visibleDefaultButtonDefinitions.splice(buttonIndex, 1, buttonDefinition);
+          }
         } else {
-          buttonsMap.delete(buttonDefinition.name);
+          visibleDefaultButtonDefinitions.splice(buttonIndex, 1);
         }
       });
     }
-    return Array.from(buttonsMap.values());
+
+    return visibleDefaultButtonDefinitions.map(
+      (buttonDefinition) => (this.yasqeService.getButtonInstance(buttonDefinition))
+    );
   }
 }

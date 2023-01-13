@@ -41,6 +41,12 @@ export interface ExternalYasguiConfiguration {
   savedQuery?: SavedQueryControlConfig;
 
   /**
+   * Configuration which should be set by the client when saved queries are
+   * loaded. Once queries response is set, the saved queries dialog pops up.
+   */
+  savedQueries?: LoadedSavedQueriesConfig;
+
+  /**
    * If the control bar should be rendered or not.
    */
   showControlBar?: boolean;
@@ -154,4 +160,15 @@ export type YasqeActionButtonDefinition = {
 export type SavedQueryControlConfig = {
   saveSuccess: boolean;
   errorMessage: string[];
+}
+
+type SavedQuery = {
+  name: string;
+  body: string;
+  shared: boolean;
+  owner: string;
+}
+
+export type LoadedSavedQueriesConfig = {
+  data: SavedQuery[];
 }
