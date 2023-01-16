@@ -7,7 +7,7 @@ import {HtmlElementsUtil} from '../utils/html-elements-util';
  * and applies patches to created instance. Then the instance is wrapped in a OntotextYasgui adapter
  * instance.
  */
-class YasguiBuilderDefinition {
+export class YasguiBuilder {
   /**
    * Builds an instance of Yasgui and wraps it in an OntotextYasgui adapter instance.
    *
@@ -22,5 +22,3 @@ class YasguiBuilderDefinition {
     return new OntotextYasgui(yasgui, yasguiConfiguration);
   }
 }
-
-export const YasguiBuilder = new YasguiBuilderDefinition();

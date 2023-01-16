@@ -94,20 +94,18 @@ yasgui-tooltip tag have to wrap the element to which tooltip have to be appeared
 
 # Services
 
-Services are just plain javascript classes.
+Services are just plain javascript classes. 
 
-Services should be implemented as singletons. For example:
+There is a service factory which get care of service creation. 
+This factory have to be used everywhere a service is needed. 
+Construction of an instance with "new" operator will brooke the Singleton of the service
+and can produce unexpected behaviour of "ontotext-yasgui-web-component" components.
+
+Example of a Service
 
 ```javascript
 export class YasqeService {
-  private static _instance: YasqeService;
-  
-  static get Instance(): YasqeService {
-    if (!this._instance) {
-      this._instance = new YasqeService();
-    }
-    return this._instance;
-  }
+  ...
 }
 ```
 
@@ -118,7 +116,7 @@ export class SomeComponentOrService {
   private yasqeService: YasqeService;
 
   constructor() {
-    this.yasqeService = YasqeService.Instance;
+    this.yasqeService = ServiceFactory.get(YasqeService);
   } 
 }
 ```

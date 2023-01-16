@@ -4,18 +4,9 @@ import {DEFAULT_LANG} from '../configurations/constants';
 import {Translations} from '../models/yasgui-configuration';
 
 export class TranslationService {
-  private static _instance: TranslationService;
-
   private currentLang = DEFAULT_LANG;
 
   private bundle = {en, fr}
-
-  static get Instance(): TranslationService {
-    if (!this._instance) {
-      this._instance = new TranslationService();
-    }
-    return this._instance;
-  }
 
   setLanguage(lang: string = DEFAULT_LANG) {
     if (!this.bundle || !this.bundle[this.currentLang]) {
