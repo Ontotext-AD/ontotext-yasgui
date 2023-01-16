@@ -20,7 +20,7 @@ There is a configuration watcher which triggers the initialization again after a
 detected.
 
 During the component initialization, the provided external configuration is passed down to a
-configuration builder which use it to override and extend the the yasgui library defaults.
+configuration builder which use it to override and extend the yasgui library defaults.
 
 After the configuration is ready, then a yasgui instance is created with it.
 

@@ -8,6 +8,7 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
 import { SavedQueriesData, SaveQueryData } from "./models/model";
+import { ServiceFactory } from "./services/service-factory";
 export namespace Components {
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -20,7 +21,7 @@ export namespace Components {
      * There is a configuration watcher which triggers the initialization again after a change is
      * detected.
      * During the component initialization, the provided external configuration is passed down to a
-     * configuration builder which use it to override and extend the the yasgui library defaults.
+     * configuration builder which use it to override and extend the yasgui library defaults.
      * After the configuration is ready, then a yasgui instance is created with it.
      * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
      * yasgui can be tweaked using the values from the configuration.
@@ -41,6 +42,7 @@ export namespace Components {
           * Input holding the saved query data if available. This data is used to initialize the form.
          */
         "data": SaveQueryData;
+        "serviceFactory": ServiceFactory;
     }
     interface SavedQueriesPopup {
         "data": SavedQueriesData;
@@ -75,7 +77,7 @@ declare global {
      * There is a configuration watcher which triggers the initialization again after a change is
      * detected.
      * During the component initialization, the provided external configuration is passed down to a
-     * configuration builder which use it to override and extend the the yasgui library defaults.
+     * configuration builder which use it to override and extend the yasgui library defaults.
      * After the configuration is ready, then a yasgui instance is created with it.
      * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
      * yasgui can be tweaked using the values from the configuration.
@@ -123,7 +125,7 @@ declare namespace LocalJSX {
      * There is a configuration watcher which triggers the initialization again after a change is
      * detected.
      * During the component initialization, the provided external configuration is passed down to a
-     * configuration builder which use it to override and extend the the yasgui library defaults.
+     * configuration builder which use it to override and extend the yasgui library defaults.
      * After the configuration is ready, then a yasgui instance is created with it.
      * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
      * yasgui can be tweaked using the values from the configuration.
@@ -167,6 +169,7 @@ declare namespace LocalJSX {
           * Event fired when the create button in the dialog is triggered. The event payload holds the new saved query data.
          */
         "onInternalSaveQueryEvent"?: (event: SaveQueryDialogCustomEvent<SaveQueryData>) => void;
+        "serviceFactory"?: ServiceFactory;
     }
     interface SavedQueriesPopup {
         "data"?: SavedQueriesData;
@@ -206,7 +209,7 @@ declare module "@stencil/core" {
              * There is a configuration watcher which triggers the initialization again after a change is
              * detected.
              * During the component initialization, the provided external configuration is passed down to a
-             * configuration builder which use it to override and extend the the yasgui library defaults.
+             * configuration builder which use it to override and extend the yasgui library defaults.
              * After the configuration is ready, then a yasgui instance is created with it.
              * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
              * yasgui can be tweaked using the values from the configuration.

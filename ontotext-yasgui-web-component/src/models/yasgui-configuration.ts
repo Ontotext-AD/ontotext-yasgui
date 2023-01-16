@@ -1,5 +1,4 @@
-import {TranslationService} from '../services/translation.service';
-import {ServiceFactory} from '../services/service-factory';
+import {TranslationParameter} from '../services/translation.service';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -69,7 +68,7 @@ export interface YasguiConfiguration {
    */
   yasguiConfig?: {
     tabName?: string,
-    translate: (key: string, _parameters?: Record<string, string>[]) => string;
+    translate: (key: string, _parameters?: TranslationParameter[]) => string;
     requestConfig: {
       endpoint?: string;
       method?: 'POST' | 'GET';
@@ -121,8 +120,6 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
 }
 
 export const defaultYasguiConfig: Record<string, any> = {
-  translate: (key, parameters) => ServiceFactory.get(TranslationService).translate(key, parameters),
-  defaultTabName: ServiceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name'),
   copyEndpointOnNewTab: true,
   persistenceLabelConfig: "ontotext-yasgui-config",
   endpoint: '',

@@ -6,28 +6,28 @@ import {ServiceFactory} from '../service-factory';
 
 export class OntotextYasguiService {
 
-  private static translationService: TranslationService;
+  private translationService: TranslationService;
 
-  constructor() {
-    OntotextYasguiService.translationService = ServiceFactory.get(TranslationService);
+  constructor(serviceFactory: ServiceFactory) {
+    this.translationService = serviceFactory.get(TranslationService);
   }
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
 
-    OntotextYasguiService.initEditorTabs(hostElement, config);
-    OntotextYasguiService.initControlBar(hostElement, config);
-    OntotextYasguiService.initResultTabs(hostElement, config);
-    OntotextYasguiService.initButtonsStyling(hostElement, config);
-    OntotextYasguiService.updateTranslation(config);
+    this.initEditorTabs(hostElement, config);
+    this.initControlBar(hostElement, config);
+    this.initResultTabs(hostElement, config);
+    this.initButtonsStyling(hostElement, config);
+    this.updateTranslation(config);
   }
 
-  private static updateTranslation(config: YasguiConfiguration): void {
+  private updateTranslation(config: YasguiConfiguration): void {
     if (config.i18n) {
-      OntotextYasguiService.translationService.addTranslations(config.i18n);
+      this.translationService.addTranslations(config.i18n);
     }
   }
 
-  private static initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     if (config.showEditorTabs) {
       hostElement.classList.remove('hidden-editor-tabs');
     } else {
@@ -35,7 +35,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private static initControlBar(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private initControlBar(hostElement: HTMLElement, config: YasguiConfiguration): void {
     const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showControlBar) {
       ontotextYasgui.classList.remove('hidden-control-bar');
@@ -44,7 +44,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     if (config.showResultTabs) {
       hostElement.classList.remove('hidden-result-tabs');
     } else {
@@ -52,7 +52,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private static initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
     // Initialize render buttons styling.
     VisualisationUtils.changeRenderMode(hostElement, config.render);
 

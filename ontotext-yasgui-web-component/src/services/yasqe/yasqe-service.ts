@@ -10,12 +10,9 @@ export class YasqeService {
 
   buttonInstances: Map<string, HTMLElement> = new Map<string, HTMLElement>();
 
-  constructor() {
-    this.eventService = ServiceFactory.get(EventService);
-    this.translationService = ServiceFactory.get(TranslationService);
-  }
-
-  init(): void {
+  constructor(serviceFactory: ServiceFactory) {
+    this.eventService = serviceFactory.getEventService();
+    this.translationService = serviceFactory.get(TranslationService);
     this.buttonInstances.set('createSavedQuery', this.buildCreateSaveQueryButton());
     this.buttonInstances.set('showSavedQueries', this.buildShowSavedQueriesButton());
   }
