@@ -10,6 +10,7 @@ import {
 } from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
 import {SaveQueryData} from "../../models/model";
+import {ServiceFactory} from '../../services/service-factory';
 
 @Component({
   tag: 'save-query-dialog',
@@ -20,7 +21,7 @@ export class SaveQueryDialog {
   private translationService: TranslationService;
 
   constructor() {
-    this.translationService = TranslationService.Instance;
+    this.translationService = ServiceFactory.get(TranslationService);
   }
 
   /**

@@ -20,12 +20,11 @@ import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
-import {YasguiConfigurationBuilderDefinition} from "../../services/yasgui/configuration/yasgui-configuration-builder";
 import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
 import {TranslationService} from '../../services/translation.service';
-import {EventService} from "../../services/event-service";
 import {SavedQueriesData, SaveQueryData} from "../../models/model";
-import {YasqeService} from "../../services/yasqe/yasqe-service";
+import {ServiceFactory} from '../../services/service-factory';
+import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/yasgui-configuration-builder';
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -56,25 +55,11 @@ type EventArguments = [Yasqe, Request, number];
   shadow: false,
 })
 export class OntotextYasguiWebComponent {
-  private yasguiBuilder: typeof YasguiBuilder;
-  private ontotextYasguiService: typeof OntotextYasguiService;
-  private yasguiConfigurationBuilder: YasguiConfigurationBuilderDefinition;
   private translationService: TranslationService;
 
   constructor() {
-    const eventService = EventService.Instance;
-    eventService.hostElement = this.hostElement;
-
-    this.translationService = TranslationService.Instance;
-
-    this.yasguiBuilder = YasguiBuilder;
-
-    this.ontotextYasguiService = OntotextYasguiService;
-
-    const yasqeService = YasqeService.Instance;
-    yasqeService.init();
-
-    this.yasguiConfigurationBuilder = YasguiConfigurationBuilderDefinition.Instance;
+    ServiceFactory.init(this.hostElement);
+    this.translationService = ServiceFactory.get(TranslationService);
   }
 
   /**
@@ -239,13 +224,13 @@ export class OntotextYasguiWebComponent {
     // @ts-ignore
     if (window.Yasgui) {
       // * Build the internal yasgui configuration using the provided external configuration
-      const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
+      const yasguiConfiguration = ServiceFactory.get(YasguiConfigurationBuilder).build(externalConfiguration);
 
       // * Build a yasgui instance using the configuration
-      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
+      this.ontotextYasgui = ServiceFactory.get(YasguiBuilder).build(this.hostElement, yasguiConfiguration);
 
       // * Configure the web component
-      this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+      ServiceFactory.get(OntotextYasguiService).postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
       this.shouldShowSaveQueryDialog();
       this.shouldShowSavedQueriesPopup();

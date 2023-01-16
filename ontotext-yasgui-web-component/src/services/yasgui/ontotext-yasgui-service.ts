@@ -2,27 +2,28 @@ import {YasguiConfiguration} from '../../models/yasgui-configuration';
 import {VisualisationUtils} from '../utils/visualisation-utils';
 import {HtmlElementsUtil} from '../utils/html-elements-util';
 import {TranslationService} from '../translation.service';
+import {ServiceFactory} from '../service-factory';
 
-class OntotextYasguiServiceDefinition {
+export class OntotextYasguiService {
 
   private static translationService: TranslationService;
 
   constructor() {
-    OntotextYasguiServiceDefinition.translationService = TranslationService.Instance;
+    OntotextYasguiService.translationService = ServiceFactory.get(TranslationService);
   }
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
 
-    OntotextYasguiServiceDefinition.initEditorTabs(hostElement, config);
-    OntotextYasguiServiceDefinition.initControlBar(hostElement, config);
-    OntotextYasguiServiceDefinition.initResultTabs(hostElement, config);
-    OntotextYasguiServiceDefinition.initButtonsStyling(hostElement, config);
-    OntotextYasguiServiceDefinition.updateTranslation(config);
+    OntotextYasguiService.initEditorTabs(hostElement, config);
+    OntotextYasguiService.initControlBar(hostElement, config);
+    OntotextYasguiService.initResultTabs(hostElement, config);
+    OntotextYasguiService.initButtonsStyling(hostElement, config);
+    OntotextYasguiService.updateTranslation(config);
   }
 
   private static updateTranslation(config: YasguiConfiguration): void {
     if (config.i18n) {
-      OntotextYasguiServiceDefinition.translationService.addTranslations(config.i18n);
+      OntotextYasguiService.translationService.addTranslations(config.i18n);
     }
   }
 
@@ -65,5 +66,3 @@ class OntotextYasguiServiceDefinition {
     }
   }
 }
-
-export const OntotextYasguiService = new OntotextYasguiServiceDefinition();

@@ -1,9 +1,9 @@
 import {EventService} from "../event-service";
 import {InternalCreateSavedQueryEvent, InternalShowSavedQueriesEvent} from "../../models/event";
 import {TranslationService} from "../translation.service";
+import {ServiceFactory} from '../service-factory';
 
 export class YasqeService {
-  private static _instance: YasqeService;
 
   private eventService: EventService;
   private translationService: TranslationService;
@@ -11,15 +11,8 @@ export class YasqeService {
   buttonInstances: Map<string, HTMLElement> = new Map<string, HTMLElement>();
 
   constructor() {
-    this.eventService = EventService.Instance;
-    this.translationService = TranslationService.Instance;
-  }
-
-  static get Instance(): YasqeService {
-    if (!this._instance) {
-      this._instance = new YasqeService();
-    }
-    return this._instance;
+    this.eventService = ServiceFactory.get(EventService);
+    this.translationService = ServiceFactory.get(TranslationService);
   }
 
   init(): void {

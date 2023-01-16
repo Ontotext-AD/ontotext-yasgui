@@ -9,25 +9,17 @@ import {
   YasqeActionButtonDefinition
 } from "../../../models/external-yasgui-configuration";
 import {YasqeService} from "../../yasqe/yasqe-service";
+import {ServiceFactory} from '../../service-factory';
 
 /**
  * Builder for yasgui configuration.
  */
-export class YasguiConfigurationBuilderDefinition {
-  private static _instance: YasguiConfigurationBuilderDefinition;
+export class YasguiConfigurationBuilder {
 
   private yasqeService: YasqeService;
 
   constructor() {
-    this.yasqeService = YasqeService.Instance;
-  }
-
-
-  static get Instance(): YasguiConfigurationBuilderDefinition {
-    if (!this._instance) {
-      this._instance = new YasguiConfigurationBuilderDefinition();
-    }
-    return this._instance;
+    this.yasqeService = ServiceFactory.get(YasqeService);
   }
 
   /**

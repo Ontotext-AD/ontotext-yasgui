@@ -13,16 +13,8 @@ import {EventEmitter} from "@stencil/core";
  * separate event systems in place.
  */
 export class EventService implements EventEmitter {
-  private static _instance: EventService;
 
   private _hostElement: HTMLElement;
-
-  static get Instance(): EventService {
-    if (!this._instance) {
-      this._instance = new EventService();
-    }
-    return this._instance;
-  }
 
   /**
    * Emits an event of a given type. The event payload is wrapped in a native CustomEvent.
