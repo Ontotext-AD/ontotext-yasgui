@@ -21,8 +21,10 @@ export class SaveQueryDialog {
   private translationService: TranslationService;
 
   constructor() {
-    this.translationService = ServiceFactory.get(TranslationService);
+    this.translationService = this.serviceFactory.get(TranslationService);
   }
+
+  @Prop() serviceFactory: ServiceFactory
 
   /**
    * Input holding the saved query data if available. This data is used to initialize the form.

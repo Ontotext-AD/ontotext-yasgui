@@ -96,10 +96,8 @@ yasgui-tooltip tag have to wrap the element to which tooltip have to be appeared
 
 Services are just plain javascript classes. 
 
-There is a service factory which get care of service creation. 
-This factory have to be used everywhere a service is needed. 
-Construction of an instance with "new" operator will brooke the Singleton of the service
-and can produce unexpected behaviour of "ontotext-yasgui-web-component" components.
+There is a service factory which is responsible for service creation. 
+The factory must be used everywhere a service is needed. 
 
 Example of a Service
 
@@ -115,11 +113,13 @@ And injecting it like this:
 export class SomeComponentOrService {
   private yasqeService: YasqeService;
 
-  constructor() {
-    this.yasqeService = ServiceFactory.get(YasqeService);
+  constructor(serviceFactory: ServiceFactory) {
+    this.yasqeService = serviceFactory.get(YasqeService);
   } 
 }
 ```
+**<span style="color:red">IMPORTANT:</style>** If a service depends on another services then it have to introduce constructor
+with ServiceFactory as parameter. It will be passed automatically by factory when service is created.
 
 # Custom YASQE actions
 

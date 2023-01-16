@@ -42,7 +42,7 @@ type EventArguments = [Yasqe, Request, number];
  * detected.
  *
  * During the component initialization, the provided external configuration is passed down to a
- * configuration builder which use it to override and extend the the yasgui library defaults.
+ * configuration builder which use it to override and extend the yasgui library defaults.
  *
  * After the configuration is ready, then a yasgui instance is created with it.
  *
@@ -56,10 +56,17 @@ type EventArguments = [Yasqe, Request, number];
 })
 export class OntotextYasguiWebComponent {
   private translationService: TranslationService;
+  private readonly serviceFactory: ServiceFactory;
+  private readonly yasguiConfigurationBuilder: YasguiConfigurationBuilder;
+  private readonly yasguiBuilder: YasguiBuilder;
+  private readonly ontotextYasguiService: OntotextYasguiService;
 
   constructor() {
-    ServiceFactory.init(this.hostElement);
-    this.translationService = ServiceFactory.get(TranslationService);
+    this.serviceFactory = new ServiceFactory(this.hostElement);
+    this.translationService = this.serviceFactory.get(TranslationService);
+    this.yasguiConfigurationBuilder = this.serviceFactory.get(YasguiConfigurationBuilder);
+    this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
+    this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
   }
 
   /**
@@ -224,13 +231,13 @@ export class OntotextYasguiWebComponent {
     // @ts-ignore
     if (window.Yasgui) {
       // * Build the internal yasgui configuration using the provided external configuration
-      const yasguiConfiguration = ServiceFactory.get(YasguiConfigurationBuilder).build(externalConfiguration);
+      const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
 
       // * Build a yasgui instance using the configuration
-      this.ontotextYasgui = ServiceFactory.get(YasguiBuilder).build(this.hostElement, yasguiConfiguration);
+      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
 
       // * Configure the web component
-      ServiceFactory.get(OntotextYasguiService).postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+      this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
       this.shouldShowSaveQueryDialog();
       this.shouldShowSavedQueriesPopup();
@@ -359,7 +366,7 @@ export class OntotextYasguiWebComponent {
         <div class="ontotext-yasgui"></div>
 
         {this.showSaveQueryDialog &&
-        <save-query-dialog data={this.getSaveQueryData()}>&nbsp;</save-query-dialog>}
+        <save-query-dialog data={this.getSaveQueryData()} serviceFactory={this.serviceFactory}>&nbsp;</save-query-dialog>}
 
         {this.showSavedQueriesPopup &&
         <saved-queries-popup data={this.getSaveQueriesData()}></saved-queries-popup>}

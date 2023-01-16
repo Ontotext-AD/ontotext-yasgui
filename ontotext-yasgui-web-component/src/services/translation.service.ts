@@ -80,7 +80,7 @@ export class TranslationService {
   }
 }
 
-interface TranslationParameter {
+export interface TranslationParameter {
   key: string;
   value: string;
 }

@@ -1,4 +1,3 @@
-import {YasqeService} from './yasqe/yasqe-service';
 import {EventService} from './event-service';
 
 /**
@@ -7,36 +6,30 @@ import {EventService} from './event-service';
  * <ul>
  *   <li>building of service</li>
  *   <li>every service to have only one instance (Singleton)</li>
- *
- * This factory have to be used everywhere a service is needed. Construction of an instance with "new" operator will brooke the Singleton of the service
- * and can produce unexpected behaviour of "ontotext-yasgui-web-component" components.
  */
 export class ServiceFactory {
 
-  private static _hostElement: HTMLElement;
+  private readonly hostElement: HTMLElement;
 
-  static init(hostElement: HTMLElement) {
-    this._hostElement = hostElement;
-  }
-  private static readonly _instances: Map<string, any> = new Map<string, any>();
-
-  static get<T>(type: { new(): T; }): T {
-    if (!this._instances.has(type.name)) {
-      const instance = new type();
-      ServiceFactory.postConstruct(instance);
-      this._instances.set(type.name, instance);
-    }
-    return this._instances.get(type.name);
+  constructor(hostElement: HTMLElement) {
+    this.hostElement = hostElement;
   }
 
-  private static postConstruct<T>(instance: T) {
-    switch (instance.constructor.name) {
-      case "YasqeService":
-        (instance as YasqeService).init();
-        break;
-      case "EventService":
-        (instance as EventService).hostElement = this._hostElement;
-        break;
+  private instances: Map<string, any> = new Map<string, any>();
+
+  get<T>(type: { new(serviceFactory: ServiceFactory): T; }): T {
+    if (!this.instances.has(type.name)) {
+      this.instances.set(type.name, new type(this));
     }
+    return this.instances.get(type.name);
+  }
+
+  getEventService(): EventService {
+    if (!this.instances.has(EventService.name)) {
+      const instance = new EventService();
+      instance.hostElement = this.hostElement;
+      this.instances.set(EventService.name, instance);
+    }
+    return this.instances.get(EventService.name);
   }
 }

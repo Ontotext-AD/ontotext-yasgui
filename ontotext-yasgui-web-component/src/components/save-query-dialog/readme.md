@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description                                                                                | Type            | Default     |
-| -------- | --------- | ------------------------------------------------------------------------------------------ | --------------- | ----------- |
-| `data`   | --        | Input holding the saved query data if available. This data is used to initialize the form. | `SaveQueryData` | `undefined` |
+| Property         | Attribute | Description                                                                                | Type             | Default     |
+| ---------------- | --------- | ------------------------------------------------------------------------------------------ | ---------------- | ----------- |
+| `data`           | --        | Input holding the saved query data if available. This data is used to initialize the form. | `SaveQueryData`  | `undefined` |
+| `serviceFactory` | --        |                                                                                            | `ServiceFactory` | `undefined` |
 
 
 ## Events

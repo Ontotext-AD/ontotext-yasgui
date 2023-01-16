@@ -10,6 +10,7 @@ import {
 } from "../../../models/external-yasgui-configuration";
 import {YasqeService} from "../../yasqe/yasqe-service";
 import {ServiceFactory} from '../../service-factory';
+import {TranslationService} from '../../translation.service';
 
 /**
  * Builder for yasgui configuration.
@@ -17,9 +18,11 @@ import {ServiceFactory} from '../../service-factory';
 export class YasguiConfigurationBuilder {
 
   private yasqeService: YasqeService;
+  private serviceFactory: ServiceFactory;
 
-  constructor() {
-    this.yasqeService = ServiceFactory.get(YasqeService);
+  constructor(serviceFactory: ServiceFactory) {
+    this.serviceFactory = serviceFactory;
+    this.yasqeService = serviceFactory.get(YasqeService);
   }
 
   /**
@@ -40,13 +43,13 @@ export class YasguiConfigurationBuilder {
 
     // prepare the yasgui config
     config.yasguiConfig = {
-      translate: defaultYasguiConfig.translate,
+      translate: (key, parameters) => this.serviceFactory.get(TranslationService).translate(key, parameters),
       requestConfig: {},
       yasqe: {}
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
-    config.yasguiConfig.tabName = externalConfiguration.defaultTabName || defaultYasguiConfig.defaultTabName;
+    config.yasguiConfig.tabName = externalConfiguration.defaultTabName ||  this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;
