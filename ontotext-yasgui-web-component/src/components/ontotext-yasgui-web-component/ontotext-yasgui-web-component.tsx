@@ -24,7 +24,7 @@ import {YasguiConfigurationBuilderDefinition} from "../../services/yasgui/config
 import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
 import {TranslationService} from '../../services/translation.service';
 import {EventService} from "../../services/event-service";
-import {SaveQueryData} from "../../models/model";
+import {SavedQueriesData, SaveQueryData} from "../../models/model";
 import {YasqeService} from "../../services/yasqe/yasqe-service";
 
 type EventArguments = [Yasqe, Request, number];
@@ -109,6 +109,12 @@ export class OntotextYasguiWebComponent {
   @Event() createSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
+   * Event emitted when saved queries is expected to be loaded by the component client and provided
+   * back in order to be displayed.
+   */
+  @Event() loadSavedQueries: EventEmitter<boolean>;
+
+  /**
    * The instance of our adapter around the actual yasgui instance.
    */
   ontotextYasgui: OntotextYasgui;
@@ -148,7 +154,7 @@ export class OntotextYasguiWebComponent {
   @State() showSaveQueryDialog = false;
 
   /**
-   * Handler for the event fired when the button in the yasqe is triggered.
+   * Handler for the event fired when the save query button in the yasqe toolbar is triggered.
    */
   @Listen('internalCreateSavedQueryEvent')
   saveQueryHandler() {
@@ -169,6 +175,37 @@ export class OntotextYasguiWebComponent {
   @Listen('internalSaveQueryDialogClosedEvent')
   closeSaveDialogHandler() {
     this.showSaveQueryDialog = false;
+  }
+
+  /**
+   * Flag controlling the visibility of the saved queries list popup.
+   */
+  @State() showSavedQueriesPopup = false;
+
+  /**
+   * Handler for the event fired when the show saved queries button in the yasqe toolbar is triggered.
+   */
+  @Listen('internalShowSavedQueriesEvent')
+  showSavedQueriesHandler() {
+    this.loadSavedQueries.emit(true);
+  }
+
+  /**
+   * Handler for the event fired when the saved query is selected from the saved queries list.
+   */
+  @Listen('internalSaveQuerySelectedEvent')
+  savedQuerySelectedHandler(event: CustomEvent<SaveQueryData>) {
+    const queryData: SaveQueryData = event.detail;
+    this.showSavedQueriesPopup = false;
+    this.ontotextYasgui.createNewTab(queryData.queryName, queryData.query);
+  }
+
+  /**
+   * Handler for the event for closing the saved queries popup.
+   */
+  @Listen('internalCloseSavedQueriesPopupEvent')
+  closeSavedQueriesPopupHandler() {
+    this.showSavedQueriesPopup = false;
   }
 
   componentWillLoad() {
@@ -211,6 +248,7 @@ export class OntotextYasguiWebComponent {
       this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
       this.shouldShowSaveQueryDialog();
+      this.shouldShowSavedQueriesPopup();
 
       // * Register any needed event handler
       this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
@@ -257,6 +295,24 @@ export class OntotextYasguiWebComponent {
     return data;
   }
 
+  private getSaveQueriesData(): SavedQueriesData {
+    const data: SavedQueriesData = {
+      savedQueriesList: []
+    };
+    if (this.config.savedQueries) {
+      data.savedQueriesList = this.config.savedQueries.data.map((savedQuery) => {
+        return {
+          queryName: savedQuery.queryName,
+          query: savedQuery.query,
+          isPublic: savedQuery.isPublic,
+          owner: savedQuery.owner
+        }
+      });
+
+    }
+    return data;
+  }
+
   private getRenderMode() {
     return this.config.render || defaultOntotextYasguiConfig.render;
   }
@@ -271,6 +327,10 @@ export class OntotextYasguiWebComponent {
 
   private isSavedQuerySaved() {
     return this.config.savedQuery && this.config.savedQuery.saveSuccess;
+  }
+
+  private shouldShowSavedQueriesPopup(): void {
+    this.showSavedQueriesPopup = this.showSavedQueriesPopup || !!(this.config.savedQueries?.data && this.config.savedQueries?.data.length > 0);
   }
 
   private destroy() {
@@ -311,10 +371,13 @@ export class OntotextYasguiWebComponent {
                     onClick={() => this.changeOrientation()}>&nbsp;</button>
           </yasgui-tooltip>
         </div>
-        <div class="ontotext-yasgui">&nbsp;</div>
+        <div class="ontotext-yasgui"></div>
 
         {this.showSaveQueryDialog &&
         <save-query-dialog data={this.getSaveQueryData()}>&nbsp;</save-query-dialog>}
+
+        {this.showSavedQueriesPopup &&
+        <saved-queries-popup data={this.getSaveQueriesData()}></saved-queries-popup>}
       </Host>
     );
   }

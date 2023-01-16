@@ -1,0 +1,71 @@
+@import "src/css/variables";
+
+:host {
+  display: block;
+}
+
+.saved-queries-container {
+  position: absolute;
+  // prevent CodeMirror stuff to overlap the popup
+  z-index: 10;
+  border: 1px solid #ccc;
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+  background-color: #fff;
+
+  .saved-queries-popup {
+    height: 250px;
+    overflow-y: scroll;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    ul {
+      padding: 15px;
+      margin: 0;
+
+      .saved-query {
+        list-style-type: none;
+        padding: 5px 0;
+
+        a {
+          display: block;
+          text-decoration: none;
+          cursor: pointer;
+          color: $color-onto-blue;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+
+  .arrow {
+    position: absolute;
+    display: block;
+    right: calc(-0.5rem - 1px);
+    width: 8px;
+    height: 16px;
+    margin: 0.3rem 0;
+
+    &::before, &::after {
+      position: absolute;
+      display: block;
+      content: "";
+      border-color: transparent;
+      border-style: solid;
+    }
+
+    &::before {
+      right: 0;
+      border-width: 0.5rem 0 0.5rem 0.5rem;
+      border-left-color: rgba(0,0,0,.25);
+    }
+
+    &::after {
+      right: 1px;
+      border-width: 0.5rem 0 0.5rem 0.5rem;
+      border-left-color: #fff;
+    }
+  }
+}

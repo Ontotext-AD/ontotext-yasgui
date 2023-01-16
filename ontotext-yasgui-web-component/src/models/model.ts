@@ -6,3 +6,8 @@ export class SaveQueryData {
               public messages?: string[]) {
   }
 }
+
+export class SavedQueriesData {
+  constructor(public savedQueriesList: SaveQueryData[]) {
+  }
+}
