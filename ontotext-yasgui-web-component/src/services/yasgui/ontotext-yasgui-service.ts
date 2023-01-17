@@ -14,10 +14,10 @@ export class OntotextYasguiService {
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
 
-    this.initEditorTabs(hostElement, config);
-    this.initControlBar(hostElement, config);
-    this.initResultTabs(hostElement, config);
-    this.initButtonsStyling(hostElement, config);
+    OntotextYasguiService.initEditorTabs(hostElement, config);
+    OntotextYasguiService.initControlBar(hostElement, config);
+    OntotextYasguiService.initResultTabs(hostElement, config);
+    OntotextYasguiService.initButtonsStyling(hostElement, config);
     this.updateTranslation(config);
   }
 
@@ -27,7 +27,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initEditorTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     if (config.showEditorTabs) {
       hostElement.classList.remove('hidden-editor-tabs');
     } else {
@@ -35,7 +35,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private initControlBar(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initControlBar(hostElement: HTMLElement, config: YasguiConfiguration): void {
     const ontotextYasgui = HtmlElementsUtil.getOntotextYasgui(hostElement);
     if (config.showControlBar) {
       ontotextYasgui.classList.remove('hidden-control-bar');
@@ -44,7 +44,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     if (config.showResultTabs) {
       hostElement.classList.remove('hidden-result-tabs');
     } else {
@@ -52,7 +52,7 @@ export class OntotextYasguiService {
     }
   }
 
-  private initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
+  private static initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
     // Initialize render buttons styling.
     VisualisationUtils.changeRenderMode(hostElement, config.render);
 
