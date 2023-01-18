@@ -121,7 +121,7 @@ describe('Save query action', () => {
         ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"Query","query":"select * where {  ?s ?p ?o . } limit 100","isPublic":false}');
     });
 
-    it('Should be able to edit query and save it', () => {
+    it('Should be able to change the query and save it', () => {
         // When I click on the save query button
         YasqeSteps.getCreateSavedQueryButton().should('be.visible');
         YasqeSteps.createSavedQuery();
@@ -160,5 +160,23 @@ describe('Save query action', () => {
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         // And query is saved
         ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"Query two","query":"select * where {  ?s ?p ?o . } limit 100","isPublic":false}');
+    });
+
+    it('Should reset the error message from previous failure', () => {
+        // I have saved a query with name Query once
+        YasqeSteps.createSavedQuery();
+        YasqeSteps.saveQuery();
+        YasqeSteps.getSaveQueryDialog().should('not.exist');
+        // When I try to save a query with the same query name again
+        YasqeSteps.createSavedQuery();
+        YasqeSteps.saveQuery();
+        // Then the save query dialog remains open
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        YasqeSteps.getErrorsPane().should('contain.text', 'Query name already exist!');
+        // When I close the dialog and reopen it again
+        YasqeSteps.cancelSaveQuery();
+        YasqeSteps.createSavedQuery();
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        YasqeSteps.getErrorsPane().should('not.exist');
     });
 });

@@ -22,9 +22,14 @@ import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
 import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
 import {TranslationService} from '../../services/translation.service';
-import {SavedQueriesData, SaveQueryData} from "../../models/model";
 import {ServiceFactory} from '../../services/service-factory';
 import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/yasgui-configuration-builder';
+import {
+  SavedQueriesData,
+  SavedQueryConfig,
+  SaveQueryData,
+  UpdateQueryData
+} from "../../models/model";
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -85,6 +90,11 @@ export class OntotextYasguiWebComponent {
   @Prop() language: string
 
   /**
+   * A configuration model related with all the saved queries actions.
+   */
+  @Prop() savedQueryConfig?: SavedQueryConfig;
+
+  /**
    * Event emitted when before query to be executed.
    */
   @Event() queryExecuted: EventEmitter<QueryEvent>;
@@ -99,6 +109,12 @@ export class OntotextYasguiWebComponent {
    * component client.
    */
   @Event() createSavedQuery: EventEmitter<SaveQueryData>;
+
+  /**
+   * Event emitted when a query payload is updated and the query name is the same as the one being
+   * edited. In result the client must perform a query update.
+   */
+  @Event() updateSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
    * Event emitted when saved queries is expected to be loaded by the component client and provided
@@ -121,11 +137,31 @@ export class OntotextYasguiWebComponent {
    */
   queryDuration = 0;
 
+  /**
+   * A model which is set when query details are populated and the query is going to be saved.
+   */
+  @State() saveQueryData: SaveQueryData;
+
+  /**
+   * A model which is set when an existing saved query is edited and is going to be saved.
+   */
+  @State() savedQueryData: SaveQueryData;
+
+  /**
+   * If the yasgui layout is oriented vertically or not.
+   */
   @State() isVerticalOrientation = true;
 
   @Watch('config')
   configurationChanged(newConfig: ExternalYasguiConfiguration) {
     this.init(newConfig);
+  }
+
+  @Watch('savedQueryConfig')
+  savedQueryConfigChanged() {
+    this.shouldShowSaveQueryDialog();
+    this.shouldShowSavedQueriesPopup();
+    this.saveQueryData = this.initSaveQueryData();
   }
 
   @Watch('language')
@@ -151,6 +187,7 @@ export class OntotextYasguiWebComponent {
   @Listen('internalCreateSavedQueryEvent')
   saveQueryHandler() {
     this.showSaveQueryDialog = true;
+    this.saveQueryData = this.getDefaultSaveQueryData();
   }
 
   /**
@@ -159,6 +196,14 @@ export class OntotextYasguiWebComponent {
   @Listen('internalSaveQueryEvent')
   createSavedQueryHandler(event: CustomEvent<SaveQueryData>) {
     this.createSavedQuery.emit(event.detail);
+  }
+
+  /**
+   * Handler for the event fired when the query should be saved by the component client.
+   */
+  @Listen('internalUpdateQueryEvent')
+  updateSavedQueryHandler(event: CustomEvent<UpdateQueryData>) {
+    this.updateSavedQuery.emit(event.detail);
   }
 
   /**
@@ -180,6 +225,7 @@ export class OntotextYasguiWebComponent {
   @Listen('internalShowSavedQueriesEvent')
   showSavedQueriesHandler() {
     this.loadSavedQueries.emit(true);
+    this.showSavedQueriesPopup = true;
   }
 
   /**
@@ -190,6 +236,16 @@ export class OntotextYasguiWebComponent {
     const queryData: SaveQueryData = event.detail;
     this.showSavedQueriesPopup = false;
     this.ontotextYasgui.createNewTab(queryData.queryName, queryData.query);
+  }
+
+  /**
+   * Handler for the event fired when the edit saved query button is triggered.
+   */
+  @Listen('internalEditSavedQueryEvent')
+  editSavedQueryHandler(event: CustomEvent<SaveQueryData>) {
+    this.savedQueryData = event.detail
+    this.showSavedQueriesPopup = false;
+    this.showSaveQueryDialog = true;
   }
 
   /**
@@ -239,9 +295,6 @@ export class OntotextYasguiWebComponent {
       // * Configure the web component
       this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
-      this.shouldShowSaveQueryDialog();
-      this.shouldShowSavedQueriesPopup();
-
       // * Register any needed event handler
       this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
       this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
@@ -270,20 +323,42 @@ export class OntotextYasguiWebComponent {
     this.queryResponse.emit({duration});
   }
 
-  private getSaveQueryData(): SaveQueryData {
-    const data: SaveQueryData = {
+  private getDefaultSaveQueryData(): SaveQueryData {
+    return {
       queryName: '',
       query: '',
-      isPublic: false
+      owner: '',
+      isPublic: false,
+      messages: []
     };
-    if (this.ontotextYasgui) {
+  }
+
+  private initSaveQueryData(): SaveQueryData {
+    return {
+      queryName: '',
+      query: '',
+      owner: '',
+      isPublic: false,
+      messages: this.savedQueryConfig?.errorMessage || []
+    };
+  }
+
+  private getSaveQueryData(): SaveQueryData {
+    const data: SaveQueryData = this.saveQueryData || this.getDefaultSaveQueryData();
+    // first take into account if there is a saved query selected for edit
+    // then take the data from the currently opened yasgui which means a new unsaved yet query
+    if (this.savedQueryData) {
+      data.queryName = this.savedQueryData.queryName;
+      data.query = this.savedQueryData.query;
+      data.isPublic = this.savedQueryData.isPublic;
+      data.isNew = false;
+    } else if (this.ontotextYasgui) {
       data.queryName = this.ontotextYasgui.getTabName();
       data.query = this.ontotextYasgui.getTabQuery();
       data.isPublic = false;
+      data.isNew = true;
     }
-    if (this.config.savedQuery && !this.isSavedQuerySaved()) {
-      data.messages = this.config.savedQuery.errorMessage;
-    }
+    data.messages = this.saveQueryData && this.saveQueryData.messages;
     return data;
   }
 
@@ -291,8 +366,8 @@ export class OntotextYasguiWebComponent {
     const data: SavedQueriesData = {
       savedQueriesList: []
     };
-    if (this.config.savedQueries) {
-      data.savedQueriesList = this.config.savedQueries.data.map((savedQuery) => {
+    if (this.savedQueryConfig && this.savedQueryConfig.savedQueries) {
+      data.savedQueriesList = this.savedQueryConfig.savedQueries.map((savedQuery) => {
         return {
           queryName: savedQuery.queryName,
           query: savedQuery.query,
@@ -314,15 +389,15 @@ export class OntotextYasguiWebComponent {
   }
 
   private shouldShowSaveQueryDialog(): void {
-    this.showSaveQueryDialog = this.showSaveQueryDialog && (!this.config.savedQuery || !this.isSavedQuerySaved());
+    this.showSaveQueryDialog = this.showSaveQueryDialog && !this.isSavedQuerySaved();
   }
 
   private isSavedQuerySaved() {
-    return this.config.savedQuery && this.config.savedQuery.saveSuccess;
+    return this.savedQueryConfig && this.savedQueryConfig.saveSuccess;
   }
 
   private shouldShowSavedQueriesPopup(): void {
-    this.showSavedQueriesPopup = this.showSavedQueriesPopup || !!(this.config.savedQueries?.data && this.config.savedQueries?.data.length > 0);
+    this.showSavedQueriesPopup = this.showSavedQueriesPopup && (this.savedQueryConfig?.savedQueries && this.savedQueryConfig?.savedQueries.length > 0);
   }
 
   private destroy() {
@@ -339,6 +414,7 @@ export class OntotextYasguiWebComponent {
     if (!this.config) {
       return (<Host></Host>);
     }
+
     const classList = `yasgui-host-element ${this.getOrientationMode()} ${this.getRenderMode()}`;
     return (
       <Host class={classList}>

@@ -91,8 +91,12 @@ export class YasqeSteps {
         this.getQueryNameField().clear();
     }
 
+    static getIsPublicField() {
+        return this.getSaveQueryDialog().find('#publicQuery');
+    }
+
     static toggleIsPublic() {
-        this.getSaveQueryDialog().find('#publicQuery').click();
+        this.getIsPublicField().click();
     }
 
     static getControlBar() {
@@ -129,5 +133,9 @@ export class YasqeSteps {
         return cy.get('.yasqe .CodeMirror').then((el) => {
             return el[tabIndex].CodeMirror.getValue();
         });
+    }
+
+    static editQuery(index: number) {
+        this.getSavedQueries().eq(index).realHover().find('.edit-saved-query').click();
     }
 }

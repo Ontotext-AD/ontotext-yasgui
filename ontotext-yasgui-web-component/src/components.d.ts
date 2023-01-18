@@ -6,8 +6,8 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
+import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/model";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
-import { SavedQueriesData, SaveQueryData } from "./models/model";
 import { ServiceFactory } from "./services/service-factory";
 export namespace Components {
     /**
@@ -35,6 +35,10 @@ export namespace Components {
           * An input property containing the chosen translation language.
          */
         "language": string;
+        /**
+          * A configuration model related with all the saved queries actions.
+         */
+        "savedQueryConfig"?: SavedQueryConfig;
         "setQuery": (query: string) => Promise<void>;
     }
     interface SaveQueryDialog {
@@ -155,6 +159,14 @@ declare namespace LocalJSX {
           * Event emitted when after query response is returned.
          */
         "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
+        /**
+          * Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update.
+         */
+        "onUpdateSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
+        /**
+          * A configuration model related with all the saved queries actions.
+         */
+        "savedQueryConfig"?: SavedQueryConfig;
     }
     interface SaveQueryDialog {
         /**
@@ -169,6 +181,10 @@ declare namespace LocalJSX {
           * Event fired when the create button in the dialog is triggered. The event payload holds the new saved query data.
          */
         "onInternalSaveQueryEvent"?: (event: SaveQueryDialogCustomEvent<SaveQueryData>) => void;
+        /**
+          * Event fired when the create button in the dialog is triggered and the query name is the same as the one that was initially provided a.k.a. the query is updated. The event payload holds the updated query data.
+         */
+        "onInternalUpdateQueryEvent"?: (event: SaveQueryDialogCustomEvent<UpdateQueryData>) => void;
         "serviceFactory"?: ServiceFactory;
     }
     interface SavedQueriesPopup {
@@ -177,6 +193,10 @@ declare namespace LocalJSX {
           * Event fired when the saved queries popup should be closed.
          */
         "onInternalCloseSavedQueriesPopupEvent"?: (event: SavedQueriesPopupCustomEvent<any>) => void;
+        /**
+          * Event fired when the edit saved query button is triggered.
+         */
+        "onInternalEditSavedQueryEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
         /**
           * Event fired when a saved query is selected from the list.
          */
