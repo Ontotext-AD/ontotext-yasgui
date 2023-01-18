@@ -29,11 +29,11 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Properties
 
-| Property           | Attribute  | Description                                                   | Type                          | Default     |
-| ------------------ | ---------- | ------------------------------------------------------------- | ----------------------------- | ----------- |
-| `config`           | --         | An input object property containing the yasgui configuration. | `ExternalYasguiConfiguration` | `undefined` |
-| `language`         | `language` | An input property containing the chosen translation language. | `string`                      | `undefined` |
-| `savedQueryConfig` | --         |                                                               | `SavedQueryConfig`            | `undefined` |
+| Property           | Attribute  | Description                                                       | Type                          | Default     |
+| ------------------ | ---------- | ----------------------------------------------------------------- | ----------------------------- | ----------- |
+| `config`           | --         | An input object property containing the yasgui configuration.     | `ExternalYasguiConfiguration` | `undefined` |
+| `language`         | `language` | An input property containing the chosen translation language.     | `string`                      | `undefined` |
+| `savedQueryConfig` | --         | A configuration model related with all the saved queries actions. | `SavedQueryConfig`            | `undefined` |
 
 
 ## Events
