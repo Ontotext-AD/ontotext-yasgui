@@ -33,20 +33,6 @@ export interface ExternalYasguiConfiguration {
   showToolbar: boolean;
 
   /**
-   * Configuration which should be set when query saving request has
-   * failed for some reason. This is taken into account when the visibility
-   * of the save query dialog is resolved and what messages are rendered
-   * inside it.
-   */
-  savedQuery?: SavedQueryControlConfig;
-
-  /**
-   * Configuration which should be set by the client when saved queries are
-   * loaded. Once queries response is set, the saved queries dialog pops up.
-   */
-  savedQueries?: LoadedSavedQueriesConfig;
-
-  /**
    * If the control bar should be rendered or not.
    */
   showControlBar?: boolean;
@@ -155,20 +141,4 @@ export enum Orientation {
 export type YasqeActionButtonDefinition = {
   name: string;
   visible: boolean;
-}
-
-export type SavedQueryControlConfig = {
-  saveSuccess: boolean;
-  errorMessage: string[];
-}
-
-type SavedQuery = {
-  queryName: string;
-  query: string;
-  isPublic: boolean;
-  owner: string;
-}
-
-export type LoadedSavedQueriesConfig = {
-  data: SavedQuery[];
 }

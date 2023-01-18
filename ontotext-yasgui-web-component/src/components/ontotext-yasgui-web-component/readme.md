@@ -29,20 +29,22 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Properties
 
-| Property   | Attribute  | Description                                                   | Type                          | Default     |
-| ---------- | ---------- | ------------------------------------------------------------- | ----------------------------- | ----------- |
-| `config`   | --         | An input object property containing the yasgui configuration. | `ExternalYasguiConfiguration` | `undefined` |
-| `language` | `language` | An input property containing the chosen translation language. | `string`                      | `undefined` |
+| Property           | Attribute  | Description                                                   | Type                          | Default     |
+| ------------------ | ---------- | ------------------------------------------------------------- | ----------------------------- | ----------- |
+| `config`           | --         | An input object property containing the yasgui configuration. | `ExternalYasguiConfiguration` | `undefined` |
+| `language`         | `language` | An input property containing the chosen translation language. | `string`                      | `undefined` |
+| `savedQueryConfig` | --         |                                                               | `SavedQueryConfig`            | `undefined` |
 
 
 ## Events
 
-| Event              | Description                                                                                                                   | Type                                 |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `createSavedQuery` | Event emitted when saved query payload is collected and the query should be saved by the component client.                    | `CustomEvent<SaveQueryData>`         |
-| `loadSavedQueries` | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed. | `CustomEvent<boolean>`               |
-| `queryExecuted`    | Event emitted when before query to be executed.                                                                               | `CustomEvent<{ query: string; }>`    |
-| `queryResponse`    | Event emitted when after query response is returned.                                                                          | `CustomEvent<{ duration: number; }>` |
+| Event              | Description                                                                                                                                             | Type                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `createSavedQuery` | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
+| `loadSavedQueries` | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
+| `queryExecuted`    | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
+| `queryResponse`    | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
+| `updateSavedQuery` | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`         |
 
 
 ## Methods

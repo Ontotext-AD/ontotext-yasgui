@@ -15,10 +15,11 @@
 
 ## Events
 
-| Event                                | Description                                                                                                      | Type                         |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `internalSaveQueryDialogClosedEvent` | Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button.      | `CustomEvent<any>`           |
-| `internalSaveQueryEvent`             | Event fired when the create button in the dialog is triggered. The event payload holds the new saved query data. | `CustomEvent<SaveQueryData>` |
+| Event                                | Description                                                                                                                                                                                                      | Type                           |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `internalSaveQueryDialogClosedEvent` | Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button.                                                                                                      | `CustomEvent<any>`             |
+| `internalSaveQueryEvent`             | Event fired when the create button in the dialog is triggered. The event payload holds the new saved query data.                                                                                                 | `CustomEvent<SaveQueryData>`   |
+| `internalUpdateQueryEvent`           | Event fired when the create button in the dialog is triggered and the query name is the same as the one that was initially provided a.k.a. the query is updated. The event payload holds the updated query data. | `CustomEvent<UpdateQueryData>` |
 
 
 ## Dependencies

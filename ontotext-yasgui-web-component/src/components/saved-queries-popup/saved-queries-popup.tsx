@@ -1,5 +1,5 @@
 import {Component, Element, Event, EventEmitter, h, Host, Listen, Prop} from '@stencil/core';
-import {SavedQueriesData, SaveQueryData} from "../../models/model";
+import {SavedQueriesData, SaveQueryData, UpdateQueryData} from "../../models/model";
 
 @Component({
   tag: 'saved-queries-popup',
@@ -18,18 +18,22 @@ export class SavedQueriesPopup {
   @Event() internalSaveQuerySelectedEvent: EventEmitter<SaveQueryData>;
 
   /**
+   * Event fired when the edit saved query button is triggered.
+   */
+  @Event() internalEditSavedQueryEvent: EventEmitter<SaveQueryData>;
+
+  /**
    * Event fired when the saved queries popup should be closed.
    */
   @Event() internalCloseSavedQueriesPopupEvent: EventEmitter;
 
-  @Listen('click', { target: 'window' })
+  @Listen('click', {target: 'window'})
   onWindowResize(event: PointerEvent) {
     const target: HTMLElement = event.target as HTMLElement;
     if (!target.closest('.saved-queries-container')) {
       this.internalCloseSavedQueriesPopupEvent.emit();
     }
   }
-
 
   onSelect(evt, selectedQuery: SaveQueryData): void {
     evt.stopPropagation();
@@ -38,6 +42,11 @@ export class SavedQueriesPopup {
 
   componentDidRender() {
     this.setPopupPosition();
+  }
+
+  onEdit(evt: MouseEvent, selectedQuery): void {
+    evt.stopPropagation();
+    this.internalEditSavedQueryEvent.emit(new UpdateQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic, false));
   }
 
   private setPopupPosition(): void {
@@ -56,11 +65,14 @@ export class SavedQueriesPopup {
         <div class="arrow"></div>
         <div class="saved-queries-popup">
           <ul>
-          {this.data.savedQueriesList.map((savedQuery) => (
-            <li class="saved-query">
-              <a onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
-            </li>
-          ))}
+            {this.data.savedQueriesList.map((savedQuery) => (
+              <li class="saved-query">
+                <a onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
+                <button class="saved-query-action edit-saved-query icon-edit"
+                        title="Edit"
+                        onClick={(evt) => this.onEdit(evt, savedQuery)}></button>
+              </li>
+            ))}
           </ul>
         </div>
       </Host>

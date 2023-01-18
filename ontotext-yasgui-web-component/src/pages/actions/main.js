@@ -69,39 +69,43 @@ ontoElement.addEventListener('queryResponse', () => {
   document.body.appendChild(div);
 });
 
-const savedQueryStorage = {};
+const savedQueryStorage = {
+  'q2': {
+    'queryName': 'q2',
+    'query': "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    'isPublic': false,
+    'owner': 'admin'
+  }
+};
 
-ontoElement.addEventListener('createSavedQuery', (event) => {
+function saveQuery(event) {
   let data = event.detail;
   textAreaElement.value = JSON.stringify(data);
-
   // emulate duplicated query name error
   if (savedQueryStorage[data.queryName]) {
-    ontoElement.config = {
-      ...ontoElement.config,
-      savedQuery: {
-        saveSuccess: false,
-        errorMessage: ['Query name already exist!']
-      }
+    ontoElement.savedQueryConfig = {
+      saveSuccess: false,
+      errorMessage: ['Query name already exist!']
     };
   } else {
     savedQueryStorage[data.queryName] = data;
-    ontoElement.config = {
-      ...ontoElement.config,
-      savedQuery: {
-        saveSuccess: true
-      }
+    ontoElement.savedQueryConfig = {
+      saveSuccess: true
     };
   }
+}
+
+ontoElement.addEventListener('createSavedQuery', (event) => {
+  saveQuery(event);
+});
+
+ontoElement.addEventListener('updateSavedQuery', (event) => {
+  saveQuery(event);
 });
 
 ontoElement.addEventListener('loadSavedQueries', (event) => {
-  console.log('loadSavedQueries event', event);
-  ontoElement.config = {
-    ...ontoElement.config,
-    savedQueries: {
-      data: savedQueries
-    }
+  ontoElement.savedQueryConfig = {
+    savedQueries: savedQueries
   };
 });
 
@@ -132,7 +136,7 @@ const savedQueries = [
   },
   {
     "queryName": "q2",
-    "query": "slect * where { \n\t?s ?p ?o .\n} limit 100 \n",
+    "query": "select * where { \n\t?s ?p ?o .\n} limit 100 \n",
     "isPublic": false,
     "owner": "admin"
   },

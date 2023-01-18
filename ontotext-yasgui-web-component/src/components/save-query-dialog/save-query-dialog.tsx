@@ -9,8 +9,8 @@ import {
   State
 } from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
-import {SaveQueryData} from "../../models/model";
 import {ServiceFactory} from '../../services/service-factory';
+import {SaveQueryData, UpdateQueryData} from "../../models/model";
 
 @Component({
   tag: 'save-query-dialog',
@@ -19,10 +19,6 @@ import {ServiceFactory} from '../../services/service-factory';
 })
 export class SaveQueryDialog {
   private translationService: TranslationService;
-
-  constructor() {
-    this.translationService = this.serviceFactory.get(TranslationService);
-  }
 
   @Prop() serviceFactory: ServiceFactory
 
@@ -36,6 +32,8 @@ export class SaveQueryDialog {
   @State() query = '';
 
   @State() isPublic = false;
+
+  @State() isNew = false;
 
   @State() isSaveAllowed = false;
 
@@ -51,11 +49,22 @@ export class SaveQueryDialog {
    */
   @Event() internalSaveQueryEvent: EventEmitter<SaveQueryData>;
 
+  /**
+   * Event fired when the create button in the dialog is triggered and the query name is the same as
+   * the one that was initially provided a.k.a. the query is updated. The event payload holds the
+   * updated query data.
+   */
+  @Event() internalUpdateQueryEvent: EventEmitter<UpdateQueryData>;
+
   componentWillLoad(): void {
+    // TranslationService is injected here because the service factory is not available
+    // in the constructor.
+    this.translationService = this.serviceFactory.get(TranslationService);
     if (this.data) {
       this.queryName = this.data.queryName || this.queryName;
       this.query = this.data.query || this.query;
-      this.isPublic = this.data.isPublic || this.isPublic;
+      this.isPublic = this.data.isPublic !== undefined ? this.data.isPublic : this.isPublic;
+      this.isNew = this.data.isNew !== undefined ? this.data.isNew : this.isNew;
       this.resolveIsSaveAllowed();
     }
   }
@@ -76,7 +85,12 @@ export class SaveQueryDialog {
     const queryName = this.queryName;
     const query = this.query;
     const isPublic = this.isPublic;
-    this.internalSaveQueryEvent.emit(new SaveQueryData(queryName, query, isPublic));
+
+    if (this.isNew) {
+      this.internalSaveQueryEvent.emit(new SaveQueryData(queryName, query, isPublic));
+    } else {
+      this.internalUpdateQueryEvent.emit(new UpdateQueryData(queryName, query, isPublic));
+    }
   }
 
   handleQueryNameChange(event): void {
@@ -97,18 +111,18 @@ export class SaveQueryDialog {
     this.isSaveAllowed = !!(this.queryName.trim().length && this.query.trim().length);
   }
 
-  private getMissingFieldsMessage(): string[] {
-    const missingFieldWarningMessage = [];
+  private getErrorMessages(): string[] {
+    const errorMessages = [];
     if (this.hasMissingQueryName()) {
-      missingFieldWarningMessage.push(this.translationService.translate('yasqe.actions.save_query.dialog.query_name.empty_error'));
+      errorMessages.push(this.translationService.translate('yasqe.actions.save_query.dialog.query_name.empty_error'));
     }
     if (this.hasMissingQuery()) {
-      missingFieldWarningMessage.push(this.translationService.translate('yasqe.actions.save_query.dialog.query.empty_error'));
+      errorMessages.push(this.translationService.translate('yasqe.actions.save_query.dialog.query.empty_error'));
     }
     if (this.data.messages) {
-      missingFieldWarningMessage.push(...this.data.messages);
+      errorMessages.push(...this.data.messages);
     }
-    return missingFieldWarningMessage;
+    return errorMessages;
   }
 
   private hasMissingQueryName() {
@@ -124,7 +138,7 @@ export class SaveQueryDialog {
   }
 
   private showErrorMessage() {
-    return this.hasMissingFields() || this.data.messages?.length;
+    return this.hasMissingFields() || this.data.messages?.length > 0;
   }
 
   render() {
@@ -166,7 +180,7 @@ export class SaveQueryDialog {
                             onInput={(evt) => this.handleQueryChange(evt)}>
                   </textarea>
                 </div>
-                {this.showErrorMessage() && <Alert messages={this.getMissingFieldsMessage()}>&nbsp;</Alert>}
+                {this.showErrorMessage() && <Alert messages={this.getErrorMessages()}>&nbsp;</Alert>}
               </div>
 
             </div>
