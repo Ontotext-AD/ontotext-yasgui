@@ -1,0 +1,78 @@
+import {Component, Event, EventEmitter, h, Host, Prop} from '@stencil/core';
+import {TranslationService} from "../../services/translation.service";
+import {ServiceFactory} from "../../services/service-factory";
+
+export type ConfirmationDialogConfig = {
+  title: string;
+  message: string;
+}
+
+@Component({
+  tag: 'confirmation-dialog',
+  styleUrl: 'confirmation-dialog.scss',
+  shadow: false,
+})
+export class ConfirmationDialog {
+
+  private translationService: TranslationService;
+
+  @Prop() serviceFactory: ServiceFactory
+
+  @Prop() config: ConfirmationDialogConfig = {
+    title: 'Confirmation',
+    message: 'Confirming?'
+  }
+
+  /**
+   * Event fired when confirmation is rejected and the dialog should be closed.
+   */
+  @Event() internalConfirmationRejectedEvent: EventEmitter;
+
+  /**
+   * Event fired when confirmation is rejected and the dialog should be closed.
+   */
+  @Event() internalConfirmationApprovedEvent: EventEmitter;
+
+  componentWillLoad(): void {
+    this.translationService = this.serviceFactory.get(TranslationService);
+  }
+
+  onClose(evt: MouseEvent): void {
+    const target = evt.target as HTMLElement;
+    evt.stopPropagation();
+    const isOverlay = target.classList.contains('dialog-overlay');
+    const isCloseButton = target.classList.contains('close-button');
+    const isCancelButton = target.classList.contains('cancel-button');
+    if (isOverlay || isCloseButton || isCancelButton) {
+      this.internalConfirmationRejectedEvent.emit();
+    }
+  }
+
+  onConfirm(evt: MouseEvent): void {
+    evt.stopPropagation();
+    this.internalConfirmationApprovedEvent.emit();
+  }
+
+  render() {
+    return (
+      <Host>
+        <div class="dialog-overlay" onClick={(evt) => this.onClose(evt)}>
+          <div class="dialog confirmation-dialog">
+            <div class="dialog-header">
+              <h3 class="dialog-title">{this.config.title}</h3>
+              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}></button>
+            </div>
+            <div class="dialog-body">{this.config.message}</div>
+            <div class="dialog-footer">
+              <button class="confirm-button"
+                      onClick={(evt) => this.onConfirm(evt)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
+              <button class="cancel-button"
+                      onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
+            </div>
+          </div>
+        </div>
+      </Host>
+    );
+  }
+
+}

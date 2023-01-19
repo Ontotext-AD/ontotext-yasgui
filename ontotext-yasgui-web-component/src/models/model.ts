@@ -40,6 +40,9 @@ export class SaveQueryData {
 export class UpdateQueryData extends SaveQueryData {
 }
 
+export class DeleteQueryData extends SaveQueryData {
+}
+
 export class SavedQueriesData {
   constructor(public savedQueriesList: SaveQueryData[]) {
   }
