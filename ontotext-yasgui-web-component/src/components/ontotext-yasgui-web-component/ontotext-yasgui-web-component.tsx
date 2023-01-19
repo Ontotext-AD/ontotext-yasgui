@@ -30,6 +30,7 @@ import {
   SaveQueryData,
   UpdateQueryData
 } from "../../models/model";
+import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -117,6 +118,12 @@ export class OntotextYasguiWebComponent {
   @Event() updateSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
+   * Event emitted when a saved query should be deleted. In result the client must perform a query
+   * delete.
+   */
+  @Event() deleteSavedQuery: EventEmitter<SaveQueryData>;
+
+  /**
    * Event emitted when saved queries is expected to be loaded by the component client and provided
    * back in order to be displayed.
    */
@@ -146,6 +153,8 @@ export class OntotextYasguiWebComponent {
    * A model which is set when an existing saved query is edited and is going to be saved.
    */
   @State() savedQueryData: SaveQueryData;
+
+  @State() deleteQueryData: SaveQueryData;
 
   /**
    * If the yasgui layout is oriented vertically or not.
@@ -246,6 +255,36 @@ export class OntotextYasguiWebComponent {
     this.savedQueryData = event.detail
     this.showSavedQueriesPopup = false;
     this.showSaveQueryDialog = true;
+  }
+
+  @State() showConfirmationDialog = false;
+
+  /**
+   * Handler for the event fired when the delete saved query button is triggered.
+   */
+  @Listen('internalSavedQuerySelectedForDeleteEvent')
+  savedQuerySelectedForEditHandler(event: CustomEvent<SaveQueryData>) {
+    this.showConfirmationDialog = true;
+    this.deleteQueryData = event.detail;
+  }
+
+  /**
+   */
+  @Listen('internalConfirmationApprovedEvent')
+  deleteSavedQueryHandler() {
+    this.showConfirmationDialog = false;
+    this.showSavedQueriesPopup = false;
+    this.deleteSavedQuery.emit(this.deleteQueryData);
+  }
+
+  /**
+   * Handler for the event for closing the saved query delete confirmation dialog.
+   */
+  @Listen('internalConfirmationRejectedEvent')
+  closeSavedQueryDeleteConfirmationHandler() {
+    this.showConfirmationDialog = false;
+    this.showSavedQueriesPopup = false;
+    this.deleteQueryData = undefined;
   }
 
   /**
@@ -400,6 +439,16 @@ export class OntotextYasguiWebComponent {
     this.showSavedQueriesPopup = this.showSavedQueriesPopup && (this.savedQueryConfig?.savedQueries && this.savedQueryConfig?.savedQueries.length > 0);
   }
 
+  private getDeleteQueryConfirmationConfig(): ConfirmationDialogConfig {
+    return {
+      title: this.translationService.translate('yasqe.actions.delete_saved_query.confirm.dialog.label'),
+      message: this.translationService.translate('yasqe.actions.delete_saved_query.confirm.dialog.message', [{
+        key: 'query',
+        value: this.deleteQueryData.queryName
+      }])
+    }
+  }
+
   private destroy() {
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
@@ -442,10 +491,15 @@ export class OntotextYasguiWebComponent {
         <div class="ontotext-yasgui"></div>
 
         {this.showSaveQueryDialog &&
-        <save-query-dialog data={this.getSaveQueryData()} serviceFactory={this.serviceFactory}>&nbsp;</save-query-dialog>}
+        <save-query-dialog data={this.getSaveQueryData()}
+                           serviceFactory={this.serviceFactory}>&nbsp;</save-query-dialog>}
 
         {this.showSavedQueriesPopup &&
         <saved-queries-popup data={this.getSaveQueriesData()}></saved-queries-popup>}
+
+        {this.showConfirmationDialog &&
+        <confirmation-dialog serviceFactory={this.serviceFactory}
+                             config={this.getDeleteQueryConfirmationConfig()}></confirmation-dialog>}
       </Host>
     );
   }

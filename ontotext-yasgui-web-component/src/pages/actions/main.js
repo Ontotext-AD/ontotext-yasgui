@@ -109,7 +109,15 @@ ontoElement.addEventListener('loadSavedQueries', (event) => {
   };
 });
 
-const savedQueries = [
+ontoElement.addEventListener('deleteSavedQuery', (event) => {
+  let selectedQuery = event.detail;
+  savedQueries = savedQueries.filter((savedQuery) => savedQuery.queryName !== selectedQuery.queryName);
+  ontoElement.savedQueryConfig = {
+    savedQueries: savedQueries
+  };
+});
+
+let savedQueries = [
   {
     "queryName": "Add statements",
     "query": "PREFIX dc: <http://purl.org/dc/elements/1.1/>\nINSERT DATA\n      {\n      GRAPH <http://example> {\n          <http://example/book1> dc:title \"A new book\" ;\n                                 dc:creator \"A.N.Other\" .\n          }\n      }",

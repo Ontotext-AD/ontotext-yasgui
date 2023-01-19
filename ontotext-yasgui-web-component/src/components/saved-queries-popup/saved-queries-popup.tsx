@@ -1,5 +1,10 @@
 import {Component, Element, Event, EventEmitter, h, Host, Listen, Prop} from '@stencil/core';
-import {SavedQueriesData, SaveQueryData, UpdateQueryData} from "../../models/model";
+import {
+  DeleteQueryData,
+  SavedQueriesData,
+  SaveQueryData,
+  UpdateQueryData
+} from "../../models/model";
 
 @Component({
   tag: 'saved-queries-popup',
@@ -21,6 +26,11 @@ export class SavedQueriesPopup {
    * Event fired when the edit saved query button is triggered.
    */
   @Event() internalEditSavedQueryEvent: EventEmitter<SaveQueryData>;
+
+  /**
+   * Event fired when the delete saved query button is triggered.
+   */
+  @Event() internalSavedQuerySelectedForDeleteEvent: EventEmitter<SaveQueryData>;
 
   /**
    * Event fired when the saved queries popup should be closed.
@@ -49,6 +59,11 @@ export class SavedQueriesPopup {
     this.internalEditSavedQueryEvent.emit(new UpdateQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic, false));
   }
 
+  onDelete(evt: MouseEvent, selectedQuery): void {
+    evt.stopPropagation();
+    this.internalSavedQuerySelectedForDeleteEvent.emit(new DeleteQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic));
+  }
+
   private setPopupPosition(): void {
     const panelRect = this.hostElement.getBoundingClientRect();
     const buttonEl: HTMLElement = document.querySelector('.yasqe_showSavedQueriesButton');
@@ -68,9 +83,14 @@ export class SavedQueriesPopup {
             {this.data.savedQueriesList.map((savedQuery) => (
               <li class="saved-query">
                 <a onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
-                <button class="saved-query-action edit-saved-query icon-edit"
-                        title="Edit"
-                        onClick={(evt) => this.onEdit(evt, savedQuery)}></button>
+                <span class="saved-query-actions">
+                  <button class="saved-query-action edit-saved-query icon-edit"
+                          title="Edit"
+                          onClick={(evt) => this.onEdit(evt, savedQuery)}></button>
+                <button class="saved-query-action delete-saved-query icon-trash"
+                        title="Delete"
+                        onClick={(evt) => this.onDelete(evt, savedQuery)}></button>
+                </span>
               </li>
             ))}
           </ul>

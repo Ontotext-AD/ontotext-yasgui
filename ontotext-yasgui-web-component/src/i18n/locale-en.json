@@ -1,4 +1,6 @@
 {
+  "confirmation.btn.confirm.label": "Yes",
+  "confirmation.btn.cancel.label": "Cancel",
   "yasgui.control_bar.accept_headers.label": "Accept Headers",
   "yasgui.control_bar.arguments.label": "Arguments",
   "yasgui.control_bar.ask_select.label": "Ask / Select",
@@ -79,5 +81,9 @@
   "yasqe.actions.save_query.dialog.public_query.tooltip": "If checked other users will be able to see the query but not delete or edit it",
   "yasqe.actions.save_query.dialog.create.button": "Create",
   "yasqe.actions.save_query.dialog.cancel.button": "Cancel",
-  "yasqe.actions.show_saved_queries.button.tooltip": "Show saved queries"
+  "yasqe.actions.show_saved_queries.button.tooltip": "Show saved queries",
+  "yasqe.actions.edit_saved_query.button.tooltip": "Edit",
+  "yasqe.actions.delete_saved_query.button.tooltip": "Delete",
+  "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirm",
+  "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?"
 }

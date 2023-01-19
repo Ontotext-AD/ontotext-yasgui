@@ -5,11 +5,16 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { ServiceFactory } from "./services/service-factory";
+import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/model";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
-import { ServiceFactory } from "./services/service-factory";
 export namespace Components {
+    interface ConfirmationDialog {
+        "config": ConfirmationDialogConfig;
+        "serviceFactory": ServiceFactory;
+    }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
      * configure and extend the library without potentially breaking the component clients.
@@ -57,6 +62,10 @@ export namespace Components {
         "showOnClick": false;
     }
 }
+export interface ConfirmationDialogCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLConfirmationDialogElement;
+}
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextYasguiElement;
@@ -70,6 +79,12 @@ export interface SavedQueriesPopupCustomEvent<T> extends CustomEvent<T> {
     target: HTMLSavedQueriesPopupElement;
 }
 declare global {
+    interface HTMLConfirmationDialogElement extends Components.ConfirmationDialog, HTMLStencilElement {
+    }
+    var HTMLConfirmationDialogElement: {
+        prototype: HTMLConfirmationDialogElement;
+        new (): HTMLConfirmationDialogElement;
+    };
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
      * configure and extend the library without potentially breaking the component clients.
@@ -111,6 +126,7 @@ declare global {
         new (): HTMLYasguiTooltipElement;
     };
     interface HTMLElementTagNameMap {
+        "confirmation-dialog": HTMLConfirmationDialogElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
@@ -118,6 +134,18 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface ConfirmationDialog {
+        "config"?: ConfirmationDialogConfig;
+        /**
+          * Event fired when confirmation is rejected and the dialog should be closed.
+         */
+        "onInternalConfirmationApprovedEvent"?: (event: ConfirmationDialogCustomEvent<any>) => void;
+        /**
+          * Event fired when confirmation is rejected and the dialog should be closed.
+         */
+        "onInternalConfirmationRejectedEvent"?: (event: ConfirmationDialogCustomEvent<any>) => void;
+        "serviceFactory"?: ServiceFactory;
+    }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
      * configure and extend the library without potentially breaking the component clients.
@@ -147,6 +175,10 @@ declare namespace LocalJSX {
           * Event emitted when saved query payload is collected and the query should be saved by the component client.
          */
         "onCreateSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
+        /**
+          * Event emitted when a saved query should be deleted. In result the client must perform a query delete.
+         */
+        "onDeleteSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
         /**
           * Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
          */
@@ -201,6 +233,10 @@ declare namespace LocalJSX {
           * Event fired when a saved query is selected from the list.
          */
         "onInternalSaveQuerySelectedEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
+        /**
+          * Event fired when the delete saved query button is triggered.
+         */
+        "onInternalSavedQuerySelectedForDeleteEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
     }
     interface YasguiTooltip {
         "dataTooltip"?: string;
@@ -208,6 +244,7 @@ declare namespace LocalJSX {
         "showOnClick"?: false;
     }
     interface IntrinsicElements {
+        "confirmation-dialog": ConfirmationDialog;
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
@@ -218,6 +255,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "confirmation-dialog": LocalJSX.ConfirmationDialog & JSXBase.HTMLAttributes<HTMLConfirmationDialogElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to
              * configure and extend the library without potentially breaking the component clients.
