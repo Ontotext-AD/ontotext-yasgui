@@ -19,6 +19,10 @@ export class YasguiSteps {
         cy.get('button.addTab').click();
     }
 
+    static openTab(index: number) {
+        this.getTabs().eq(index).click();
+    }
+
     static isVerticalOrientation() {
         this.getYasguiTag().should('have.class', 'orientation-vertical');
     }

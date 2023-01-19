@@ -1,6 +1,7 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/actions-page-steps";
+import {YasguiSteps} from "../../steps/yasgui-steps";
 
 describe('Configure editor actions', () => {
     beforeEach(() => {
@@ -27,5 +28,13 @@ describe('Configure editor actions', () => {
         YasqeSteps.getShowSavedQueriesButton().should('not.exist');
         ActionsPageSteps.showShowSavedQueriesAction();
         YasqeSteps.getShowSavedQueriesButton().should('be.visible');
+    });
+
+    it('Should show editor actions on each editor tab', () => {
+        YasqeSteps.getActionButtons().should('have.length', 2);
+        YasguiSteps.openANewTab();
+        YasqeSteps.getActionButtons().should('have.length', 2);
+        YasguiSteps.openTab(0);
+        YasqeSteps.getActionButtons().should('have.length', 2);
     });
 });

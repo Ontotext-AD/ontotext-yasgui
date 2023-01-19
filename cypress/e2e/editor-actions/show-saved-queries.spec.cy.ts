@@ -33,6 +33,23 @@ describe('Show saved queries action', () => {
         ]);
     });
 
+    it('Should work on each new yasgui tab', () => {
+        // When I click on show saved queries button
+        YasqeSteps.showSavedQueries();
+        // Then I expect that a popup with a saved queries list to be opened
+        YasqeSteps.getSavedQueriesPopup().should('be.visible');
+        // When I open a new yasgui tab
+        YasguiSteps.openANewTab();
+        // Then I expect that the button will still work as expected
+        YasqeSteps.showSavedQueries(1);
+        YasqeSteps.getSavedQueriesPopup().should('be.visible');
+        // When I open the previous tab
+        YasguiSteps.openTab(0);
+        // Then I expect that the button will still work as expected
+        YasqeSteps.showSavedQueries();
+        YasqeSteps.getSavedQueriesPopup().should('be.visible');
+    });
+
     it('Should be able to select a query from the list', () => {
         // Given I have opened the saved queries popup
         YasqeSteps.showSavedQueries();

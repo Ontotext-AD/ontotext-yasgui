@@ -13,7 +13,6 @@ export class OntotextYasguiService {
   }
 
   postConstruct(hostElement: HTMLElement, config: YasguiConfiguration): void {
-
     OntotextYasguiService.initEditorTabs(hostElement, config);
     OntotextYasguiService.initControlBar(hostElement, config);
     OntotextYasguiService.initResultTabs(hostElement, config);

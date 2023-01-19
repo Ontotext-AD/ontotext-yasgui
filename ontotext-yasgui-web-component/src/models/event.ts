@@ -12,4 +12,6 @@ export class InternalCreateSavedQueryEvent {
 
 export class InternalShowSavedQueriesEvent {
   static readonly TYPE = 'internalShowSavedQueriesEvent';
+  constructor(public buttonInstance: HTMLElement) {
+  }
 }

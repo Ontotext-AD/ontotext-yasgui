@@ -44,6 +44,7 @@ export class DeleteQueryData extends SaveQueryData {
 }
 
 export class SavedQueriesData {
-  constructor(public savedQueriesList: SaveQueryData[]) {
+  constructor(public savedQueriesList: SaveQueryData[],
+              public popupTarget: HTMLElement) {
   }
 }

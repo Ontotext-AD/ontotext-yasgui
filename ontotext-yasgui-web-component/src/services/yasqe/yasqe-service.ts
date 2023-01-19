@@ -8,20 +8,20 @@ export class YasqeService {
   private eventService: EventService;
   private translationService: TranslationService;
 
-  buttonInstances: Map<string, HTMLElement> = new Map<string, HTMLElement>();
+  buttonBuilders: Map<string, (() => HTMLElement)> = new Map<string, (() => HTMLElement)>();
 
   constructor(serviceFactory: ServiceFactory) {
     this.eventService = serviceFactory.getEventService();
     this.translationService = serviceFactory.get(TranslationService);
-    this.buttonInstances.set('createSavedQuery', this.buildCreateSaveQueryButton());
-    this.buttonInstances.set('showSavedQueries', this.buildShowSavedQueriesButton());
+    this.buttonBuilders.set('createSavedQuery', () => this.buildCreateSaveQueryButton());
+    this.buttonBuilders.set('showSavedQueries', () => this.buildShowSavedQueriesButton());
   }
 
   getButtonInstance(buttonDefinition: {name}): HTMLElement {
-    if (!this.buttonInstances.has(buttonDefinition.name)) {
-      throw Error(`No yasqe button instance was found for ${buttonDefinition.name}`);
+    if (!this.buttonBuilders.has(buttonDefinition.name)) {
+      throw Error(`No yasqe button builder was found for ${buttonDefinition.name}`);
     }
-    return this.buttonInstances.get(buttonDefinition.name);
+    return this.buttonBuilders.get(buttonDefinition.name)();
   }
 
   private buildShowSavedQueriesButton(): HTMLElement {
@@ -31,7 +31,7 @@ export class YasqeService {
     buttonElement.setAttribute("aria-label", this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip'));
     buttonElement.addEventListener("click",
       () => {
-        this.eventService.emit(InternalShowSavedQueriesEvent.TYPE, new InternalShowSavedQueriesEvent())
+        this.eventService.emit(InternalShowSavedQueriesEvent.TYPE, new InternalShowSavedQueriesEvent(buttonElement))
       });
     return buttonElement;
   }

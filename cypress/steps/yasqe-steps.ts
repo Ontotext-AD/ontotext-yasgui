@@ -35,8 +35,8 @@ export class YasqeSteps {
         return cy.get('.yasqe_createSavedQueryButton');
     }
 
-    static createSavedQuery() {
-        this.getCreateSavedQueryButton().click();
+    static createSavedQuery(index = 0) {
+        this.getCreateSavedQueryButton().eq(index).click();
     }
 
     static getSaveQueryDialog() {
@@ -107,8 +107,9 @@ export class YasqeSteps {
         return cy.get('.yasqe_showSavedQueriesButton');
     }
 
-    static showSavedQueries() {
-        this.getShowSavedQueriesButton().click();
+    static showSavedQueries(index = 0) {
+        // When more than one yasgui tabs are opened, then these buttons are the same number as the tabs
+        this.getShowSavedQueriesButton().eq(index).click();
     }
 
     static getSavedQueriesPopup() {

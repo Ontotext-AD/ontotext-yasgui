@@ -15,7 +15,7 @@ import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-co
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
-import {QueryEvent, QueryResponseEvent} from "../../models/event";
+import {InternalShowSavedQueriesEvent, QueryEvent, QueryResponseEvent} from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
@@ -227,14 +227,16 @@ export class OntotextYasguiWebComponent {
    * Flag controlling the visibility of the saved queries list popup.
    */
   @State() showSavedQueriesPopup = false;
+  @State() showSavedQueriesPopupTarget: HTMLElement;
 
   /**
    * Handler for the event fired when the show saved queries button in the yasqe toolbar is triggered.
    */
   @Listen('internalShowSavedQueriesEvent')
-  showSavedQueriesHandler() {
+  showSavedQueriesHandler(event: CustomEvent<InternalShowSavedQueriesEvent>) {
     this.loadSavedQueries.emit(true);
     this.showSavedQueriesPopup = true;
+    this.showSavedQueriesPopupTarget = event.detail.buttonInstance;
   }
 
   /**
@@ -403,7 +405,8 @@ export class OntotextYasguiWebComponent {
 
   private getSaveQueriesData(): SavedQueriesData {
     const data: SavedQueriesData = {
-      savedQueriesList: []
+      savedQueriesList: [],
+      popupTarget: this.showSavedQueriesPopupTarget
     };
     if (this.savedQueryConfig && this.savedQueryConfig.savedQueries) {
       data.savedQueriesList = this.savedQueryConfig.savedQueries.map((savedQuery) => {
@@ -495,7 +498,7 @@ export class OntotextYasguiWebComponent {
                            serviceFactory={this.serviceFactory}>&nbsp;</save-query-dialog>}
 
         {this.showSavedQueriesPopup &&
-        <saved-queries-popup data={this.getSaveQueriesData()}></saved-queries-popup>}
+        <saved-queries-popup config={this.getSaveQueriesData()}></saved-queries-popup>}
 
         {this.showConfirmationDialog &&
         <confirmation-dialog serviceFactory={this.serviceFactory}

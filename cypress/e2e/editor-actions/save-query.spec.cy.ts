@@ -1,6 +1,7 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/actions-page-steps";
+import {YasguiSteps} from "../../steps/yasgui-steps";
 
 describe('Save query action', () => {
     beforeEach(() => {
@@ -20,6 +21,26 @@ describe('Save query action', () => {
         YasqeSteps.closeSaveQueryDialog();
         // Then save query dialog should hide
         YasqeSteps.getSaveQueryDialog().should('not.exist');
+    });
+
+    it('Should work on each new yasgui tab', () => {
+        // When I click on save query button
+        YasqeSteps.createSavedQuery();
+        // Then I should see the save query dialog
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        YasqeSteps.closeSaveQueryDialog();
+        // When I open a new yasgui tab
+        YasguiSteps.openANewTab();
+        // Then I expect that the button will still work as expected
+        YasqeSteps.createSavedQuery(1);
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        YasqeSteps.closeSaveQueryDialog();
+        // When I open the previous tab
+        YasguiSteps.openTab(0);
+        // Then I expect that the button will still work as expected
+        YasqeSteps.createSavedQuery();
+        YasqeSteps.getSaveQueryDialog().should('be.visible');
+        YasqeSteps.closeSaveQueryDialog();
     });
 
     it('Should be able to cancel the save query operation', () => {
