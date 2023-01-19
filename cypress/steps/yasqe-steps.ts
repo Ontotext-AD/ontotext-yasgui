@@ -138,4 +138,20 @@ export class YasqeSteps {
     static editQuery(index: number) {
         this.getSavedQueries().eq(index).realHover().find('.edit-saved-query').click();
     }
+
+    static deleteQuery(index: number) {
+        this.getSavedQueries().eq(index).realHover().find('.delete-saved-query').click();
+    }
+
+    static getDeleteQueryConfirmation() {
+        return cy.get('.confirmation-dialog');
+    }
+
+    static confirmQueryDelete() {
+        this.getDeleteQueryConfirmation().find('.confirm-button').click();
+    }
+
+    static rejectQueryDelete() {
+        this.getDeleteQueryConfirmation().find('.cancel-button').click();
+    }
 }
