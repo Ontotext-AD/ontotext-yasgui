@@ -9,17 +9,17 @@
 
 | Property | Attribute | Description | Type               | Default     |
 | -------- | --------- | ----------- | ------------------ | ----------- |
-| `data`   | --        |             | `SavedQueriesData` | `undefined` |
+| `config` | --        |             | `SavedQueriesData` | `undefined` |
 
 
 ## Events
 
-| Event                                 | Description                                                  | Type                         |
-| ------------------------------------- | ------------------------------------------------------------ | ---------------------------- |
-| `internalCloseSavedQueriesPopupEvent` | Event fired when the saved queries popup should be closed.   | `CustomEvent<any>`           |
-| `internalDeleteSavedQueryEvent`       | Event fired when the delete saved query button is triggered. | `CustomEvent<SaveQueryData>` |
-| `internalEditSavedQueryEvent`         | Event fired when the edit saved query button is triggered.   | `CustomEvent<SaveQueryData>` |
-| `internalSaveQuerySelectedEvent`      | Event fired when a saved query is selected from the list.    | `CustomEvent<SaveQueryData>` |
+| Event                                      | Description                                                  | Type                         |
+| ------------------------------------------ | ------------------------------------------------------------ | ---------------------------- |
+| `internalCloseSavedQueriesPopupEvent`      | Event fired when the saved queries popup should be closed.   | `CustomEvent<any>`           |
+| `internalEditSavedQueryEvent`              | Event fired when the edit saved query button is triggered.   | `CustomEvent<SaveQueryData>` |
+| `internalSavedQuerySelectedForDeleteEvent` | Event fired when the delete saved query button is triggered. | `CustomEvent<SaveQueryData>` |
+| `internalSaveQuerySelectedEvent`           | Event fired when a saved query is selected from the list.    | `CustomEvent<SaveQueryData>` |
 
 
 ## Dependencies

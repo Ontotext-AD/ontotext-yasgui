@@ -54,7 +54,7 @@ export namespace Components {
         "serviceFactory": ServiceFactory;
     }
     interface SavedQueriesPopup {
-        "data": SavedQueriesData;
+        "config": SavedQueriesData;
     }
     interface YasguiTooltip {
         "dataTooltip": string;
@@ -220,7 +220,7 @@ declare namespace LocalJSX {
         "serviceFactory"?: ServiceFactory;
     }
     interface SavedQueriesPopup {
-        "data"?: SavedQueriesData;
+        "config"?: SavedQueriesData;
         /**
           * Event fired when the saved queries popup should be closed.
          */

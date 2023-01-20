@@ -23,7 +23,7 @@ export class EventService implements EventEmitter {
    * @param evt The event payload.
    */
   emit(type: string, evt?: any): CustomEvent {
-    const event = new CustomEvent(type, evt);
+    const event = new CustomEvent(type, {detail: evt});
     this.hostElement.dispatchEvent(event);
     return event;
   }

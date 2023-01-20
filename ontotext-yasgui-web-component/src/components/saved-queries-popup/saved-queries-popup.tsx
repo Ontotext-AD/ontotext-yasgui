@@ -15,7 +15,7 @@ export class SavedQueriesPopup {
 
   @Element() hostElement: HTMLElement;
 
-  @Prop() data: SavedQueriesData;
+  @Prop() config: SavedQueriesData;
 
   /**
    * Event fired when a saved query is selected from the list.
@@ -66,8 +66,7 @@ export class SavedQueriesPopup {
 
   private setPopupPosition(): void {
     const panelRect = this.hostElement.getBoundingClientRect();
-    const buttonEl: HTMLElement = document.querySelector('.yasqe_showSavedQueriesButton');
-    const buttonRect = buttonEl.getBoundingClientRect();
+    const buttonRect = this.config.popupTarget.getBoundingClientRect();
     this.hostElement.style.top = ((buttonRect.top + buttonRect.height / 2) - panelRect.height / 2) + 'px';
     this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
     const arrowEl: HTMLElement = this.hostElement.querySelector('.arrow');
@@ -80,7 +79,7 @@ export class SavedQueriesPopup {
         <div class="arrow"></div>
         <div class="saved-queries-popup">
           <ul>
-            {this.data.savedQueriesList.map((savedQuery) => (
+            {this.config.savedQueriesList.map((savedQuery) => (
               <li class="saved-query">
                 <a onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
                 <span class="saved-query-actions">

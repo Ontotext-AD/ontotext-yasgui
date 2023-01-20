@@ -41,6 +41,7 @@ yasgui can be tweaked using the values from the configuration.
 | Event              | Description                                                                                                                                             | Type                                 |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `createSavedQuery` | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
+| `deleteSavedQuery` | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`         |
 | `loadSavedQueries` | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
 | `queryExecuted`    | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
 | `queryResponse`    | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
@@ -67,6 +68,7 @@ Type: `Promise<void>`
 - [yasgui-tooltip](../ontotext-tooltip-web-component)
 - [save-query-dialog](../save-query-dialog)
 - [saved-queries-popup](../saved-queries-popup)
+- [confirmation-dialog](../confirmation-dialog)
 
 ### Graph
 ```mermaid
@@ -74,6 +76,7 @@ graph TD;
   ontotext-yasgui --> yasgui-tooltip
   ontotext-yasgui --> save-query-dialog
   ontotext-yasgui --> saved-queries-popup
+  ontotext-yasgui --> confirmation-dialog
   save-query-dialog --> yasgui-tooltip
   style ontotext-yasgui fill:#f9f,stroke:#333,stroke-width:4px
 ```
