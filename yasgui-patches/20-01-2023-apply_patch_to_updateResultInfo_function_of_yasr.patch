@@ -1,0 +1,233 @@
+Subject: [PATCH] Apply patch to updateResultInfo function of yasr. Extends emitted events of yasgui with a new one "result-info-changed"
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision b3b70d0330477e5c860e25bd262b480819969ea6)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision f6feb4550348fe9e61d063234ff633b8aceed0d1)
+@@ -403,10 +403,10 @@
+   handleAutocompletionClose = (_yasqe: Yasqe) => {
+     this.emit("autocompletionClose", this);
+   };
+-  handleQueryResponse = (_yasqe: Yasqe, response: any, duration: number) => {
++  handleQueryResponse = (_yasqe: Yasqe, response: any, duration: number, queryStartedTime: number) => {
+     this.emit("queryResponse", this);
+     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
+-    this.yasr.setResponse(response, duration);
++    this.yasr.setResponse(response, duration, queryStartedTime);
+     if (!this.yasr.results) return;
+     if (!this.yasr.results.hasError()) {
+       this.persistentJson.yasr.response = this.yasr.results.getAsStoreObject(
+@@ -461,6 +461,9 @@
+     yasrConf.translate = this.yasgui.config.translate;
+ 
+     this.yasr = new Yasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
++    this.yasr.on("result-info-changed", (yasr) => {
++      this.yasgui.emit("result-info-changed", yasr);
++    });
+ 
+     //populate our own persistent config
+     this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision b3b70d0330477e5c860e25bd262b480819969ea6)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision f6feb4550348fe9e61d063234ff633b8aceed0d1)
+@@ -81,6 +81,8 @@
+   emit(event: "autocompletionShown", instance: Yasgui, tab: Tab, widget: any): boolean;
+   on(event: "autocompletionClose", listener: (instance: Yasgui, tab: Tab) => void): this;
+   emit(event: "autocompletionClose", instance: Yasgui, tab: Tab): boolean;
++  on(event: "result-info-changed", listener: (instance: Tab) => void): this;
++  emit(event: "result-info-changed", instance: Yasr): boolean;
+ }
+ export class Yasgui extends EventEmitter {
+   public rootEl: HTMLDivElement;
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision b3b70d0330477e5c860e25bd262b480819969ea6)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision f6feb4550348fe9e61d063234ff633b8aceed0d1)
+@@ -24,11 +24,11 @@
+   off(eventName: "queryAbort", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
+   on(
+     eventName: "queryResponse",
+-    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number) => void
++    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
+   ): void;
+   off(
+     eventName: "queryResponse",
+-    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number) => void
++    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
+   ): void;
+   showHint: (conf: HintConfig) => void;
+   on(eventName: "error", handler: (instance: Yasqe) => void): void;
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision b3b70d0330477e5c860e25bd262b480819969ea6)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision f6feb4550348fe9e61d063234ff633b8aceed0d1)
+@@ -73,7 +73,7 @@
+     yasqe.emit("query", req, populatedConfig);
+     return await req.then(
+       (result) => {
+-        yasqe.emit("queryResponse", result, Date.now() - queryStart);
++        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart);
+         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
+         return result.body;
+       },
+@@ -81,7 +81,7 @@
+         if (e instanceof Error && e.message === "Aborted") {
+           //The query was aborted. We should not do or draw anything
+         } else {
+-          yasqe.emit("queryResponse", e, Date.now() - queryStart);
++          yasqe.emit("queryResponse", e, Date.now() - queryStart, queryStart);
+         }
+         yasqe.emit("error", e);
+         throw e;
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision b3b70d0330477e5c860e25bd262b480819969ea6)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision f6feb4550348fe9e61d063234ff633b8aceed0d1)
+@@ -31,6 +31,8 @@
+   emit(event: "drawn", instance: Yasr, plugin: Plugin<any>): boolean;
+   on(event: "toggle-help", listener: (instance: Yasr) => void): this;
+   emit(event: "toggle-help", instance: Yasr): boolean;
++  on(event: "result-info-changed", listener: (instance: Yasr) => void): this;
++  emit(event: "result-info-changed", instance: Yasr): boolean;
+ }
+ export class Yasr extends EventEmitter {
+   public results?: Parser;
+@@ -401,36 +403,8 @@
+     this.headerEl.appendChild(this.dataElement);
+     this.updateResponseInfo();
+   }
+-  private updateResponseInfo() {
+-    let innerText = "";
+-    if (this.results) {
+-      removeClass(this.dataElement, "empty");
+-      const bindings = this.results.getBindings();
+-      if (bindings) {
+-        // Set amount of results
+-        const params = [{ key: "countResults", value: `${bindings.length}` }];
+-        innerText +=
+-          bindings.length === 1
+-            ? this.translate("yasr.plugin_control.info.count_result", params)
+-            : this.translate("yasr.plugin_control.info.count_results", params);
+-      }
+-
+-      const responseTime = this.results.getResponseTime();
+-      if (responseTime) {
+-        if (!innerText) {
+-          innerText = this.translate("yasr.response");
+-        }
+-        const time = responseTime / 1000;
+-        const params = [{ key: "timeInSeconds", value: `${time}` }];
+-        innerText +=
+-          time === 1
+-            ? this.translate("yasr.plugin_control.info.result_in_second", params)
+-            : this.translate("yasr.plugin_control.info.result_in_seconds", params);
+-      }
+-    } else {
+-      addClass(this.dataElement, "empty");
+-    }
+-    this.dataElement.innerText = innerText;
++  public updateResponseInfo() {
++    this.emit("result-info-changed", this);
+   }
+   private updateHelpButton() {
+     const selectedPlugin = this.getSelectedPlugin();
+@@ -567,9 +541,9 @@
+       }
+     }
+   }
+-  public setResponse(data: any, duration?: number) {
++  public setResponse(data: any, duration?: number, queryStartedTime?: number) {
+     if (!data) return;
+-    this.results = new Parser(data, duration);
++    this.results = new Parser(data, duration, queryStartedTime);
+ 
+     this.draw();
+ 
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision b3b70d0330477e5c860e25bd262b480819969ea6)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision f6feb4550348fe9e61d063234ff633b8aceed0d1)
+@@ -39,6 +39,7 @@
+     status?: number;
+     contentType?: string;
+     executionTime?: number;
++    queryStartedTime?: number;
+   }
+   export type PostProcessBinding = (binding: Binding) => Binding;
+ }
+@@ -64,9 +65,20 @@
+   private error: Error | (SuperAgent.ResponseError & { response: { statusText: string } }) | undefined;
+   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
+   private executionTime: number | undefined;
+-  constructor(responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any, executionTime?: number) {
++  private queryStartedTime: number | undefined;
++  constructor(
++    responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
++    executionTime?: number,
++    queryStartedTime?: number
++  ) {
+     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
+-    if (executionTime) this.executionTime = executionTime; // Parameter has priority
++    if (executionTime) this.executionTime = executionTime; // Parameters has priority
++
++    if (responseOrObject.queryStartedTime) this.queryStartedTime = responseOrObject.queryStartedTime;
++    if (queryStartedTime) {
++      this.queryStartedTime = queryStartedTime;
++    }
++
+     if (responseOrObject instanceof Error) {
+       this.error = responseOrObject;
+     } else if ((<any>responseOrObject).xhr) {
+@@ -155,6 +167,11 @@
+   public getResponseTime() {
+     return this.executionTime;
+   }
++
++  public getQueryStartedTime() {
++    return this.queryStartedTime;
++  }
++
+   private getParserFromContentType(): boolean {
+     const contentType = this.getContentType();
+     if (contentType) {
+@@ -278,6 +295,7 @@
+         error: this.getError(),
+         status: this.getStatus(),
+         executionTime: this.getResponseTime(),
++        queryStartedTime: this.getQueryStartedTime(),
+       };
+     }
+     if (summary) {
+@@ -291,6 +309,7 @@
+       return {
+         error: this.getError(),
+         executionTime: this.getResponseTime(),
++        queryStartedTime: this.getQueryStartedTime(),
+       };
+     }
+   }
