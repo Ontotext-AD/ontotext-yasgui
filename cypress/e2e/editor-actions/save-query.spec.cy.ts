@@ -133,13 +133,13 @@ describe('Save query action', () => {
         // And the query name should be same as the tab name
         YasqeSteps.getQueryNameField().should('have.value', 'Query');
         // And the query should be same as the one in the current tab
-        YasqeSteps.getQueryField().should('have.value', 'select * where {  ?s ?p ?o . } limit 100');
+        YasqeSteps.getQueryField().shouldHaveTrimmedText('select * where { ?s ?p ?o . } limit 100');
         // And I click on save button
         YasqeSteps.saveQuery();
         // Then the dialog is closed
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         // And query is saved
-        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"Query","query":"select * where {  ?s ?p ?o . } limit 100","isPublic":false}');
+        ActionsPageSteps.getSaveQueryPayload().shouldHaveTrimmedText('{"queryName":"Query","query":"select * where {\\n  ?s ?p ?o . \\n} limit 100","isPublic":false}');
     });
 
     it('Should be able to change the query and save it', () => {
@@ -180,7 +180,7 @@ describe('Save query action', () => {
         // Then the dialog is closed
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         // And query is saved
-        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"Query two","query":"select * where {  ?s ?p ?o . } limit 100","isPublic":false}');
+        ActionsPageSteps.getSaveQueryPayload().shouldHaveTrimmedText('{"queryName":"Query two","query":"select * where {\\n  ?s ?p ?o . \\n} limit 100","isPublic":false}');
     });
 
     it('Should reset the error message from previous failure', () => {

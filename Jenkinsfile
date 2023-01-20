@@ -21,7 +21,7 @@ pipeline {
             }
          }
 
-         stage('Starting eslint') {
+        stage('Starting eslint') {
              steps {
               sh 'npm run lint'
              }

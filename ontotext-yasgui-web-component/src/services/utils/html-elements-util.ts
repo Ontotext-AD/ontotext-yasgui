@@ -37,4 +37,12 @@ export class HtmlElementsUtil {
   static getControlBar(hostElement: HTMLElement): HTMLElement {
     return hostElement.querySelector('.yasgui .controlbar');
   }
+
+  /**
+   * Fetches the query result info element.
+   * @param hostElement - the host element of "ontotext-yasgui-web-component".
+   */
+  static getQueryResultInfo(hostElement: HTMLElement): HTMLElement {
+    return hostElement.querySelector('.tabPanel.active .yasr_response_chip');
+  }
 }

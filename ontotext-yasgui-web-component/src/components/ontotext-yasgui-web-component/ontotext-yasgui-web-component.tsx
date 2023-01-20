@@ -460,6 +460,10 @@ export class OntotextYasguiWebComponent {
         yasgui.firstChild.remove();
       }
     }
+
+    if (this.serviceFactory) {
+      this.serviceFactory.destroy();
+    }
   }
 
   render() {

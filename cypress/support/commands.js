@@ -32,3 +32,12 @@ Cypress.Commands.add('getByDataSelector', (selector, ...args) => {
 Cypress.Commands.add('getByDataSelectorContainsValue', (selector, ...args) => {
     return cy.get(`[data-cy*=${selector}]`, ...args)
 })
+
+Cypress.Commands.add('shouldHaveTrimmedText', {
+        prevSubject: true,
+    },
+    (subject, equalTo) => {
+        expect(subject[0].value.replace(/\s+/g, '')).to.eq(equalTo.replace(/\s+/g, ''));
+        return subject;
+    },
+);

@@ -41,6 +41,61 @@
     }
   }
 
+  .yasr {
+    table.dataTable thead th {
+      background-color: $color-onto-green;
+    }
+
+    table.dataTable thead th:hover {
+      background-color: $color-onto-green;
+    }
+
+    .yasr_header > * {
+      margin-left: 0;
+    }
+
+    .yasr_header {
+      background-color: $color-onto-table-header-background;
+      margin-bottom: 1rem;
+
+      .yasr_btnGroup {
+        width: 100%;
+        background-color: white;
+        padding-bottom: 1rem;
+      }
+
+      .yasr_external_ref_btn, .yasr_downloadIcon {
+        display: none;
+      }
+
+      .yasr_response_chip {
+        min-height: 50px;
+        background-color: $color-onto-table-header-background;
+      }
+
+      .pageSizeWrapper, .switch {
+        color: #000000A8;
+      }
+
+      .tableControls .tableFilter, .tableControls .tableSizer {
+        border-color: #00000026;
+        background-color: #ffffff;
+      }
+
+      .tableControls {
+        .tableFilter:focus, .tableSizer:focus {
+          border-color: #00366380 !important;
+          outline: none !important;
+        }
+      }
+    }
+
+    .dataTables_empty {
+      color: #999;
+      background-color: #f9f9f9;
+    }
+  }
+
   .hidden-control-bar {
     .yasgui {
 

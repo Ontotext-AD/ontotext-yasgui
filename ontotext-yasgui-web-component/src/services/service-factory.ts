@@ -1,4 +1,5 @@
 import {EventService} from './event-service';
+import {YasrService} from './yasr/yasr.service';
 
 /**
  * The purpose of this @{see ServiceFactory} is to manage all other services used into the "ontotext-yasgui-web-component" components.
@@ -31,5 +32,22 @@ export class ServiceFactory {
       this.instances.set(EventService.name, instance);
     }
     return this.instances.get(EventService.name);
+  }
+
+  getYasrService(): YasrService {
+    if (!this.instances.has(YasrService.name)) {
+      const yasrService = this.get(YasrService);
+      yasrService.hostElement = this.hostElement;
+      this.instances.set(YasrService.name, yasrService);
+    }
+    return this.instances.get(YasrService.name);
+  }
+
+  destroy() {
+    this.instances.forEach((service) => {
+      if (typeof service.destroy === 'function') {
+        service.destroy();
+      }
+    });
   }
 }

@@ -34,9 +34,13 @@ export class OntotextYasgui {
     }
   }
 
+  getTab() {
+    return this.yasgui.getTab();
+  }
+
   registerYasqeEventListener(eventName, callback): void {
     // @ts-ignore
-    this.yasgui.getTab().yasqe.on(eventName, (...args) => {
+    this.getTab().yasqe.on(eventName, (...args) => {
       callback(args);
     });
   }
