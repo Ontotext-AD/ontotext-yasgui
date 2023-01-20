@@ -403,10 +403,10 @@ export class Tab extends EventEmitter {
   handleAutocompletionClose = (_yasqe: Yasqe) => {
     this.emit("autocompletionClose", this);
   };
-  handleQueryResponse = (_yasqe: Yasqe, response: any, duration: number) => {
+  handleQueryResponse = (_yasqe: Yasqe, response: any, duration: number, queryStartedTime: number) => {
     this.emit("queryResponse", this);
     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
-    this.yasr.setResponse(response, duration);
+    this.yasr.setResponse(response, duration, queryStartedTime);
     if (!this.yasr.results) return;
     if (!this.yasr.results.hasError()) {
       this.persistentJson.yasr.response = this.yasr.results.getAsStoreObject(
@@ -461,6 +461,9 @@ export class Tab extends EventEmitter {
     yasrConf.translate = this.yasgui.config.translate;
 
     this.yasr = new Yasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
+    this.yasr.on("result-info-changed", (yasr) => {
+      this.yasgui.emit("result-info-changed", yasr);
+    });
 
     //populate our own persistent config
     this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();

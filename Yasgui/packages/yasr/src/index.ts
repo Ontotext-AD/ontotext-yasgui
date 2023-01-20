@@ -31,6 +31,8 @@ export interface Yasr {
   emit(event: "drawn", instance: Yasr, plugin: Plugin<any>): boolean;
   on(event: "toggle-help", listener: (instance: Yasr) => void): this;
   emit(event: "toggle-help", instance: Yasr): boolean;
+  on(event: "result-info-changed", listener: (instance: Yasr) => void): this;
+  emit(event: "result-info-changed", instance: Yasr): boolean;
 }
 export class Yasr extends EventEmitter {
   public results?: Parser;
@@ -401,36 +403,8 @@ export class Yasr extends EventEmitter {
     this.headerEl.appendChild(this.dataElement);
     this.updateResponseInfo();
   }
-  private updateResponseInfo() {
-    let innerText = "";
-    if (this.results) {
-      removeClass(this.dataElement, "empty");
-      const bindings = this.results.getBindings();
-      if (bindings) {
-        // Set amount of results
-        const params = [{ key: "countResults", value: `${bindings.length}` }];
-        innerText +=
-          bindings.length === 1
-            ? this.translate("yasr.plugin_control.info.count_result", params)
-            : this.translate("yasr.plugin_control.info.count_results", params);
-      }
-
-      const responseTime = this.results.getResponseTime();
-      if (responseTime) {
-        if (!innerText) {
-          innerText = this.translate("yasr.response");
-        }
-        const time = responseTime / 1000;
-        const params = [{ key: "timeInSeconds", value: `${time}` }];
-        innerText +=
-          time === 1
-            ? this.translate("yasr.plugin_control.info.result_in_second", params)
-            : this.translate("yasr.plugin_control.info.result_in_seconds", params);
-      }
-    } else {
-      addClass(this.dataElement, "empty");
-    }
-    this.dataElement.innerText = innerText;
+  public updateResponseInfo() {
+    this.emit("result-info-changed", this);
   }
   private updateHelpButton() {
     const selectedPlugin = this.getSelectedPlugin();
@@ -567,9 +541,9 @@ export class Yasr extends EventEmitter {
       }
     }
   }
-  public setResponse(data: any, duration?: number) {
+  public setResponse(data: any, duration?: number, queryStartedTime?: number) {
     if (!data) return;
-    this.results = new Parser(data, duration);
+    this.results = new Parser(data, duration, queryStartedTime);
 
     this.draw();
 
