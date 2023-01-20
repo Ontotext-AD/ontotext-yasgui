@@ -117,6 +117,26 @@ ontoElement.addEventListener('deleteSavedQuery', (event) => {
   };
 });
 
+ontoElement.addEventListener('shareSavedQuery', (event) => {
+  let selectedQuery = event.detail;
+  const url = [location.protocol, '//', location.host, location.pathname];
+  if (selectedQuery.queryName) {
+    url.push(...['?savedQueryName=', encodeURIComponent(selectedQuery.queryName)]);
+  }
+  if (selectedQuery.owner) {
+    url.push(...['&owner=', encodeURIComponent(selectedQuery.owner)]);
+  }
+  ontoElement.savedQueryConfig = {
+    shareQueryLink: url.join('')
+  };
+});
+
+ontoElement.addEventListener('savedQueryShareLinkCopied', () => {
+  navigator.clipboard.readText().then((clipText) => {
+    textAreaElement.value = clipText;
+  });
+});
+
 let savedQueries = [
   {
     "queryName": "Add statements",

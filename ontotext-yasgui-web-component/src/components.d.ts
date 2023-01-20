@@ -7,13 +7,18 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ServiceFactory } from "./services/service-factory";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
+import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/model";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
+import { ShareSavedQueryDialogConfig } from "./components/share-saved-query-dialog/share-saved-query-dialog";
 export namespace Components {
     interface ConfirmationDialog {
         "config": ConfirmationDialogConfig;
         "serviceFactory": ServiceFactory;
+    }
+    interface OntotextDialogWebComponent {
+        "config": DialogConfig;
     }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -56,6 +61,10 @@ export namespace Components {
     interface SavedQueriesPopup {
         "config": SavedQueriesData;
     }
+    interface ShareSavedQueryDialog {
+        "config": ShareSavedQueryDialogConfig;
+        "serviceFactory": ServiceFactory;
+    }
     interface YasguiTooltip {
         "dataTooltip": string;
         "placement": string;
@@ -78,12 +87,22 @@ export interface SavedQueriesPopupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLSavedQueriesPopupElement;
 }
+export interface ShareSavedQueryDialogCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLShareSavedQueryDialogElement;
+}
 declare global {
     interface HTMLConfirmationDialogElement extends Components.ConfirmationDialog, HTMLStencilElement {
     }
     var HTMLConfirmationDialogElement: {
         prototype: HTMLConfirmationDialogElement;
         new (): HTMLConfirmationDialogElement;
+    };
+    interface HTMLOntotextDialogWebComponentElement extends Components.OntotextDialogWebComponent, HTMLStencilElement {
+    }
+    var HTMLOntotextDialogWebComponentElement: {
+        prototype: HTMLOntotextDialogWebComponentElement;
+        new (): HTMLOntotextDialogWebComponentElement;
     };
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -119,6 +138,12 @@ declare global {
         prototype: HTMLSavedQueriesPopupElement;
         new (): HTMLSavedQueriesPopupElement;
     };
+    interface HTMLShareSavedQueryDialogElement extends Components.ShareSavedQueryDialog, HTMLStencilElement {
+    }
+    var HTMLShareSavedQueryDialogElement: {
+        prototype: HTMLShareSavedQueryDialogElement;
+        new (): HTMLShareSavedQueryDialogElement;
+    };
     interface HTMLYasguiTooltipElement extends Components.YasguiTooltip, HTMLStencilElement {
     }
     var HTMLYasguiTooltipElement: {
@@ -127,9 +152,11 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "confirmation-dialog": HTMLConfirmationDialogElement;
+        "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
+        "share-saved-query-dialog": HTMLShareSavedQueryDialogElement;
         "yasgui-tooltip": HTMLYasguiTooltipElement;
     }
 }
@@ -145,6 +172,9 @@ declare namespace LocalJSX {
          */
         "onInternalConfirmationRejectedEvent"?: (event: ConfirmationDialogCustomEvent<any>) => void;
         "serviceFactory"?: ServiceFactory;
+    }
+    interface OntotextDialogWebComponent {
+        "config"?: DialogConfig;
     }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -192,6 +222,14 @@ declare namespace LocalJSX {
          */
         "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
         /**
+          * Event emitted when saved query share link gets copied in the clipboard.
+         */
+        "onSavedQueryShareLinkCopied"?: (event: OntotextYasguiCustomEvent<any>) => void;
+        /**
+          * Event emitted when saved query share link has to be build by the client.
+         */
+        "onShareSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
+        /**
           * Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update.
          */
         "onUpdateSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
@@ -237,6 +275,22 @@ declare namespace LocalJSX {
           * Event fired when the delete saved query button is triggered.
          */
         "onInternalSavedQuerySelectedForDeleteEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
+        /**
+          * Event fired when the share saved query button is triggered.
+         */
+        "onInternalSavedQuerySelectedForShareEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
+    }
+    interface ShareSavedQueryDialog {
+        "config"?: ShareSavedQueryDialogConfig;
+        /**
+          * Internal event fired when saved query share link is copied in the clipboard.
+         */
+        "onInternalSavedQueryShareLinkCopiedEvent"?: (event: ShareSavedQueryDialogCustomEvent<any>) => void;
+        /**
+          * Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button as well as clicking outside of the dialog.
+         */
+        "onInternalShareSavedQueryDialogClosedEvent"?: (event: ShareSavedQueryDialogCustomEvent<any>) => void;
+        "serviceFactory"?: ServiceFactory;
     }
     interface YasguiTooltip {
         "dataTooltip"?: string;
@@ -245,9 +299,11 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "confirmation-dialog": ConfirmationDialog;
+        "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
+        "share-saved-query-dialog": ShareSavedQueryDialog;
         "yasgui-tooltip": YasguiTooltip;
     }
 }
@@ -256,6 +312,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "confirmation-dialog": LocalJSX.ConfirmationDialog & JSXBase.HTMLAttributes<HTMLConfirmationDialogElement>;
+            "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to
              * configure and extend the library without potentially breaking the component clients.
@@ -275,6 +332,7 @@ declare module "@stencil/core" {
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "saved-queries-popup": LocalJSX.SavedQueriesPopup & JSXBase.HTMLAttributes<HTMLSavedQueriesPopupElement>;
+            "share-saved-query-dialog": LocalJSX.ShareSavedQueryDialog & JSXBase.HTMLAttributes<HTMLShareSavedQueryDialogElement>;
             "yasgui-tooltip": LocalJSX.YasguiTooltip & JSXBase.HTMLAttributes<HTMLYasguiTooltipElement>;
         }
     }

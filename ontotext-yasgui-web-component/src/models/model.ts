@@ -16,7 +16,14 @@ export interface SavedQueryConfig {
    * inside it.
    */
   saveSuccess: boolean;
+  /**
+   * Any error message which can appear during the query saving.
+   */
   errorMessage: string[];
+  /**
+   * A link for sharing particular saved query.
+   */
+  shareQueryLink?: string;
 }
 
 export interface SavedQueryInput {
