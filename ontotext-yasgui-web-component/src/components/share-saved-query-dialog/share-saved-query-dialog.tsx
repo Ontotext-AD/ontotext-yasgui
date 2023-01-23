@@ -98,9 +98,9 @@ export class ShareSavedQueryDialog {
       return Promise.resolve();
     }
     return navigator.clipboard.writeText(this.config.shareQueryLink).then(() => {
-      console.log('Async: Copying to clipboard was successful!');
+      // do nothing
     }, (err) => {
-      console.error('Async: Could not copy text: ', err);
+      console.error('Could not copy share link: ', err);
     });
   }
 
@@ -111,7 +111,7 @@ export class ShareSavedQueryDialog {
         <div slot="body">
           <div class="share-query-form">
             <div class="form-field share-link-field">
-              <input type="text" name="shareLink" id="shareLink" autofocus
+              <input type="text" name="shareLink" id="shareLink" autofocus readonly
                      value={this.config.shareQueryLink}/>
             </div>
           </div>

@@ -45,7 +45,7 @@ yasgui can be tweaked using the values from the configuration.
 | `loadSavedQueries`          | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
 | `queryExecuted`             | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
 | `queryResponse`             | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
-| `savedQueryShareLinkCopied` |                                                                                                                                                         | `CustomEvent<any>`                   |
+| `savedQueryShareLinkCopied` | Event emitted when saved query share link gets copied in the clipboard.                                                                                 | `CustomEvent<any>`                   |
 | `shareSavedQuery`           | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<SaveQueryData>`         |
 | `updateSavedQuery`          | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`         |
 

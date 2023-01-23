@@ -17,7 +17,7 @@
 
 | Event                                      | Description                                                                                                                                           | Type               |
 | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `internalSavedQueryShareLinkCopiedEvent`   |                                                                                                                                                       | `CustomEvent<any>` |
+| `internalSavedQueryShareLinkCopiedEvent`   | Internal event fired when saved query share link is copied in the clipboard.                                                                          | `CustomEvent<any>` |
 | `internalShareSavedQueryDialogClosedEvent` | Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button as well as clicking outside of the dialog. | `CustomEvent<any>` |
 
 
