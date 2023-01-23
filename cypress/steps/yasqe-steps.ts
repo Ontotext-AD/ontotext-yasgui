@@ -144,6 +144,10 @@ export class YasqeSteps {
         this.getSavedQueries().eq(index).realHover().find('.delete-saved-query').click();
     }
 
+    static shareSavedQuery(index: number) {
+        this.getSavedQueries().eq(index).realHover().find('.share-saved-query').click();
+    }
+
     static getDeleteQueryConfirmation() {
         return cy.get('.confirmation-dialog');
     }
@@ -154,5 +158,25 @@ export class YasqeSteps {
 
     static rejectQueryDelete() {
         this.getDeleteQueryConfirmation().find('.cancel-button').click();
+    }
+
+    static getShareSavedQueryDialog() {
+        return cy.get('.share-saved-query-dialog');
+    }
+
+    static getShareSavedQueryDialogTitle() {
+        return this.getShareSavedQueryDialog().find('.dialog-title');
+    }
+
+    static closeShareSavedQueryDialog() {
+        this.getShareSavedQueryDialog().find('.cancel-button').click();
+    }
+
+    static copySavedQueryShareLink() {
+        this.getShareSavedQueryDialog().find('.copy-button').click();
+    }
+
+    static getShareSavedQueryLink() {
+        return this.getShareSavedQueryDialog().find('.share-link-field input')
     }
 }

@@ -33,12 +33,17 @@ export class SavedQueriesPopup {
   @Event() internalSavedQuerySelectedForDeleteEvent: EventEmitter<SaveQueryData>;
 
   /**
+   * Event fired when the share saved query button is triggered.
+   */
+  @Event() internalSavedQuerySelectedForShareEvent: EventEmitter<SaveQueryData>;
+
+  /**
    * Event fired when the saved queries popup should be closed.
    */
   @Event() internalCloseSavedQueriesPopupEvent: EventEmitter;
 
   @Listen('click', {target: 'window'})
-  onWindowResize(event: PointerEvent) {
+  onWindowResize(event: PointerEvent): void {
     const target: HTMLElement = event.target as HTMLElement;
     if (!target.closest('.saved-queries-container')) {
       this.internalCloseSavedQueriesPopupEvent.emit();
@@ -50,18 +55,23 @@ export class SavedQueriesPopup {
     this.internalSaveQuerySelectedEvent.emit(selectedQuery);
   }
 
-  componentDidRender() {
+  componentDidRender(): void {
     this.setPopupPosition();
   }
 
-  onEdit(evt: MouseEvent, selectedQuery): void {
+  onEdit(evt: MouseEvent, selectedQuery: SaveQueryData): void {
     evt.stopPropagation();
     this.internalEditSavedQueryEvent.emit(new UpdateQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic, false));
   }
 
-  onDelete(evt: MouseEvent, selectedQuery): void {
+  onDelete(evt: MouseEvent, selectedQuery: SaveQueryData): void {
     evt.stopPropagation();
     this.internalSavedQuerySelectedForDeleteEvent.emit(new DeleteQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic));
+  }
+
+  onShare(evt: MouseEvent, selectedQuery: SaveQueryData): void {
+    evt.stopPropagation();
+    this.internalSavedQuerySelectedForShareEvent.emit(new DeleteQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic));
   }
 
   private setPopupPosition(): void {
@@ -89,6 +99,9 @@ export class SavedQueriesPopup {
                 <button class="saved-query-action delete-saved-query icon-trash"
                         title="Delete"
                         onClick={(evt) => this.onDelete(evt, savedQuery)}></button>
+                <button class="saved-query-action share-saved-query icon-link"
+                        title="Share"
+                        onClick={(evt) => this.onShare(evt, savedQuery)}></button>
                 </span>
               </li>
             ))}
@@ -97,5 +110,4 @@ export class SavedQueriesPopup {
       </Host>
     );
   }
-
 }

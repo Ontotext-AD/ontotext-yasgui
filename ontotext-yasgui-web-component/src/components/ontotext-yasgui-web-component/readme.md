@@ -38,14 +38,16 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Events
 
-| Event              | Description                                                                                                                                             | Type                                 |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `createSavedQuery` | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
-| `deleteSavedQuery` | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`         |
-| `loadSavedQueries` | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
-| `queryExecuted`    | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
-| `queryResponse`    | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
-| `updateSavedQuery` | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`         |
+| Event                       | Description                                                                                                                                             | Type                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `createSavedQuery`          | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
+| `deleteSavedQuery`          | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`         |
+| `loadSavedQueries`          | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
+| `queryExecuted`             | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
+| `queryResponse`             | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
+| `savedQueryShareLinkCopied` | Event emitted when saved query share link gets copied in the clipboard.                                                                                 | `CustomEvent<any>`                   |
+| `shareSavedQuery`           | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<SaveQueryData>`         |
+| `updateSavedQuery`          | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`         |
 
 
 ## Methods
@@ -69,6 +71,7 @@ Type: `Promise<void>`
 - [save-query-dialog](../save-query-dialog)
 - [saved-queries-popup](../saved-queries-popup)
 - [confirmation-dialog](../confirmation-dialog)
+- [share-saved-query-dialog](../share-saved-query-dialog)
 
 ### Graph
 ```mermaid
@@ -77,7 +80,9 @@ graph TD;
   ontotext-yasgui --> save-query-dialog
   ontotext-yasgui --> saved-queries-popup
   ontotext-yasgui --> confirmation-dialog
+  ontotext-yasgui --> share-saved-query-dialog
   save-query-dialog --> yasgui-tooltip
+  share-saved-query-dialog --> ontotext-dialog-web-component
   style ontotext-yasgui fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -86,5 +86,7 @@
   "yasqe.actions.edit_saved_query.button.tooltip": "Edit",
   "yasqe.actions.delete_saved_query.button.tooltip": "Delete",
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirm",
-  "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?"
+  "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?",
+  "yasqe.share.saved_query.dialog.title": "Copy URL to clipboard",
+  "yasqe.share.saved_query.dialog.copy.btn.label": "Copy to clipboard"
 }

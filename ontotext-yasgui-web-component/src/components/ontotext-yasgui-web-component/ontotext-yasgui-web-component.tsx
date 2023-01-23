@@ -31,6 +31,7 @@ import {
   UpdateQueryData
 } from "../../models/model";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
+import {ShareSavedQueryDialogConfig} from "../share-saved-query-dialog/share-saved-query-dialog";
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -297,6 +298,49 @@ export class OntotextYasguiWebComponent {
     this.showSavedQueriesPopup = false;
   }
 
+  @State() showShareQueryDialog = false;
+
+  /**
+   * Configuration for the share saved query dialog.
+   */
+  @State() shareSavedQueryDialogConfig: ShareSavedQueryDialogConfig;
+
+  /**
+   * Event emitted when saved query share link has to be build by the client.
+   */
+  @Event() shareSavedQuery: EventEmitter<SaveQueryData>;
+
+  /**
+   * Event emitted when saved query share link gets copied in the clipboard.
+   */
+  @Event() savedQueryShareLinkCopied: EventEmitter;
+
+  /**
+   * Handler for the event fired when the share saved query button is triggered.
+   */
+  @Listen('internalSavedQuerySelectedForShareEvent')
+  savedQuerySelectedForShareHandler(event: CustomEvent<SaveQueryData>) {
+    this.shareSavedQuery.emit(event.detail);
+    this.showShareQueryDialog = true;
+  }
+
+  /**
+   * Handler for the internal event fired when a saved query share link is copied in the clipboard.
+   */
+  @Listen('internalSavedQueryShareLinkCopiedEvent')
+  savedQueryShareLinkCopiedHandler() {
+    this.showShareQueryDialog = false;
+    this.savedQueryShareLinkCopied.emit();
+  }
+
+  /**
+   * Handler for the event for closing the share saved query dialog.
+   */
+  @Listen('internalShareSavedQueryDialogClosedEvent')
+  closeShareSavedQueryDialogHandler() {
+    this.showShareQueryDialog = false;
+  }
+
   componentWillLoad() {
     // @ts-ignore
     if (!window.Yasgui) {
@@ -452,6 +496,13 @@ export class OntotextYasguiWebComponent {
     }
   }
 
+  private getShareLinkDialogConfig(): ShareSavedQueryDialogConfig {
+    return {
+      dialogTitle: this.translationService.translate('yasqe.share.saved_query.dialog.title'),
+      shareQueryLink: this.savedQueryConfig.shareQueryLink
+    }
+  }
+
   private destroy() {
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
@@ -503,6 +554,10 @@ export class OntotextYasguiWebComponent {
         {this.showConfirmationDialog &&
         <confirmation-dialog serviceFactory={this.serviceFactory}
                              config={this.getDeleteQueryConfirmationConfig()}></confirmation-dialog>}
+
+        {this.showShareQueryDialog &&
+        <share-saved-query-dialog serviceFactory={this.serviceFactory}
+                                  config={this.getShareLinkDialogConfig()}></share-saved-query-dialog>}
       </Host>
     );
   }

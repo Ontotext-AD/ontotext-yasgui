@@ -18,3 +18,63 @@
 .hidden {
   display: none !important;
 }
+
+@mixin primaryButton() {
+  .primary-button {
+    background-color: $color-ontotext-orange;
+    border-color: $color-ontotext-orange;
+    color: #fff;
+    margin-right: 10px;
+
+    &:hover, &:focus {
+      background-color: $color-ontotext-orange-dark;
+      border-color: $color-ontotext-orange-dark;
+    }
+  }
+}
+
+@mixin secondaryButton() {
+  .secondary-button {
+    color: $color-onto-blue;
+
+    &:hover, &:focus {
+      background-color: #d4d4d4;
+      border-color: #d4d4d4;
+    }
+  }
+}
+
+@mixin formField() {
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    input[type=text], textarea {
+      padding: .5rem .75rem;
+      border: 1px solid rgba(0, 0, 0, .15);
+      font-size: 1rem;
+      color: #55595c;
+
+      &:focus {
+        border-color: rgba(0, 54, 99, .5);
+        outline: none;
+      }
+    }
+
+    input[type=text] {
+
+      &.invalid {
+        border-color: #fa787e;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+
+      &.invalid {
+        border-color: #fa787e;
+      }
+    }
+  }
+}
