@@ -24,11 +24,11 @@ export interface Yasqe {
   off(eventName: "queryAbort", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
   on(
     eventName: "queryResponse",
-    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number) => void
+    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
   ): void;
   off(
     eventName: "queryResponse",
-    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number) => void
+    handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
   ): void;
   showHint: (conf: HintConfig) => void;
   on(eventName: "error", handler: (instance: Yasqe) => void): void;

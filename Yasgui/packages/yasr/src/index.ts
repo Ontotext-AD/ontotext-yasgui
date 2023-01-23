@@ -47,7 +47,7 @@ export class Yasr extends EventEmitter {
   private drawnPlugin: string | undefined;
   private selectedPlugin: string | undefined;
 
-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  protected readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
 
   // Utils
   public utils = { addScript: addScript, addCSS: addCss, sanitize: sanitize };
@@ -401,7 +401,12 @@ export class Yasr extends EventEmitter {
     this.headerEl.appendChild(this.dataElement);
     this.updateResponseInfo();
   }
-  private updateResponseInfo() {
+
+  getResponseInfoElement() {
+    return this.dataElement;
+  }
+
+  public updateResponseInfo() {
     let innerText = "";
     if (this.results) {
       removeClass(this.dataElement, "empty");
@@ -567,9 +572,9 @@ export class Yasr extends EventEmitter {
       }
     }
   }
-  public setResponse(data: any, duration?: number) {
+  public setResponse(data: any, duration?: number, queryStartedTime?: number) {
     if (!data) return;
-    this.results = new Parser(data, duration);
+    this.results = new Parser(data, duration, queryStartedTime);
 
     this.draw();
 
