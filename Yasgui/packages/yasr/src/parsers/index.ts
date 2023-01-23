@@ -39,6 +39,7 @@ namespace Parser {
     status?: number;
     contentType?: string;
     executionTime?: number;
+    queryStartedTime?: number;
   }
   export type PostProcessBinding = (binding: Binding) => Binding;
 }
@@ -64,9 +65,21 @@ class Parser {
   private error: Error | (SuperAgent.ResponseError & { response: { statusText: string } }) | undefined;
   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
   private executionTime: number | undefined;
-  constructor(responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any, executionTime?: number) {
+  private queryStartedTime: number | undefined;
+  constructor(
+    responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
+    executionTime?: number,
+    queryStartedTime?: number
+  ) {
     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
     if (executionTime) this.executionTime = executionTime; // Parameter has priority
+
+    if (queryStartedTime) {
+      this.queryStartedTime = queryStartedTime;
+    } else {
+      this.queryStartedTime = responseOrObject.queryStartedTime;
+    }
+
     if (responseOrObject instanceof Error) {
       this.error = responseOrObject;
     } else if ((<any>responseOrObject).xhr) {
@@ -155,6 +168,11 @@ class Parser {
   public getResponseTime() {
     return this.executionTime;
   }
+
+  public getQueryStartedTime() {
+    return this.queryStartedTime;
+  }
+
   private getParserFromContentType(): boolean {
     const contentType = this.getContentType();
     if (contentType) {
@@ -278,6 +296,7 @@ class Parser {
         error: this.getError(),
         status: this.getStatus(),
         executionTime: this.getResponseTime(),
+        queryStartedTime: this.getQueryStartedTime(),
       };
     }
     if (summary) {
@@ -291,6 +310,7 @@ class Parser {
       return {
         error: this.getError(),
         executionTime: this.getResponseTime(),
+        queryStartedTime: this.getQueryStartedTime(),
       };
     }
   }

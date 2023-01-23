@@ -73,7 +73,7 @@ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Prom
     yasqe.emit("query", req, populatedConfig);
     return await req.then(
       (result) => {
-        yasqe.emit("queryResponse", result, Date.now() - queryStart);
+        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart);
         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
         return result.body;
       },
@@ -81,7 +81,7 @@ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Prom
         if (e instanceof Error && e.message === "Aborted") {
           //The query was aborted. We should not do or draw anything
         } else {
-          yasqe.emit("queryResponse", e, Date.now() - queryStart);
+          yasqe.emit("queryResponse", e, Date.now() - queryStart, queryStart);
         }
         yasqe.emit("error", e);
         throw e;
