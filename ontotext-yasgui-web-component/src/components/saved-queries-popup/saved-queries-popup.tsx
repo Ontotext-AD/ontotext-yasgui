@@ -4,7 +4,7 @@ import {
   SavedQueriesData,
   SaveQueryData,
   UpdateQueryData
-} from "../../models/model";
+} from "../../models/saved-query-configuration";
 
 @Component({
   tag: 'saved-queries-popup',

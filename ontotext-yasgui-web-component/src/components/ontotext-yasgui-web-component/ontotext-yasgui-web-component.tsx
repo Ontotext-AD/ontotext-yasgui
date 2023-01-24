@@ -20,7 +20,10 @@ import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
-import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
+import {
+  ExternalYasguiConfiguration,
+  TabQueryModel
+} from "../../models/external-yasgui-configuration";
 import {TranslationService} from '../../services/translation.service';
 import {ServiceFactory} from '../../services/service-factory';
 import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/yasgui-configuration-builder';
@@ -29,7 +32,7 @@ import {
   SavedQueryConfig,
   SaveQueryData,
   UpdateQueryData
-} from "../../models/model";
+} from "../../models/saved-query-configuration";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
 import {ShareSavedQueryDialogConfig} from "../share-saved-query-dialog/share-saved-query-dialog";
 
@@ -180,9 +183,25 @@ export class OntotextYasguiWebComponent {
     this.ontotextYasgui.refresh();
   }
 
+  /**
+   * Allows the client to set a query in the current opened tab.
+   * @param query The query that should be set in the current focused tab.
+   */
   @Method()
   setQuery(query: string): Promise<void> {
     this.ontotextYasgui.setQuery(query);
+    return Promise.resolve();
+  }
+
+  /**
+   * Allows the client to init the editor using a query model. When the query and query name are
+   * found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and
+   * initialized using the provided query model.
+   * @param query The query model.
+   */
+  @Method()
+  openTab(query: TabQueryModel): Promise<void> {
+    this.ontotextYasgui.openTab(query);
     return Promise.resolve();
   }
 

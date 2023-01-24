@@ -1,5 +1,6 @@
 import {Yasgui} from '../../../Yasgui/packages/yasgui'
 import {YasguiConfiguration} from './yasgui-configuration';
+import {TabQueryModel} from "./external-yasgui-configuration";
 
 /**
  * An adapter around the actual yasgui instance.
@@ -64,6 +65,16 @@ export class OntotextYasgui {
   // TODO: What's the difference between getQuery() and this method?
   getTabQuery(): string {
     return this.getInstance().getTab().getQuery();
+  }
+
+  openTab(queryModel: TabQueryModel): void {
+    const existingTab = this.getInstance().tabNameTaken(queryModel.queryName);
+    const isSameQuery = existingTab?.getQuery() === queryModel.query;
+    if (existingTab && isSameQuery) {
+      this.getInstance().selectTabId(existingTab.getId());
+    } else {
+      this.createNewTab(queryModel.queryName, queryModel.query);
+    }
   }
 
   createNewTab(queryName: string, query: string): void {

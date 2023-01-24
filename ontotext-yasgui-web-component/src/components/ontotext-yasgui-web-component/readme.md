@@ -52,6 +52,16 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
+### `openTab(query: SavedQueryInput) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `setQuery(query: string) => Promise<void>`
 
 

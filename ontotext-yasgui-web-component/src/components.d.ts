@@ -8,8 +8,8 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ServiceFactory } from "./services/service-factory";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
-import { ExternalYasguiConfiguration } from "./models/external-yasgui-configuration";
-import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/model";
+import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
+import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
 import { ShareSavedQueryDialogConfig } from "./components/share-saved-query-dialog/share-saved-query-dialog";
 export namespace Components {
@@ -46,9 +46,18 @@ export namespace Components {
          */
         "language": string;
         /**
+          * Allows the client to init the editor using a query model. When the query and query name are found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and initialized using the provided query model.
+          * @param query The query model.
+         */
+        "openTab": (query: TabQueryModel) => Promise<void>;
+        /**
           * A configuration model related with all the saved queries actions.
          */
         "savedQueryConfig"?: SavedQueryConfig;
+        /**
+          * Allows the client to set a query in the current opened tab.
+          * @param query The query that should be set in the current focused tab.
+         */
         "setQuery": (query: string) => Promise<void>;
     }
     interface SaveQueryDialog {
