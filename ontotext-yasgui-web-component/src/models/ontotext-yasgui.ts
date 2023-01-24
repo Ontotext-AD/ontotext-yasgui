@@ -69,7 +69,10 @@ export class OntotextYasgui {
 
   openTab(queryModel: TabQueryModel): void {
     const existingTab = this.getInstance().tabNameTaken(queryModel.queryName);
-    const isSameQuery = existingTab?.getQuery() === queryModel.query;
+    const config = existingTab?.getPersistedJson();
+    // We can't get the query directly from the tab because if the tab hasn't been opened before
+    // then the yasqe won't be initialized. That's why we get the query from the tab's persistence.
+    const isSameQuery = config?.yasqe?.value === queryModel.query;
     if (existingTab && isSameQuery) {
       this.getInstance().selectTabId(existingTab.getId());
     } else {
