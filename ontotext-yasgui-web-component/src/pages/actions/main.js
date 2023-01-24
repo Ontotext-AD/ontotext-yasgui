@@ -57,6 +57,15 @@ function showLoadSavedQueriesAction() {
   };
 }
 
+function openNewQueryAction() {
+  ontoElement.openTab({
+    queryName: 'Clear graph',
+    query: 'CLEAR GRAPH <http://example>',
+    isPublic: false,
+    owner: 'admin'
+  });
+}
+
 ontoElement.addEventListener("queryExecuted", () => {
   const div = document.createElement('div');
   div.innerHTML = '<div id="queryRan">Query was Executed</div>';

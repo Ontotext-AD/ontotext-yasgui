@@ -10,7 +10,7 @@ import {
 } from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
 import {ServiceFactory} from '../../services/service-factory';
-import {SaveQueryData, UpdateQueryData} from "../../models/model";
+import {SaveQueryData, UpdateQueryData} from "../../models/saved-query-configuration";
 
 @Component({
   tag: 'save-query-dialog',

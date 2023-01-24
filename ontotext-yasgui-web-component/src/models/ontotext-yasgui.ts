@@ -1,5 +1,6 @@
 import {Yasgui} from '../../../Yasgui/packages/yasgui'
 import {YasguiConfiguration} from './yasgui-configuration';
+import {TabQueryModel} from "./external-yasgui-configuration";
 
 /**
  * An adapter around the actual yasgui instance.
@@ -64,6 +65,19 @@ export class OntotextYasgui {
   // TODO: What's the difference between getQuery() and this method?
   getTabQuery(): string {
     return this.getInstance().getTab().getQuery();
+  }
+
+  openTab(queryModel: TabQueryModel): void {
+    const existingTab = this.getInstance().tabNameTaken(queryModel.queryName);
+    const config = existingTab?.getPersistedJson();
+    // We can't get the query directly from the tab because if the tab hasn't been opened before
+    // then the yasqe won't be initialized. That's why we get the query from the tab's persistence.
+    const isSameQuery = config?.yasqe?.value === queryModel.query;
+    if (existingTab && isSameQuery) {
+      this.getInstance().selectTabId(existingTab.getId());
+    } else {
+      this.createNewTab(queryModel.queryName, queryModel.query);
+    }
   }
 
   createNewTab(queryName: string, query: string): void {

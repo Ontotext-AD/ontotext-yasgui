@@ -142,3 +142,10 @@ export type YasqeActionButtonDefinition = {
   name: string;
   visible: boolean;
 }
+
+export interface TabQueryModel {
+  queryName: string;
+  query: string;
+  isPublic: boolean;
+  owner: string;
+}

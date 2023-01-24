@@ -52,9 +52,21 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
+### `openTab(query: TabQueryModel) => Promise<void>`
+
+Allows the client to init the editor using a query model. When the query and query name are
+found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and
+initialized using the provided query model.
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `setQuery(query: string) => Promise<void>`
 
-
+Allows the client to set a query in the current opened tab.
 
 #### Returns
 
