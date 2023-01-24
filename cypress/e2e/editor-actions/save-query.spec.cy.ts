@@ -126,7 +126,7 @@ describe('Save query action', () => {
         YasqeSteps.getQueryNameField().should('not.have.class', 'invalid');
     });
 
-    it.only('Should be able to save private query', () => {
+    it('Should be able to save private query', () => {
         // When I click on the save query button
         YasqeSteps.getCreateSavedQueryButton().should('be.visible');
         YasqeSteps.createSavedQuery();
