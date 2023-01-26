@@ -179,4 +179,12 @@ export class YasqeSteps {
     static getShareSavedQueryLink() {
         return this.getShareSavedQueryDialog().find('.share-link-field input')
     }
+
+    static getShareQueryButton() {
+        return cy.get('.yasqe_shareQueryButton');
+    }
+
+    static shareQuery() {
+        this.getShareQueryButton().click();
+    }
 }

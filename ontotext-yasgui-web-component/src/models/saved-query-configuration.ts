@@ -21,7 +21,7 @@ export interface SavedQueryConfig {
    */
   errorMessage?: string[];
   /**
-   * A link for sharing particular saved query.
+   * A link for sharing particular query: a saved query or just current tab query.
    */
   shareQueryLink?: string;
 }

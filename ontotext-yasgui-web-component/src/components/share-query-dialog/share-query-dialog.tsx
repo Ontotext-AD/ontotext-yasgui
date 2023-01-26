@@ -3,23 +3,23 @@ import {DialogConfig} from "../ontotext-dialog-web-component/ontotext-dialog-web
 import {ServiceFactory} from "../../services/service-factory";
 import {TranslationService} from "../../services/translation.service";
 
-export type ShareSavedQueryDialogConfig = {
+export type ShareQueryDialogConfig = {
   dialogTitle: string;
   shareQueryLink: string;
 }
 
 @Component({
-  tag: 'share-saved-query-dialog',
-  styleUrl: 'share-saved-query-dialog.scss',
+  tag: 'share-query-dialog',
+  styleUrl: 'share-query-dialog.scss',
   shadow: false,
 })
-export class ShareSavedQueryDialog {
+export class ShareQueryDialog {
 
   private translationService: TranslationService;
 
   @Element() hostElement: HTMLElement;
 
-  @Prop() config: ShareSavedQueryDialogConfig;
+  @Prop() config: ShareQueryDialogConfig;
 
   @Prop() serviceFactory: ServiceFactory
 
@@ -27,12 +27,12 @@ export class ShareSavedQueryDialog {
    * Event fired when the dialog is closed by triggering one of the close controls, e.g. close or
    * cancel button as well as clicking outside of the dialog.
    */
-  @Event() internalShareSavedQueryDialogClosedEvent: EventEmitter;
+  @Event() internalShareQueryDialogClosedEvent: EventEmitter;
 
   /**
    * Internal event fired when saved query share link is copied in the clipboard.
    */
-  @Event() internalSavedQueryShareLinkCopiedEvent: EventEmitter;
+  @Event() internalQueryShareLinkCopiedEvent: EventEmitter;
 
   buildDialogConfig(): DialogConfig {
     return {
@@ -44,7 +44,7 @@ export class ShareSavedQueryDialog {
   onCopy(evt: MouseEvent): void {
     evt.stopPropagation();
     this.copyToClipboard().then(() => {
-      this.internalSavedQueryShareLinkCopiedEvent.emit();
+      this.internalQueryShareLinkCopiedEvent.emit();
     });
   }
 
@@ -55,7 +55,7 @@ export class ShareSavedQueryDialog {
     const isCloseButton = target.classList.contains('close-button');
     const isCancelButton = target.classList.contains('cancel-button');
     if (isOverlay || isCloseButton || isCancelButton) {
-      this.internalShareSavedQueryDialogClosedEvent.emit();
+      this.internalShareQueryDialogClosedEvent.emit();
     }
   }
 
@@ -94,7 +94,7 @@ export class ShareSavedQueryDialog {
 
   private copyToClipboard(): Promise<void> {
     if (!navigator.clipboard) {
-      ShareSavedQueryDialog.fallbackCopyTextToClipboard(this.config.shareQueryLink);
+      ShareQueryDialog.fallbackCopyTextToClipboard(this.config.shareQueryLink);
       return Promise.resolve();
     }
     return navigator.clipboard.writeText(this.config.shareQueryLink).then(() => {
@@ -118,7 +118,7 @@ export class ShareSavedQueryDialog {
         </div>
         <div slot="footer">
           <button class="primary-button copy-button"
-                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.saved_query.dialog.copy.btn.label')}</button>
+                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.query.dialog.copy.btn.label')}</button>
           <button class="secondary-button cancel-button"
                   onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
         </div>

@@ -16,12 +16,12 @@
 
 ### Used by
 
- - [share-saved-query-dialog](../share-saved-query-dialog)
+ - [share-query-dialog](../share-query-dialog)
 
 ### Graph
 ```mermaid
 graph TD;
-  share-saved-query-dialog --> ontotext-dialog-web-component
+  share-query-dialog --> ontotext-dialog-web-component
   style ontotext-dialog-web-component fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -23,6 +23,11 @@
         flex-direction: column;
         align-items: center;
 
+        // There is no other way to hide it but to patch the yasqe
+        .yasqe_share {
+          display: none;
+        }
+
         .custom-button {
           border: none;
           background-color: #fff;

@@ -1,5 +1,9 @@
 import {EventService} from "../event-service";
-import {InternalCreateSavedQueryEvent, InternalShowSavedQueriesEvent} from "../../models/event";
+import {
+  InternalCreateSavedQueryEvent,
+  InternalShareQueryEvent,
+  InternalShowSavedQueriesEvent
+} from "../../models/event";
 import {TranslationService} from "../translation.service";
 import {ServiceFactory} from '../service-factory';
 
@@ -15,6 +19,7 @@ export class YasqeService {
     this.translationService = serviceFactory.get(TranslationService);
     this.buttonBuilders.set('createSavedQuery', () => this.buildCreateSaveQueryButton());
     this.buttonBuilders.set('showSavedQueries', () => this.buildShowSavedQueriesButton());
+    this.buttonBuilders.set('shareQuery', () => this.buildShareQueryButton());
   }
 
   getButtonInstance(buttonDefinition: {name}): HTMLElement {
@@ -43,6 +48,16 @@ export class YasqeService {
     buttonElement.setAttribute("aria-label", this.translationService.translate('yasqe.actions.save_query.button.tooltip'));
     buttonElement.addEventListener("click",
       () => this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent()));
+    return buttonElement;
+  }
+
+  private buildShareQueryButton(): HTMLElement {
+    const buttonElement = document.createElement("button");
+    buttonElement.className = "yasqe_shareQueryButton custom-button icon-link";
+    buttonElement.title = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
+    buttonElement.setAttribute("aria-label", this.translationService.translate('yasqe.actions.share_query.button.tooltip'));
+    buttonElement.addEventListener("click",
+      () => this.eventService.emit(InternalShareQueryEvent.TYPE, new InternalShareQueryEvent()));
     return buttonElement;
   }
 }

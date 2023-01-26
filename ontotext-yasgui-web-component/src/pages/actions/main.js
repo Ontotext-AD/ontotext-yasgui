@@ -9,6 +9,27 @@ let textAreaElement = document.createElement('textarea');
 textAreaElement.id = 'saveQueryPayload';
 document.body.appendChild(textAreaElement);
 
+
+const urlString = window.location;
+const url = new URL(urlString);
+const query = url.searchParams.get('query');
+const savedQueryName = url.searchParams.get('savedQueryName');
+const name = url.searchParams.get('name');
+console.log('urlString', urlString);
+console.log(query, name);
+if (query) {
+  ontoElement.openTab({
+    query: query,
+    queryName: name
+  });
+} else if (savedQueryName) {
+  ontoElement.openTab({
+    query: query,
+    queryName: savedQueryName
+  });
+}
+
+
 function hideSaveQueryAction() {
   ontoElement.config = {
     ...ontoElement.config,
@@ -56,6 +77,31 @@ function showLoadSavedQueriesAction() {
     ]
   };
 }
+
+function hideShareQueryAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'shareQuery',
+        visible: false
+      }
+    ]
+  };
+}
+
+function showShareQueryAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'shareQuery',
+        visible: true
+      }
+    ]
+  };
+}
+
 
 function openNewQueryAction() {
   ontoElement.openTab({
@@ -140,7 +186,24 @@ ontoElement.addEventListener('shareSavedQuery', (event) => {
   };
 });
 
-ontoElement.addEventListener('savedQueryShareLinkCopied', () => {
+ontoElement.addEventListener('shareQuery', (event) => {
+  console.log('shareQuery', event);
+  let selectedQuery = event.detail;
+  const url = [location.protocol, '//', location.host, location.pathname];
+  url.push(...[
+    '?',
+    `name=${encodeURIComponent(selectedQuery.queryName)}`,
+    `&query=${encodeURIComponent(selectedQuery.query)}`,
+    `&infer=true`,
+    `&sameAs=true`,
+  ])
+  ontoElement.savedQueryConfig = {
+    shareQueryLink: url.join('')
+  };
+  console.log('URL', url.join(''));
+});
+
+ontoElement.addEventListener('queryShareLinkCopied', () => {
   navigator.clipboard.readText().then((clipText) => {
     textAreaElement.value = clipText;
   });

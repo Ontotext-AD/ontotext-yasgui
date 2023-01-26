@@ -53,11 +53,13 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;
-    config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
+    config.yasguiConfig.populateFromUrl = externalConfiguration.populateFromUrl || defaultYasguiConfig.populateFromUrl;
 
     // prepare the yasqe config
+    config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
+    config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
     config.yasguiConfig.yasqe.pluginButtons = () => {
       return this.getYasqeActionButtons(externalConfiguration, defaultYasqeConfig);
     }

@@ -76,6 +76,7 @@ export interface YasguiConfiguration {
     },
     copyEndpointOnNewTab?: boolean;
     persistenceLabelConfig?: string;
+    populateFromUrl?: boolean;
     yasqe?: {
       /**
        * Default query when a tab is opened.
@@ -85,6 +86,8 @@ export interface YasguiConfiguration {
        * Button implementations for the yasqe actions.
        */
       pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
+
+      createShareableLink?: (yasqe: any) => string | null;
     }
   };
 
@@ -121,6 +124,7 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
 
 export const defaultYasguiConfig: Record<string, any> = {
   copyEndpointOnNewTab: true,
+  populateFromUrl: false,
   persistenceLabelConfig: "ontotext-yasgui-config",
   endpoint: '',
   method: 'POST',
@@ -136,8 +140,10 @@ export const defaultYasguiConfig: Record<string, any> = {
 export const defaultYasqeConfig: Record<string, any> = {
   query: 'select * where {  \n ?s ?p ?o . \n } limit 100',
   initialQuery: '',
+  createShareableLink: null,
   yasqeActionButtons: [
     {name: 'createSavedQuery', visible: true},
-    {name: 'showSavedQueries', visible: true}
+    {name: 'showSavedQueries', visible: true},
+    {name: 'shareQuery', visible: true}
   ]
 }
