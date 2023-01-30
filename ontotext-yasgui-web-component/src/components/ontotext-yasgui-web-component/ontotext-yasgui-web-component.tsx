@@ -205,12 +205,18 @@ export class OntotextYasguiWebComponent {
     // for handling the fact that there is a chance for the client to hit the problem where when the
     // OntotextYasgui instance is created and returned the wrapped Yasgui instance might not be yet
     // initialized.
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let maxIterationsToComplete = 15;
       const timer = setInterval(() => {
+        maxIterationsToComplete--;
         if (this.ontotextYasgui.getInstance()) {
           this.ontotextYasgui.openTab(queryModel);
           clearInterval(timer);
           return resolve();
+        }
+        if (maxIterationsToComplete === 0) {
+          clearInterval(timer);
+          return reject(`Can't initialize Yasgui!`);
         }
       }, 100);
     });

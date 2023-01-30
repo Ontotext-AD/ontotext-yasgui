@@ -29,8 +29,4 @@ describe('Share query action', () => {
         YasqeSteps.getShareSavedQueryDialog().should('not.exist');
         ActionsPageSteps.getSaveQueryPayload().should('have.value', 'http://localhost:3333/pages/actions?name=Query&query=select%20*%20where%20%7B%20%20%0A%20%3Fs%20%3Fp%20%3Fo%20.%20%0A%20%7D%20limit%20100&infer=true&sameAs=true');
     });
-
-    it.skip('Should open shared query', () => {
-
-    });
 });
