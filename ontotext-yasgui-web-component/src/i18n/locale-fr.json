@@ -100,6 +100,6 @@
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirm",
   "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?",
   "yasqe.actions.share_query.button.tooltip": "Obtenir l'URL de la requête en cours",
-  "yasqe.share.query.dialog.title": "Copy URL to clipboard",
-  "yasqe.share.query.dialog.copy.btn.label": "Copy to clipboard"
+  "yasqe.share.query.dialog.title": "Copier l'URL dans le presse-papiers",
+  "yasqe.share.query.dialog.copy.btn.label": "Copier dans le presse-papiers"
 }
