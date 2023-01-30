@@ -26,4 +26,12 @@ export default class ActionsPageSteps {
     static openNewQueryAction() {
         cy.get('#openNewQueryAction').click();
     }
+
+    static hideShareQueryAction() {
+        cy.get('#hideShareQueryAction').click();
+    }
+
+    static showShareQueryAction() {
+        cy.get('#showShareQueryAction').click();
+    }
 }

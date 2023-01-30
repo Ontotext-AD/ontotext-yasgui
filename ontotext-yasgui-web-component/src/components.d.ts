@@ -11,7 +11,7 @@ import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotex
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
 import { QueryEvent, QueryResponseEvent } from "./models/event";
-import { ShareSavedQueryDialogConfig } from "./components/share-saved-query-dialog/share-saved-query-dialog";
+import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     interface ConfirmationDialog {
         "config": ConfirmationDialogConfig;
@@ -47,9 +47,9 @@ export namespace Components {
         "language": string;
         /**
           * Allows the client to init the editor using a query model. When the query and query name are found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and initialized using the provided query model.
-          * @param query The query model.
+          * @param queryModel The query model.
          */
-        "openTab": (query: TabQueryModel) => Promise<void>;
+        "openTab": (queryModel: TabQueryModel) => Promise<void>;
         /**
           * A configuration model related with all the saved queries actions.
          */
@@ -70,8 +70,8 @@ export namespace Components {
     interface SavedQueriesPopup {
         "config": SavedQueriesData;
     }
-    interface ShareSavedQueryDialog {
-        "config": ShareSavedQueryDialogConfig;
+    interface ShareQueryDialog {
+        "config": ShareQueryDialogConfig;
         "serviceFactory": ServiceFactory;
     }
     interface YasguiTooltip {
@@ -96,9 +96,9 @@ export interface SavedQueriesPopupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLSavedQueriesPopupElement;
 }
-export interface ShareSavedQueryDialogCustomEvent<T> extends CustomEvent<T> {
+export interface ShareQueryDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLShareSavedQueryDialogElement;
+    target: HTMLShareQueryDialogElement;
 }
 declare global {
     interface HTMLConfirmationDialogElement extends Components.ConfirmationDialog, HTMLStencilElement {
@@ -147,11 +147,11 @@ declare global {
         prototype: HTMLSavedQueriesPopupElement;
         new (): HTMLSavedQueriesPopupElement;
     };
-    interface HTMLShareSavedQueryDialogElement extends Components.ShareSavedQueryDialog, HTMLStencilElement {
+    interface HTMLShareQueryDialogElement extends Components.ShareQueryDialog, HTMLStencilElement {
     }
-    var HTMLShareSavedQueryDialogElement: {
-        prototype: HTMLShareSavedQueryDialogElement;
-        new (): HTMLShareSavedQueryDialogElement;
+    var HTMLShareQueryDialogElement: {
+        prototype: HTMLShareQueryDialogElement;
+        new (): HTMLShareQueryDialogElement;
     };
     interface HTMLYasguiTooltipElement extends Components.YasguiTooltip, HTMLStencilElement {
     }
@@ -165,7 +165,7 @@ declare global {
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
-        "share-saved-query-dialog": HTMLShareSavedQueryDialogElement;
+        "share-query-dialog": HTMLShareQueryDialogElement;
         "yasgui-tooltip": HTMLYasguiTooltipElement;
     }
 }
@@ -231,9 +231,13 @@ declare namespace LocalJSX {
          */
         "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
         /**
-          * Event emitted when saved query share link gets copied in the clipboard.
+          * Event emitted when query share link gets copied in the clipboard.
          */
-        "onSavedQueryShareLinkCopied"?: (event: OntotextYasguiCustomEvent<any>) => void;
+        "onQueryShareLinkCopied"?: (event: OntotextYasguiCustomEvent<any>) => void;
+        /**
+          * TODO: Event emitted when saved query share link has to be build by the client.
+         */
+        "onShareQuery"?: (event: OntotextYasguiCustomEvent<TabQueryModel>) => void;
         /**
           * Event emitted when saved query share link has to be build by the client.
          */
@@ -289,16 +293,16 @@ declare namespace LocalJSX {
          */
         "onInternalSavedQuerySelectedForShareEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
     }
-    interface ShareSavedQueryDialog {
-        "config"?: ShareSavedQueryDialogConfig;
+    interface ShareQueryDialog {
+        "config"?: ShareQueryDialogConfig;
         /**
           * Internal event fired when saved query share link is copied in the clipboard.
          */
-        "onInternalSavedQueryShareLinkCopiedEvent"?: (event: ShareSavedQueryDialogCustomEvent<any>) => void;
+        "onInternalQueryShareLinkCopiedEvent"?: (event: ShareQueryDialogCustomEvent<any>) => void;
         /**
           * Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button as well as clicking outside of the dialog.
          */
-        "onInternalShareSavedQueryDialogClosedEvent"?: (event: ShareSavedQueryDialogCustomEvent<any>) => void;
+        "onInternalShareQueryDialogClosedEvent"?: (event: ShareQueryDialogCustomEvent<any>) => void;
         "serviceFactory"?: ServiceFactory;
     }
     interface YasguiTooltip {
@@ -312,7 +316,7 @@ declare namespace LocalJSX {
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
-        "share-saved-query-dialog": ShareSavedQueryDialog;
+        "share-query-dialog": ShareQueryDialog;
         "yasgui-tooltip": YasguiTooltip;
     }
 }
@@ -341,7 +345,7 @@ declare module "@stencil/core" {
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "saved-queries-popup": LocalJSX.SavedQueriesPopup & JSXBase.HTMLAttributes<HTMLSavedQueriesPopupElement>;
-            "share-saved-query-dialog": LocalJSX.ShareSavedQueryDialog & JSXBase.HTMLAttributes<HTMLShareSavedQueryDialogElement>;
+            "share-query-dialog": LocalJSX.ShareQueryDialog & JSXBase.HTMLAttributes<HTMLShareQueryDialogElement>;
             "yasgui-tooltip": LocalJSX.YasguiTooltip & JSXBase.HTMLAttributes<HTMLYasguiTooltipElement>;
         }
     }

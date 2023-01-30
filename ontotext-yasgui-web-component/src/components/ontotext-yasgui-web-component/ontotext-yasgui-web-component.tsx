@@ -34,7 +34,7 @@ import {
   UpdateQueryData
 } from "../../models/saved-query-configuration";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
-import {ShareSavedQueryDialogConfig} from "../share-saved-query-dialog/share-saved-query-dialog";
+import {ShareQueryDialogConfig} from "../share-query-dialog/share-query-dialog";
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -197,12 +197,29 @@ export class OntotextYasguiWebComponent {
    * Allows the client to init the editor using a query model. When the query and query name are
    * found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and
    * initialized using the provided query model.
-   * @param query The query model.
+   * @param queryModel The query model.
    */
   @Method()
-  openTab(query: TabQueryModel): Promise<void> {
-    this.ontotextYasgui.openTab(query);
-    return Promise.resolve();
+  openTab(queryModel: TabQueryModel): Promise<void> {
+    // While this does the job in this particular method, we definitely need a more general approach
+    // for handling the fact that there is a chance for the client to hit the problem where when the
+    // OntotextYasgui instance is created and returned the wrapped Yasgui instance might not be yet
+    // initialized.
+    return new Promise((resolve, reject) => {
+      let maxIterationsToComplete = 15;
+      const timer = setInterval(() => {
+        maxIterationsToComplete--;
+        if (this.ontotextYasgui.getInstance()) {
+          this.ontotextYasgui.openTab(queryModel);
+          clearInterval(timer);
+          return resolve();
+        }
+        if (maxIterationsToComplete === 0) {
+          clearInterval(timer);
+          return reject(`Can't initialize Yasgui!`);
+        }
+      }, 100);
+    });
   }
 
   /**
@@ -320,19 +337,14 @@ export class OntotextYasguiWebComponent {
   @State() showShareQueryDialog = false;
 
   /**
-   * Configuration for the share saved query dialog.
-   */
-  @State() shareSavedQueryDialogConfig: ShareSavedQueryDialogConfig;
-
-  /**
    * Event emitted when saved query share link has to be build by the client.
    */
   @Event() shareSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
-   * Event emitted when saved query share link gets copied in the clipboard.
+   * Event emitted when query share link gets copied in the clipboard.
    */
-  @Event() savedQueryShareLinkCopied: EventEmitter;
+  @Event() queryShareLinkCopied: EventEmitter;
 
   /**
    * Handler for the event fired when the share saved query button is triggered.
@@ -344,19 +356,39 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Handler for the internal event fired when a saved query share link is copied in the clipboard.
+   * TODO: Event emitted when saved query share link has to be build by the client.
    */
-  @Listen('internalSavedQueryShareLinkCopiedEvent')
-  savedQueryShareLinkCopiedHandler() {
-    this.showShareQueryDialog = false;
-    this.savedQueryShareLinkCopied.emit();
+  @Event() shareQuery: EventEmitter<TabQueryModel>;
+
+  /**
+   * Handler for the event fired when the share query button in the editor is triggered.
+   */
+  @Listen('internalShareQueryEvent')
+  shareQueryHandler() {
+    const query = this.ontotextYasgui.getQuery();
+    const queryName = this.ontotextYasgui.getTabName();
+    this.shareQuery.emit({
+      queryName: queryName,
+      query: query,
+      owner: ''
+    });
+    this.showShareQueryDialog = true;
   }
 
   /**
-   * Handler for the event for closing the share saved query dialog.
+   * Handler for the internal event fired when a query share link is copied in the clipboard.
    */
-  @Listen('internalShareSavedQueryDialogClosedEvent')
-  closeShareSavedQueryDialogHandler() {
+  @Listen('internalQueryShareLinkCopiedEvent')
+  savedQueryShareLinkCopiedHandler() {
+    this.showShareQueryDialog = false;
+    this.queryShareLinkCopied.emit();
+  }
+
+  /**
+   * Handler for the event for closing the share query dialog.
+   */
+  @Listen('internalShareQueryDialogClosedEvent')
+  closeShareQueryDialogHandler() {
     this.showShareQueryDialog = false;
   }
 
@@ -392,10 +424,8 @@ export class OntotextYasguiWebComponent {
     if (window.Yasgui) {
       // * Build the internal yasgui configuration using the provided external configuration
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
-
       // * Build a yasgui instance using the configuration
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-
       // * Configure the web component
       this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
@@ -515,9 +545,9 @@ export class OntotextYasguiWebComponent {
     }
   }
 
-  private getShareLinkDialogConfig(): ShareSavedQueryDialogConfig {
+  private getShareLinkDialogConfig(): ShareQueryDialogConfig {
     return {
-      dialogTitle: this.translationService.translate('yasqe.share.saved_query.dialog.title'),
+      dialogTitle: this.translationService.translate('yasqe.share.query.dialog.title'),
       shareQueryLink: this.savedQueryConfig.shareQueryLink
     }
   }
@@ -575,8 +605,8 @@ export class OntotextYasguiWebComponent {
                              config={this.getDeleteQueryConfirmationConfig()}></confirmation-dialog>}
 
         {this.showShareQueryDialog &&
-        <share-saved-query-dialog serviceFactory={this.serviceFactory}
-                                  config={this.getShareLinkDialogConfig()}></share-saved-query-dialog>}
+        <share-query-dialog serviceFactory={this.serviceFactory}
+                                  config={this.getShareLinkDialogConfig()}></share-query-dialog>}
       </Host>
     );
   }

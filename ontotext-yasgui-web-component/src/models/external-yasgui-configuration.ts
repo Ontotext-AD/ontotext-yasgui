@@ -118,13 +118,30 @@ export interface ExternalYasguiConfiguration {
    */
   defaultTabName?: string;
 
+  /**
+   * Action button definitions which can be plugged in the yasqe extension point.
+   */
+  yasqeActionButtons: YasqeActionButtonDefinition[];
+
+  /**
+   * Function which is used by yasgui internally to create a shareable links. We
+   * expose it here just to allow the share button to be hidden but in reality it
+   * doesn't work due to a bug in the yasgui configuration merge code.
+   * @param yasqe
+   */
+  createShareableLink: (yasqe: any) => string | null;
+
+  /**
+   * This allows to skip the code in yasgui handling url parameters and internally
+   * initializing the editor using them.
+   */
+  populateFromUrl?: boolean;
+
   // ***********************************************************
   //
   // All configurations related with the yasr instance
   //
   // ***********************************************************
-
-  yasqeActionButtons: YasqeActionButtonDefinition[]
 }
 
 export enum RenderingMode {
@@ -146,6 +163,6 @@ export type YasqeActionButtonDefinition = {
 export interface TabQueryModel {
   queryName: string;
   query: string;
-  isPublic: boolean;
   owner: string;
+  isPublic?: boolean;
 }

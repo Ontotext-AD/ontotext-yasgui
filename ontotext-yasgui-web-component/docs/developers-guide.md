@@ -160,6 +160,17 @@ createSavedQueryButton.addEventListener("click",
   () => this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent()));
 ```
 
+Currently, the action buttons which are plugged in are:
+```
+"createSavedQuery" - opens the save query dialog  
+```
+```
+"showSavedQueries" - triggers loading of saved queries and shows them in a popup  
+```
+```
+"shareQuery" - obtains a shareable link for the current query and opens a copy link dialog  
+```
+
 ## Recommendations for implementing custom action buttons
 
 * Buttons are implemented in TODO:
