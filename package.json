@@ -1,6 +1,6 @@
 {
   "name": "ontotext-yasgui",
-  "version": "0.0.2-TR9",
+  "version": "0.0.2-TR10",
   "description": "Base project of \"ontotext-yasgui-web-component\" component. It holds yasgui source code and ontotext-yasgui-web-component customization project for Ontotext.",
   "scripts": {
     "install": "sh scripts/install.sh",
