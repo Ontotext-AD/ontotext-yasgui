@@ -100,6 +100,8 @@
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirm",
   "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?",
   "yasqe.actions.share_query.button.tooltip": "Obtenir l'URL de la requête en cours",
+  "yasqe.actions.include_inferred.true.button.tooltip": "Inclure les données déduites dans les résultats: AU",
+  "yasqe.actions.include_inferred.false.button.tooltip": "Inclure les données déduites dans les résultats: DÉSACTIVÉ",
   "yasqe.share.query.dialog.title": "Copier l'URL dans le presse-papiers",
   "yasqe.share.query.dialog.copy.btn.label": "Copier dans le presse-papiers"
 }

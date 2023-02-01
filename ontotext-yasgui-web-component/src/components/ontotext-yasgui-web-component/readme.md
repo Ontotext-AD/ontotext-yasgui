@@ -46,7 +46,7 @@ yasgui can be tweaked using the values from the configuration.
 | `queryExecuted`        | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
 | `queryResponse`        | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
 | `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`                   |
-| `shareQuery`           | TODO: Event emitted when saved query share link has to be build by the client.                                                                          | `CustomEvent<TabQueryModel>`         |
+| `shareQuery`           | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<TabQueryModel>`         |
 | `shareSavedQuery`      | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<SaveQueryData>`         |
 | `updateSavedQuery`     | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`         |
 

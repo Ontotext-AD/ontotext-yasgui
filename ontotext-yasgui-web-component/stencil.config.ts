@@ -1,6 +1,8 @@
 import {Config} from '@stencil/core';
 import {sass} from '@stencil/sass';
 
+const path = `${__dirname}/src/pages/fake-server.js`;
+
 export const config: Config = {
   namespace: 'ontotext-yasgui-web-component',
   globalStyle: "src/css/app.scss",
@@ -26,5 +28,8 @@ export const config: Config = {
       ]
     },
   ],
-  plugins: [sass()]
+  plugins: [sass()],
+  devServer: {
+    requestListenerPath: path
+  }
 };

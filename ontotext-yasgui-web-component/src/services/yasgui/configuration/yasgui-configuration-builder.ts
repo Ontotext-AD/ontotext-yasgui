@@ -44,11 +44,22 @@ export class YasguiConfigurationBuilder {
     // prepare the yasgui config
     config.yasguiConfig = {
       translate: (key, parameters) => this.serviceFactory.get(TranslationService).translate(key, parameters),
+      infer: defaultYasguiConfig.infer,
+      sameAs: defaultYasguiConfig.sameAs,
       requestConfig: {},
       yasqe: {}
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
+    const infer = externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer;
+    const sameAs = externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs;
+    defaultYasguiConfig.infer = false;
+    config.yasguiConfig.requestConfig.args = () => {
+      return [
+        {name: 'infer', value: infer + ''},
+        {name: 'sameAs', value: sameAs + ''}
+      ];
+    }
     config.yasguiConfig.tabName = externalConfiguration.defaultTabName ||  this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
@@ -62,7 +73,8 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
     config.yasguiConfig.yasqe.pluginButtons = () => {
       return this.getYasqeActionButtons(externalConfiguration, defaultYasqeConfig);
-    }
+    };
+    config.yasguiConfig.yasqe.showQueryButton = true;
 
     // prepare the yasr config
 
@@ -92,7 +104,7 @@ export class YasguiConfigurationBuilder {
     }
 
     return visibleDefaultButtonDefinitions.map(
-      (buttonDefinition) => (this.yasqeService.getButtonInstance(buttonDefinition))
+      (buttonDefinition) => (this.yasqeService.getButtonInstance(buttonDefinition, externalConfiguration))
     );
   }
 }

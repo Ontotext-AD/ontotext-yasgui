@@ -9,14 +9,11 @@ let textAreaElement = document.createElement('textarea');
 textAreaElement.id = 'saveQueryPayload';
 document.body.appendChild(textAreaElement);
 
-
 const urlString = window.location;
 const url = new URL(urlString);
 const query = url.searchParams.get('query');
 const savedQueryName = url.searchParams.get('savedQueryName');
 const name = url.searchParams.get('name');
-console.log('urlString', urlString);
-console.log(query, name);
 if (query) {
   ontoElement.openTab({
     query: query,
@@ -102,6 +99,37 @@ function showShareQueryAction() {
   };
 }
 
+function showIncludeInferredAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'includeInferredStatements',
+        visible: true
+      }
+    ]
+  };
+}
+
+function hideIncludeInferredAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'includeInferredStatements',
+        visible: false
+      }
+    ]
+  };
+}
+
+function toggleIncludeInferred() {
+  const infer = ontoElement.config.infer === undefined ? false : !ontoElement.config.infer
+  ontoElement.config = {
+    ...ontoElement.config,
+    infer: infer
+  };
+}
 
 function openNewQueryAction() {
   ontoElement.openTab({
