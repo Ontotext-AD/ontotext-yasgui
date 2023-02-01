@@ -187,4 +187,12 @@ export class YasqeSteps {
     static shareQuery() {
         this.getShareQueryButton().click();
     }
+
+    static getIncludeInferredStatementsButton() {
+      return cy.get('.yasqe_inferStatementsButton');
+    }
+
+    static includeInferredStatements() {
+      this.getIncludeInferredStatementsButton().click();
+    }
 }

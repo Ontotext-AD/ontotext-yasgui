@@ -170,6 +170,9 @@ Currently, the action buttons which are plugged in are:
 ```
 "shareQuery" - obtains a shareable link for the current query and opens a copy link dialog  
 ```
+```
+"includeInferredStatements" - include infered data in sparql results
+```
 
 ## Recommendations for implementing custom action buttons
 

@@ -235,7 +235,7 @@ declare namespace LocalJSX {
          */
         "onQueryShareLinkCopied"?: (event: OntotextYasguiCustomEvent<any>) => void;
         /**
-          * TODO: Event emitted when saved query share link has to be build by the client.
+          * Event emitted when saved query share link has to be build by the client.
          */
         "onShareQuery"?: (event: OntotextYasguiCustomEvent<TabQueryModel>) => void;
         /**

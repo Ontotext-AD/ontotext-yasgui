@@ -11,7 +11,11 @@ import {
   State,
   Watch
 } from '@stencil/core';
-import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-configuration';
+import {
+  defaultOntotextYasguiConfig,
+  defaultYasguiConfig,
+  RenderingMode
+} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -158,6 +162,9 @@ export class OntotextYasguiWebComponent {
    */
   @State() savedQueryData: SaveQueryData;
 
+  /**
+   * A query model which is set when a query is set to be deleted.
+   */
   @State() deleteQueryData: SaveQueryData;
 
   /**
@@ -356,7 +363,7 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * TODO: Event emitted when saved query share link has to be build by the client.
+   * Event emitted when saved query share link has to be build by the client.
    */
   @Event() shareQuery: EventEmitter<TabQueryModel>;
 
@@ -390,6 +397,15 @@ export class OntotextYasguiWebComponent {
   @Listen('internalShareQueryDialogClosedEvent')
   closeShareQueryDialogHandler() {
     this.showShareQueryDialog = false;
+  }
+
+  /**
+   * Handler for the event for closing the share query dialog.
+   */
+  @Listen('internalIncludeInferredEvent')
+  includeInferredEventHandler() {
+    this.config.infer = this.config.infer === undefined ? defaultYasguiConfig.infer : !this.config.infer;
+    this.init(this.config);
   }
 
   componentWillLoad() {

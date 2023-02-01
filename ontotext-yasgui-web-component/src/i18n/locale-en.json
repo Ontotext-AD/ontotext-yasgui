@@ -100,6 +100,8 @@
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirm",
   "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?",
   "yasqe.actions.share_query.button.tooltip": "Get URL to current query",
+  "yasqe.actions.include_inferred.true.button.tooltip": "Include inferred data in results: ON",
+  "yasqe.actions.include_inferred.false.button.tooltip": "Include inferred data in results: OFF",
   "yasqe.share.query.dialog.title": "Copy URL to clipboard",
   "yasqe.share.query.dialog.copy.btn.label": "Copy to clipboard"
 }

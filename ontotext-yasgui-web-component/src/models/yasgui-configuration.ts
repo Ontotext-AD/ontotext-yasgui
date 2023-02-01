@@ -73,10 +73,13 @@ export interface YasguiConfiguration {
       endpoint?: string;
       method?: 'POST' | 'GET';
       headers?: () => Record<string, string>;
+      args?: Array<{ name: string; value: string }> | any;
     },
     copyEndpointOnNewTab?: boolean;
     persistenceLabelConfig?: string;
     populateFromUrl?: boolean;
+    infer: boolean;
+    sameAs: boolean;
     yasqe?: {
       /**
        * Default query when a tab is opened.
@@ -88,6 +91,8 @@ export interface YasguiConfiguration {
       pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
 
       createShareableLink?: (yasqe: any) => string | null;
+
+      showQueryButton?: boolean;
     }
   };
 
@@ -128,6 +133,8 @@ export const defaultYasguiConfig: Record<string, any> = {
   persistenceLabelConfig: "ontotext-yasgui-config",
   endpoint: '',
   method: 'POST',
+  infer: true,
+  sameAs: true,
   headers: () => {
     return {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -144,6 +151,7 @@ export const defaultYasqeConfig: Record<string, any> = {
   yasqeActionButtons: [
     {name: 'createSavedQuery', visible: true},
     {name: 'showSavedQueries', visible: true},
-    {name: 'shareQuery', visible: true}
+    {name: 'shareQuery', visible: true},
+    {name: 'includeInferredStatements', visible: true},
   ]
 }

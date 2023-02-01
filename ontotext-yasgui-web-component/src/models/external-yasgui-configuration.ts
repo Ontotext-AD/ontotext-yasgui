@@ -79,6 +79,17 @@ export interface ExternalYasguiConfiguration {
   headers: () => Record<string, string>;
 
   /**
+   * Allows to a default value of the include inferred configuration which is enabled by default.
+   */
+  infer: boolean;
+
+  /**
+   * Allows to a default value of the expand results on sameAs configuration which is enabled by
+   * default.
+   */
+  sameAs: boolean;
+
+  /**
    * If the configured endpoint should be preconfigured to any new opened editor tab.
    */
   copyEndpointOnNewTab: boolean;

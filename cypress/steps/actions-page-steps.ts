@@ -34,4 +34,16 @@ export default class ActionsPageSteps {
     static showShareQueryAction() {
         cy.get('#showShareQueryAction').click();
     }
+
+    static hideIncludeInferredStatementsAction() {
+        cy.get('#hideIncludeInferredAction').click();
+    }
+
+    static showIncludeInferredStatementsAction() {
+        cy.get('#showIncludeInferredAction').click();
+    }
+
+    static toggleIncludeInferred() {
+        cy.get('#toggleIncludeInferred').click();
+    }
 }
