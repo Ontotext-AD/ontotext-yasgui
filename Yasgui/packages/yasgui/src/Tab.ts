@@ -322,7 +322,7 @@ export class Tab extends EventEmitter {
             objValue,
             srcValue
           ) {
-            if (Array.isArray(objValue) || Array.isArray(srcValue)) {
+            if (Array.isArray(objValue) && Array.isArray(srcValue)) {
               return [...(objValue || []), ...(srcValue || [])];
             }
           }),
