@@ -78,3 +78,20 @@
     }
   }
 }
+
+
+.yasr_results {
+  .resource-copy-link {
+    display: none;
+  }
+
+  table tbody td:hover .resource-copy-link {
+    display: inline;
+    float: right;
+    padding-right: 10px;
+  }
+
+  .uri-link:hover {
+    text-decoration: none;
+  }
+}

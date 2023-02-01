@@ -1,0 +1,14 @@
+@import "src/css/variables";
+@import 'src/css/common';
+@import "src/css/icons";
+
+:host {
+  display: block;
+}
+
+.copy-link-dialog {
+
+  .copy-link-form {
+    @include formField;
+  }
+}

@@ -43,6 +43,7 @@ yasgui can be tweaked using the values from the configuration.
 | `createSavedQuery`     | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
 | `deleteSavedQuery`     | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`         |
 | `loadSavedQueries`     | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
+| `notify`               |                                                                                                                                                         | `CustomEvent<string>`                |
 | `queryExecuted`        | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
 | `queryResponse`        | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
 | `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`                   |
@@ -85,6 +86,7 @@ Type: `Promise<void>`
 - [saved-queries-popup](../saved-queries-popup)
 - [confirmation-dialog](../confirmation-dialog)
 - [share-query-dialog](../share-query-dialog)
+- [copy-resource-link-dialog](../copy-resource-link-dialog)
 
 ### Graph
 ```mermaid
@@ -94,8 +96,11 @@ graph TD;
   ontotext-yasgui --> saved-queries-popup
   ontotext-yasgui --> confirmation-dialog
   ontotext-yasgui --> share-query-dialog
+  ontotext-yasgui --> copy-resource-link-dialog
   save-query-dialog --> yasgui-tooltip
-  share-query-dialog --> ontotext-dialog-web-component
+  share-query-dialog --> copy-link-dialog
+  copy-link-dialog --> ontotext-dialog-web-component
+  copy-resource-link-dialog --> copy-link-dialog
   style ontotext-yasgui fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -32,3 +32,11 @@ Cypress.Commands.add('getByDataSelector', (selector, ...args) => {
 Cypress.Commands.add('getByDataSelectorContainsValue', (selector, ...args) => {
     return cy.get(`[data-cy*=${selector}]`, ...args)
 })
+
+Cypress.Commands.add('assertClipboardValue', value => {
+    cy.window().then(win => {
+        win.navigator.clipboard.readText().then(text => {
+            expect(text).to.eq(value)
+        })
+    })
+})

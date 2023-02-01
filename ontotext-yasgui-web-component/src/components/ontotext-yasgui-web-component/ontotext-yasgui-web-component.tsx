@@ -19,7 +19,7 @@ import {
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
-import {InternalShowSavedQueriesEvent, QueryEvent, QueryResponseEvent} from "../../models/event";
+import {InternalShowResourceCopyLinkDialogEvent, InternalShowSavedQueriesEvent, QueryEvent, QueryResponseEvent} from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
@@ -38,7 +38,7 @@ import {
   UpdateQueryData
 } from "../../models/saved-query-configuration";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
-import {ShareQueryDialogConfig} from "../share-query-dialog/share-query-dialog";
+import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -136,6 +136,8 @@ export class OntotextYasguiWebComponent {
    * back in order to be displayed.
    */
   @Event() loadSavedQueries: EventEmitter<boolean>;
+
+  @Event() notify: EventEmitter<string>;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -343,6 +345,8 @@ export class OntotextYasguiWebComponent {
 
   @State() showShareQueryDialog = false;
 
+  @State() showCopyResourceLinkDialog = false;
+
   /**
    * Event emitted when saved query share link has to be build by the client.
    */
@@ -421,6 +425,36 @@ export class OntotextYasguiWebComponent {
     yasguiConfiguration.yasguiConfig.sameAs = !sameAs;
     this.rebuild(yasguiConfiguration);
   }
+
+  /**
+   * Handler for the event fired when the copy link dialog is closed without copying the link to the clipboard.
+   */
+  @Listen('internalResourceLinkDialogClosedEvent')
+  resourceLinkDialogClosedHandler() {
+    this.showCopyResourceLinkDialog = false;
+    this.copiedResourceLink = undefined;
+  }
+
+  /**
+   * Handler for the event fired when the copy link dialog is closed when the link is copied to the clipboard.
+   */
+  @Listen('internalResourceLinkCopiedEvent')
+  resourceLinkCopiedHandler() {
+    this.notify.emit(this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success'));
+    this.showCopyResourceLinkDialog = false;
+    this.copiedResourceLink = undefined;
+  }
+
+  /**
+   * Handler for the event fired when the copy link dialog is closed when the link is copied to the clipboard.
+   */
+  @Listen('internalShowResourceCopyLinkDialogEvent')
+  showResourceCopyLinkDialogHandler(event: CustomEvent<InternalShowResourceCopyLinkDialogEvent>) {
+    this.copiedResourceLink = event.detail.copyLink;
+    this.showCopyResourceLinkDialog = true;
+  }
+
+  @State() copiedResourceLink: string;
 
   componentWillLoad() {
     // @ts-ignore
@@ -651,6 +685,10 @@ export class OntotextYasguiWebComponent {
         {this.showShareQueryDialog &&
         <share-query-dialog serviceFactory={this.serviceFactory}
                                   config={this.getShareLinkDialogConfig()}></share-query-dialog>}
+        {this.showCopyResourceLinkDialog &&
+          <copy-resource-link-dialog serviceFactory={this.serviceFactory}
+                                     resourceLink={this.copiedResourceLink}>
+          </copy-resource-link-dialog>}
       </Host>
     );
   }

@@ -132,7 +132,7 @@ export class YasqeSteps {
 
     static getTabQuery(tabIndex: number) {
         return cy.get('.yasqe .CodeMirror').then((el) => {
-            return el[tabIndex].CodeMirror.getValue();
+            return (el[tabIndex] as any).CodeMirror.getValue();
         });
     }
 
@@ -177,7 +177,7 @@ export class YasqeSteps {
     }
 
     static getShareSavedQueryLink() {
-        return this.getShareSavedQueryDialog().find('.share-link-field input')
+        return this.getShareSavedQueryDialog().find('.copy-link-form input')
     }
 
     static getShareQueryButton() {

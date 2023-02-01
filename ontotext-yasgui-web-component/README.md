@@ -33,12 +33,12 @@ file (for example `vendor.js`).
 import ng-custom-element/dist/ng-custom-element.umd';
 ```
 
-Import the `defineCustomElementOntotextYasgui` function and call it in the `app.js`
+Import the `defineCustomElements` function and call it in the `app.js`
 
 ```
-import {defineCustomElementOntotextYasgui} from 'ontotext-yasgui-web-component/dist/components/index';
+import {defineCustomElements} from 'ontotext-yasgui-web-component/loader/index'
 
-defineCustomElementOntotextYasgui();
+defineCustomElements();
 ```
 
 Then the component can be used in html templates like this:
