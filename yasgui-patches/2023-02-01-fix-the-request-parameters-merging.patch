@@ -1,0 +1,17 @@
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision f4e434103a884538d0994bf190467b99a7e9267e)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 8998151cfe2bcc709f732511cc8a2963c90e9117)
+@@ -322,7 +322,7 @@
+             objValue,
+             srcValue
+           ) {
+-            if (Array.isArray(objValue) || Array.isArray(srcValue)) {
++            if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+               return [...(objValue || []), ...(srcValue || [])];
+             }
+           }),
