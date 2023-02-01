@@ -15,5 +15,11 @@ declare namespace Cypress {
        * @param options - cypress get function options. @see <a href="https://docs.cypress.io/api/commands/get#Arguments">Cypress documentation</a>.
        */
       getByDataSelectorContainsValue(selectorValue: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>): Chainable<any>;
+
+      /**
+       * Checks if <code>value</code> is same as clipboard value.
+       * @param value - to be checked.
+       */
+      assertClipboardValue(value);
    }
 }

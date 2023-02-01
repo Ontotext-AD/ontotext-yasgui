@@ -1,7 +1,6 @@
-import {Component, Element, Event, EventEmitter, h, Prop} from '@stencil/core';
-import {DialogConfig} from "../ontotext-dialog-web-component/ontotext-dialog-web-component";
+import {Component, Event, EventEmitter, h, Prop} from '@stencil/core';
 import {ServiceFactory} from "../../services/service-factory";
-import {TranslationService} from "../../services/translation.service";
+import {CopyLInkObserver} from '../copy-link-dialog/copy-link-dialog';
 
 export type ShareQueryDialogConfig = {
   dialogTitle: string;
@@ -13,11 +12,7 @@ export type ShareQueryDialogConfig = {
   styleUrl: 'share-query-dialog.scss',
   shadow: false,
 })
-export class ShareQueryDialog {
-
-  private translationService: TranslationService;
-
-  @Element() hostElement: HTMLElement;
+export class ShareQueryDialog implements CopyLInkObserver {
 
   @Prop() config: ShareQueryDialogConfig;
 
@@ -34,96 +29,21 @@ export class ShareQueryDialog {
    */
   @Event() internalQueryShareLinkCopiedEvent: EventEmitter;
 
-  buildDialogConfig(): DialogConfig {
-    return {
-      dialogTitle: this.config.dialogTitle,
-      onClose: this.onClose.bind(this)
-    }
+  onDialogClosed(): void {
+    this.internalShareQueryDialogClosedEvent.emit();
   }
 
-  onCopy(evt: MouseEvent): void {
-    evt.stopPropagation();
-    this.copyToClipboard().then(() => {
-      this.internalQueryShareLinkCopiedEvent.emit();
-    });
-  }
-
-  onClose(evt: MouseEvent): void {
-    const target = evt.target as HTMLElement;
-    evt.stopPropagation();
-    const isOverlay = target.classList.contains('dialog-overlay');
-    const isCloseButton = target.classList.contains('close-button');
-    const isCancelButton = target.classList.contains('cancel-button');
-    if (isOverlay || isCloseButton || isCancelButton) {
-      this.internalShareQueryDialogClosedEvent.emit();
-    }
-  }
-
-  componentWillLoad(): void {
-    this.translationService = this.serviceFactory.get(TranslationService);
-  }
-
-  componentDidRender(): void {
-    const inputField: HTMLInputElement = document.querySelector('#shareLink');
-    inputField.focus();
-    // FIXME: For some reason this works only the first time dialog is opened
-    inputField.select();
-  }
-
-  private static fallbackCopyTextToClipboard(text: string): void {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-
-    // Avoid scrolling to bottom
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      console.error('Unable to copy', err);
-    }
-
-    document.body.removeChild(textArea);
-  }
-
-  private copyToClipboard(): Promise<void> {
-    if (!navigator.clipboard) {
-      ShareQueryDialog.fallbackCopyTextToClipboard(this.config.shareQueryLink);
-      return Promise.resolve();
-    }
-    return navigator.clipboard.writeText(this.config.shareQueryLink).then(() => {
-      // do nothing
-    }, (err) => {
-      console.error('Could not copy share link: ', err);
-    });
+  onLinkCopied(): void {
+    this.internalQueryShareLinkCopiedEvent.emit();
   }
 
   render() {
     return (
-      <ontotext-dialog-web-component class="share-saved-query-dialog"
-                                     config={this.buildDialogConfig()}>
-        <div slot="body">
-          <div class="share-query-form">
-            <div class="form-field share-link-field">
-              <input type="text" name="shareLink" id="shareLink" autofocus readonly
-                     value={this.config.shareQueryLink}/>
-            </div>
-          </div>
-        </div>
-        <div slot="footer">
-          <button class="primary-button copy-button"
-                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.query.dialog.copy.btn.label')}</button>
-          <button class="secondary-button cancel-button"
-                  onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
-        </div>
-      </ontotext-dialog-web-component>
+      <copy-link-dialog config={{copyLink: this.config.shareQueryLink}}
+                        serviceFactory={this.serviceFactory}
+                        classes="share-saved-query-dialog"
+                        copyLinkEventsObserver={this}>
+      </copy-link-dialog>
     );
   }
-
 }

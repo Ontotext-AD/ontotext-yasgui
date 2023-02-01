@@ -99,6 +99,39 @@ export interface YasguiConfiguration {
 
       showQueryButton?: boolean;
     }
+    yasr: {
+      /**
+       * Object with uris and their corresponding prefixes.
+       * For example:
+       * <pre>
+       *   {
+       *     "gn": "http://www.geonames.org/ontology#",
+       *     "path": "http://www.ontotext.com/path#",
+       *     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+       *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+       *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+       *   }
+       * </pre>
+       */
+      prefixes: {},
+
+      /**
+       * The name of plugin which have to be active when yasr is created.
+       */
+      defaultPlugin: string,
+
+      /**
+       * Describes the order of how plugins will be displayed.
+       * For example: ["extended_table", "response"]
+       */
+      pluginOrder: string[],
+
+      /**
+       * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which fields are supported by
+       * the plugin configuration.
+       */
+      externalPluginsConfigurations: Map<string, any>;
+    }
   };
 
   yasqeConfig?: {
@@ -146,7 +179,9 @@ export const defaultYasguiConfig: Record<string, any> = {
       'Accept': 'application/sparql-results+json',
       'X-GraphDB-Local-Consistency': 'updating'
     };
-  }
+  },
+  defaultPlugin: 'extended_table',
+  pluginOrder: ["extended_table", "response"],
 }
 
 export const defaultYasqeConfig: Record<string, any> = {
@@ -159,5 +194,8 @@ export const defaultYasqeConfig: Record<string, any> = {
     {name: 'shareQuery', visible: true},
     {name: 'includeInferredStatements', visible: true},
     {name: 'expandResultsOverSameAs', visible: true}
-  ]
+  ],
+  prefixes: {
+
+  }
 }

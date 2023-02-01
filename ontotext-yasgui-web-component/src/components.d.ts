@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ServiceFactory } from "./services/service-factory";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
+import { CopyLinkDialogConfig, CopyLInkObserver } from "./components/copy-link-dialog/copy-link-dialog";
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
@@ -15,6 +16,20 @@ import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-qu
 export namespace Components {
     interface ConfirmationDialog {
         "config": ConfirmationDialogConfig;
+        "serviceFactory": ServiceFactory;
+    }
+    interface CopyLinkDialog {
+        "classes": string;
+        "config": CopyLinkDialogConfig;
+        "copyLinkEventsObserver": CopyLInkObserver;
+        "serviceFactory": ServiceFactory;
+    }
+    interface CopyResourceLinkButton {
+        "classes": string;
+        "uri": string;
+    }
+    interface CopyResourceLinkDialog {
+        "resourceLink": string;
         "serviceFactory": ServiceFactory;
     }
     interface OntotextDialogWebComponent {
@@ -84,6 +99,10 @@ export interface ConfirmationDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLConfirmationDialogElement;
 }
+export interface CopyResourceLinkDialogCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLCopyResourceLinkDialogElement;
+}
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextYasguiElement;
@@ -106,6 +125,24 @@ declare global {
     var HTMLConfirmationDialogElement: {
         prototype: HTMLConfirmationDialogElement;
         new (): HTMLConfirmationDialogElement;
+    };
+    interface HTMLCopyLinkDialogElement extends Components.CopyLinkDialog, HTMLStencilElement {
+    }
+    var HTMLCopyLinkDialogElement: {
+        prototype: HTMLCopyLinkDialogElement;
+        new (): HTMLCopyLinkDialogElement;
+    };
+    interface HTMLCopyResourceLinkButtonElement extends Components.CopyResourceLinkButton, HTMLStencilElement {
+    }
+    var HTMLCopyResourceLinkButtonElement: {
+        prototype: HTMLCopyResourceLinkButtonElement;
+        new (): HTMLCopyResourceLinkButtonElement;
+    };
+    interface HTMLCopyResourceLinkDialogElement extends Components.CopyResourceLinkDialog, HTMLStencilElement {
+    }
+    var HTMLCopyResourceLinkDialogElement: {
+        prototype: HTMLCopyResourceLinkDialogElement;
+        new (): HTMLCopyResourceLinkDialogElement;
     };
     interface HTMLOntotextDialogWebComponentElement extends Components.OntotextDialogWebComponent, HTMLStencilElement {
     }
@@ -161,6 +198,9 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "confirmation-dialog": HTMLConfirmationDialogElement;
+        "copy-link-dialog": HTMLCopyLinkDialogElement;
+        "copy-resource-link-button": HTMLCopyResourceLinkButtonElement;
+        "copy-resource-link-dialog": HTMLCopyResourceLinkDialogElement;
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
@@ -180,6 +220,28 @@ declare namespace LocalJSX {
           * Event fired when confirmation is rejected and the dialog should be closed.
          */
         "onInternalConfirmationRejectedEvent"?: (event: ConfirmationDialogCustomEvent<any>) => void;
+        "serviceFactory"?: ServiceFactory;
+    }
+    interface CopyLinkDialog {
+        "classes"?: string;
+        "config"?: CopyLinkDialogConfig;
+        "copyLinkEventsObserver"?: CopyLInkObserver;
+        "serviceFactory"?: ServiceFactory;
+    }
+    interface CopyResourceLinkButton {
+        "classes"?: string;
+        "uri"?: string;
+    }
+    interface CopyResourceLinkDialog {
+        /**
+          * Internal event fired when resource link is copied to the clipboard.
+         */
+        "onInternalResourceLinkCopiedEvent"?: (event: CopyResourceLinkDialogCustomEvent<any>) => void;
+        /**
+          * Event fired when the dialog is closed by triggering one of the close controls, e.g. close or cancel button as well as clicking outside the dialog.
+         */
+        "onInternalResourceLinkDialogClosedEvent"?: (event: CopyResourceLinkDialogCustomEvent<any>) => void;
+        "resourceLink"?: string;
         "serviceFactory"?: ServiceFactory;
     }
     interface OntotextDialogWebComponent {
@@ -222,6 +284,7 @@ declare namespace LocalJSX {
           * Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
          */
         "onLoadSavedQueries"?: (event: OntotextYasguiCustomEvent<boolean>) => void;
+        "onNotify"?: (event: OntotextYasguiCustomEvent<string>) => void;
         /**
           * Event emitted when before query to be executed.
          */
@@ -312,6 +375,9 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "confirmation-dialog": ConfirmationDialog;
+        "copy-link-dialog": CopyLinkDialog;
+        "copy-resource-link-button": CopyResourceLinkButton;
+        "copy-resource-link-dialog": CopyResourceLinkDialog;
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
@@ -325,6 +391,9 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "confirmation-dialog": LocalJSX.ConfirmationDialog & JSXBase.HTMLAttributes<HTMLConfirmationDialogElement>;
+            "copy-link-dialog": LocalJSX.CopyLinkDialog & JSXBase.HTMLAttributes<HTMLCopyLinkDialogElement>;
+            "copy-resource-link-button": LocalJSX.CopyResourceLinkButton & JSXBase.HTMLAttributes<HTMLCopyResourceLinkButtonElement>;
+            "copy-resource-link-dialog": LocalJSX.CopyResourceLinkDialog & JSXBase.HTMLAttributes<HTMLCopyResourceLinkDialogElement>;
             "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to

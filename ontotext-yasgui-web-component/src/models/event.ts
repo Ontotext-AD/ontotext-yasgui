@@ -27,3 +27,9 @@ export class InternalShowSavedQueriesEvent {
   constructor(public buttonInstance: HTMLElement) {
   }
 }
+
+export class InternalShowResourceCopyLinkDialogEvent {
+  static readonly TYPE = 'internalShowResourceCopyLinkDialogEvent';
+
+  constructor(public copyLink: string) {}
+}

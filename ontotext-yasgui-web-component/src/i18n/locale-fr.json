@@ -49,6 +49,7 @@
   "yasr.plugin_control.missing_help.link.tooltip": "This plugin doesn't have a help reference yet. Please contact the maintainer to fix this",
   "yasr.plugin_control.plugin_documentation.link.label": "{{selectedPluginName}} documentation",
   "yasr.plugin_control.plugin_documentation.link.tooltip": "View documentation of {{pluginName}}",
+  "yasr.plugin_control.plugin.name.extended_table": "Table",
   "yasr.plugin_control.plugin.name.response": "Raw response",
   "yasr.plugin_control.plugin.name.table": "Table",
   "yasr.plugin_control.shows_view.btn.aria_label": "Shows {{name}} view",
@@ -104,6 +105,9 @@
   "yasqe.actions.include_inferred.false.button.tooltip": "Inclure les données déduites dans les résultats: DÉSACTIVÉ",
   "yasqe.actions.expand_results_sameas.true.button.tooltip": "Développer les résultats sur owl:sameAs: ON",
   "yasqe.actions.expand_results_sameas.false.button.tooltip": "Développer les résultats sur owl:sameAs: OFF",
-  "yasqe.share.query.dialog.title": "Copier l'URL dans le presse-papiers",
-  "yasqe.share.query.dialog.copy.btn.label": "Copier dans le presse-papiers"
+  "yasqe.share.copy_link.dialog.title": "Copy URL to clipboard",
+  "yasqe.share.copy_link.dialog.copy.btn.label": "Copy to clipboard",
+  "yasqe.share.copy_link.dialog.copy.btn.title": "Copy to clipboard",
+  "yasqe.share.copy_link.dialog.copy.message.success": "URL copied successfully to clipboard.",
+  "yasqe.share.saved_query.dialog.copy.btn.label": "Copy to clipboard"
 }

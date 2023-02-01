@@ -11,6 +11,7 @@ import {
 import {YasqeService} from "../../yasqe/yasqe-service";
 import {ServiceFactory} from '../../service-factory';
 import {TranslationService} from '../../translation.service';
+import {YasrService} from '../../yasr/yasr-service';
 
 /**
  * Builder for yasgui configuration.
@@ -47,7 +48,13 @@ export class YasguiConfigurationBuilder {
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},
-      yasqe: {}
+      yasqe: {},
+      yasr: {
+        prefixes: {},
+        defaultPlugin: '',
+        pluginOrder: [],
+        externalPluginsConfigurations: YasrService.getPluginsConfigurations()
+      }
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
@@ -62,6 +69,9 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;
     config.yasguiConfig.populateFromUrl = externalConfiguration.populateFromUrl || defaultYasguiConfig.populateFromUrl;
+    config.yasguiConfig.yasr.prefixes = externalConfiguration.prefixes || defaultYasguiConfig.prefixes;
+    config.yasguiConfig.yasr.defaultPlugin = externalConfiguration.defaultPlugin || defaultYasguiConfig.defaultPlugin;
+    config.yasguiConfig.yasr.pluginOrder = externalConfiguration.pluginOrder || defaultYasguiConfig.pluginOrder;
 
     // prepare the yasqe config
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
@@ -77,6 +87,8 @@ export class YasguiConfigurationBuilder {
       return this.getYasqeActionButtons(config, defaultYasqeConfig);
     };
     config.yasguiConfig.yasqe.showQueryButton = true;
+
+    YasrService.disablePlugin('table');
 
     // prepare the yasr config
 

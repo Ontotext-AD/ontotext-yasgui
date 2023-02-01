@@ -28,6 +28,12 @@ export class EventService implements EventEmitter {
     return event;
   }
 
+  static emitFromInnerElement(element: HTMLElement, type: string, evt?: any): CustomEvent {
+    const event = new CustomEvent(type, {detail: evt});
+    element.closest('.yasgui-host-element').dispatchEvent(event);
+    return event;
+  }
+
   get hostElement(): HTMLElement {
     return this._hostElement;
   }

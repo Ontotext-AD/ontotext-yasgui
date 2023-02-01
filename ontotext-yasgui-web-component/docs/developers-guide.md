@@ -244,6 +244,43 @@ of the client to handle properly and to respond in the expected way.
     }
   }
   ```
+# Yasr plugins
+  ## Common configurations of yasr plugins:
+- **prefixes**: object with uris and their corresponding prefixes. If uris have to be shown with short uri this object have to be set. Example of configuration prefixes: 
+```json
+  {
+  "gn": "http://www.geonames.org/ontology#",
+  "path": "http://www.ontotext.com/path#",
+  "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+  "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+  "xsd": "http://www.w3.org/2001/XMLSchema#"
+  }
+  ```
+- **defaultPlugin**: then name of active plugin when yasr is created. Default value is "extended_table".
+- **pluginOrder**: describes the order of how plugins will be displayed. Default is ["extended_table", "response"].
+- **externalPluginsConfigurations**: Map with configurations for concrete plugin. The key of the map is a name of plugin and value is object with the configuration of the plugin.
+
+## Plugins
+ ### Table plugin
+This is [the yasgui Table plugin](https://triply.cc/docs/yasgui-api#table).
+- name of plugin: **table**
+
+### Raw Response plugin
+This is [the yasgui Raw Response plugin](https://triply.cc/docs/yasgui-api#raw-response)
+- name of plugin: **response**
+
+### Extended Table plugin
+This plugin extends the original yasgui plugin with ability to format the cell value displayed into table with results.
+- name of plugin: **extended_table**
+- configuration into the common externalPluginsConfigurations: 
+    - key: **extended_table**
+    - value:
+      - getCellContent: this function is called when a cell of table is rendered. The returning string will be used as value of the table cell. 
+  ```
+    {
+      getCellContent: (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => string
+    }
+  ```
 
 # Useful References
 1. [State Management with State Tunnel in StencilJS](https://www.joshmorony.com/state-management-with-state-tunnel-in-stencil-js/)

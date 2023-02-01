@@ -29,12 +29,13 @@
 
 ### Depends on
 
-- [ontotext-dialog-web-component](../ontotext-dialog-web-component)
+- [copy-link-dialog](../copy-link-dialog)
 
 ### Graph
 ```mermaid
 graph TD;
-  share-query-dialog --> ontotext-dialog-web-component
+  share-query-dialog --> copy-link-dialog
+  copy-link-dialog --> ontotext-dialog-web-component
   ontotext-yasgui --> share-query-dialog
   style share-query-dialog fill:#f9f,stroke:#333,stroke-width:4px
 ```
