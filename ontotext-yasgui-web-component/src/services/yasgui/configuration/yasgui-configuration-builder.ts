@@ -44,20 +44,17 @@ export class YasguiConfigurationBuilder {
     // prepare the yasgui config
     config.yasguiConfig = {
       translate: (key, parameters) => this.serviceFactory.get(TranslationService).translate(key, parameters),
-      infer: defaultYasguiConfig.infer,
-      sameAs: defaultYasguiConfig.sameAs,
+      infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
+      sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},
       yasqe: {}
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
-    const infer = externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer;
-    const sameAs = externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs;
-    defaultYasguiConfig.infer = false;
     config.yasguiConfig.requestConfig.args = () => {
       return [
-        {name: 'infer', value: infer + ''},
-        {name: 'sameAs', value: sameAs + ''}
+        {name: 'infer', value: config.yasguiConfig.infer + ''},
+        {name: 'sameAs', value: config.yasguiConfig.sameAs + ''}
       ];
     }
     config.yasguiConfig.tabName = externalConfiguration.defaultTabName ||  this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
@@ -71,8 +68,13 @@ export class YasguiConfigurationBuilder {
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
     config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
+
+    config.yasguiConfig.yasqe.yasqeActionButtons =
+      externalConfiguration.yasqeActionButtons !== undefined && externalConfiguration.yasqeActionButtons.length ?
+        externalConfiguration.yasqeActionButtons : defaultYasqeConfig.yasqeActionButtons;
+
     config.yasguiConfig.yasqe.pluginButtons = () => {
-      return this.getYasqeActionButtons(externalConfiguration, defaultYasqeConfig);
+      return this.getYasqeActionButtons(config, defaultYasqeConfig);
     };
     config.yasguiConfig.yasqe.showQueryButton = true;
 
@@ -81,12 +83,12 @@ export class YasguiConfigurationBuilder {
     return config;
   }
 
-  getYasqeActionButtons(externalConfiguration: ExternalYasguiConfiguration, defaultYasqeConfig: Record<string, any>): HTMLElement[] {
+  getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>): HTMLElement[] {
     const visibleDefaultButtonDefinitions: YasqeActionButtonDefinition[] = defaultYasqeConfig.yasqeActionButtons
       .filter((buttonDefinition: YasqeActionButtonDefinition) => buttonDefinition.visible);
 
-    if (externalConfiguration.yasqeActionButtons && externalConfiguration.yasqeActionButtons.length) {
-      externalConfiguration.yasqeActionButtons.forEach((buttonDefinition) => {
+    if (yasguiConfiguration.yasguiConfig.yasqe.yasqeActionButtons && yasguiConfiguration.yasguiConfig.yasqe.yasqeActionButtons.length) {
+      yasguiConfiguration.yasguiConfig.yasqe.yasqeActionButtons.forEach((buttonDefinition) => {
         const buttonIndex = visibleDefaultButtonDefinitions.findIndex(
           (defaultButtonDefinition) => defaultButtonDefinition.name === buttonDefinition.name
         );
@@ -104,7 +106,7 @@ export class YasguiConfigurationBuilder {
     }
 
     return visibleDefaultButtonDefinitions.map(
-      (buttonDefinition) => (this.yasqeService.getButtonInstance(buttonDefinition, externalConfiguration))
+      (buttonDefinition) => (this.yasqeService.getButtonInstance(buttonDefinition, yasguiConfiguration))
     );
   }
 }

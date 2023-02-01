@@ -14,7 +14,7 @@ export class OntotextYasgui {
   /**
    * The yasgui configuration.
    */
-  private readonly config: YasguiConfiguration;
+  private config: YasguiConfiguration;
 
   constructor(yasgui: Yasgui, config: YasguiConfiguration) {
     this.yasgui = yasgui;
@@ -54,8 +54,16 @@ export class OntotextYasgui {
     return this.config;
   }
 
+  setConfig(yasguiConfiguration: YasguiConfiguration) {
+    this.config = yasguiConfiguration;
+  }
+
   getInstance(): Yasgui {
     return this.yasgui;
+  }
+
+  setInstance(yasgui: Yasgui): void {
+    this.yasgui = yasgui;
   }
 
   getTabName(): string {

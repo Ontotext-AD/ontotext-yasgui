@@ -14,7 +14,7 @@ import {
 import {
   defaultOntotextYasguiConfig,
   defaultYasguiConfig,
-  RenderingMode
+  RenderingMode, YasguiConfiguration
 } from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
@@ -400,12 +400,14 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Handler for the event for closing the share query dialog.
+   * Handles event for changing the include inferred statements config.
    */
   @Listen('internalIncludeInferredEvent')
   includeInferredEventHandler() {
-    this.config.infer = this.config.infer === undefined ? defaultYasguiConfig.infer : !this.config.infer;
-    this.init(this.config);
+    const yasguiConfiguration: YasguiConfiguration = this.ontotextYasgui.getConfig();
+    const infer = yasguiConfiguration.yasguiConfig.infer === undefined ? defaultYasguiConfig.infer : yasguiConfiguration.yasguiConfig.infer;
+    yasguiConfiguration.yasguiConfig.infer = !infer;
+    this.rebuild(yasguiConfiguration);
   }
 
   componentWillLoad() {
@@ -429,7 +431,7 @@ export class OntotextYasguiWebComponent {
     this.destroy();
   }
 
-  private init(externalConfiguration: ExternalYasguiConfiguration) {
+  private init(externalConfiguration: ExternalYasguiConfiguration): void {
     this.destroy();
 
     if (!externalConfiguration) {
@@ -442,13 +444,27 @@ export class OntotextYasguiWebComponent {
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
       // * Build a yasgui instance using the configuration
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-      // * Configure the web component
-      this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
 
-      // * Register any needed event handler
-      this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
-      this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
+      this.afterInit();
     }
+  }
+
+  private rebuild(yasguiConfiguration: YasguiConfiguration): void {
+    this.destroy();
+    // @ts-ignore
+    if (window.Yasgui) {
+      this.yasguiBuilder.rebuild(this.hostElement, yasguiConfiguration, this.ontotextYasgui);
+      this.afterInit();
+    }
+  }
+
+  private afterInit(): void {
+    // * Configure the web component
+    this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+
+    // * Register any needed event handler
+    this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
+    this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
   }
 
   private resolveOrientationButtonTooltip(): string {

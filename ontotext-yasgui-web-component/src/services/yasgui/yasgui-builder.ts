@@ -15,10 +15,19 @@ export class YasguiBuilder {
    * @param yasguiConfiguration - the yasgui configuration merged with the external one.
    */
   build(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration): OntotextYasgui {
-    // @ts-ignore
-    const yasgui = new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfiguration.yasguiConfig);
-
+    const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
     // monkey patches have to be applied before return yasgui.
     return new OntotextYasgui(yasgui, yasguiConfiguration);
+  }
+
+  rebuild(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration, ontotextYasgui: OntotextYasgui): void {
+    const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
+    ontotextYasgui.setInstance(yasgui);
+    ontotextYasgui.setConfig(yasguiConfiguration);
+  }
+
+  private createYasguiInstance(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration): any {
+    // @ts-ignore
+    return new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfiguration.yasguiConfig);
   }
 }
