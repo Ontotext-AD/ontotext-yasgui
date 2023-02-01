@@ -38,11 +38,11 @@ describe('Include inferred action', () => {
     // Given I have executing the query without changing configs
     YasqeSteps.executeQuery();
     // Then I expect that infer=true will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=true&sameAs=true');
+    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=true');
     // When I disable include inferred statements
     YasqeSteps.includeInferredStatements();
     YasqeSteps.executeQuery();
     // Then I expect that infer=false will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=false&sameAs=true');
+    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=false');
   });
 });

@@ -102,6 +102,8 @@
   "yasqe.actions.share_query.button.tooltip": "Obtenir l'URL de la requête en cours",
   "yasqe.actions.include_inferred.true.button.tooltip": "Inclure les données déduites dans les résultats: AU",
   "yasqe.actions.include_inferred.false.button.tooltip": "Inclure les données déduites dans les résultats: DÉSACTIVÉ",
+  "yasqe.actions.expand_results_sameas.true.button.tooltip": "Développer les résultats sur owl:sameAs: ON",
+  "yasqe.actions.expand_results_sameas.false.button.tooltip": "Développer les résultats sur owl:sameAs: OFF",
   "yasqe.share.query.dialog.title": "Copier l'URL dans le presse-papiers",
   "yasqe.share.query.dialog.copy.btn.label": "Copier dans le presse-papiers"
 }

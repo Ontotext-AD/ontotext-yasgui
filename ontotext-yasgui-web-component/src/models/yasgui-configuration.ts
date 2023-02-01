@@ -158,5 +158,6 @@ export const defaultYasqeConfig: Record<string, any> = {
     {name: 'showSavedQueries', visible: true},
     {name: 'shareQuery', visible: true},
     {name: 'includeInferredStatements', visible: true},
+    {name: 'expandResultsOverSameAs', visible: true}
   ]
 }

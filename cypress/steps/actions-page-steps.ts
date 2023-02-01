@@ -46,4 +46,16 @@ export default class ActionsPageSteps {
     static toggleIncludeInferred() {
         cy.get('#toggleIncludeInferred').click();
     }
+
+    static hideExpandResultsAction() {
+        cy.get('#hideExpandResultsAction').click();
+    }
+
+    static showExpandResultsAction() {
+        cy.get('#showExpandResultsAction').click();
+    }
+
+    static toggleExpandResults() {
+        cy.get('#toggleExpandResults').click();
+    }
 }

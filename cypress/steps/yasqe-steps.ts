@@ -195,4 +195,12 @@ export class YasqeSteps {
     static includeInferredStatements() {
       this.getIncludeInferredStatementsButton().click();
     }
+
+    static getExpandResultsOverSameAsButton() {
+      return cy.get('.yasqe_expandResultsButton');
+    }
+
+    static expandResultsOverSameAs() {
+      this.getExpandResultsOverSameAsButton().click();
+    }
 }
