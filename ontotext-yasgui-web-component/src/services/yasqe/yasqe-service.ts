@@ -1,6 +1,6 @@
 import {EventService} from "../event-service";
 import {
-  InternalCreateSavedQueryEvent, InternalIncludeInferredEvent,
+  InternalCreateSavedQueryEvent, InternalExpandResultsOverSameAsEvent, InternalIncludeInferredEvent,
   InternalShareQueryEvent,
   InternalShowSavedQueriesEvent
 } from "../../models/event";
@@ -22,6 +22,7 @@ export class YasqeService {
     this.buttonBuilders.set('showSavedQueries', () => this.buildShowSavedQueriesButton());
     this.buttonBuilders.set('shareQuery', () => this.buildShareQueryButton());
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration) => this.buildInferStatementsButton(externalConfiguration));
+    this.buttonBuilders.set('expandResultsOverSameAs', (externalConfiguration) => this.buildExpandResultsOverSameAsButton(externalConfiguration));
   }
 
   getButtonInstance(buttonDefinition: { name }, yasguiConfiguration: YasguiConfiguration): HTMLElement {
@@ -65,14 +66,29 @@ export class YasqeService {
 
   private buildInferStatementsButton(yasguiConfiguration: YasguiConfiguration): HTMLElement {
     const buttonElement = document.createElement("button");
-    const inludeInferred = yasguiConfiguration.yasguiConfig.infer === undefined || yasguiConfiguration.yasguiConfig.infer;
-    const iconClass = inludeInferred ? 'icon-inferred-on' : 'icon-inferred-off'
+    const includeInferred = yasguiConfiguration.yasguiConfig.infer === undefined || yasguiConfiguration.yasguiConfig.infer;
+    const iconClass = includeInferred ? 'icon-inferred-on' : 'icon-inferred-off'
     buttonElement.className = `yasqe_inferStatementsButton custom-button ${iconClass}`;
-    const title = this.translationService.translate(`yasqe.actions.include_inferred.${inludeInferred}.button.tooltip`);
+    const title = this.translationService.translate(`yasqe.actions.include_inferred.${includeInferred}.button.tooltip`);
     buttonElement.title = title;
     buttonElement.setAttribute("aria-label", title);
     buttonElement.addEventListener("click",
       () => this.eventService.emit(InternalIncludeInferredEvent.TYPE, new InternalIncludeInferredEvent()));
+    return buttonElement;
+  }
+
+  private buildExpandResultsOverSameAsButton(yasguiConfiguration: YasguiConfiguration): HTMLElement {
+    const buttonElement = document.createElement("button");
+    const expandResults = yasguiConfiguration.yasguiConfig.sameAs === undefined || yasguiConfiguration.yasguiConfig.sameAs;
+    const includeInferred = yasguiConfiguration.yasguiConfig.infer === undefined || yasguiConfiguration.yasguiConfig.infer;
+    const iconClass = expandResults ? 'icon-sameas-on' : 'icon-sameas-off'
+    buttonElement.className = `yasqe_expandResultsButton custom-button ${iconClass}`;
+    const title = this.translationService.translate(`yasqe.actions.expand_results_sameas.${expandResults}.button.tooltip`);
+    buttonElement.title = title;
+    buttonElement.setAttribute("aria-label", title);
+    buttonElement.disabled = !includeInferred;
+    buttonElement.addEventListener("click",
+      () => this.eventService.emit(InternalExpandResultsOverSameAsEvent.TYPE, new InternalExpandResultsOverSameAsEvent()));
     return buttonElement;
   }
 }

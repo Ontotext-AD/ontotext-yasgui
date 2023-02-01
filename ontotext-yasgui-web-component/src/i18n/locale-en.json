@@ -102,6 +102,8 @@
   "yasqe.actions.share_query.button.tooltip": "Get URL to current query",
   "yasqe.actions.include_inferred.true.button.tooltip": "Include inferred data in results: ON",
   "yasqe.actions.include_inferred.false.button.tooltip": "Include inferred data in results: OFF",
+  "yasqe.actions.expand_results_sameas.true.button.tooltip": "Expand results over owl:sameAs: ON",
+  "yasqe.actions.expand_results_sameas.false.button.tooltip": "Expand results over owl:sameAs: OFF",
   "yasqe.share.query.dialog.title": "Copy URL to clipboard",
   "yasqe.share.query.dialog.copy.btn.label": "Copy to clipboard"
 }

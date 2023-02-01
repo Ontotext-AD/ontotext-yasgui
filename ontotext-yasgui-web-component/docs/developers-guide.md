@@ -160,7 +160,7 @@ createSavedQueryButton.addEventListener("click",
   () => this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent()));
 ```
 
-Currently, the action buttons which are plugged in are:
+Currently, the action buttons which are plugged in:
 ```
 "createSavedQuery" - opens the save query dialog  
 ```
@@ -172,6 +172,9 @@ Currently, the action buttons which are plugged in are:
 ```
 ```
 "includeInferredStatements" - include infered data in sparql results
+```
+```
+"expandResultsOverSameAs" - expand results over owl:sameAs
 ```
 
 ## Recommendations for implementing custom action buttons

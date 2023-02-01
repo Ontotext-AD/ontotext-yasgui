@@ -407,6 +407,18 @@ export class OntotextYasguiWebComponent {
     const yasguiConfiguration: YasguiConfiguration = this.ontotextYasgui.getConfig();
     const infer = yasguiConfiguration.yasguiConfig.infer === undefined ? defaultYasguiConfig.infer : yasguiConfiguration.yasguiConfig.infer;
     yasguiConfiguration.yasguiConfig.infer = !infer;
+    yasguiConfiguration.yasguiConfig.sameAs = !infer;
+    this.rebuild(yasguiConfiguration);
+  }
+
+  /**
+   * Handles event for changing the include inferred statements config.
+   */
+  @Listen('internalExpandResultsOverSameAsEvent')
+  expandResultsOverSameAsEventHandler() {
+    const yasguiConfiguration: YasguiConfiguration = this.ontotextYasgui.getConfig();
+    const sameAs = yasguiConfiguration.yasguiConfig.sameAs === undefined ? defaultYasguiConfig.sameAs : yasguiConfiguration.yasguiConfig.sameAs;
+    yasguiConfiguration.yasguiConfig.sameAs = !sameAs;
     this.rebuild(yasguiConfiguration);
   }
 
