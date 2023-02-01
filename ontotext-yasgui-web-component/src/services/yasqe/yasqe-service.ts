@@ -6,14 +6,14 @@ import {
 } from "../../models/event";
 import {TranslationService} from "../translation.service";
 import {ServiceFactory} from '../service-factory';
-import {ExternalYasguiConfiguration} from "../../models/external-yasgui-configuration";
+import {YasguiConfiguration} from "../../models/yasgui-configuration";
 
 export class YasqeService {
 
   private eventService: EventService;
   private translationService: TranslationService;
 
-  buttonBuilders: Map<string, ((externalConfiguration: ExternalYasguiConfiguration) => HTMLElement)> = new Map<string, (() => HTMLElement)>();
+  buttonBuilders: Map<string, ((yasguiConfiguration: YasguiConfiguration) => HTMLElement)> = new Map<string, (() => HTMLElement)>();
 
   constructor(serviceFactory: ServiceFactory) {
     this.eventService = serviceFactory.getEventService();
@@ -24,11 +24,11 @@ export class YasqeService {
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration) => this.buildInferStatementsButton(externalConfiguration));
   }
 
-  getButtonInstance(buttonDefinition: { name }, externalConfiguration: ExternalYasguiConfiguration): HTMLElement {
+  getButtonInstance(buttonDefinition: { name }, yasguiConfiguration: YasguiConfiguration): HTMLElement {
     if (!this.buttonBuilders.has(buttonDefinition.name)) {
       throw Error(`No yasqe button builder was found for ${buttonDefinition.name}`);
     }
-    return this.buttonBuilders.get(buttonDefinition.name)(externalConfiguration);
+    return this.buttonBuilders.get(buttonDefinition.name)(yasguiConfiguration);
   }
 
   private buildShowSavedQueriesButton(): HTMLElement {
@@ -63,9 +63,9 @@ export class YasqeService {
     return buttonElement;
   }
 
-  private buildInferStatementsButton(externalConfiguration: ExternalYasguiConfiguration): HTMLElement {
+  private buildInferStatementsButton(yasguiConfiguration: YasguiConfiguration): HTMLElement {
     const buttonElement = document.createElement("button");
-    const inludeInferred = externalConfiguration.infer === undefined || externalConfiguration.infer;
+    const inludeInferred = yasguiConfiguration.yasguiConfig.infer === undefined || yasguiConfiguration.yasguiConfig.infer;
     const iconClass = inludeInferred ? 'icon-inferred-on' : 'icon-inferred-off'
     buttonElement.className = `yasqe_inferStatementsButton custom-button ${iconClass}`;
     const title = this.translationService.translate(`yasqe.actions.include_inferred.${inludeInferred}.button.tooltip`);

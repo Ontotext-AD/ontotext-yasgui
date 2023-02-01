@@ -1,4 +1,5 @@
 import {TranslationParameter} from '../services/translation.service';
+import {YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -86,9 +87,13 @@ export interface YasguiConfiguration {
        */
       value?: string;
       /**
-       * Button implementations for the yasqe actions.
+       * Button implementations for the yasqe actions. This is passed down to yasqe.
        */
       pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
+      /**
+       * Used to track the changes in external or internal config for this property.
+       */
+      yasqeActionButtons?: YasqeActionButtonDefinition[];
 
       createShareableLink?: (yasqe: any) => string | null;
 
