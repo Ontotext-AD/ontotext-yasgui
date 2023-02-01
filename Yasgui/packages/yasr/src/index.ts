@@ -634,6 +634,7 @@ export interface Config {
 
   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
   translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  externalPluginsConfigurations?: Map<string, any>;
 
   /**
    * Custom renderers for errors.
@@ -656,11 +657,13 @@ import * as YasrPluginTable from "./plugins/table";
 import * as YasrPluginBoolean from "./plugins/boolean";
 import * as YasrPluginResponse from "./plugins/response";
 import * as YasrPluginError from "./plugins/error";
+import { ExtendedTable } from "./plugins/extended-table/extended-table";
 
 Yasr.registerPlugin("table", YasrPluginTable.default as any);
 Yasr.registerPlugin("boolean", YasrPluginBoolean.default as any);
 Yasr.registerPlugin("response", YasrPluginResponse.default as any);
 Yasr.registerPlugin("error", YasrPluginError.default as any);
+Yasr.registerPlugin("extended_table", ExtendedTable as any);
 
 export { Plugin, DownloadInfo } from "./plugins";
 

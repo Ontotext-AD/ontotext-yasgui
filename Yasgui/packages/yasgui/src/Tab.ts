@@ -437,6 +437,7 @@ export class Tab extends EventEmitter {
         return invert(invert({ ...prefixesFromYasrConf, ...prefixesFromYasqe }));
       },
       defaultPlugin: this.persistentJson.yasr.settings.selectedPlugin,
+      pluginOrder: this.yasgui.config.yasr.pluginOrder,
       getPlainQueryLinkToEndpoint: () => {
         if (this.yasqe) {
           return shareLink.appendArgsToUrl(
@@ -460,6 +461,7 @@ export class Tab extends EventEmitter {
       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
     }
     yasrConf.translate = this.yasgui.config.translate;
+    yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
 
     this.yasr = new ExtendedYasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
 

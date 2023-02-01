@@ -123,7 +123,7 @@ export default class Table implements Plugin<PluginConfig> {
       hideBrackets ? "" : "&gt;"
     }`;
   }
-  private getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
+  protected getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
     let content: string;
     if (binding.type == "uri") {
       content = `<span>${this.getUriLinkFromBinding(binding, prefixes)}</span>`;
