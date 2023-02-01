@@ -1,0 +1,111 @@
+Subject: [PATCH] Adds a new "extended_table" plugin to yasr. Changes modifier of "getCellContent" "Table" plugin's function to "protected", so it can be overwritten by subclasses of "Table" plugin. Extends yasr plugin functionality with external plugin functionality.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 92e86691263a9672c14ee9e0fb0c48ac52716261)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision a40d16edf7cf60211112777dac4b5044685ddbe5)
+@@ -437,6 +437,7 @@
+         return invert(invert({ ...prefixesFromYasrConf, ...prefixesFromYasqe }));
+       },
+       defaultPlugin: this.persistentJson.yasr.settings.selectedPlugin,
++      pluginOrder: this.yasgui.config.yasr.pluginOrder,
+       getPlainQueryLinkToEndpoint: () => {
+         if (this.yasqe) {
+           return shareLink.appendArgsToUrl(
+@@ -460,6 +461,7 @@
+       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
+     }
+     yasrConf.translate = this.yasgui.config.translate;
++    yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+ 
+     this.yasr = new ExtendedYasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
+ 
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 92e86691263a9672c14ee9e0fb0c48ac52716261)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision a40d16edf7cf60211112777dac4b5044685ddbe5)
+@@ -634,6 +634,7 @@
+ 
+   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
+   translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  externalPluginsConfigurations?: Map<string, any>;
+ 
+   /**
+    * Custom renderers for errors.
+@@ -656,11 +657,13 @@
+ import * as YasrPluginBoolean from "./plugins/boolean";
+ import * as YasrPluginResponse from "./plugins/response";
+ import * as YasrPluginError from "./plugins/error";
++import { ExtendedTable } from "./plugins/extended-table/extended-table";
+ 
+ Yasr.registerPlugin("table", YasrPluginTable.default as any);
+ Yasr.registerPlugin("boolean", YasrPluginBoolean.default as any);
+ Yasr.registerPlugin("response", YasrPluginResponse.default as any);
+ Yasr.registerPlugin("error", YasrPluginError.default as any);
++Yasr.registerPlugin("extended_table", ExtendedTable as any);
+ 
+ export { Plugin, DownloadInfo } from "./plugins";
+ 
+Index: Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts
+new file mode 100644
+--- /dev/null	(revision a40d16edf7cf60211112777dac4b5044685ddbe5)
++++ b/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts	(revision a40d16edf7cf60211112777dac4b5044685ddbe5)
+@@ -0,0 +1,28 @@
++import Table from "../table";
++import Parser from "../../parsers";
++import Yasr from "@triply/yasr";
++
++export class ExtendedTable extends Table {
++  public label = "Extended_Table";
++  public priority = 11;
++
++  private readonly getCellContentCustom?: (
++    binding: Parser.BindingValue,
++    prefixes?: { [label: string]: string }
++  ) => string;
++
++  constructor(yasr: Yasr) {
++    super(yasr);
++    if (yasr.config.externalPluginsConfigurations) {
++      const pluginConfiguration = yasr.config.externalPluginsConfigurations.get("extended_table");
++      this.getCellContentCustom = pluginConfiguration.getCellContent;
++    }
++  }
++
++  public getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
++    if (this.getCellContentCustom) {
++      return this.getCellContentCustom(binding, prefixes);
++    }
++    return super.getCellContent(binding, prefixes);
++  }
++}
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 92e86691263a9672c14ee9e0fb0c48ac52716261)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision a40d16edf7cf60211112777dac4b5044685ddbe5)
+@@ -123,7 +123,7 @@
+       hideBrackets ? "" : "&gt;"
+     }`;
+   }
+-  private getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
++  protected getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
+     let content: string;
+     if (binding.type == "uri") {
+       content = `<span>${this.getUriLinkFromBinding(binding, prefixes)}</span>`;
