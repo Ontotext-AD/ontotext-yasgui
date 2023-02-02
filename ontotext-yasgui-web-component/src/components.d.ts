@@ -11,7 +11,7 @@ import { CopyLinkDialogConfig, CopyLInkObserver } from "./components/copy-link-d
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
-import { QueryEvent, QueryResponseEvent } from "./models/event";
+import { NotificationMessage, QueryEvent, QueryResponseEvent } from "./models/event";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     interface ConfirmationDialog {
@@ -284,7 +284,7 @@ declare namespace LocalJSX {
           * Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
          */
         "onLoadSavedQueries"?: (event: OntotextYasguiCustomEvent<boolean>) => void;
-        "onNotify"?: (event: OntotextYasguiCustomEvent<string>) => void;
+        "onNotify"?: (event: OntotextYasguiCustomEvent<NotificationMessage>) => void;
         /**
           * Event emitted when before query to be executed.
          */

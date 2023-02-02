@@ -19,7 +19,13 @@ import {
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
-import {InternalShowResourceCopyLinkDialogEvent, InternalShowSavedQueriesEvent, QueryEvent, QueryResponseEvent} from "../../models/event";
+import {
+  InternalShowResourceCopyLinkDialogEvent,
+  InternalShowSavedQueriesEvent, NotificationMessage,
+  NotificationMessageType,
+  QueryEvent,
+  QueryResponseEvent
+} from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
@@ -137,7 +143,7 @@ export class OntotextYasguiWebComponent {
    */
   @Event() loadSavedQueries: EventEmitter<boolean>;
 
-  @Event() notify: EventEmitter<string>;
+  @Event() notify: EventEmitter<NotificationMessage>;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -440,7 +446,7 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalResourceLinkCopiedEvent')
   resourceLinkCopiedHandler() {
-    this.notify.emit(this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success'));
+    this.notify.emit(new NotificationMessage(NotificationMessageType.SUCCESS, this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success')));
     this.showCopyResourceLinkDialog = false;
     this.copiedResourceLink = undefined;
   }

@@ -33,3 +33,14 @@ export class InternalShowResourceCopyLinkDialogEvent {
 
   constructor(public copyLink: string) {}
 }
+
+export enum NotificationMessageType {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  WARNING = 'warning'
+}
+
+export class NotificationMessage {
+  constructor(public type: NotificationMessageType, public message: string) {
+  }
+}
