@@ -11,7 +11,7 @@
 | ------------------------ | --------- | ----------- | --------------------------------------------- | ----------- |
 | `classes`                | `classes` |             | `string`                                      | `undefined` |
 | `config`                 | --        |             | `{ dialogTitle?: string; copyLink: string; }` | `undefined` |
-| `copyLinkEventsObserver` | --        |             | `CopyLInkObserver`                            | `undefined` |
+| `copyLinkEventsObserver` | --        |             | `CopyLinkObserver`                            | `undefined` |
 | `serviceFactory`         | --        |             | `ServiceFactory`                              | `undefined` |
 
 

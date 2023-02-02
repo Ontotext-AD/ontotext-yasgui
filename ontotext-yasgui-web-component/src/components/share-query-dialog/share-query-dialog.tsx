@@ -1,6 +1,6 @@
 import {Component, Event, EventEmitter, h, Prop} from '@stencil/core';
 import {ServiceFactory} from "../../services/service-factory";
-import {CopyLInkObserver} from '../copy-link-dialog/copy-link-dialog';
+import {CopyLinkObserver} from '../copy-link-dialog/copy-link-dialog';
 
 export type ShareQueryDialogConfig = {
   dialogTitle: string;
@@ -12,7 +12,7 @@ export type ShareQueryDialogConfig = {
   styleUrl: 'share-query-dialog.scss',
   shadow: false,
 })
-export class ShareQueryDialog implements CopyLInkObserver {
+export class ShareQueryDialog implements CopyLinkObserver {
 
   @Prop() config: ShareQueryDialogConfig;
 

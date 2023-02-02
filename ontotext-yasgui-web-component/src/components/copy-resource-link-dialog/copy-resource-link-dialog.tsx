@@ -1,13 +1,13 @@
 import {Component, Event, EventEmitter, h, Prop} from '@stencil/core';
 import {ServiceFactory} from '../../services/service-factory';
-import {CopyLInkObserver} from '../copy-link-dialog/copy-link-dialog';
+import {CopyLinkObserver} from '../copy-link-dialog/copy-link-dialog';
 
 @Component({
   tag: 'copy-resource-link-dialog',
   styleUrl: 'copy-resource-link-dialog.scss',
   shadow: false,
 })
-export class CopyResourceLinkDialog implements CopyLInkObserver {
+export class CopyResourceLinkDialog implements CopyLinkObserver {
 
   @Prop() serviceFactory: ServiceFactory
 
