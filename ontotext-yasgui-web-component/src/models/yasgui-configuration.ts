@@ -113,7 +113,7 @@ export interface YasguiConfiguration {
        *   }
        * </pre>
        */
-      prefixes: {},
+      prefixes: any,
 
       /**
        * The name of plugin which have to be active when yasr is created.

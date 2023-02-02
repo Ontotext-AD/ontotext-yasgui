@@ -44,7 +44,8 @@ export class YasrService {
 
   // @ts-ignore
   private static getUriCellContent(binding: Parser.BindingValue, isShacl = false, prefixes?: { [label: string]: string }): string {
-    let uri = binding.value;
+
+    const uri = binding.value;
     const ontotext = window.location.origin + '/resource/';
     let localHref;
     let content;
