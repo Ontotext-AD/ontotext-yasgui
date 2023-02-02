@@ -106,8 +106,8 @@
   "yasqe.actions.expand_results_sameas.true.button.tooltip": "Développer les résultats sur owl:sameAs: ON",
   "yasqe.actions.expand_results_sameas.false.button.tooltip": "Développer les résultats sur owl:sameAs: OFF",
   "yasqe.share.copy_link.dialog.title": "Copy URL to clipboard",
-  "yasqe.share.copy_link.dialog.copy.btn.label": "Copy to clipboard",
-  "yasqe.share.copy_link.dialog.copy.btn.title": "Copy to clipboard",
+  "yasqe.share.copy_link.dialog.copy.btn.label": "Copier dans le presse-papiers",
+  "yasqe.share.copy_link.dialog.copy.btn.title": "Copier l'URL dans le presse-papiers",
   "yasqe.share.copy_link.dialog.copy.message.success": "URL copied successfully to clipboard.",
   "yasqe.share.saved_query.dialog.copy.btn.label": "Copy to clipboard"
 }
