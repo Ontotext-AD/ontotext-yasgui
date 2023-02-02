@@ -7,7 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ServiceFactory } from "./services/service-factory";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
-import { CopyLinkDialogConfig, CopyLInkObserver } from "./components/copy-link-dialog/copy-link-dialog";
+import { CopyLinkDialogConfig, CopyLinkObserver } from "./components/copy-link-dialog/copy-link-dialog";
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
@@ -21,7 +21,7 @@ export namespace Components {
     interface CopyLinkDialog {
         "classes": string;
         "config": CopyLinkDialogConfig;
-        "copyLinkEventsObserver": CopyLInkObserver;
+        "copyLinkEventsObserver": CopyLinkObserver;
         "serviceFactory": ServiceFactory;
     }
     interface CopyResourceLinkButton {
@@ -225,7 +225,7 @@ declare namespace LocalJSX {
     interface CopyLinkDialog {
         "classes"?: string;
         "config"?: CopyLinkDialogConfig;
-        "copyLinkEventsObserver"?: CopyLInkObserver;
+        "copyLinkEventsObserver"?: CopyLinkObserver;
         "serviceFactory"?: ServiceFactory;
     }
     interface CopyResourceLinkButton {

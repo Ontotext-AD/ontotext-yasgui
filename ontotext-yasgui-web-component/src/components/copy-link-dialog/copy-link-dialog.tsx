@@ -8,7 +8,7 @@ export type CopyLinkDialogConfig = {
   copyLink: string;
 }
 
-export interface CopyLInkObserver {
+export interface CopyLinkObserver {
   onDialogClosed: () => void;
 
   onLinkCopied:() => void;
@@ -29,7 +29,7 @@ export class CopyLinkDialog {
 
   @Prop() serviceFactory: ServiceFactory
 
-  @Prop() copyLinkEventsObserver: CopyLInkObserver;
+  @Prop() copyLinkEventsObserver: CopyLinkObserver;
 
   @Prop() classes: string
 
