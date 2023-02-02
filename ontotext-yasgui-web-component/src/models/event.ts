@@ -40,7 +40,11 @@ export enum NotificationMessageType {
   WARNING = 'warning'
 }
 
+export enum NotificationMessageCode {
+  RESOURCE_LINK_COPIED_SUCCESSFULLY = 'resource_link_copied_successfully'
+}
+
 export class NotificationMessage {
-  constructor(public type: NotificationMessageType, public message: string) {
+  constructor(public code: NotificationMessageCode, public type: NotificationMessageType, public message: string) {
   }
 }

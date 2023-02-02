@@ -1,27 +1,13 @@
-import {
-  Component,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  Listen,
-  Method,
-  Prop,
-  State,
-  Watch
-} from '@stencil/core';
-import {
-  defaultOntotextYasguiConfig,
-  defaultYasguiConfig,
-  RenderingMode, YasguiConfiguration
-} from '../../models/yasgui-configuration';
+import {Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
+import {defaultOntotextYasguiConfig, defaultYasguiConfig, RenderingMode, YasguiConfiguration} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {
   InternalShowResourceCopyLinkDialogEvent,
-  InternalShowSavedQueriesEvent, NotificationMessage,
+  InternalShowSavedQueriesEvent,
+  NotificationMessage,
+  NotificationMessageCode,
   NotificationMessageType,
   QueryEvent,
   QueryResponseEvent
@@ -30,19 +16,11 @@ import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
-import {
-  ExternalYasguiConfiguration,
-  TabQueryModel
-} from "../../models/external-yasgui-configuration";
+import {ExternalYasguiConfiguration, TabQueryModel} from "../../models/external-yasgui-configuration";
 import {TranslationService} from '../../services/translation.service';
 import {ServiceFactory} from '../../services/service-factory';
 import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/yasgui-configuration-builder';
-import {
-  SavedQueriesData,
-  SavedQueryConfig,
-  SaveQueryData,
-  UpdateQueryData
-} from "../../models/saved-query-configuration";
+import {SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData} from "../../models/saved-query-configuration";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 
@@ -446,7 +424,9 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalResourceLinkCopiedEvent')
   resourceLinkCopiedHandler() {
-    this.notify.emit(new NotificationMessage(NotificationMessageType.SUCCESS, this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success')));
+    const resourceCopiedMessage = this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success');
+    const notificationMessage = new NotificationMessage(NotificationMessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, NotificationMessageType.SUCCESS, resourceCopiedMessage);
+    this.notify.emit(notificationMessage);
     this.showCopyResourceLinkDialog = false;
     this.copiedResourceLink = undefined;
   }
