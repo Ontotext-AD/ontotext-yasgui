@@ -72,13 +72,13 @@ export class YasrService {
   // @ts-ignore
   private static getTripleCellContent(_binding: Parser.BindingValue, _prefixes?: { [label: string]: string }): string {
     // TODO implement it.
-    return '';
+    return `<div></div>`;
   }
 
   // @ts-ignore
   private static getLiteralCellContent(_binding: Parser.BindingValue, _prefixes?: { [label: string]: string }): string {
     // TODO implement it.
-    return '';
+    return `<div></div>`;
   }
 
   /**
