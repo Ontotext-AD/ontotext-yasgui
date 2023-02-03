@@ -97,12 +97,7 @@ export class OntotextYasgui {
 
   destroy() {
     if (this.yasgui) {
-      Object.keys(this.yasgui._tabs).forEach((tabId) => {
-        const tab = this.yasgui._tabs[tabId];
-        tab.getYasr() && tab.getYasr().destroy();
-      });
       this.yasgui.destroy();
-      // this.yasguiElement = null;
       this.yasgui = null;
       localStorage.removeItem('yasqe__query');
     }
