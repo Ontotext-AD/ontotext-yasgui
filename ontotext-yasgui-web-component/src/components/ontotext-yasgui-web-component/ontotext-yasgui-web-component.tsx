@@ -464,12 +464,10 @@ export class OntotextYasguiWebComponent {
   }
 
   private init(externalConfiguration: ExternalYasguiConfiguration): void {
-    this.destroy();
-
-    if (!externalConfiguration) {
+    if (!HtmlElementsUtil.getOntotextYasgui(this.hostElement) || !externalConfiguration) {
       return;
     }
-
+    this.destroy();
     // @ts-ignore
     if (window.Yasgui) {
       // * Build the internal yasgui configuration using the provided external configuration
@@ -580,11 +578,11 @@ export class OntotextYasguiWebComponent {
   }
 
   private getRenderMode() {
-    return this.config.render || defaultOntotextYasguiConfig.render;
+    return this.config && this.config.render || defaultOntotextYasguiConfig.render;
   }
 
   private getOrientationMode() {
-    return this.config.orientation || defaultOntotextYasguiConfig.orientation;
+    return this.config && this.config.orientation || defaultOntotextYasguiConfig.orientation;
   }
 
   private shouldShowSaveQueryDialog(): void {
@@ -627,10 +625,6 @@ export class OntotextYasguiWebComponent {
   }
 
   render() {
-    if (!this.config) {
-      return (<Host></Host>);
-    }
-
     const classList = `yasgui-host-element ${this.getOrientationMode()} ${this.getRenderMode()}`;
     return (
       <Host class={classList}>
