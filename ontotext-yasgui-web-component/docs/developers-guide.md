@@ -78,6 +78,19 @@ before 1.7.3, then additional custom directive must be installed on the client a
   }
 ```
 
+## Public instance methods
+
+The ontotext yasgui web component exposes a public API which can be accessed through the component
+instance in the following way:
+
+```
+const ontoElement = document.querySelector('ontotext-yasgui');
+ontoElement.openTab(...);
+```
+
+The public API documentation can be found [here](src/components/ontotext-yasgui-web-component/readme.md)
+
+
 # Components
 ## OntotextTooltipWebComponent
  ### Usage

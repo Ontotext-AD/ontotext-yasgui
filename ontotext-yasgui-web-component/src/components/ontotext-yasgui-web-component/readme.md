@@ -43,7 +43,7 @@ yasgui can be tweaked using the values from the configuration.
 | `createSavedQuery`     | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
 | `deleteSavedQuery`     | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`         |
 | `loadSavedQueries`     | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
-| `notify`               |                                                                                                                                                         | `CustomEvent<NotificationMessage>`   |
+| `notify`               | Event emitted when there is a message which the client might want to show to the user or handle in some other way.                                      | `CustomEvent<NotificationMessage>`   |
 | `queryExecuted`        | Event emitted when before query to be executed.                                                                                                         | `CustomEvent<{ query: string; }>`    |
 | `queryResponse`        | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
 | `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`                   |
@@ -53,6 +53,32 @@ yasgui can be tweaked using the values from the configuration.
 
 
 ## Methods
+
+### `getQueryMode() => Promise<string>`
+
+Utility method allowing the client to get the mode of the query which is written in the current
+editor tab.
+The query mode can be either `query` or `update` regarding the query mode. This method just
+exposes the similar utility method from the yasqe component.
+
+#### Returns
+
+Type: `Promise<string>`
+
+A promise which resolves with a string representing the query mode.
+
+### `getQueryType() => Promise<string>`
+
+Utility method allowing the client to get the type of the query which is written in the current
+editor tab.
+The query mode can be `INSERT`, `LOAD`, `CLEAR`, `DELETE`, etc. This method just exposes the
+similar utility method from the yasqe component.
+
+#### Returns
+
+Type: `Promise<string>`
+
+A promise which resolves with a string representing the query type.
 
 ### `openTab(queryModel: TabQueryModel) => Promise<void>`
 

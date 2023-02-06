@@ -50,6 +50,14 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getValue();
   }
 
+  getQueryMode(): string {
+    return this.yasgui.getTab().getYasqe().getQueryMode();
+  }
+
+  getQueryType(): string {
+    return this.yasgui.getTab().getYasqe().getQueryType();
+  }
+
   getConfig() {
     return this.config;
   }
