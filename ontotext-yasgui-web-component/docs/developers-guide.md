@@ -88,7 +88,7 @@ const ontoElement = document.querySelector('ontotext-yasgui');
 ontoElement.openTab(...);
 ```
 
-The public API documentation can be found [here](src/components/ontotext-yasgui-web-component/readme.md)
+The public API documentation can be found [here](../src/components/ontotext-yasgui-web-component/readme.md)
 
 
 # Components
