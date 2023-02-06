@@ -186,7 +186,9 @@ export class OntotextYasguiWebComponent {
   @Method()
   setQuery(query: string): Promise<void> {
     return this.getOntotextYasgui()
-      .then(() => this.ontotextYasgui.setQuery(query));
+      .then(() => {
+        this.ontotextYasgui.setQuery(query)
+      });
   }
 
   /**
@@ -202,7 +204,9 @@ export class OntotextYasguiWebComponent {
     // OntotextYasgui instance is created and returned the wrapped Yasgui instance might not be yet
     // initialized.
     return this.getOntotextYasgui()
-      .then(ontotextYasgui => ontotextYasgui.openTab(queryModel));
+      .then(ontotextYasgui => {
+        ontotextYasgui.openTab(queryModel)
+      });
   }
 
   /**
