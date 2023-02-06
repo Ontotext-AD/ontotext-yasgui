@@ -173,7 +173,10 @@ export class OntotextYasguiWebComponent {
   @Watch('language')
   languageChanged(newLang: string) {
     this.translationService.setLanguage(newLang);
-    this.ontotextYasgui.refresh();
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.refresh();
+      });
   }
 
   /**
@@ -182,8 +185,8 @@ export class OntotextYasguiWebComponent {
    */
   @Method()
   setQuery(query: string): Promise<void> {
-    this.ontotextYasgui.setQuery(query);
-    return Promise.resolve();
+    return this.getOntotextYasgui()
+      .then(() => this.ontotextYasgui.setQuery(query));
   }
 
   /**
@@ -198,21 +201,8 @@ export class OntotextYasguiWebComponent {
     // for handling the fact that there is a chance for the client to hit the problem where when the
     // OntotextYasgui instance is created and returned the wrapped Yasgui instance might not be yet
     // initialized.
-    return new Promise((resolve, reject) => {
-      let maxIterationsToComplete = 15;
-      const timer = setInterval(() => {
-        maxIterationsToComplete--;
-        if (this.ontotextYasgui.getInstance()) {
-          this.ontotextYasgui.openTab(queryModel);
-          clearInterval(timer);
-          return resolve();
-        }
-        if (maxIterationsToComplete === 0) {
-          clearInterval(timer);
-          return reject(`Can't initialize Yasgui!`);
-        }
-      }, 100);
-    });
+    return this.getOntotextYasgui()
+      .then(ontotextYasgui => ontotextYasgui.openTab(queryModel));
   }
 
   /**
@@ -612,6 +602,23 @@ export class OntotextYasguiWebComponent {
       dialogTitle: this.translationService.translate('yasqe.share.query.dialog.title'),
       shareQueryLink: this.savedQueryConfig.shareQueryLink
     }
+  }
+
+  private getOntotextYasgui(): Promise<OntotextYasgui> {
+    return new Promise((resolve, reject) => {
+      let maxIterationsToComplete = 15;
+      const timer = setInterval(() => {
+        maxIterationsToComplete--;
+        if (this.ontotextYasgui && this.ontotextYasgui.getInstance()) {
+          clearInterval(timer);
+          return resolve(this.ontotextYasgui);
+        }
+        if (maxIterationsToComplete === 0) {
+          clearInterval(timer);
+          return reject(`Can't initialize Yasgui!`);
+        }
+      }, 100);
+    });
   }
 
   private destroy() {

@@ -8,7 +8,7 @@ export class YasrSteps {
     }
 
     static getErrorHeader() {
-        return YasrSteps.getResultHeader().get('.errorHeader');
+        return cy.get('.errorHeader');
     }
 
     static getResults() {

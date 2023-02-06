@@ -58,8 +58,11 @@ describe('Languages', () => {
             // Then I expect to see error message be translated to English language.
             YasrSteps.getErrorHeader().contains('Try query in new browser window');
 
-            // When change the language to be French
-            LanguagesSteps.switchToFr();
+      // When change the language to be French
+      LanguagesSteps.switchToFr();
+      // Yasgui re-renders all DOM elements to shows the new labels. This includes the plugins of yasr which is time-consuming.
+      // We have to wait a bit because cypress is too fast and grabs the old element (with the old label) and the test fails.
+      cy.wait(500);
 
             // Then I expect to see error message be translated to French language.
             YasrSteps.getErrorHeader().contains('Essayez la requête dans une nouvelle fenêtre du navigateur');
@@ -73,8 +76,11 @@ describe('Languages', () => {
             // Then I expect to see error message be translated to English language.
             YasrSteps.getResultFilter().invoke('attr', 'placeholder').should('contain', 'Filter query results');
 
-            // When change the language to be French
-            LanguagesSteps.switchToFr();
+      // When change the language to be French
+      LanguagesSteps.switchToFr();
+      // Yasgui re-renders all DOM elements to shows the new labels. This includes the plugins of yasr which is time-consuming.
+      // We have to wait a bit because cypress is too fast and grabs the old element (with the old label) and the test fails.
+      cy.wait(500);
 
             // Then I expect yasr to be translated to French.
             YasrSteps.getResultFilter().invoke('attr', 'placeholder').should('contain', 'Filtrer les résultats des requêtes');
