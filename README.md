@@ -66,7 +66,7 @@ After execution of command the projects will be cleared as just cloned from repo
 > For development purpose the minimization of yasgui can be skipped by setting minimize property to 
 > false of the optimization configuration in Yasgui/webpack/config.ts file.
 
-Read [Development guide](ontotext-yasgui-web-component/src/docs/development-guide.md) before 
+Read [Development guide](ontotext-yasgui-web-component/docs/developers-guide.md) before 
 starting any development in this project.
 
 ## Usage of the component

@@ -104,7 +104,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 
 ## Developers guide
 
-The guide can be found [here](../ontotext-yasgui-web-component/docs/developers-guide.md)
+The guide can be found [here](./docs/developers-guide.md)
 
 # License
 TODO:
