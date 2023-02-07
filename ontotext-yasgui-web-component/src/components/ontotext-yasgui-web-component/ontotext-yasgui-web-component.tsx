@@ -91,16 +91,34 @@ export class OntotextYasguiWebComponent {
    * An input object property containing the yasgui configuration.
    */
   @Prop() config: ExternalYasguiConfiguration;
+  @Watch('config')
+  configurationChanged(newConfig: ExternalYasguiConfiguration) {
+    this.init(newConfig);
+  }
 
   /**
    * An input property containing the chosen translation language.
    */
   @Prop() language: string
+  @Watch('language')
+  languageChanged(newLang: string) {
+    this.translationService.setLanguage(newLang);
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.refresh();
+      });
+  }
 
   /**
    * A configuration model related with all the saved queries actions.
    */
   @Prop() savedQueryConfig?: SavedQueryConfig;
+  @Watch('savedQueryConfig')
+  savedQueryConfigChanged() {
+    this.shouldShowSaveQueryDialog();
+    this.shouldShowSavedQueriesPopup();
+    this.saveQueryData = this.initSaveQueryData();
+  }
 
   /**
    * Event emitted when before query to be executed.
@@ -196,27 +214,6 @@ export class OntotextYasguiWebComponent {
   @State() showCopyResourceLinkDialog = false;
 
   @State() copiedResourceLink: string;
-
-  @Watch('config')
-  configurationChanged(newConfig: ExternalYasguiConfiguration) {
-    this.init(newConfig);
-  }
-
-  @Watch('savedQueryConfig')
-  savedQueryConfigChanged() {
-    this.shouldShowSaveQueryDialog();
-    this.shouldShowSavedQueriesPopup();
-    this.saveQueryData = this.initSaveQueryData();
-  }
-
-  @Watch('language')
-  languageChanged(newLang: string) {
-    this.translationService.setLanguage(newLang);
-    this.getOntotextYasgui()
-      .then((ontotextYasgui) => {
-        ontotextYasgui.refresh();
-      });
-  }
 
   /**
    * Allows the client to set a query in the current opened tab.
