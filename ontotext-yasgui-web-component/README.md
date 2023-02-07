@@ -99,7 +99,12 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - <b>showResultTabs</b>: If the results tabs should be rendered or not;
 - <b>showToolbar</b>: If the toolbar with render mode buttons should be rendered or not;
 - <b>yasqePluginButtons</b>: Plugin definitions configurations for yasqe action buttons; 
-- <b>componentId</b>: Unique identifier of an instance of the component. This config is optional.
+- <b>componentId</b>: An unique identifier of an instance of the component. This config is optional.
   A unique identifier of the component instance. This configuration is optional. A unique value should be passed only if the component's internal state (open tabs, completed requests, etc.) should not be shared with its other instances.
+
+## Developers guide
+
+The guide can be found [here](./docs/developers-guide.md)
+
 # License
 TODO:

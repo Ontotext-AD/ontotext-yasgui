@@ -59,6 +59,21 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
 
+  /**
+   * The instance of our adapter around the actual yasgui instance.
+   */
+  ontotextYasgui: OntotextYasgui;
+
+  /**
+   * A flag showing that a query is running.
+   */
+  showQueryProgress = false;
+
+  /**
+   * The duration of the last executed query.
+   */
+  queryDuration = 0;
+
   constructor() {
     this.serviceFactory = new ServiceFactory(this.hostElement);
     this.translationService = this.serviceFactory.get(TranslationService);
@@ -76,16 +91,34 @@ export class OntotextYasguiWebComponent {
    * An input object property containing the yasgui configuration.
    */
   @Prop() config: ExternalYasguiConfiguration;
+  @Watch('config')
+  configurationChanged(newConfig: ExternalYasguiConfiguration) {
+    this.init(newConfig);
+  }
 
   /**
    * An input property containing the chosen translation language.
    */
   @Prop() language: string
+  @Watch('language')
+  languageChanged(newLang: string) {
+    this.translationService.setLanguage(newLang);
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.refresh();
+      });
+  }
 
   /**
    * A configuration model related with all the saved queries actions.
    */
   @Prop() savedQueryConfig?: SavedQueryConfig;
+  @Watch('savedQueryConfig')
+  savedQueryConfigChanged() {
+    this.shouldShowSaveQueryDialog();
+    this.shouldShowSavedQueriesPopup();
+    this.saveQueryData = this.initSaveQueryData();
+  }
 
   /**
    * Event emitted when before query to be executed.
@@ -121,22 +154,26 @@ export class OntotextYasguiWebComponent {
    */
   @Event() loadSavedQueries: EventEmitter<boolean>;
 
+  /**
+   * Event emitted when there is a message which the client might want to show to the user or handle
+   * in some other way.
+   */
   @Event() notify: EventEmitter<NotificationMessage>;
 
   /**
-   * The instance of our adapter around the actual yasgui instance.
+   * Event emitted when saved query share link has to be build by the client.
    */
-  ontotextYasgui: OntotextYasgui;
+  @Event() shareSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
-   * A flag showing that a query is running.
+   * Event emitted when query share link gets copied in the clipboard.
    */
-  showQueryProgress = false;
+  @Event() queryShareLinkCopied: EventEmitter;
 
   /**
-   * The duration of the last executed query.
+   * Event emitted when saved query share link has to be build by the client.
    */
-  queryDuration = 0;
+  @Event() shareQuery: EventEmitter<TabQueryModel>;
 
   /**
    * A model which is set when query details are populated and the query is going to be saved.
@@ -158,26 +195,25 @@ export class OntotextYasguiWebComponent {
    */
   @State() isVerticalOrientation = true;
 
-  @Watch('config')
-  configurationChanged(newConfig: ExternalYasguiConfiguration) {
-    this.init(newConfig);
-  }
+  /**
+   * Flag controlling the visibility of the save query dialog.
+   */
+  @State() showSaveQueryDialog = false;
 
-  @Watch('savedQueryConfig')
-  savedQueryConfigChanged() {
-    this.shouldShowSaveQueryDialog();
-    this.shouldShowSavedQueriesPopup();
-    this.saveQueryData = this.initSaveQueryData();
-  }
+  /**
+   * Flag controlling the visibility of the saved queries list popup.
+   */
+  @State() showSavedQueriesPopup = false;
 
-  @Watch('language')
-  languageChanged(newLang: string) {
-    this.translationService.setLanguage(newLang);
-    this.getOntotextYasgui()
-      .then((ontotextYasgui) => {
-        ontotextYasgui.refresh();
-      });
-  }
+  @State() showSavedQueriesPopupTarget: HTMLElement;
+
+  @State() showConfirmationDialog = false;
+
+  @State() showShareQueryDialog = false;
+
+  @State() showCopyResourceLinkDialog = false;
+
+  @State() copiedResourceLink: string;
 
   /**
    * Allows the client to set a query in the current opened tab.
@@ -204,15 +240,40 @@ export class OntotextYasguiWebComponent {
     // OntotextYasgui instance is created and returned the wrapped Yasgui instance might not be yet
     // initialized.
     return this.getOntotextYasgui()
-      .then(ontotextYasgui => {
+      .then((ontotextYasgui) => {
         ontotextYasgui.openTab(queryModel)
       });
   }
 
   /**
-   * Flag controlling the visibility of the save query dialog.
+   * Utility method allowing the client to get the mode of the query which is written in the current
+   * editor tab.
+   * The query mode can be either `query` or `update` regarding the query mode. This method just
+   * exposes the similar utility method from the yasqe component.
+   *
+   * @return A promise which resolves with a string representing the query mode.
    */
-  @State() showSaveQueryDialog = false;
+  @Method()
+  getQueryMode(): Promise<string> {
+    return this.getOntotextYasgui().then((ontottextYasgui) => {
+      return ontottextYasgui.getQueryMode();
+    })
+  }
+
+  /**
+   * Utility method allowing the client to get the type of the query which is written in the current
+   * editor tab.
+   * The query mode can be `INSERT`, `LOAD`, `CLEAR`, `DELETE`, etc. This method just exposes the
+   * similar utility method from the yasqe component.
+   *
+   * @return A promise which resolves with a string representing the query type.
+   */
+  @Method()
+  getQueryType(): Promise<string> {
+    return this.getOntotextYasgui().then((ontottextYasgui) => {
+      return ontottextYasgui.getQueryType();
+    })
+  }
 
   /**
    * Handler for the event fired when the save query button in the yasqe toolbar is triggered.
@@ -248,12 +309,6 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Flag controlling the visibility of the saved queries list popup.
-   */
-  @State() showSavedQueriesPopup = false;
-  @State() showSavedQueriesPopupTarget: HTMLElement;
-
-  /**
    * Handler for the event fired when the show saved queries button in the yasqe toolbar is triggered.
    */
   @Listen('internalShowSavedQueriesEvent')
@@ -282,8 +337,6 @@ export class OntotextYasguiWebComponent {
     this.showSavedQueriesPopup = false;
     this.showSaveQueryDialog = true;
   }
-
-  @State() showConfirmationDialog = false;
 
   /**
    * Handler for the event fired when the delete saved query button is triggered.
@@ -321,20 +374,6 @@ export class OntotextYasguiWebComponent {
     this.showSavedQueriesPopup = false;
   }
 
-  @State() showShareQueryDialog = false;
-
-  @State() showCopyResourceLinkDialog = false;
-
-  /**
-   * Event emitted when saved query share link has to be build by the client.
-   */
-  @Event() shareSavedQuery: EventEmitter<SaveQueryData>;
-
-  /**
-   * Event emitted when query share link gets copied in the clipboard.
-   */
-  @Event() queryShareLinkCopied: EventEmitter;
-
   /**
    * Handler for the event fired when the share saved query button is triggered.
    */
@@ -343,11 +382,6 @@ export class OntotextYasguiWebComponent {
     this.shareSavedQuery.emit(event.detail);
     this.showShareQueryDialog = true;
   }
-
-  /**
-   * Event emitted when saved query share link has to be build by the client.
-   */
-  @Event() shareQuery: EventEmitter<TabQueryModel>;
 
   /**
    * Handler for the event fired when the share query button in the editor is triggered.
@@ -432,63 +466,6 @@ export class OntotextYasguiWebComponent {
   showResourceCopyLinkDialogHandler(event: CustomEvent<InternalShowResourceCopyLinkDialogEvent>) {
     this.copiedResourceLink = event.detail.copyLink;
     this.showCopyResourceLinkDialog = true;
-  }
-
-  @State() copiedResourceLink: string;
-
-  componentWillLoad() {
-    // @ts-ignore
-    if (!window.Yasgui) {
-      // Load the yasgui script once.
-      YASGUI_MIN_SCRIPT();
-    }
-    this.translationService.setLanguage(this.language);
-  }
-
-  componentDidLoad() {
-    // As documentation said "The @Watch() decorator does not fire when a component initially loads."
-    // yasgui instance will not be created if we set configuration when component is loaded, which
-    // will be most case of the component usage. So we call the method manually when component is
-    // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
-    this.init(this.config);
-  }
-
-  disconnectedCallback() {
-    this.destroy();
-  }
-
-  private init(externalConfiguration: ExternalYasguiConfiguration): void {
-    if (!HtmlElementsUtil.getOntotextYasgui(this.hostElement) || !externalConfiguration) {
-      return;
-    }
-    this.destroy();
-    // @ts-ignore
-    if (window.Yasgui) {
-      // * Build the internal yasgui configuration using the provided external configuration
-      const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
-      // * Build a yasgui instance using the configuration
-      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-
-      this.afterInit();
-    }
-  }
-
-  private rebuild(yasguiConfiguration: YasguiConfiguration): void {
-    this.destroy();
-    // @ts-ignore
-    if (window.Yasgui) {
-      this.yasguiBuilder.rebuild(this.hostElement, yasguiConfiguration, this.ontotextYasgui);
-      this.afterInit();
-    }
-  }
-
-  private afterInit(): void {
-    // * Configure the web component
-    this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
-
-    // * Register any needed event handler
-    this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
-    this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
   }
 
   private resolveOrientationButtonTooltip(): string {
@@ -633,6 +610,61 @@ export class OntotextYasguiWebComponent {
         yasgui.firstChild.remove();
       }
     }
+  }
+
+  private init(externalConfiguration: ExternalYasguiConfiguration): void {
+    if (!HtmlElementsUtil.getOntotextYasgui(this.hostElement) || !externalConfiguration) {
+      return;
+    }
+    this.destroy();
+    // @ts-ignore
+    if (window.Yasgui) {
+      // * Build the internal yasgui configuration using the provided external configuration
+      const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
+      // * Build a yasgui instance using the configuration
+      this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
+
+      this.afterInit();
+    }
+  }
+
+  private rebuild(yasguiConfiguration: YasguiConfiguration): void {
+    this.destroy();
+    // @ts-ignore
+    if (window.Yasgui) {
+      this.yasguiBuilder.rebuild(this.hostElement, yasguiConfiguration, this.ontotextYasgui);
+      this.afterInit();
+    }
+  }
+
+  private afterInit(): void {
+    // * Configure the web component
+    this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+
+    // * Register any needed event handler
+    this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
+    this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
+  }
+
+  componentWillLoad() {
+    // @ts-ignore
+    if (!window.Yasgui) {
+      // Load the yasgui script once.
+      YASGUI_MIN_SCRIPT();
+    }
+    this.translationService.setLanguage(this.language);
+  }
+
+  componentDidLoad() {
+    // As documentation said "The @Watch() decorator does not fire when a component initially loads."
+    // yasgui instance will not be created if we set configuration when component is loaded, which
+    // will be most case of the component usage. So we call the method manually when component is
+    // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
+    this.init(this.config);
+  }
+
+  disconnectedCallback() {
+    this.destroy();
   }
 
   render() {

@@ -1,7 +1,7 @@
 import {QueryStubs} from '../../stubs/query-stubs';
 import {YasrTablePluginSteps} from '../../steps/yasr-table-plugin-steps';
 import {YasqeSteps} from '../../steps/yasqe-steps';
-import PageSteps from '../../steps/page-steps';
+import DefaultViewPageSteps from '../../steps/default-view-page-steps';
 import {YasrSteps} from '../../steps/yasr-steps';
 
 describe('Plugin: Table', () => {
@@ -35,7 +35,7 @@ describe('Plugin: Table', () => {
          YasrTablePluginSteps.getQueryResultInfo().contains(/36 results Query took \d{1}\.\d{1}s, moments ago\./);
 
          // When I go to other page
-         PageSteps.visitDefaultViewPage();
+         DefaultViewPageSteps.visitDefaultViewPage();
          // And return to the first one.
          YasrTablePluginSteps.visit();
 
