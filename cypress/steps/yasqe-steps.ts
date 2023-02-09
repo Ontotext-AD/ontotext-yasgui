@@ -136,6 +136,12 @@ export class YasqeSteps {
         });
     }
 
+    static setTabQuery(tabIndex: number, query: string) {
+      return cy.get('.yasqe .CodeMirror').then((el) => {
+        return (el[tabIndex] as any).CodeMirror.setValue(query);
+      });
+    }
+
     static editQuery(index: number) {
         this.getSavedQueries().eq(index).realHover().find('.edit-saved-query').click();
     }

@@ -1,0 +1,52 @@
+@import 'src/css/variables';
+
+.ontotext-yasgui-dropdown {
+  background-color: $color-ontotext-orange;
+  display: inline-block;
+
+  .ontotext-yasgui-dropdown-button {
+    font-size: 1.2em;
+    font-weight: 400;
+    padding: 0.1em 0.5em;
+    margin: 10px 10px 12px;
+    border: none;
+    outline: none;
+    color: $color-onto-white;
+    background-color: $color-ontotext-orange;
+  }
+
+  .ontotext-yasgui-dropdown-button.icon-caret-down-after:after, .ontotext-yasgui-dropdown-button.icon-caret-up-after:after {
+    padding-left: 10px;
+    color: $color-onto-grey;
+  }
+
+  .ontotext-yasgui-dropdown-menu-item {
+    font-size: 1.2em;
+    font-weight: 400;
+    padding: 0.2em 0.5em;
+    position: relative;
+    list-style: none;
+    color: $color-onto-white;
+    background-color: $color-ontotext-orange;
+  }
+
+  .ontotext-yasgui-dropdown-menu-item:hover {
+    cursor: pointer;
+    background-color: $color-ontotext-orange-dark;
+  }
+
+  .ontotext-yasgui-dropdown-button:hover {
+    cursor: pointer;
+  }
+
+  .ontotext-yasgui-dropdown-menu {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    z-index: 1000;
+  }
+
+  .ontotext-yasgui-dropdown-menu.closed {
+    display: none;
+  }
+}

@@ -23,6 +23,8 @@ import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/ya
 import {SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData} from "../../models/saved-query-configuration";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
+import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
+import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
 
 type EventArguments = [Yasqe, Request, number];
 
@@ -174,6 +176,11 @@ export class OntotextYasguiWebComponent {
    * Event emitted when saved query share link has to be build by the client.
    */
   @Event() shareQuery: EventEmitter<TabQueryModel>;
+
+  /**
+   * Event emitter used to send message to the clients of component.
+   */
+  @Event() output: EventEmitter<OutputEvent>;
 
   /**
    * A model which is set when query details are populated and the query is going to be saved.
@@ -466,6 +473,11 @@ export class OntotextYasguiWebComponent {
   showResourceCopyLinkDialogHandler(event: CustomEvent<InternalShowResourceCopyLinkDialogEvent>) {
     this.copiedResourceLink = event.detail.copyLink;
     this.showCopyResourceLinkDialog = true;
+  }
+
+  @Listen('internalDownloadAsEvent')
+  onDownloadAsEventHandler(downloadAsEvent: CustomEvent<InternalDownloadAsEvent>) {
+    this.output.emit(toOutputEvent(downloadAsEvent));
   }
 
   private resolveOrientationButtonTooltip(): string {
