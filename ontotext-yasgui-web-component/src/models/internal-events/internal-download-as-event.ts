@@ -5,7 +5,7 @@ export class InternalDownloadAsEvent implements InternalEvent {
   readonly TYPE = 'internalDownloadAsEvent';
   payload: any;
 
-  constructor(value: string, pluginName: string, query: string) {
-    this.payload = {value, pluginName, query};
+  constructor(value: string, pluginName: string, query: string, infer = true, sameAs = true) {
+    this.payload = {value, pluginName, query, infer, sameAs};
   }
 }

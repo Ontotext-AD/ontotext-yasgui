@@ -262,8 +262,8 @@ export class OntotextYasguiWebComponent {
    */
   @Method()
   getQueryMode(): Promise<string> {
-    return this.getOntotextYasgui().then((ontottextYasgui) => {
-      return ontottextYasgui.getQueryMode();
+    return this.getOntotextYasgui().then((ontotextYasgui) => {
+      return ontotextYasgui.getQueryMode();
     })
   }
 
@@ -277,9 +277,23 @@ export class OntotextYasguiWebComponent {
    */
   @Method()
   getQueryType(): Promise<string> {
-    return this.getOntotextYasgui().then((ontottextYasgui) => {
-      return ontottextYasgui.getQueryType();
+    return this.getOntotextYasgui().then((ontotextYasgui) => {
+      return ontotextYasgui.getQueryType();
     })
+  }
+
+  @Method()
+  getEmbeddedResultAsJson(): Promise<unknown> {
+    return this.getOntotextYasgui().then((ontotextYasgui) => {
+      return ontotextYasgui.getEmbeddedResultAsJson();
+    });
+  }
+
+  @Method()
+  getEmbeddedResultAsCSV(): Promise<unknown> {
+    return this.getOntotextYasgui().then((ontotextYasgui) => {
+      return ontotextYasgui.getEmbeddedResultAsCSV();
+    });
   }
 
   /**

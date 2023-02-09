@@ -71,6 +71,8 @@
   "yasr.plugin_control.download_as.raw_response.dropdown.label": "Obtenir un extrait HTML pour intégrer les résultats dans une page web",
   "yasr.plugin_control.download_as.sparql_results_json.label": "JSON",
   "yasr.plugin_control.download_as.x_sparqlstar_results_json.label": "JSON*",
+  "yasr.plugin_control.download_as.sparql_results_xml.label": "XML",
+  "yasr.plugin_control.download_as.x_sparqlstar_results_xml.label": "XML*",
   "yasr.plugin_control.download_as.csv.label": "CSV",
   "yasr.plugin_control.download_as.tab_separated_values.label": "TSV",
   "yasr.plugin_control.download_as.x_tab_separated_values_star.label": "TSV*",

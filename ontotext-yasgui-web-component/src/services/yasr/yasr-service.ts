@@ -134,24 +134,25 @@ export const defaultExtendedTableConfiguration = {
     {
       labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
       value: "application/sparql-results+json",
-    },
-    {
+    }, {
       labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
       value: "application/x-sparqlstar-results+json",
-    },
-    {
+    }, {
+      labelKey: 'yasr.plugin_control.download_as.sparql_results_xml.label',
+      value: 'application/sparql-results+xml'
+    }, {
+    labelKey: 'yasr.plugin_control.download_as.x_sparqlstar_results_xml.label',
+      value: 'application/x-sparqlstar-results+xml'
+    }, {
       labelKey: "yasr.plugin_control.download_as.csv.label",
       value: "text/csv",
-    },
-    {
+    }, {
       labelKey: "yasr.plugin_control.download_as.tab_separated_values.label",
       value: "text/tab-separated-values",
-    },
-    {
+    }, {
       labelKey: "yasr.plugin_control.download_as.x_tab_separated_values_star.label",
       value: "text/x-tab-separated-values-star",
-    },
-    {
+    }, {
       labelKey: "yasr.plugin_control.download_as.x_binary_rdf_results_table.label",
       value: "application/x-binary-rdf-results-table",
     },
@@ -164,6 +165,9 @@ export const defaultRawResponsePluginConfiguration = {
     {
       labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
       value: "application/sparql-results+json",
+    }, {
+      labelKey: "yasr.plugin_control.download_as.csv.label",
+      value: "text/csv",
     },
   ]
 }

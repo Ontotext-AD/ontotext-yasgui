@@ -58,6 +58,16 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getQueryType();
   }
 
+  // @ts-ignore
+  getEmbeddedResultAsJson(): Parser.SparqlResults {
+    return this.yasgui.getTab().getYasr().results.getAsJson();
+  }
+
+  // @ts-ignore
+  getEmbeddedResultAsCSV(): Parser.SparqlResults {
+    return this.yasgui.getTab().getYasr().results.asCsv();
+  }
+
   getConfig() {
     return this.config;
   }

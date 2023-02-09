@@ -55,6 +55,26 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
+### `getEmbeddedResultAsCSV() => Promise<unknown>`
+
+
+
+#### Returns
+
+Type: `Promise<unknown>`
+
+
+
+### `getEmbeddedResultAsJson() => Promise<unknown>`
+
+
+
+#### Returns
+
+Type: `Promise<unknown>`
+
+
+
 ### `getQueryMode() => Promise<string>`
 
 Utility method allowing the client to get the mode of the query which is written in the current

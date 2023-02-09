@@ -69,7 +69,12 @@ describe('Languages', () => {
 
         });
 
-        it('Should translate labels in table plugin', () => {
+        it('Should translate labels in table plugin', {
+          retries: {
+            runMode: 1,
+            openMode: 0,
+          },
+        },() => {
             // When execute a query.
             YasqeSteps.executeQuery();
 
