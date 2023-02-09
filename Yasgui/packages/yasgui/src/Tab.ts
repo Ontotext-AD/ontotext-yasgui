@@ -354,7 +354,7 @@ export class Tab extends EventEmitter {
     if (!this.yasqeWrapperEl) {
       throw new Error("Expected a wrapper element before instantiating yasqe");
     }
-    yasqeConf.translate = this.yasgui.config.translate;
+    yasqeConf.translationService = this.yasgui.config.translationService;
     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
 
     this.yasqe.on("blur", this.handleYasqeBlur);
@@ -460,10 +460,11 @@ export class Tab extends EventEmitter {
     if (yasrConf.getDownloadFileName === undefined) {
       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
     }
-    yasrConf.translate = this.yasgui.config.translate;
+    yasrConf.translationService = this.yasgui.config.translationService;
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+    yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
 
-    this.yasr = new ExtendedYasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
+    this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
 
     //populate our own persistent config
     this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();

@@ -1,6 +1,7 @@
 import Yasgui from "./";
 import TabContextMenu from "./TabContextMenu";
 import { hasClass, addClass, removeClass } from "@triply/yasgui-utils";
+import { TranslationService } from "@triply/yasgui-utils";
 const sortablejs = require("sortablejs");
 require("./TabElements.scss");
 export interface TabList {}
@@ -11,11 +12,11 @@ export class TabListEl {
   private renameEl?: HTMLInputElement;
   private nameEl?: HTMLSpanElement;
   public tabEl?: HTMLDivElement;
-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  private readonly translationService: TranslationService;
   constructor(yasgui: Yasgui, tabList: TabList, tabId: string) {
     this.tabList = tabList;
     this.yasgui = yasgui;
-    this.translate = this.yasgui.translate;
+    this.translationService = this.yasgui.translationService;
     this.tabId = tabId;
   }
   public delete() {
@@ -113,7 +114,7 @@ export class TabListEl {
     //tab close btn
     const closeBtn = document.createElement("div");
     closeBtn.innerHTML = "&#x2716;";
-    closeBtn.title = this.translate("yasgui.tab_list.close_tab.btn.label");
+    closeBtn.title = this.translationService.translate("yasgui.tab_list.close_tab.btn.label");
     closeBtn.setAttribute("tabindex", "-1");
     closeBtn.setAttribute("aria-hidden", "true");
     addClass(closeBtn, "closeTab");
@@ -256,7 +257,7 @@ export class TabList {
     const addTabLink = document.createElement("button");
     addTabLink.className = "addTab";
     addTabLink.textContent = "+";
-    const addTabLabel = this.yasgui.translate("yasgui.tab_list.add_tab.btn.label");
+    const addTabLabel = this.yasgui.translationService.translate("yasgui.tab_list.add_tab.btn.label");
     addTabLink.title = addTabLabel;
     addTabLink.setAttribute("aria-label", addTabLabel);
     addTabLink.addEventListener("click", this.handleAddNewTab);

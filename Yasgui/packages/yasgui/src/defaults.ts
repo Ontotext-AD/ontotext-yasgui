@@ -2,10 +2,11 @@ import { Config } from "./";
 import Yasr from "@triply/yasr";
 import { default as Yasqe } from "@triply/yasqe";
 import { CatalogueItem } from "./endpointSelect";
+import { TranslationService } from "@triply/yasgui-utils";
 
 export default function initialize(): Config<CatalogueItem> {
   return {
-    translate: (key: string, _parameters?: Record<string, string>[]) => key,
+    translationService: TranslationService.INSTANCE,
     autofocus: true,
     endpointInfo: undefined,
     persistenceId: function (yasgui) {

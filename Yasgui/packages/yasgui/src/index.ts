@@ -10,6 +10,7 @@ import TabElements from "./TabElements";
 import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
 import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
 import { addClass, removeClass } from "@triply/yasgui-utils";
+import { TranslationService } from "@triply/yasgui-utils";
 require("./index.scss");
 require("@triply/yasr/src/scss/global.scss");
 if (window) {
@@ -44,7 +45,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   requestConfig: YasguiRequestConfig;
   contextMenuContainer: HTMLElement | undefined;
   nonSslDomain?: string;
-  translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  translationService: TranslationService;
 }
 export type PartialConfig = {
   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
@@ -91,7 +92,7 @@ export class Yasgui extends EventEmitter {
   public persistentConfig: PersistentConfig;
   public static Tab = Tab;
 
-  public readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  public readonly translationService: TranslationService;
   constructor(parent: HTMLElement, config: PartialConfig) {
     super();
     this.rootEl = document.createElement("div");
@@ -99,7 +100,7 @@ export class Yasgui extends EventEmitter {
     parent.appendChild(this.rootEl);
 
     this.config = merge({}, Yasgui.defaults, config);
-    this.translate = this.config.translate;
+    this.translationService = this.config.translationService;
     this.persistentConfig = new PersistentConfig(this);
 
     this.tabElements = new TabElements(this);

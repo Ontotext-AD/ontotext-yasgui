@@ -6,6 +6,7 @@ import { Plugin } from "../";
 require("./index.scss");
 export interface PluginConfig {}
 import { drawSvgStringAsElement } from "@triply/yasgui-utils";
+import { TranslationService } from "@triply/yasgui-utils";
 const cross =
   '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="30" height="30" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve"><g><path d="M83.288,88.13c-2.114,2.112-5.575,2.112-7.689,0L53.659,66.188c-2.114-2.112-5.573-2.112-7.687,0L24.251,87.907 c-2.113,2.114-5.571,2.114-7.686,0l-4.693-4.691c-2.114-2.114-2.114-5.573,0-7.688l21.719-21.721c2.113-2.114,2.113-5.573,0-7.686 L11.872,24.4c-2.114-2.113-2.114-5.571,0-7.686l4.842-4.842c2.113-2.114,5.571-2.114,7.686,0L46.12,33.591 c2.114,2.114,5.572,2.114,7.688,0l21.721-21.719c2.114-2.114,5.573-2.114,7.687,0l4.695,4.695c2.111,2.113,2.111,5.571-0.003,7.686 L66.188,45.973c-2.112,2.114-2.112,5.573,0,7.686L88.13,75.602c2.112,2.111,2.112,5.572,0,7.687L83.288,88.13z"/></g></svg>';
 const check =
@@ -15,10 +16,10 @@ export default class Boolean implements Plugin<PluginConfig> {
   private yasr: Yasr;
   public priority = 10;
   hideFromSelection = true;
-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  private readonly translationService: TranslationService;
   constructor(yasr: Yasr) {
     this.yasr = yasr;
-    this.translate = this.yasr.config.translate;
+    this.translationService = this.yasr.config.translationService;
   }
   draw() {
     const el = document.createElement("div");
@@ -28,8 +29,8 @@ export default class Boolean implements Plugin<PluginConfig> {
     el.appendChild(drawSvgStringAsElement(boolVal ? check : cross));
     const textEl = document.createElement("span");
     textEl.textContent = boolVal
-      ? this.translate("yasr.boolean.alert.true")
-      : this.translate("yasr.boolean.alert.false");
+      ? this.translationService.translate("yasr.boolean.alert.true")
+      : this.translationService.translate("yasr.boolean.alert.false");
     el.appendChild(textEl);
 
     this.yasr.resultsEl.appendChild(el);

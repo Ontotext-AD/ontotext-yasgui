@@ -57,3 +57,18 @@ export function getAsValue<E, A>(valueOrFn: E | ((arg: A) => E), arg: A): E {
   if (typeof valueOrFn === "function") return (valueOrFn as any)(arg);
   return valueOrFn;
 }
+
+export class TranslationService {
+  private static _INSTANCE: TranslationService;
+
+  static get INSTANCE(): TranslationService {
+    if (!TranslationService._INSTANCE) {
+      TranslationService._INSTANCE = new TranslationService();
+    }
+    return TranslationService._INSTANCE;
+  }
+
+  translate(key: string, _parameters?: Record<string, string>[]): string {
+    return key;
+  }
+}

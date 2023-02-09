@@ -1,3 +1,5 @@
+import { TranslationService } from "@triply/yasgui-utils";
+
 require("./scss/yasqe.scss");
 require("./scss/buttons.scss");
 import * as superagent from "superagent";
@@ -62,7 +64,7 @@ export class Yasqe extends CodeMirror {
   public persistentConfig: PersistentConfig | undefined;
   public superagent = superagent;
 
-  public readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  public readonly translationService: TranslationService;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -70,7 +72,7 @@ export class Yasqe extends CodeMirror {
     this.rootEl.className = "yasqe";
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasqe.defaults, conf);
-    this.translate = this.config.translate;
+    this.translationService = this.config.translationService;
     //inherit codemirror props
     const cm = (CodeMirror as any)(this.rootEl, this.config);
     //Assign our functions to the cm object. This is needed, as some functions (like the ctrl-enter callback)
@@ -196,7 +198,7 @@ export class Yasqe extends CodeMirror {
     let parentElement = this.getWrapperElement();
     let shareLinkWrapper = parentElement.querySelector(".yasqe_share");
     if (shareLinkWrapper) {
-      let shareQueryLabel = this.translate("yasqe.action.share.btn.tooltip");
+      let shareQueryLabel = this.translationService.translate("yasqe.action.share.btn.tooltip");
       shareLinkWrapper.setAttribute("title", shareQueryLabel);
       shareLinkWrapper.setAttribute("aria-label", shareQueryLabel);
     }
@@ -225,7 +227,7 @@ export class Yasqe extends CodeMirror {
       var svgShare = drawSvgStringAsElement(imgs.share);
       const shareLinkWrapper = document.createElement("button");
       shareLinkWrapper.className = "yasqe_share";
-      let shareQueryLabel = this.translate("yasqe.action.share.btn.tooltip");
+      let shareQueryLabel = this.translationService.translate("yasqe.action.share.btn.tooltip");
       shareLinkWrapper.title = shareQueryLabel;
       shareLinkWrapper.setAttribute("aria-label", shareQueryLabel);
       shareLinkWrapper.appendChild(svgShare);
@@ -280,7 +282,7 @@ export class Yasqe extends CodeMirror {
           popup.className = popup.className += " enableShort";
           const shortBtn = document.createElement("button");
           popupInputButtons.push(shortBtn);
-          shortBtn.innerHTML = this.translate("yasqe.action.shorten.btn.label");
+          shortBtn.innerHTML = this.translationService.translate("yasqe.action.shorten.btn.label");
           shortBtn.className = "yasqe_btn yasqe_btn-sm shorten";
           popup.appendChild(shortBtn);
           shortBtn.onclick = () => {
@@ -294,7 +296,7 @@ export class Yasqe extends CodeMirror {
                 const errSpan = document.createElement("span");
                 errSpan.className = "shortlinkErr";
                 // Throwing a string or an object should work
-                let textContent = this.translate("yasqe.action.share.error.general_message");
+                let textContent = this.translationService.translate("yasqe.action.share.error.general_message");
                 if (typeof err === "string" && err.length !== 0) {
                   textContent = err;
                 } else if (err.message && err.message.length !== 0) {
@@ -309,7 +311,7 @@ export class Yasqe extends CodeMirror {
 
         const curlBtn = document.createElement("button");
         popupInputButtons.push(curlBtn);
-        curlBtn.innerText = this.translate("yasqe.action.curl.btn.label");
+        curlBtn.innerText = this.translationService.translate("yasqe.action.curl.btn.label");
         curlBtn.className = "yasqe_btn yasqe_btn-sm curl";
         popup.appendChild(curlBtn);
         curlBtn.onclick = () => {
@@ -351,7 +353,7 @@ export class Yasqe extends CodeMirror {
           this.query().catch(() => {}); //catch this to avoid unhandled rejection
         }
       };
-      let runQueryLabel = this.translate("yasqe.action.run_query.btn.tooltip");
+      let runQueryLabel = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
       this.queryBtn.title = runQueryLabel;
       this.queryBtn.setAttribute("aria-label", runQueryLabel);
 
@@ -419,7 +421,7 @@ export class Yasqe extends CodeMirror {
       this.queryBtn.title = this.config.queryingDisabled;
     } else {
       removeClass(this.queryBtn, "query_disabled");
-      let runQueryLabel = this.translate("yasqe.action.run_query.btn.tooltip");
+      let runQueryLabel = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
       this.queryBtn.title = runQueryLabel;
       this.queryBtn.setAttribute("aria-label", runQueryLabel);
     }
@@ -739,7 +741,9 @@ export class Yasqe extends CodeMirror {
           tooltip(
             this,
             warningEl,
-            `${this.translate("yasqe.check_syntax.error.invalid_line.prefix")} ${expectedEncoded.join(", ")}`
+            `${this.translationService.translate(
+              "yasqe.check_syntax.error.invalid_line.prefix"
+            )} ${expectedEncoded.join(", ")}`
           );
         }
         // warningEl.style.marginTop = "2px";
@@ -1065,7 +1069,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   editorHeight: string;
   queryingDisabled: string | undefined; // The string will be the message displayed when hovered
   prefixCcApi: string; // the suggested default prefixes URL API getter
-  translate: (key: string, parameters?: Record<string, string>[]) => string;
+  translationService: TranslationService;
 }
 export interface PersistentConfig {
   query: string;
