@@ -12,6 +12,11 @@ import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotex
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
 import { NotificationMessage, QueryEvent, QueryResponseEvent } from "./models/event";
+import { OutputEvent } from "./models/output-events/output-event";
+import { TranslationService } from "./services/translation.service";
+import { DropdownOption } from "./models/dropdown-option";
+import { InternalDownloadAsEvent } from "./models/internal-events/internal-download-as-event";
+import { InternalDropdownValueSelectedEvent } from "./models/internal-events/internal-dropdown-value-selected-event";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     interface ConfirmationDialog {
@@ -85,6 +90,18 @@ export namespace Components {
          */
         "setQuery": (query: string) => Promise<void>;
     }
+    interface OntotextYasguiDownloadAs {
+        "items": DropdownOption[];
+        "nameLabelKey": string;
+        "pluginName": string;
+        "query": string;
+        "translationService": TranslationService;
+    }
+    interface OntotextYasguiDropdown {
+        "items": DropdownOption[];
+        "nameLabelKey": string;
+        "translationService": TranslationService;
+    }
     interface SaveQueryDialog {
         /**
           * Input holding the saved query data if available. This data is used to initialize the form.
@@ -116,6 +133,14 @@ export interface CopyResourceLinkDialogCustomEvent<T> extends CustomEvent<T> {
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextYasguiElement;
+}
+export interface OntotextYasguiDownloadAsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLOntotextYasguiDownloadAsElement;
+}
+export interface OntotextYasguiDropdownCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLOntotextYasguiDropdownElement;
 }
 export interface SaveQueryDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -182,6 +207,18 @@ declare global {
         prototype: HTMLOntotextYasguiElement;
         new (): HTMLOntotextYasguiElement;
     };
+    interface HTMLOntotextYasguiDownloadAsElement extends Components.OntotextYasguiDownloadAs, HTMLStencilElement {
+    }
+    var HTMLOntotextYasguiDownloadAsElement: {
+        prototype: HTMLOntotextYasguiDownloadAsElement;
+        new (): HTMLOntotextYasguiDownloadAsElement;
+    };
+    interface HTMLOntotextYasguiDropdownElement extends Components.OntotextYasguiDropdown, HTMLStencilElement {
+    }
+    var HTMLOntotextYasguiDropdownElement: {
+        prototype: HTMLOntotextYasguiDropdownElement;
+        new (): HTMLOntotextYasguiDropdownElement;
+    };
     interface HTMLSaveQueryDialogElement extends Components.SaveQueryDialog, HTMLStencilElement {
     }
     var HTMLSaveQueryDialogElement: {
@@ -213,6 +250,8 @@ declare global {
         "copy-resource-link-dialog": HTMLCopyResourceLinkDialogElement;
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
+        "ontotext-yasgui-download-as": HTMLOntotextYasguiDownloadAsElement;
+        "ontotext-yasgui-dropdown": HTMLOntotextYasguiDropdownElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
         "share-query-dialog": HTMLShareQueryDialogElement;
@@ -299,6 +338,10 @@ declare namespace LocalJSX {
          */
         "onNotify"?: (event: OntotextYasguiCustomEvent<NotificationMessage>) => void;
         /**
+          * Event emitter used to send message to the clients of component.
+         */
+        "onOutput"?: (event: OntotextYasguiCustomEvent<OutputEvent>) => void;
+        /**
           * Event emitted when before query to be executed.
          */
         "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<QueryEvent>) => void;
@@ -326,6 +369,20 @@ declare namespace LocalJSX {
           * A configuration model related with all the saved queries actions.
          */
         "savedQueryConfig"?: SavedQueryConfig;
+    }
+    interface OntotextYasguiDownloadAs {
+        "items"?: DropdownOption[];
+        "nameLabelKey"?: string;
+        "onInternalDownloadAsEvent"?: (event: OntotextYasguiDownloadAsCustomEvent<InternalDownloadAsEvent>) => void;
+        "pluginName"?: string;
+        "query"?: string;
+        "translationService"?: TranslationService;
+    }
+    interface OntotextYasguiDropdown {
+        "items"?: DropdownOption[];
+        "nameLabelKey"?: string;
+        "onValueChanged"?: (event: OntotextYasguiDropdownCustomEvent<InternalDropdownValueSelectedEvent>) => void;
+        "translationService"?: TranslationService;
     }
     interface SaveQueryDialog {
         /**
@@ -393,6 +450,8 @@ declare namespace LocalJSX {
         "copy-resource-link-dialog": CopyResourceLinkDialog;
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-yasgui": OntotextYasgui;
+        "ontotext-yasgui-download-as": OntotextYasguiDownloadAs;
+        "ontotext-yasgui-dropdown": OntotextYasguiDropdown;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
         "share-query-dialog": ShareQueryDialog;
@@ -425,6 +484,8 @@ declare module "@stencil/core" {
              * yasgui can be tweaked using the values from the configuration.
              */
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
+            "ontotext-yasgui-download-as": LocalJSX.OntotextYasguiDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextYasguiDownloadAsElement>;
+            "ontotext-yasgui-dropdown": LocalJSX.OntotextYasguiDropdown & JSXBase.HTMLAttributes<HTMLOntotextYasguiDropdownElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "saved-queries-popup": LocalJSX.SavedQueriesPopup & JSXBase.HTMLAttributes<HTMLSavedQueriesPopupElement>;
             "share-query-dialog": LocalJSX.ShareQueryDialog & JSXBase.HTMLAttributes<HTMLShareQueryDialogElement>;

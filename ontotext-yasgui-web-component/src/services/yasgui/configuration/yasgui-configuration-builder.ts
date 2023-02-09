@@ -1,7 +1,7 @@
 import {
   defaultOntotextYasguiConfig,
   defaultYasguiConfig,
-  defaultYasqeConfig,
+  defaultYasqeConfig, defaultYasrConfig,
   YasguiConfiguration
 } from '../../../models/yasgui-configuration';
 import {
@@ -44,7 +44,7 @@ export class YasguiConfigurationBuilder {
 
     // prepare the yasgui config
     config.yasguiConfig = {
-      translate: (key, parameters) => this.serviceFactory.get(TranslationService).translate(key, parameters),
+      translationService: this.serviceFactory.get(TranslationService),
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},
@@ -53,7 +53,7 @@ export class YasguiConfigurationBuilder {
         prefixes: {},
         defaultPlugin: '',
         pluginOrder: [],
-        externalPluginsConfigurations: YasrService.getPluginsConfigurations()
+        externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration.pluginsConfigurations),
       }
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
@@ -69,9 +69,11 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;
     config.yasguiConfig.populateFromUrl = externalConfiguration.populateFromUrl || defaultYasguiConfig.populateFromUrl;
-    config.yasguiConfig.yasr.prefixes = externalConfiguration.prefixes || defaultYasguiConfig.prefixes;
-    config.yasguiConfig.yasr.defaultPlugin = externalConfiguration.defaultPlugin || defaultYasguiConfig.defaultPlugin;
-    config.yasguiConfig.yasr.pluginOrder = externalConfiguration.pluginOrder || defaultYasguiConfig.pluginOrder;
+
+    // prepare the yasr config
+    config.yasguiConfig.yasr.prefixes = externalConfiguration.prefixes || defaultYasrConfig.prefixes;
+    config.yasguiConfig.yasr.defaultPlugin = externalConfiguration.defaultPlugin || defaultYasrConfig.defaultPlugin;
+    config.yasguiConfig.yasr.pluginOrder = externalConfiguration.pluginOrder || defaultYasrConfig.pluginOrder;
 
     // prepare the yasqe config
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;

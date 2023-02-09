@@ -77,4 +77,17 @@ export class YasrSteps {
     static getResultFilter() {
         return cy.get('.tableFilter');
     }
+
+    static switchToPlugin(pluginName: string) {
+      YasrSteps.getYasr().find(`.select_${pluginName}`).realClick();
+
+    }
+
+    static switchToExtendedTablePlugin() {
+      YasrSteps.switchToPlugin('extended_table');
+    }
+
+  static switchToRawResponsePlugin() {
+    YasrSteps.switchToPlugin('response');
+  }
 }

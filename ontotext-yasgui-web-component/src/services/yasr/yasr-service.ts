@@ -19,16 +19,34 @@ export class YasrService {
     }
   }
 
-  static getPluginsConfigurations(): Map<string, any> {
+  static getPluginsConfigurations(externalPluginsConfigurations: Map<string, any>): Map<string, any> {
     const pluginsConfigurations = new Map<string, any>();
-    pluginsConfigurations.set('extended_table', YasrService.getExtendedTableConfiguration());
+    this.addExtendedTableConfiguration(pluginsConfigurations, externalPluginsConfigurations);
+    this.addRawResponseConfiguration(pluginsConfigurations, externalPluginsConfigurations);
     return pluginsConfigurations;
   }
 
-  private static getExtendedTableConfiguration() {
-    return {
-      getCellContent: YasrService.getCellContent.bind(this)
+  private static addExtendedTableConfiguration(pluginsConfigurations: Map<string, any>, externalPluginsConfigurations: Map<string, any>) {
+    const externalExtendedTableConfig = externalPluginsConfigurations ? externalPluginsConfigurations['extended_table'] : null;
+    const configuration = {
+      getCellContent: YasrService.getCellContent.bind(this),
+      downloadAsConfig: {
+        nameLabelKey: externalExtendedTableConfig?.downloadAsConfig?.nameLabelKey || defaultExtendedTableConfiguration.nameLabelKey,
+        items: externalExtendedTableConfig?.downloadAsConfig?.items || defaultExtendedTableConfiguration.items
+      }
     };
+    pluginsConfigurations.set('extended_table', configuration);
+  }
+
+  private static addRawResponseConfiguration(pluginsConfigurations: Map<string, any>, externalPluginsConfigurations: Map<string, any>) {
+    const externalExtendedTableConfig = externalPluginsConfigurations ? externalPluginsConfigurations['response'] : null;
+    const configuration = {
+      downloadAsConfig: {
+        nameLabelKey: externalExtendedTableConfig?.downloadAsConfig?.nameLabelKey || defaultRawResponsePluginConfiguration.nameLabelKey,
+        items: externalExtendedTableConfig?.downloadAsConfig?.items || defaultRawResponsePluginConfiguration.items
+      }
+    };
+    pluginsConfigurations.set('response', configuration);
   }
 
   // @ts-ignore
@@ -66,7 +84,7 @@ export class YasrService {
     const shortUri = YasrService.uriToPrefixWithLocalName(uri, prefixes);
     content = `<a title="${uri}" class="uri-link" href="${localHref}">${shortUri}</a>`;
     content += `<copy-resource-link-button uri=${uri} classes="resource-copy-link"></copy-resource-link-button>`;
-    return  `<div>${content}</div>`;
+    return `<div>${content}</div>`;
   }
 
   // @ts-ignore
@@ -108,4 +126,44 @@ export class YasrService {
     }
     return uri;
   }
+}
+
+export const defaultExtendedTableConfiguration = {
+  nameLabelKey: 'yasr.plugin_control.download_as.extended_table.dropdown.label',
+  items: [
+    {
+      labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
+      value: "application/sparql-results+json",
+    },
+    {
+      labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
+      value: "application/x-sparqlstar-results+json",
+    },
+    {
+      labelKey: "yasr.plugin_control.download_as.csv.label",
+      value: "text/csv",
+    },
+    {
+      labelKey: "yasr.plugin_control.download_as.tab_separated_values.label",
+      value: "text/tab-separated-values",
+    },
+    {
+      labelKey: "yasr.plugin_control.download_as.x_tab_separated_values_star.label",
+      value: "text/x-tab-separated-values-star",
+    },
+    {
+      labelKey: "yasr.plugin_control.download_as.x_binary_rdf_results_table.label",
+      value: "application/x-binary-rdf-results-table",
+    },
+  ]
+}
+
+export const defaultRawResponsePluginConfiguration = {
+  nameLabelKey: 'yasr.plugin_control.download_as.raw_response.dropdown.label',
+  items: [
+    {
+      labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
+      value: "application/sparql-results+json",
+    },
+  ]
 }

@@ -1,4 +1,4 @@
-import {TranslationParameter} from '../services/translation.service';
+import {TranslationService} from '../services/translation.service';
 import {YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 
 export interface YasguiConfiguration {
@@ -69,7 +69,7 @@ export interface YasguiConfiguration {
    */
   yasguiConfig?: {
     tabName?: string,
-    translate: (key: string, _parameters?: TranslationParameter[]) => string;
+    translationService: TranslationService;
     requestConfig: {
       endpoint?: string;
       method?: 'POST' | 'GET';
@@ -179,9 +179,7 @@ export const defaultYasguiConfig: Record<string, any> = {
       'Accept': 'application/sparql-results+json',
       'X-GraphDB-Local-Consistency': 'updating'
     };
-  },
-  defaultPlugin: 'extended_table',
-  pluginOrder: ["extended_table", "response"],
+  }
 }
 
 export const defaultYasqeConfig: Record<string, any> = {
@@ -198,4 +196,9 @@ export const defaultYasqeConfig: Record<string, any> = {
   prefixes: {
 
   }
+}
+
+export const defaultYasrConfig: Record<string, any> = {
+  defaultPlugin: 'extended_table',
+  pluginOrder: ["extended_table", "response"]
 }

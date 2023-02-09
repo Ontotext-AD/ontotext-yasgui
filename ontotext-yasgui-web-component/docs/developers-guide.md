@@ -281,19 +281,59 @@ This is [the yasgui Table plugin](https://triply.cc/docs/yasgui-api#table).
 ### Raw Response plugin
 This is [the yasgui Raw Response plugin](https://triply.cc/docs/yasgui-api#raw-response)
 - name of plugin: **response**
+- configuration into the common externalPluginsConfigurations:
+  - key: **response**
+  - value:
+```
+{
+  downloadAsConfig: {
+    // Translation label key of dropdown button label.
+    nameLabelKey: string,
+    // Array with dropdown options  
+    items: [
+      {
+         // Translation label key of an "Download as" dropdown option.
+        labelKey: string,
+        // value of the options.
+        value: any,
+      },
+        ...
+      ]
+  }
+}
+```
 
 ### Extended Table plugin
 This plugin extends the original yasgui plugin with ability to format the cell value displayed into table with results.
 - name of plugin: **extended_table**
 - configuration into the common externalPluginsConfigurations: 
-    - key: **extended_table**
-    - value:
-      - getCellContent: this function is called when a cell of table is rendered. The returning string will be used as value of the table cell. 
-  ```
-    {
-      getCellContent: (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => string
-    }
-  ```
+  - key: **extended_table**
+  - value:
+```
+{
+  /**
+   * This function is called when a cell of table is rendered. T
+   * he returning string will be used as value of the table cell.
+   */
+  getCellContent: (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => string,
+
+  downloadAsConfig: {
+    // Translation label key of dropdown button label.
+    nameLabelKey: string,
+    // Array with dropdown options  
+    items: [
+      {
+         // Translation label key of an "Download as" dropdown option.
+        labelKey: string,
+        // value of the options.
+        value: any,
+      },
+        ...
+      ]
+  }
+}
+```
+  
 
 # Useful References
 1. [State Management with State Tunnel in StencilJS](https://www.joshmorony.com/state-management-with-state-tunnel-in-stencil-js/)

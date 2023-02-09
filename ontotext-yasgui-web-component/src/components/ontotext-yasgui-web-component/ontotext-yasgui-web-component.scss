@@ -67,6 +67,13 @@
         width: 100%;
         background-color: white;
         padding-bottom: 1rem;
+
+        .spacer {
+          width: 100%;
+        }
+        li {
+          white-space: nowrap;
+        }
       }
 
       .yasr_external_ref_btn, .yasr_downloadIcon {
