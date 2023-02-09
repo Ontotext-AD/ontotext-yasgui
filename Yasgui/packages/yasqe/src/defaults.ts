@@ -6,15 +6,14 @@
  */
 import { default as Yasqe, Config, PlainRequestConfig } from "./";
 import * as queryString from "query-string";
+import { TranslationService } from "@triply/yasgui-utils";
 //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
 export default function get() {
   const prefixCcApi =
     (window.location.protocol.indexOf("http") === 0 ? "//" : "http://") + "prefix.cc/popular/all.file.json";
   const CodeMirror = require("codemirror");
   const config: Omit<Config, "requestConfig"> = {
-    translate(key: string, _parameters?: Record<string, string>[]): string {
-      return key;
-    },
+    translationService: TranslationService.INSTANCE,
     mode: "sparql11",
     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

@@ -41,21 +41,31 @@ export default class TabContextMenu {
     const dropDownList = document.createElement("ul");
     addClass(dropDownList, "context-menu-list");
 
-    this.newTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.new_tab.btn.label"));
+    this.newTabEl = this.getMenuItemEl(
+      this.yasgui.translationService.translate("yasgui.tab_list.menu.new_tab.btn.label")
+    );
     // We can set the function for addTab here already, as it doesn't need any outside data
     this.newTabEl.onclick = () => this.yasgui.addTab(true);
 
-    this.renameTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.rename_tab.btn.label"));
-
-    this.copyTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.copy_tab.btn.label"));
-
-    this.closeTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.close_tab.btn.label"));
-
-    this.closeOtherTabsEl = this.getMenuItemEl(
-      this.yasgui.translate("yasgui.tab_list.menu.close_other_tabs.btn.label")
+    this.renameTabEl = this.getMenuItemEl(
+      this.yasgui.translationService.translate("yasgui.tab_list.menu.rename_tab.btn.label")
     );
 
-    this.reOpenOldTab = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.undo_close_tab.btn.label"));
+    this.copyTabEl = this.getMenuItemEl(
+      this.yasgui.translationService.translate("yasgui.tab_list.menu.copy_tab.btn.label")
+    );
+
+    this.closeTabEl = this.getMenuItemEl(
+      this.yasgui.translationService.translate("yasgui.tab_list.menu.close_tab.btn.label")
+    );
+
+    this.closeOtherTabsEl = this.getMenuItemEl(
+      this.yasgui.translationService.translate("yasgui.tab_list.menu.close_other_tabs.btn.label")
+    );
+
+    this.reOpenOldTab = this.getMenuItemEl(
+      this.yasgui.translationService.translate("yasgui.tab_list.menu.undo_close_tab.btn.label")
+    );
 
     // Add items to list
     dropDownList.appendChild(this.newTabEl);

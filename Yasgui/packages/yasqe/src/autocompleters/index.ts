@@ -129,7 +129,7 @@ export class Completer extends EventEmitter {
     if (!this.config.autoShow) {
       this.yasqe.showNotification(
         this.config.name,
-        this.yasqe.translate("yasqe.autocomplete.notification.info.help_info_message")
+        this.yasqe.translationService.translate("yasqe.autocomplete.notification.info.help_info_message")
       );
     }
     this.emit("validPosition", this);
@@ -311,7 +311,7 @@ export const fetchFromLov = (
   if (!token || !token.string || token.string.trim().length == 0) {
     yasqe.showNotification(
       notificationKey,
-      yasqe.translate("yasqe.autocomplete.notification.info.nothing_to_autocomplete")
+      yasqe.translationService.translate("yasqe.autocomplete.notification.info.nothing_to_autocomplete")
     );
     return Promise.resolve([]);
   }
@@ -339,7 +339,7 @@ export const fetchFromLov = (
       (_e) => {
         yasqe.showNotification(
           notificationKey,
-          yasqe.translate("yasqe.autocomplete.notification.error.failed_fetching_suggestions")
+          yasqe.translationService.translate("yasqe.autocomplete.notification.error.failed_fetching_suggestions")
         );
       }
     );

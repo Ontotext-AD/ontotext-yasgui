@@ -1,5 +1,6 @@
 import Yasr, { Config } from "@triply/yasr";
-import { addClass, removeClass } from "@triply/yasgui-utils";
+import { addClass, removeClass, TranslationService } from "@triply/yasgui-utils";
+import Yasqe from "@triply/yasqe";
 
 export class ExtendedYasr extends Yasr {
   static readonly ONE_MINUTE_iN_SECONDS = 60;
@@ -10,8 +11,80 @@ export class ExtendedYasr extends Yasr {
   static readonly ONE_DAY_IN_MILLISECONDS = 86400000;
   static readonly ONE_MINUTE_IN_MILLISECONDS = 60000;
 
-  constructor(parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
+  downloadAsElement: HTMLElement | undefined;
+
+  externalPluginsConfigurations: Map<string, any> | undefined;
+
+  private yasqe?: Yasqe;
+
+  constructor(yasqe: Yasqe | undefined, parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
     super(parent, conf, data);
+    this.yasqe = yasqe;
+    this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
+  }
+
+  drawPluginSelectors() {
+    super.drawPluginSelectors();
+    const downloadAsLiElement = document.createElement("li");
+    this.downloadAsElement = this.createDownloadAsElement();
+    this.updateDownloadAsElementVisibility();
+
+    downloadAsLiElement.appendChild(this.downloadAsElement);
+    const pluginSelectorsEl = this.getPluginSelectorsEl();
+    const testElement = document.createElement("li");
+    testElement.classList.add("spacer");
+    pluginSelectorsEl.appendChild(testElement);
+    pluginSelectorsEl.appendChild(downloadAsLiElement);
+  }
+
+  updatePluginSelectorNames() {
+    super.updatePluginSelectorNames();
+    this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
+    this.updateDownloadAsElementVisibility();
+  }
+
+  private toDownloadAs(element: HTMLElement | undefined): DownloadAs | undefined {
+    return element ? ((element as any) as DownloadAs) : undefined;
+  }
+
+  private createDownloadAsElement(): HTMLElement {
+    const element = document.createElement("ontotext-download-as");
+    const downloadAsComponent = this.toDownloadAs(element);
+    if (downloadAsComponent) {
+      downloadAsComponent.translationService = this.translationService;
+    }
+    this.updateDownloadAsElement(downloadAsComponent);
+    return element;
+  }
+
+  private updateDownloadAsElement(element: DownloadAs | undefined) {
+    if (!element) {
+      return;
+    }
+    element.query = this.yasqe?.getValueWithoutComments();
+    element.pluginName = this.getSelectedPluginName();
+    const downloadAsConfiguration = this.getDownloadAsConfiguration();
+    if (downloadAsConfiguration) {
+      element.items = downloadAsConfiguration.items ? [...downloadAsConfiguration.items] : [];
+      if (downloadAsConfiguration.hasOwnProperty("nameLabelKey")) {
+        element.nameLabelKey = downloadAsConfiguration.nameLabelKey;
+      }
+    } else {
+      element.items = [];
+    }
+  }
+
+  private getDownloadAsConfiguration() {
+    return this.externalPluginsConfigurations
+      ? this.externalPluginsConfigurations.get(this.getSelectedPluginName())?.["downloadAsConfig"]
+      : undefined;
+  }
+
+  private updateDownloadAsElementVisibility() {
+    removeClass(this.downloadAsElement, "hidden");
+    if (!this.results || (this.downloadAsElement as any).items.length < 1) {
+      addClass(this.downloadAsElement, "hidden");
+    }
   }
 
   updateResponseInfo() {
@@ -27,15 +100,15 @@ export class ExtendedYasr extends Yasr {
       resultInfo = staleWarningMessage ? staleWarningMessage : "";
       const bindings = this.results.getBindings();
       if (!bindings || bindings.length === 0) {
-        resultInfo = this.translate("yasr.plugin_control.response_chip.message.result_empty");
+        resultInfo = this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
       } else {
         // TODO fix message and parameters when server side paging is implemented.
         // message key have to be "yasr.plugin_control.response_chip.message.result_info"
         const params = [{ key: "countResults", value: `${bindings.length}` }];
         resultInfo +=
           bindings.length === 1
-            ? this.translate("yasr.plugin_control.info.count_result", params)
-            : this.translate("yasr.plugin_control.info.count_results", params);
+            ? this.translationService.translate("yasr.plugin_control.info.count_result", params)
+            : this.translationService.translate("yasr.plugin_control.info.count_results", params);
       }
 
       const params = [
@@ -48,7 +121,10 @@ export class ExtendedYasr extends Yasr {
           value: this.getHumanReadableTimestamp(queryFinishedTime),
         },
       ];
-      resultInfo += ` ${this.translate("yasr.plugin_control.response_chip.message.result_time", params)}`;
+      resultInfo += ` ${this.translationService.translate(
+        "yasr.plugin_control.response_chip.message.result_time",
+        params
+      )}`;
     } else {
       addClass(responseInfoElement, "empty");
     }
@@ -59,9 +135,9 @@ export class ExtendedYasr extends Yasr {
     const now = this.getNowInMilliseconds();
     const delta = (now - time) / ExtendedYasr.ONE_SECOND_IN_MILLISECONDS;
     if (delta < ExtendedYasr.ONE_MINUTE_iN_SECONDS) {
-      return this.translate("yasr.plugin_control.response_chip.timestamp.moments_ago");
+      return this.translationService.translate("yasr.plugin_control.response_chip.timestamp.moments_ago");
     } else if (delta < ExtendedYasr.TEN_MINUTES_IN_SECONDS) {
-      return this.translate("yasr.plugin_control.response_chip.timestamp.minutes_ago");
+      return this.translationService.translate("yasr.plugin_control.response_chip.timestamp.minutes_ago");
     } else {
       const dNow = new Date(now);
       const dTime = new Date(time);
@@ -71,13 +147,22 @@ export class ExtendedYasr extends Yasr {
         dNow.getDate() === dTime.getDate()
       ) {
         // today
-        return this.translate("yasr.plugin_control.response_chip.timestamp.today_at", this.toTimeParameters(time));
+        return this.translationService.translate(
+          "yasr.plugin_control.response_chip.timestamp.today_at",
+          this.toTimeParameters(time)
+        );
       } else if (delta < ExtendedYasr.ONE_DAY_IN_SECONDS) {
         // yesterday
-        return this.translate("yasr.plugin_control.response_chip.timestamp.yesterday_at", this.toTimeParameters(time));
+        return this.translationService.translate(
+          "yasr.plugin_control.response_chip.timestamp.yesterday_at",
+          this.toTimeParameters(time)
+        );
       }
     }
-    return this.translate("yasr.plugin_control.response_chip.timestamp.on_at", this.toTimeParameters(time));
+    return this.translationService.translate(
+      "yasr.plugin_control.response_chip.timestamp.on_at",
+      this.toTimeParameters(time)
+    );
   }
 
   private toTimeParameters(timeInMilliseconds: number): { key: string; value: string }[] {
@@ -95,12 +180,15 @@ export class ExtendedYasr extends Yasr {
   private getStaleWarningMessage(queryFinishedTime: number): string {
     const millisecondAgo = this.getNowInMilliseconds() - queryFinishedTime;
     if (millisecondAgo >= ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) {
-      const staleWarningMessage = this.translate("yasr.plugin_control.response_chip.timestamp.warning.tooltip", [
-        {
-          key: "timeAgo",
-          value: this.getHumanReadableSeconds(millisecondAgo),
-        },
-      ]);
+      const staleWarningMessage = this.translationService.translate(
+        "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
+        [
+          {
+            key: "timeAgo",
+            value: this.getHumanReadableSeconds(millisecondAgo),
+          },
+        ]
+      );
       return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="icon-warning icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
     }
     return "";
@@ -125,21 +213,21 @@ export class ExtendedYasr extends Yasr {
   private toHumanReadableSeconds(days: number, hours: number, minutes: number, seconds: number): string {
     let message = "";
     if (days) {
-      message += `${this.translate("yasr.plugin_control.response_chip.message.day", [
+      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.day", [
         { key: "day", value: `${days}` },
       ])} `;
     }
     if (days || hours) {
-      message += `${this.translate("yasr.plugin_control.response_chip.message.hours", [
+      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.hours", [
         { key: "hours", value: `${hours}` },
       ])} `;
     }
     if (days || hours || minutes) {
-      message += `${this.translate("yasr.plugin_control.response_chip.message.minutes", [
+      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.minutes", [
         { key: "minutes", value: `${minutes}` },
       ])} `;
     }
-    message += `${this.translate("yasr.plugin_control.response_chip.message.seconds", [
+    message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.seconds", [
       { key: "seconds", value: `${seconds}` },
     ])}`;
     return message.replace(/( 0[a-z])+$/, "");
@@ -170,4 +258,12 @@ export class ExtendedYasr extends Yasr {
   private normalize(value: number): string {
     return `${value < 10 ? 0 : ""}${value}`;
   }
+}
+
+interface DownloadAs {
+  translationService: TranslationService;
+  nameLabelKey: string;
+  query: string | undefined;
+  pluginName: string;
+  items: any[];
 }

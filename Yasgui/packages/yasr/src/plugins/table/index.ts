@@ -1,6 +1,8 @@
 /**
  * Make sure not to include any deps from our main index file. That way, we can easily publish the plugin as standalone build
  */
+import { TranslationService } from "@triply/yasgui-utils";
+
 require("./index.scss");
 require("datatables.net-dt/css/jquery.dataTables.css");
 require("datatables.net");
@@ -61,14 +63,14 @@ export default class Table implements Plugin<PluginConfig> {
   public helpReference = "https://triply.cc/docs/yasgui#table";
   public label = "Table";
   public priority = 10;
-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
+  private readonly translationService: TranslationService;
   public getIcon() {
     return drawSvgStringAsElement(drawFontAwesomeIconAsSvg(faTableIcon));
   }
   constructor(yasr: Yasr) {
     this.yasr = yasr;
     //TODO read options from constructor
-    this.translate = this.yasr.config.translate;
+    this.translationService = this.yasr.config.translationService;
     this.config = Table.defaults;
   }
   public static defaults: PluginConfig = {
@@ -208,12 +210,12 @@ export default class Table implements Plugin<PluginConfig> {
       data: rows,
       columns: columns,
       language: {
-        info: this.translate("yasr.plugin.table.data_tables.info.result_info"),
+        info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
         paginate: {
-          first: this.translate("yasr.plugin.table.data_tables.paginate.first"),
-          last: this.translate("yasr.plugin.table.data_tables.paginate.last"),
-          next: this.translate("yasr.plugin.table.data_tables.paginate.next"),
-          previous: this.translate("yasr.plugin.table.data_tables.paginate.previous"),
+          first: this.translationService.translate("yasr.plugin.table.data_tables.paginate.first"),
+          last: this.translationService.translate("yasr.plugin.table.data_tables.paginate.last"),
+          next: this.translationService.translate("yasr.plugin.table.data_tables.paginate.next"),
+          previous: this.translationService.translate("yasr.plugin.table.data_tables.paginate.previous"),
         },
       },
     };
@@ -328,7 +330,7 @@ export default class Table implements Plugin<PluginConfig> {
     const toggleWrapper = document.createElement("div");
     const switchComponent = document.createElement("label");
     const textComponent = document.createElement("span");
-    textComponent.innerText = this.translate("yasr.plugin.table.simple_view.checkbox.label");
+    textComponent.innerText = this.translationService.translate("yasr.plugin.table.simple_view.checkbox.label");
     addClass(textComponent, "label");
     switchComponent.appendChild(textComponent);
     addClass(switchComponent, "switch");
@@ -344,7 +346,7 @@ export default class Table implements Plugin<PluginConfig> {
     const ellipseToggleWrapper = document.createElement("div");
     const ellipseSwitchComponent = document.createElement("label");
     const ellipseTextComponent = document.createElement("span");
-    ellipseTextComponent.innerText = this.translate("yasr.plugin.table.ellipse.checkbox.label");
+    ellipseTextComponent.innerText = this.translationService.translate("yasr.plugin.table.ellipse.checkbox.label");
     addClass(ellipseTextComponent, "label");
     ellipseSwitchComponent.appendChild(ellipseTextComponent);
     addClass(ellipseSwitchComponent, "switch");
@@ -359,7 +361,7 @@ export default class Table implements Plugin<PluginConfig> {
     // Create table filter
     this.tableFilterField = document.createElement("input");
     this.tableFilterField.className = "tableFilter";
-    let filterQueryLabel = this.translate("yasr.plugin.table.table_filter.input.placeholder");
+    let filterQueryLabel = this.translationService.translate("yasr.plugin.table.table_filter.input.placeholder");
     this.tableFilterField.placeholder = filterQueryLabel;
     this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
     this.tableControls.appendChild(this.tableFilterField);
@@ -371,7 +373,7 @@ export default class Table implements Plugin<PluginConfig> {
 
     // Create label for page size element
     const pageSizerLabel = document.createElement("span");
-    pageSizerLabel.textContent = this.translate("yasr.plugin.table.page_size.dropdown.label");
+    pageSizerLabel.textContent = this.translationService.translate("yasr.plugin.table.page_size.dropdown.label");
     pageSizerLabel.className = "pageSizerLabel";
     pageSizerWrapper.appendChild(pageSizerLabel);
 
@@ -399,7 +401,7 @@ export default class Table implements Plugin<PluginConfig> {
     return {
       getData: () => this.yasr.results?.asCsv() || "",
       contentType: "text/csv",
-      title: this.translate("yasr.plugin.table.download_result.btn.label"),
+      title: this.translationService.translate("yasr.plugin.table.download_result.btn.label"),
       filename: `${filename || "queryResults"}.csv`,
     } as DownloadInfo;
   }

@@ -1,7 +1,8 @@
 import { Config } from "./";
+import { TranslationService } from "@triply/yasgui-utils";
 export default function get(): Config {
   return {
-    translate: (key: string, _parameters?: Record<string, string>[]) => key,
+    translationService: TranslationService.INSTANCE,
     persistenceId: function (yasr) {
       //Traverse parents untl we've got an id
       // Get matching parent elements
