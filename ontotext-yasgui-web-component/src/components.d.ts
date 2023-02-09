@@ -61,6 +61,8 @@ export namespace Components {
           * An input object property containing the yasgui configuration.
          */
         "config": ExternalYasguiConfiguration;
+        "getEmbeddedResultAsCSV": () => Promise<unknown>;
+        "getEmbeddedResultAsJson": () => Promise<unknown>;
         /**
           * Utility method allowing the client to get the mode of the query which is written in the current editor tab. The query mode can be either `query` or `update` regarding the query mode. This method just exposes the similar utility method from the yasqe component.
           * @return A promise which resolves with a string representing the query mode.
