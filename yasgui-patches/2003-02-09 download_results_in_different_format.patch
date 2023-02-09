@@ -1,0 +1,1297 @@
+Subject: [PATCH] GDB-7891: Download results in different format
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/utils/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -57,3 +57,18 @@
+   if (typeof valueOrFn === "function") return (valueOrFn as any)(arg);
+   return valueOrFn;
+ }
++
++export class TranslationService {
++  private static _INSTANCE: TranslationService;
++
++  static get INSTANCE(): TranslationService {
++    if (!TranslationService._INSTANCE) {
++      TranslationService._INSTANCE = new TranslationService();
++    }
++    return TranslationService._INSTANCE;
++  }
++
++  translate(key: string, _parameters?: Record<string, string>[]): string {
++    return key;
++  }
++}
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -354,7 +354,7 @@
+     if (!this.yasqeWrapperEl) {
+       throw new Error("Expected a wrapper element before instantiating yasqe");
+     }
+-    yasqeConf.translate = this.yasgui.config.translate;
++    yasqeConf.translationService = this.yasgui.config.translationService;
+     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
+ 
+     this.yasqe.on("blur", this.handleYasqeBlur);
+@@ -460,10 +460,11 @@
+     if (yasrConf.getDownloadFileName === undefined) {
+       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
+     }
+-    yasrConf.translate = this.yasgui.config.translate;
++    yasrConf.translationService = this.yasgui.config.translationService;
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
++    yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+ 
+-    this.yasr = new ExtendedYasr(this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
++    this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
+ 
+     //populate our own persistent config
+     this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
+Index: Yasgui/packages/yasgui/src/TabContextMenu.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabContextMenu.ts b/Yasgui/packages/yasgui/src/TabContextMenu.ts
+--- a/Yasgui/packages/yasgui/src/TabContextMenu.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasgui/src/TabContextMenu.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -41,21 +41,31 @@
+     const dropDownList = document.createElement("ul");
+     addClass(dropDownList, "context-menu-list");
+ 
+-    this.newTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.new_tab.btn.label"));
++    this.newTabEl = this.getMenuItemEl(
++      this.yasgui.translationService.translate("yasgui.tab_list.menu.new_tab.btn.label")
++    );
+     // We can set the function for addTab here already, as it doesn't need any outside data
+     this.newTabEl.onclick = () => this.yasgui.addTab(true);
+ 
+-    this.renameTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.rename_tab.btn.label"));
++    this.renameTabEl = this.getMenuItemEl(
++      this.yasgui.translationService.translate("yasgui.tab_list.menu.rename_tab.btn.label")
++    );
+ 
+-    this.copyTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.copy_tab.btn.label"));
++    this.copyTabEl = this.getMenuItemEl(
++      this.yasgui.translationService.translate("yasgui.tab_list.menu.copy_tab.btn.label")
++    );
+ 
+-    this.closeTabEl = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.close_tab.btn.label"));
++    this.closeTabEl = this.getMenuItemEl(
++      this.yasgui.translationService.translate("yasgui.tab_list.menu.close_tab.btn.label")
++    );
+ 
+     this.closeOtherTabsEl = this.getMenuItemEl(
+-      this.yasgui.translate("yasgui.tab_list.menu.close_other_tabs.btn.label")
++      this.yasgui.translationService.translate("yasgui.tab_list.menu.close_other_tabs.btn.label")
+     );
+ 
+-    this.reOpenOldTab = this.getMenuItemEl(this.yasgui.translate("yasgui.tab_list.menu.undo_close_tab.btn.label"));
++    this.reOpenOldTab = this.getMenuItemEl(
++      this.yasgui.translationService.translate("yasgui.tab_list.menu.undo_close_tab.btn.label")
++    );
+ 
+     // Add items to list
+     dropDownList.appendChild(this.newTabEl);
+Index: Yasgui/packages/yasgui/src/TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
+--- a/Yasgui/packages/yasgui/src/TabElements.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasgui/src/TabElements.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -1,6 +1,7 @@
+ import Yasgui from "./";
+ import TabContextMenu from "./TabContextMenu";
+ import { hasClass, addClass, removeClass } from "@triply/yasgui-utils";
++import { TranslationService } from "@triply/yasgui-utils";
+ const sortablejs = require("sortablejs");
+ require("./TabElements.scss");
+ export interface TabList {}
+@@ -11,11 +12,11 @@
+   private renameEl?: HTMLInputElement;
+   private nameEl?: HTMLSpanElement;
+   public tabEl?: HTMLDivElement;
+-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  private readonly translationService: TranslationService;
+   constructor(yasgui: Yasgui, tabList: TabList, tabId: string) {
+     this.tabList = tabList;
+     this.yasgui = yasgui;
+-    this.translate = this.yasgui.translate;
++    this.translationService = this.yasgui.translationService;
+     this.tabId = tabId;
+   }
+   public delete() {
+@@ -113,7 +114,7 @@
+     //tab close btn
+     const closeBtn = document.createElement("div");
+     closeBtn.innerHTML = "&#x2716;";
+-    closeBtn.title = this.translate("yasgui.tab_list.close_tab.btn.label");
++    closeBtn.title = this.translationService.translate("yasgui.tab_list.close_tab.btn.label");
+     closeBtn.setAttribute("tabindex", "-1");
+     closeBtn.setAttribute("aria-hidden", "true");
+     addClass(closeBtn, "closeTab");
+@@ -256,7 +257,7 @@
+     const addTabLink = document.createElement("button");
+     addTabLink.className = "addTab";
+     addTabLink.textContent = "+";
+-    const addTabLabel = this.yasgui.translate("yasgui.tab_list.add_tab.btn.label");
++    const addTabLabel = this.yasgui.translationService.translate("yasgui.tab_list.add_tab.btn.label");
+     addTabLink.title = addTabLabel;
+     addTabLink.setAttribute("aria-label", addTabLabel);
+     addTabLink.addEventListener("click", this.handleAddNewTab);
+Index: Yasgui/packages/yasgui/src/TabPanel.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabPanel.ts b/Yasgui/packages/yasgui/src/TabPanel.ts
+--- a/Yasgui/packages/yasgui/src/TabPanel.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasgui/src/TabPanel.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -3,6 +3,7 @@
+ import Tab from "./Tab";
+ import { RequestConfig } from "@triply/yasqe";
+ import { toPairs, fromPairs } from "lodash-es";
++import { TranslationService } from "@triply/yasgui-utils";
+ const AcceptOptionsMap: { key: string; value: string }[] = [
+   { key: "JSON", value: "application/sparql-results+json" },
+   { key: "XML", value: "application/sparql-results+xml" },
+@@ -27,12 +28,12 @@
+   rootEl: HTMLElement;
+   isOpen: boolean;
+ 
+-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  private readonly translationService: TranslationService;
+   private updateLabelFunctions: Function[] = [];
+ 
+   constructor(tab: Tab, rootEl: HTMLElement, controlBarEl: HTMLElement) {
+     this.tab = tab;
+-    this.translate = this.tab.yasgui.translate;
++    this.translationService = this.tab.yasgui.translationService;
+     this.rootEl = rootEl;
+     this.isOpen = false;
+ 
+@@ -71,11 +72,11 @@
+           <cc:Work rdf:about="">
+            <dc:format>image/svg+xml</dc:format>
+            <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+-           <dc:title>${this.translate("yasgui.control_bar.settings.btn.label")}</dc:title>
++           <dc:title>${this.translationService.translate("yasgui.control_bar.settings.btn.label")}</dc:title>
+           </cc:Work>
+          </rdf:RDF>
+         </metadata>
+-        <title>${this.translate("yasgui.control_bar.settings.btn.label")}</title>
++        <title>${this.translationService.translate("yasgui.control_bar.settings.btn.label")}</title>
+         <path d="m95.868 58.018-3-3.24a42.5 42.5 0 0 0 0-9.43l3-3.22c1.79-1.91 5-4.44 4-6.85l-4.11-10c-1-2.41-5.08-1.91-7.69-2l-4.43-0.16a43.24 43.24 0 0 0-6.64-6.66l-0.14-4.43c-0.08-2.6 0.43-6.69-2-7.69l-10-4.15c-2.4-1-4.95 2.25-6.85 4l-3.23 3a42.49 42.49 0 0 0-9.44 0l-3.21-3c-1.9-1.78-4.44-5-6.85-4l-10 4.11c-2.41 1-1.9 5.09-2 7.69l-0.16 4.42a43.24 43.24 0 0 0-6.67 6.65l-4.42 0.14c-2.6 0.08-6.69-0.43-7.69 2l-4.15 10c-1 2.4 2.25 4.94 4 6.84l3 3.23a42.49 42.49 0 0 0 0 9.44l-3 3.22c-1.78 1.9-5 4.43-4 6.84l4.11 10c1 2.41 5.09 1.91 7.7 2l4.41 0.15a43.24 43.24 0 0 0 6.66 6.68l0.13 4.41c0.08 2.6-0.43 6.7 2 7.7l10 4.15c2.4 1 4.94-2.25 6.84-4l3.24-3a42.5 42.5 0 0 0 9.42 0l3.22 3c1.91 1.79 4.43 5 6.84 4l10-4.11c2.41-1 1.91-5.08 2-7.7l0.15-4.42a43.24 43.24 0 0 0 6.68-6.65l4.42-0.14c2.6-0.08 6.7 0.43 7.7-2l4.15-10c1.04-2.36-2.22-4.9-3.99-6.82zm-45.74 15.7c-12.66 0-22.91-10.61-22.91-23.7s10.25-23.7 22.91-23.7 22.91 10.61 22.91 23.7-10.25 23.7-22.91 23.7z"/>
+        </svg>`
+     );
+@@ -139,8 +140,8 @@
+     this.settingsButton.setAttribute(
+       "aria-label",
+       this.isOpen
+-        ? this.translate("yasgui.control_bar.settings.btn.close_settings.aria_label")
+-        : this.translate("yasgui.control_bar.settings.btn.open_settings.aria_label")
++        ? this.translationService.translate("yasgui.control_bar.settings.btn.close_settings.aria_label")
++        : this.translationService.translate("yasgui.control_bar.settings.btn.open_settings.aria_label")
+     );
+     this.settingsButton.setAttribute("aria-expanded", `${this.isOpen}`);
+   }
+@@ -149,20 +150,27 @@
+   private drawRequestMethodSelector() {
+     const requestTypeWrapper = document.createElement("div");
+     addClass(requestTypeWrapper, "requestConfigWrapper");
+-    const requestTypeLabel = createLabel(this.translate("yasgui.control_bar.request_method.label"), requestTypeWrapper);
++    const requestTypeLabel = createLabel(
++      this.translationService.translate("yasgui.control_bar.request_method.label"),
++      requestTypeWrapper
++    );
+     this.updateLabelFunctions.push(
+-      () => (requestTypeLabel.innerText = this.translate("yasgui.control_bar.request_method.label"))
++      () => (requestTypeLabel.innerText = this.translationService.translate("yasgui.control_bar.request_method.label"))
+     );
+ 
+     // Create Button
+     const getButton = document.createElement("button");
+     addClass(getButton, "selectorButton", "selectorGetButton");
+-    getButton.innerText = this.translate("yasgui.control_bar.get.btn.label");
+-    this.updateLabelFunctions.push(() => (getButton.innerText = this.translate("yasgui.control_bar.get.btn.label")));
++    getButton.innerText = this.translationService.translate("yasgui.control_bar.get.btn.label");
++    this.updateLabelFunctions.push(
++      () => (getButton.innerText = this.translationService.translate("yasgui.control_bar.get.btn.label"))
++    );
+     const postButton = document.createElement("button");
+     addClass(postButton, "selectorButton", "selectorPostButton");
+-    postButton.innerText = this.translate("yasgui.control_bar.post.btn.label");
+-    this.updateLabelFunctions.push(() => (postButton.innerText = this.translate("yasgui.control_bar.get.btn.label")));
++    postButton.innerText = this.translationService.translate("yasgui.control_bar.post.btn.label");
++    this.updateLabelFunctions.push(
++      () => (postButton.innerText = this.translationService.translate("yasgui.control_bar.get.btn.label"))
++    );
+     addClass(this.tab.getRequestConfig().method === "GET" ? getButton : postButton, "selected");
+ 
+     this.setRequestMethod = (method) => {
+@@ -194,13 +202,17 @@
+   private drawAcceptSelector() {
+     const acceptWrapper = document.createElement("div");
+     addClass(acceptWrapper, "requestConfigWrapper", "acceptWrapper");
+-    const acceptWrapperLabel = createLabel(this.translate("yasgui.control_bar.accept_headers.label"), acceptWrapper);
++    const acceptWrapperLabel = createLabel(
++      this.translationService.translate("yasgui.control_bar.accept_headers.label"),
++      acceptWrapper
++    );
+     this.updateLabelFunctions.push(
+-      () => (acceptWrapperLabel.innerText = this.translate("yasgui.control_bar.accept_headers.label"))
++      () =>
++        (acceptWrapperLabel.innerText = this.translationService.translate("yasgui.control_bar.accept_headers.label"))
+     );
+ 
+     const registerUpdateLabelFunction = (labelElement: HTMLElement, labelKey: string) => {
+-      this.updateLabelFunctions.push(() => (labelElement.innerText = this.translate(labelKey)));
++      this.updateLabelFunctions.push(() => (labelElement.innerText = this.translationService.translate(labelKey)));
+     };
+ 
+     // Request type
+@@ -211,7 +223,7 @@
+       },
+       "yasgui.control_bar.ask_select.label",
+       acceptWrapper,
+-      this.translate,
++      this.translationService,
+       registerUpdateLabelFunction
+     );
+ 
+@@ -222,7 +234,7 @@
+       },
+       "yasgui.control_bar.construct_describe.label",
+       acceptWrapper,
+-      this.translate,
++      this.translationService,
+       registerUpdateLabelFunction
+     );
+ 
+@@ -244,9 +256,12 @@
+     const argumentsWrapper = document.createElement("div");
+     addClass(argumentsWrapper, "requestConfigWrapper", "textSetting");
+ 
+-    const argumentsLabel = createLabel(this.translate("yasgui.control_bar.arguments.label"), argumentsWrapper);
++    const argumentsLabel = createLabel(
++      this.translationService.translate("yasgui.control_bar.arguments.label"),
++      argumentsWrapper
++    );
+     this.updateLabelFunctions.push(
+-      () => (argumentsLabel.innerText = this.translate("yasgui.control_bar.arguments.label"))
++      () => (argumentsLabel.innerText = this.translationService.translate("yasgui.control_bar.arguments.label"))
+     );
+ 
+     this.menuElement.appendChild(argumentsWrapper);
+@@ -283,9 +298,9 @@
+     const headerWrapper = document.createElement("div");
+     addClass(headerWrapper, "requestConfigWrapper", "textSetting");
+ 
+-    const URLArgLabel = createLabel(this.translate("yasgui.control_bar.header_arguments.label"));
++    const URLArgLabel = createLabel(this.translationService.translate("yasgui.control_bar.header_arguments.label"));
+     this.updateLabelFunctions.push(
+-      () => (URLArgLabel.innerText = this.translate("yasgui.control_bar.header_arguments.label"))
++      () => (URLArgLabel.innerText = this.translationService.translate("yasgui.control_bar.header_arguments.label"))
+     );
+     headerWrapper.appendChild(URLArgLabel);
+ 
+@@ -314,9 +329,9 @@
+     const defaultGraphWrapper = document.createElement("div");
+     addClass(defaultGraphWrapper, "requestConfigWrapper", "textSetting");
+ 
+-    const defaultGraphLabel = createLabel(this.translate("yasgui.control_bar.default_graphs.label"));
++    const defaultGraphLabel = createLabel(this.translationService.translate("yasgui.control_bar.default_graphs.label"));
+     this.updateLabelFunctions.push(
+-      () => (defaultGraphLabel.innerText = this.translate("yasgui.control_bar.default_graphs.label"))
++      () => (defaultGraphLabel.innerText = this.translationService.translate("yasgui.control_bar.default_graphs.label"))
+     );
+     defaultGraphWrapper.appendChild(defaultGraphLabel);
+ 
+@@ -349,9 +364,9 @@
+     const namedGraphWrapper = document.createElement("div");
+     addClass(namedGraphWrapper, "requestConfigWrapper", "textSetting");
+ 
+-    const namedGraphLabel = createLabel(this.translate("yasgui.control_bar.named_graph.label"));
++    const namedGraphLabel = createLabel(this.translationService.translate("yasgui.control_bar.named_graph.label"));
+     this.updateLabelFunctions.push(
+-      () => (namedGraphLabel.innerText = this.translate("yasgui.control_bar.named_graph.label"))
++      () => (namedGraphLabel.innerText = this.translationService.translate("yasgui.control_bar.named_graph.label"))
+     );
+     namedGraphWrapper.appendChild(namedGraphLabel);
+     this.menuElement.appendChild(namedGraphWrapper);
+@@ -424,13 +439,13 @@
+   changeHandler: (event: Event) => void,
+   labelKey: string,
+   parent: HTMLElement,
+-  translate: (key: string, _parameters?: Record<string, string>[]) => string,
++  translationService: TranslationService,
+   registerUpdateLabelFunction: (labelElement: HTMLElement, labelKey: string) => void
+ ): (selected: string) => void {
+   const selectorWrapper = document.createElement("div");
+   addClass(selectorWrapper, "selector");
+ 
+-  const selectorLabel = createLabel(translate(labelKey), selectorWrapper);
++  const selectorLabel = createLabel(translationService.translate(labelKey), selectorWrapper);
+   registerUpdateLabelFunction(selectorLabel, labelKey);
+   addClass(selectorLabel, "selectorLabel");
+ 
+Index: Yasgui/packages/yasgui/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/defaults.ts b/Yasgui/packages/yasgui/src/defaults.ts
+--- a/Yasgui/packages/yasgui/src/defaults.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -2,10 +2,11 @@
+ import Yasr from "@triply/yasr";
+ import { default as Yasqe } from "@triply/yasqe";
+ import { CatalogueItem } from "./endpointSelect";
++import { TranslationService } from "@triply/yasgui-utils";
+ 
+ export default function initialize(): Config<CatalogueItem> {
+   return {
+-    translate: (key: string, _parameters?: Record<string, string>[]) => key,
++    translationService: TranslationService.INSTANCE,
+     autofocus: true,
+     endpointInfo: undefined,
+     persistenceId: function (yasgui) {
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -10,6 +10,7 @@
+ import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
+ import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
+ import { addClass, removeClass } from "@triply/yasgui-utils";
++import { TranslationService } from "@triply/yasgui-utils";
+ require("./index.scss");
+ require("@triply/yasr/src/scss/global.scss");
+ if (window) {
+@@ -44,7 +45,7 @@
+   requestConfig: YasguiRequestConfig;
+   contextMenuContainer: HTMLElement | undefined;
+   nonSslDomain?: string;
+-  translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  translationService: TranslationService;
+ }
+ export type PartialConfig = {
+   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
+@@ -91,7 +92,7 @@
+   public persistentConfig: PersistentConfig;
+   public static Tab = Tab;
+ 
+-  public readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  public readonly translationService: TranslationService;
+   constructor(parent: HTMLElement, config: PartialConfig) {
+     super();
+     this.rootEl = document.createElement("div");
+@@ -99,7 +100,7 @@
+     parent.appendChild(this.rootEl);
+ 
+     this.config = merge({}, Yasgui.defaults, config);
+-    this.translate = this.config.translate;
++    this.translationService = this.config.translationService;
+     this.persistentConfig = new PersistentConfig(this);
+ 
+     this.tabElements = new TabElements(this);
+Index: Yasgui/packages/yasqe/src/autocompleters/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/index.ts b/Yasgui/packages/yasqe/src/autocompleters/index.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -129,7 +129,7 @@
+     if (!this.config.autoShow) {
+       this.yasqe.showNotification(
+         this.config.name,
+-        this.yasqe.translate("yasqe.autocomplete.notification.info.help_info_message")
++        this.yasqe.translationService.translate("yasqe.autocomplete.notification.info.help_info_message")
+       );
+     }
+     this.emit("validPosition", this);
+@@ -311,7 +311,7 @@
+   if (!token || !token.string || token.string.trim().length == 0) {
+     yasqe.showNotification(
+       notificationKey,
+-      yasqe.translate("yasqe.autocomplete.notification.info.nothing_to_autocomplete")
++      yasqe.translationService.translate("yasqe.autocomplete.notification.info.nothing_to_autocomplete")
+     );
+     return Promise.resolve([]);
+   }
+@@ -339,7 +339,7 @@
+       (_e) => {
+         yasqe.showNotification(
+           notificationKey,
+-          yasqe.translate("yasqe.autocomplete.notification.error.failed_fetching_suggestions")
++          yasqe.translationService.translate("yasqe.autocomplete.notification.error.failed_fetching_suggestions")
+         );
+       }
+     );
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -6,15 +6,14 @@
+  */
+ import { default as Yasqe, Config, PlainRequestConfig } from "./";
+ import * as queryString from "query-string";
++import { TranslationService } from "@triply/yasgui-utils";
+ //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
+ export default function get() {
+   const prefixCcApi =
+     (window.location.protocol.indexOf("http") === 0 ? "//" : "http://") + "prefix.cc/popular/all.file.json";
+   const CodeMirror = require("codemirror");
+   const config: Omit<Config, "requestConfig"> = {
+-    translate(key: string, _parameters?: Record<string, string>[]): string {
+-      return key;
+-    },
++    translationService: TranslationService.INSTANCE,
+     mode: "sparql11",
+     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -1,3 +1,5 @@
++import { TranslationService } from "@triply/yasgui-utils";
++
+ require("./scss/yasqe.scss");
+ require("./scss/buttons.scss");
+ import * as superagent from "superagent";
+@@ -62,7 +64,7 @@
+   public persistentConfig: PersistentConfig | undefined;
+   public superagent = superagent;
+ 
+-  public readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  public readonly translationService: TranslationService;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
+@@ -70,7 +72,7 @@
+     this.rootEl.className = "yasqe";
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasqe.defaults, conf);
+-    this.translate = this.config.translate;
++    this.translationService = this.config.translationService;
+     //inherit codemirror props
+     const cm = (CodeMirror as any)(this.rootEl, this.config);
+     //Assign our functions to the cm object. This is needed, as some functions (like the ctrl-enter callback)
+@@ -196,7 +198,7 @@
+     let parentElement = this.getWrapperElement();
+     let shareLinkWrapper = parentElement.querySelector(".yasqe_share");
+     if (shareLinkWrapper) {
+-      let shareQueryLabel = this.translate("yasqe.action.share.btn.tooltip");
++      let shareQueryLabel = this.translationService.translate("yasqe.action.share.btn.tooltip");
+       shareLinkWrapper.setAttribute("title", shareQueryLabel);
+       shareLinkWrapper.setAttribute("aria-label", shareQueryLabel);
+     }
+@@ -225,7 +227,7 @@
+       var svgShare = drawSvgStringAsElement(imgs.share);
+       const shareLinkWrapper = document.createElement("button");
+       shareLinkWrapper.className = "yasqe_share";
+-      let shareQueryLabel = this.translate("yasqe.action.share.btn.tooltip");
++      let shareQueryLabel = this.translationService.translate("yasqe.action.share.btn.tooltip");
+       shareLinkWrapper.title = shareQueryLabel;
+       shareLinkWrapper.setAttribute("aria-label", shareQueryLabel);
+       shareLinkWrapper.appendChild(svgShare);
+@@ -280,7 +282,7 @@
+           popup.className = popup.className += " enableShort";
+           const shortBtn = document.createElement("button");
+           popupInputButtons.push(shortBtn);
+-          shortBtn.innerHTML = this.translate("yasqe.action.shorten.btn.label");
++          shortBtn.innerHTML = this.translationService.translate("yasqe.action.shorten.btn.label");
+           shortBtn.className = "yasqe_btn yasqe_btn-sm shorten";
+           popup.appendChild(shortBtn);
+           shortBtn.onclick = () => {
+@@ -294,7 +296,7 @@
+                 const errSpan = document.createElement("span");
+                 errSpan.className = "shortlinkErr";
+                 // Throwing a string or an object should work
+-                let textContent = this.translate("yasqe.action.share.error.general_message");
++                let textContent = this.translationService.translate("yasqe.action.share.error.general_message");
+                 if (typeof err === "string" && err.length !== 0) {
+                   textContent = err;
+                 } else if (err.message && err.message.length !== 0) {
+@@ -309,7 +311,7 @@
+ 
+         const curlBtn = document.createElement("button");
+         popupInputButtons.push(curlBtn);
+-        curlBtn.innerText = this.translate("yasqe.action.curl.btn.label");
++        curlBtn.innerText = this.translationService.translate("yasqe.action.curl.btn.label");
+         curlBtn.className = "yasqe_btn yasqe_btn-sm curl";
+         popup.appendChild(curlBtn);
+         curlBtn.onclick = () => {
+@@ -351,7 +353,7 @@
+           this.query().catch(() => {}); //catch this to avoid unhandled rejection
+         }
+       };
+-      let runQueryLabel = this.translate("yasqe.action.run_query.btn.tooltip");
++      let runQueryLabel = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
+       this.queryBtn.title = runQueryLabel;
+       this.queryBtn.setAttribute("aria-label", runQueryLabel);
+ 
+@@ -419,7 +421,7 @@
+       this.queryBtn.title = this.config.queryingDisabled;
+     } else {
+       removeClass(this.queryBtn, "query_disabled");
+-      let runQueryLabel = this.translate("yasqe.action.run_query.btn.tooltip");
++      let runQueryLabel = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
+       this.queryBtn.title = runQueryLabel;
+       this.queryBtn.setAttribute("aria-label", runQueryLabel);
+     }
+@@ -739,7 +741,9 @@
+           tooltip(
+             this,
+             warningEl,
+-            `${this.translate("yasqe.check_syntax.error.invalid_line.prefix")} ${expectedEncoded.join(", ")}`
++            `${this.translationService.translate(
++              "yasqe.check_syntax.error.invalid_line.prefix"
++            )} ${expectedEncoded.join(", ")}`
+           );
+         }
+         // warningEl.style.marginTop = "2px";
+@@ -1065,7 +1069,7 @@
+   editorHeight: string;
+   queryingDisabled: string | undefined; // The string will be the message displayed when hovered
+   prefixCcApi: string; // the suggested default prefixes URL API getter
+-  translate: (key: string, parameters?: Record<string, string>[]) => string;
++  translationService: TranslationService;
+ }
+ export interface PersistentConfig {
+   query: string;
+Index: Yasgui/packages/yasr/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -1,7 +1,8 @@
+ import { Config } from "./";
++import { TranslationService } from "@triply/yasgui-utils";
+ export default function get(): Config {
+   return {
+-    translate: (key: string, _parameters?: Record<string, string>[]) => key,
++    translationService: TranslationService.INSTANCE,
+     persistenceId: function (yasr) {
+       //Traverse parents untl we've got an id
+       // Get matching parent elements
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -1,5 +1,6 @@
+ import Yasr, { Config } from "@triply/yasr";
+-import { addClass, removeClass } from "@triply/yasgui-utils";
++import { addClass, removeClass, TranslationService } from "@triply/yasgui-utils";
++import Yasqe from "@triply/yasqe";
+ 
+ export class ExtendedYasr extends Yasr {
+   static readonly ONE_MINUTE_iN_SECONDS = 60;
+@@ -10,8 +11,80 @@
+   static readonly ONE_DAY_IN_MILLISECONDS = 86400000;
+   static readonly ONE_MINUTE_IN_MILLISECONDS = 60000;
+ 
+-  constructor(parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
++  downloadAsElement: HTMLElement | undefined;
++
++  externalPluginsConfigurations: Map<string, any> | undefined;
++
++  private yasqe?: Yasqe;
++
++  constructor(yasqe: Yasqe | undefined, parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
+     super(parent, conf, data);
++    this.yasqe = yasqe;
++    this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
++  }
++
++  drawPluginSelectors() {
++    super.drawPluginSelectors();
++    const downloadAsLiElement = document.createElement("li");
++    this.downloadAsElement = this.createDownloadAsElement();
++    this.updateDownloadAsElementVisibility();
++
++    downloadAsLiElement.appendChild(this.downloadAsElement);
++    const pluginSelectorsEl = this.getPluginSelectorsEl();
++    const testElement = document.createElement("li");
++    testElement.classList.add("spacer");
++    pluginSelectorsEl.appendChild(testElement);
++    pluginSelectorsEl.appendChild(downloadAsLiElement);
++  }
++
++  updatePluginSelectorNames() {
++    super.updatePluginSelectorNames();
++    this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
++    this.updateDownloadAsElementVisibility();
++  }
++
++  private toDownloadAs(element: HTMLElement | undefined): DownloadAs | undefined {
++    return element ? ((element as any) as DownloadAs) : undefined;
++  }
++
++  private createDownloadAsElement(): HTMLElement {
++    const element = document.createElement("ontotext-yasgui-download-as");
++    const downloadAsComponent = this.toDownloadAs(element);
++    if (downloadAsComponent) {
++      downloadAsComponent.translationService = this.translationService;
++    }
++    this.updateDownloadAsElement(downloadAsComponent);
++    return element;
++  }
++
++  private updateDownloadAsElement(element: DownloadAs | undefined) {
++    if (!element) {
++      return;
++    }
++    element.query = this.yasqe?.getValueWithoutComments();
++    element.pluginName = this.getSelectedPluginName();
++    const downloadAsConfiguration = this.getDownloadAsConfiguration();
++    if (downloadAsConfiguration) {
++      element.items = downloadAsConfiguration.items ? [...downloadAsConfiguration.items] : [];
++      if (downloadAsConfiguration.hasOwnProperty("nameLabelKey")) {
++        element.nameLabelKey = downloadAsConfiguration.nameLabelKey;
++      }
++    } else {
++      element.items = [];
++    }
++  }
++
++  private getDownloadAsConfiguration() {
++    return this.externalPluginsConfigurations
++      ? this.externalPluginsConfigurations.get(this.getSelectedPluginName())?.["downloadAsConfig"]
++      : undefined;
++  }
++
++  private updateDownloadAsElementVisibility() {
++    removeClass(this.downloadAsElement, "hidden");
++    if (!this.results || (this.downloadAsElement as any).items.length < 1) {
++      addClass(this.downloadAsElement, "hidden");
++    }
+   }
+ 
+   updateResponseInfo() {
+@@ -27,15 +100,15 @@
+       resultInfo = staleWarningMessage ? staleWarningMessage : "";
+       const bindings = this.results.getBindings();
+       if (!bindings || bindings.length === 0) {
+-        resultInfo = this.translate("yasr.plugin_control.response_chip.message.result_empty");
++        resultInfo = this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
+       } else {
+         // TODO fix message and parameters when server side paging is implemented.
+         // message key have to be "yasr.plugin_control.response_chip.message.result_info"
+         const params = [{ key: "countResults", value: `${bindings.length}` }];
+         resultInfo +=
+           bindings.length === 1
+-            ? this.translate("yasr.plugin_control.info.count_result", params)
+-            : this.translate("yasr.plugin_control.info.count_results", params);
++            ? this.translationService.translate("yasr.plugin_control.info.count_result", params)
++            : this.translationService.translate("yasr.plugin_control.info.count_results", params);
+       }
+ 
+       const params = [
+@@ -48,7 +121,10 @@
+           value: this.getHumanReadableTimestamp(queryFinishedTime),
+         },
+       ];
+-      resultInfo += ` ${this.translate("yasr.plugin_control.response_chip.message.result_time", params)}`;
++      resultInfo += ` ${this.translationService.translate(
++        "yasr.plugin_control.response_chip.message.result_time",
++        params
++      )}`;
+     } else {
+       addClass(responseInfoElement, "empty");
+     }
+@@ -59,9 +135,9 @@
+     const now = this.getNowInMilliseconds();
+     const delta = (now - time) / ExtendedYasr.ONE_SECOND_IN_MILLISECONDS;
+     if (delta < ExtendedYasr.ONE_MINUTE_iN_SECONDS) {
+-      return this.translate("yasr.plugin_control.response_chip.timestamp.moments_ago");
++      return this.translationService.translate("yasr.plugin_control.response_chip.timestamp.moments_ago");
+     } else if (delta < ExtendedYasr.TEN_MINUTES_IN_SECONDS) {
+-      return this.translate("yasr.plugin_control.response_chip.timestamp.minutes_ago");
++      return this.translationService.translate("yasr.plugin_control.response_chip.timestamp.minutes_ago");
+     } else {
+       const dNow = new Date(now);
+       const dTime = new Date(time);
+@@ -71,13 +147,22 @@
+         dNow.getDate() === dTime.getDate()
+       ) {
+         // today
+-        return this.translate("yasr.plugin_control.response_chip.timestamp.today_at", this.toTimeParameters(time));
++        return this.translationService.translate(
++          "yasr.plugin_control.response_chip.timestamp.today_at",
++          this.toTimeParameters(time)
++        );
+       } else if (delta < ExtendedYasr.ONE_DAY_IN_SECONDS) {
+         // yesterday
+-        return this.translate("yasr.plugin_control.response_chip.timestamp.yesterday_at", this.toTimeParameters(time));
++        return this.translationService.translate(
++          "yasr.plugin_control.response_chip.timestamp.yesterday_at",
++          this.toTimeParameters(time)
++        );
+       }
+     }
+-    return this.translate("yasr.plugin_control.response_chip.timestamp.on_at", this.toTimeParameters(time));
++    return this.translationService.translate(
++      "yasr.plugin_control.response_chip.timestamp.on_at",
++      this.toTimeParameters(time)
++    );
+   }
+ 
+   private toTimeParameters(timeInMilliseconds: number): { key: string; value: string }[] {
+@@ -95,12 +180,15 @@
+   private getStaleWarningMessage(queryFinishedTime: number): string {
+     const millisecondAgo = this.getNowInMilliseconds() - queryFinishedTime;
+     if (millisecondAgo >= ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) {
+-      const staleWarningMessage = this.translate("yasr.plugin_control.response_chip.timestamp.warning.tooltip", [
+-        {
+-          key: "timeAgo",
+-          value: this.getHumanReadableSeconds(millisecondAgo),
+-        },
+-      ]);
++      const staleWarningMessage = this.translationService.translate(
++        "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
++        [
++          {
++            key: "timeAgo",
++            value: this.getHumanReadableSeconds(millisecondAgo),
++          },
++        ]
++      );
+       return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="icon-warning icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
+     }
+     return "";
+@@ -125,21 +213,21 @@
+   private toHumanReadableSeconds(days: number, hours: number, minutes: number, seconds: number): string {
+     let message = "";
+     if (days) {
+-      message += `${this.translate("yasr.plugin_control.response_chip.message.day", [
++      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.day", [
+         { key: "day", value: `${days}` },
+       ])} `;
+     }
+     if (days || hours) {
+-      message += `${this.translate("yasr.plugin_control.response_chip.message.hours", [
++      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.hours", [
+         { key: "hours", value: `${hours}` },
+       ])} `;
+     }
+     if (days || hours || minutes) {
+-      message += `${this.translate("yasr.plugin_control.response_chip.message.minutes", [
++      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.minutes", [
+         { key: "minutes", value: `${minutes}` },
+       ])} `;
+     }
+-    message += `${this.translate("yasr.plugin_control.response_chip.message.seconds", [
++    message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.seconds", [
+       { key: "seconds", value: `${seconds}` },
+     ])}`;
+     return message.replace(/( 0[a-z])+$/, "");
+@@ -171,3 +259,11 @@
+     return `${value < 10 ? 0 : ""}${value}`;
+   }
+ }
++
++interface DownloadAs {
++  translationService: TranslationService;
++  nameLabelKey: string;
++  query: string | undefined;
++  pluginName: string;
++  items: any[];
++}
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -47,7 +47,7 @@
+   private drawnPlugin: string | undefined;
+   private selectedPlugin: string | undefined;
+ 
+-  protected readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  protected readonly translationService: TranslationService;
+ 
+   // Utils
+   public utils = { addScript: addScript, addCSS: addCss, sanitize: sanitize };
+@@ -61,7 +61,7 @@
+     this.config = merge({}, Yasr.defaults, conf);
+ 
+     //Do some post processing
+-    this.translate = this.config.translate;
++    this.translationService = this.config.translationService;
+     this.storage = new YStorage(Yasr.storageNamespace);
+     this.getConfigFromStorage();
+     this.headerEl = document.createElement("div");
+@@ -271,6 +271,9 @@
+     this.draw();
+   }
+   private pluginSelectorsEl!: HTMLUListElement;
++  getPluginSelectorsEl(): HTMLUListElement {
++    return this.pluginSelectorsEl;
++  }
+   drawPluginSelectors() {
+     this.pluginSelectorsEl = document.createElement("ul");
+     this.pluginSelectorsEl.className = "yasr_btnGroup";
+@@ -288,14 +291,18 @@
+ 
+       if (!plugin) continue; //plugin not loaded
+       if (plugin.hideFromSelection) continue;
+-      const name = this.translate(`yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase());
++      const name = this.translationService.translate(
++        `yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase()
++      );
+       const button = document.createElement("button");
+       addClass(button, "yasr_btn", "select_" + pluginName);
+       button.title = name;
+       button.type = "button";
+       button.setAttribute(
+         "aria-label",
+-        this.translate("yasr.plugin_control.shows_view.btn.aria_label", [{ key: "name", value: name }])
++        this.translationService.translate("yasr.plugin_control.shows_view.btn.aria_label", [
++          { key: "name", value: name },
++        ])
+       );
+       if (plugin.getIcon) {
+         const icon = plugin.getIcon();
+@@ -327,26 +334,28 @@
+     const fallbackPluginLabel =
+       this.plugins[fallbackElement || this.drawnPlugin || ""]?.label || fallbackElement || this.drawnPlugin || "";
+     const selectedPluginLabel = selectedPlugin?.label || this.getSelectedPluginName();
+-    const selectedPluginName = this.translate(`yasr.plugin_control.plugin.name.${selectedPluginLabel}`.toLowerCase());
++    const selectedPluginName = this.translationService.translate(
++      `yasr.plugin_control.plugin.name.${selectedPluginLabel}`.toLowerCase()
++    );
+ 
+     const textElement = document.createElement("p");
+-    textElement.innerText = this.translate("yasr.fallback.box.info.info_message", [
++    textElement.innerText = this.translationService.translate("yasr.fallback.box.info.info_message", [
+       { key: "selectedPluginName", value: fallbackPluginLabel },
+     ]);
+     textElement.innerText += this.getSelectedPlugin()?.helpReference
+-      ? this.translate("yasr.plugin_control.info.see")
++      ? this.translationService.translate("yasr.plugin_control.info.see")
+       : "";
+ 
+     if (selectedPlugin?.helpReference) {
+       const linkElement = document.createElement("a");
+-      linkElement.innerText = this.translate("yasr.plugin_control.plugin_documentation.link.label", [
++      linkElement.innerText = this.translationService.translate("yasr.plugin_control.plugin_documentation.link.label", [
+         { key: "selectedPluginName", value: selectedPluginName },
+       ]);
+       linkElement.href = selectedPlugin.helpReference;
+       linkElement.rel = "noopener noreferrer";
+       linkElement.target = "_blank";
+       textElement.append(linkElement);
+-      textElement.innerHTML += " " + this.translate("yasr.fallback.box.info.for_more_info");
++      textElement.innerHTML += " " + this.translationService.translate("yasr.fallback.box.info.for_more_info");
+     }
+ 
+     this.fallbackInfoEl.appendChild(textElement);
+@@ -374,7 +383,10 @@
+     this.downloadBtn = document.createElement("a");
+     addClass(this.downloadBtn, "yasr_btn", "yasr_downloadIcon", "btn_icon");
+     this.downloadBtn.download = ""; // should default to the file name of the blob
+-    this.downloadBtn.setAttribute("aria-label", this.translate("yasr.plugin_control.download_results.btn.label"));
++    this.downloadBtn.setAttribute(
++      "aria-label",
++      this.translationService.translate("yasr.plugin_control.download_results.btn.label")
++    );
+     this.downloadBtn.setAttribute("tabindex", "0"); // anchor elements with no href are not automatically included in the tabindex
+     this.downloadBtn.setAttribute("role", "button");
+     const iconEl = drawSvgStringAsElement(drawFontAwesomeIconAsSvg(faDownload));
+@@ -416,21 +428,21 @@
+         const params = [{ key: "countResults", value: `${bindings.length}` }];
+         innerText +=
+           bindings.length === 1
+-            ? this.translate("yasr.plugin_control.info.count_result", params)
+-            : this.translate("yasr.plugin_control.info.count_results", params);
++            ? this.translationService.translate("yasr.plugin_control.info.count_result", params)
++            : this.translationService.translate("yasr.plugin_control.info.count_results", params);
+       }
+ 
+       const responseTime = this.results.getResponseTime();
+       if (responseTime) {
+         if (!innerText) {
+-          innerText = this.translate("yasr.response");
++          innerText = this.translationService.translate("yasr.response");
+         }
+         const time = responseTime / 1000;
+         const params = [{ key: "timeInSeconds", value: `${time}` }];
+         innerText +=
+           time === 1
+-            ? this.translate("yasr.plugin_control.info.result_in_second", params)
+-            : this.translate("yasr.plugin_control.info.result_in_seconds", params);
++            ? this.translationService.translate("yasr.plugin_control.info.result_in_second", params)
++            : this.translationService.translate("yasr.plugin_control.info.result_in_seconds", params);
+       }
+     } else {
+       addClass(this.dataElement, "empty");
+@@ -440,7 +452,7 @@
+   private updateHelpButton() {
+     const selectedPlugin = this.getSelectedPlugin();
+     if (selectedPlugin?.helpReference) {
+-      const titleLabel = this.translate("yasr.plugin_control.plugin_documentation.link.tooltip", [
++      const titleLabel = this.translationService.translate("yasr.plugin_control.plugin_documentation.link.tooltip", [
+         { key: "pluginName", value: selectedPlugin.label || this.getSelectedPluginName() },
+       ]);
+       this.documentationLink.href = selectedPlugin.helpReference;
+@@ -449,7 +461,7 @@
+       removeClass(this.documentationLink, "disabled");
+     } else {
+       addClass(this.documentationLink, "disabled");
+-      this.documentationLink.title = this.translate("yasr.plugin_control.missing_help.link.tooltip");
++      this.documentationLink.title = this.translationService.translate("yasr.plugin_control.missing_help.link.tooltip");
+     }
+   }
+ 
+@@ -463,11 +475,15 @@
+       if (plugin && !plugin.hideFromSelection) {
+         let button = this.pluginSelectorsEl.querySelector(".select_" + pluginName);
+         if (button) {
+-          const name = this.translate(`yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase());
++          const name = this.translationService.translate(
++            `yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase()
++          );
+           button.setAttribute("title", name);
+           button.setAttribute(
+             "aria-label",
+-            this.translate("yasr.plugin_control.shows_view.btn.aria_label", [{ key: "name", value: name }])
++            this.translationService.translate("yasr.plugin_control.shows_view.btn.aria_label", [
++              { key: "name", value: name },
++            ])
+           );
+           let nameEl = button.querySelector("span");
+           if (nameEl) {
+@@ -490,7 +506,7 @@
+           return;
+         }
+       }
+-      this.downloadBtn.title = this.translate("yasr.plugin_control.disabled.btn.tooltip");
++      this.downloadBtn.title = this.translationService.translate("yasr.plugin_control.disabled.btn.tooltip");
+       addClass(this.downloadBtn, "disabled");
+     }
+   }
+@@ -633,9 +649,9 @@
+   defaultPlugin: string;
+ 
+   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
+-  translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  translationService: TranslationService;
+   externalPluginsConfigurations?: Map<string, any>;
+-
++  downloadAsOptions?: { labelKey: string; value: any }[];
+   /**
+    * Custom renderers for errors.
+    * Allow multiple to be able to add new custom renderers without having to
+@@ -658,6 +674,7 @@
+ import * as YasrPluginResponse from "./plugins/response";
+ import * as YasrPluginError from "./plugins/error";
+ import { ExtendedTable } from "./plugins/extended-table/extended-table";
++import { TranslationService } from "@triply/yasgui-utils";
+ 
+ Yasr.registerPlugin("table", YasrPluginTable.default as any);
+ Yasr.registerPlugin("boolean", YasrPluginBoolean.default as any);
+Index: Yasgui/packages/yasr/src/plugins/boolean/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/boolean/index.ts b/Yasgui/packages/yasr/src/plugins/boolean/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -6,6 +6,7 @@
+ require("./index.scss");
+ export interface PluginConfig {}
+ import { drawSvgStringAsElement } from "@triply/yasgui-utils";
++import { TranslationService } from "@triply/yasgui-utils";
+ const cross =
+   '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="30" height="30" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve"><g><path d="M83.288,88.13c-2.114,2.112-5.575,2.112-7.689,0L53.659,66.188c-2.114-2.112-5.573-2.112-7.687,0L24.251,87.907 c-2.113,2.114-5.571,2.114-7.686,0l-4.693-4.691c-2.114-2.114-2.114-5.573,0-7.688l21.719-21.721c2.113-2.114,2.113-5.573,0-7.686 L11.872,24.4c-2.114-2.113-2.114-5.571,0-7.686l4.842-4.842c2.113-2.114,5.571-2.114,7.686,0L46.12,33.591 c2.114,2.114,5.572,2.114,7.688,0l21.721-21.719c2.114-2.114,5.573-2.114,7.687,0l4.695,4.695c2.111,2.113,2.111,5.571-0.003,7.686 L66.188,45.973c-2.112,2.114-2.112,5.573,0,7.686L88.13,75.602c2.112,2.111,2.112,5.572,0,7.687L83.288,88.13z"/></g></svg>';
+ const check =
+@@ -15,10 +16,10 @@
+   private yasr: Yasr;
+   public priority = 10;
+   hideFromSelection = true;
+-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  private readonly translationService: TranslationService;
+   constructor(yasr: Yasr) {
+     this.yasr = yasr;
+-    this.translate = this.yasr.config.translate;
++    this.translationService = this.yasr.config.translationService;
+   }
+   draw() {
+     const el = document.createElement("div");
+@@ -28,8 +29,8 @@
+     el.appendChild(drawSvgStringAsElement(boolVal ? check : cross));
+     const textEl = document.createElement("span");
+     textEl.textContent = boolVal
+-      ? this.translate("yasr.boolean.alert.true")
+-      : this.translate("yasr.boolean.alert.false");
++      ? this.translationService.translate("yasr.boolean.alert.true")
++      : this.translationService.translate("yasr.boolean.alert.false");
+     el.appendChild(textEl);
+ 
+     this.yasr.resultsEl.appendChild(el);
+Index: Yasgui/packages/yasr/src/plugins/error/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/error/index.ts b/Yasgui/packages/yasr/src/plugins/error/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/error/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/plugins/error/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -4,14 +4,15 @@
+ import { Plugin } from "../";
+ import Yasr from "../../";
+ import { addClass } from "@triply/yasgui-utils";
++import { TranslationService } from "@triply/yasgui-utils";
+ require("./index.scss");
+ 
+ export default class Error implements Plugin<never> {
+   private yasr: Yasr;
+-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  private readonly translationService: TranslationService;
+   constructor(yasr: Yasr) {
+     this.yasr = yasr;
+-    this.translate = this.yasr.config.translate;
++    this.translationService = this.yasr.config.translationService;
+   }
+   canHandleResults() {
+     return !!this.yasr.results && !!this.yasr.results.getError();
+@@ -22,31 +23,35 @@
+     tryBtn.rel = "noopener noreferrer";
+     tryBtn.target = "_blank";
+     tryBtn.className = "yasr_tryQuery";
+-    tryBtn.textContent = this.translate("yasr.plugin.error.new_window.btn.label");
++    tryBtn.textContent = this.translationService.translate("yasr.plugin.error.new_window.btn.label");
+     return tryBtn;
+   }
+   private getCorsMessage() {
+     const corsEl = document.createElement("div");
+     corsEl.className = "redOutline";
+     const mainMsg = document.createElement("p");
+-    mainMsg.textContent = this.translate("yasr.plugin.error.no_response_possible_reason.error.label");
++    mainMsg.textContent = this.translationService.translate(
++      "yasr.plugin.error.no_response_possible_reason.error.label"
++    );
+     corsEl.appendChild(mainMsg);
+ 
+     const list = document.createElement("ul");
+     const incorrectEndpoint = document.createElement("li");
+-    incorrectEndpoint.textContent = this.translate("yasr.plugin.error.incorrect_endpoint.error.label");
++    incorrectEndpoint.textContent = this.translationService.translate(
++      "yasr.plugin.error.incorrect_endpoint.error.label"
++    );
+     list.appendChild(incorrectEndpoint);
+ 
+     const endpointDown = document.createElement("li");
+-    endpointDown.textContent = this.translate("yasr.plugin.error.endpoint_down.error.label");
++    endpointDown.textContent = this.translationService.translate("yasr.plugin.error.endpoint_down.error.label");
+     list.appendChild(endpointDown);
+ 
+     const cors = document.createElement("li");
+     const firstPart = document.createElement("span");
+-    firstPart.textContent = this.translate("yasr.plugin.error.endpoint_not_accessible.error.label");
++    firstPart.textContent = this.translationService.translate("yasr.plugin.error.endpoint_not_accessible.error.label");
+     cors.appendChild(firstPart);
+     const secondPart = document.createElement("a");
+-    secondPart.textContent = this.translate("yasr.plugin.error.cors_enabled.link.label");
++    secondPart.textContent = this.translationService.translate("yasr.plugin.error.cors_enabled.link.label");
+     secondPart.href = "http://enable-cors.org/";
+     secondPart.target = "_blank";
+     secondPart.rel = "noopener noreferrer";
+Index: Yasgui/packages/yasr/src/plugins/response/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/response/index.ts b/Yasgui/packages/yasr/src/plugins/response/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -19,6 +19,7 @@
+ import * as faAlignIcon from "@fortawesome/free-solid-svg-icons/faAlignLeft";
+ import { DeepReadonly } from "ts-essentials";
+ import * as imgs from "../../imgs";
++import { TranslationService } from "@triply/yasgui-utils";
+ 
+ export interface PluginConfig {
+   maxLines: number;
+@@ -31,11 +32,11 @@
+   private config: DeepReadonly<PluginConfig>;
+   private overLay: HTMLDivElement | undefined;
+   private cm: CodeMirror.Editor | undefined;
+-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  private readonly translationService: TranslationService;
+   constructor(yasr: Yasr) {
+     this.yasr = yasr;
+     this.config = Response.defaults;
+-    this.translate = yasr.config.translate;
++    this.translationService = yasr.config.translationService;
+     if (yasr.config.plugins["response"] && yasr.config.plugins["response"].dynamicConfig) {
+       this.config = {
+         ...this.config,
+@@ -65,7 +66,7 @@
+       },
+       filename: `${filename || "queryResults"}${extension ? "." + extension : ""}`,
+       contentType: contentType ? contentType : "text/plain",
+-      title: this.translate("yasr.plugin.response.download_result.btn.tooltip"),
++      title: this.translationService.translate("yasr.plugin.response.download_result.btn.tooltip"),
+     };
+   }
+   draw(persistentConfig: PluginConfig) {
+@@ -129,18 +130,18 @@
+     addClass(overlayContent, "overlay_content");
+ 
+     const showMoreButton = document.createElement("button");
+-    showMoreButton.title = this.translate("yasr.plugin.response.show_all.btn.label");
++    showMoreButton.title = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
+     addClass(showMoreButton, "yasr_btn", "overlay_btn");
+-    showMoreButton.textContent = this.translate("yasr.plugin.response.show_all.btn.label");
++    showMoreButton.textContent = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
+     showMoreButton.addEventListener("click", () => this.showMore());
+     overlayContent.append(showMoreButton);
+ 
+     const downloadButton = document.createElement("button");
+-    downloadButton.title = this.translate("yasr.plugin.response.download_result.btn.tooltip");
++    downloadButton.title = this.translationService.translate("yasr.plugin.response.download_result.btn.tooltip");
+     addClass(downloadButton, "yasr_btn", "overlay_btn");
+ 
+     const text = document.createElement("span");
+-    text.innerText = this.translate("yasr.plugin.response.download_result.btn.label");
++    text.innerText = this.translationService.translate("yasr.plugin.response.download_result.btn.label");
+     downloadButton.appendChild(text);
+     downloadButton.appendChild(drawSvgStringAsElement(imgs.download));
+     downloadButton.addEventListener("click", () => this.yasr.download());
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+@@ -1,6 +1,8 @@
+ /**
+  * Make sure not to include any deps from our main index file. That way, we can easily publish the plugin as standalone build
+  */
++import { TranslationService } from "@triply/yasgui-utils";
++
+ require("./index.scss");
+ require("datatables.net-dt/css/jquery.dataTables.css");
+ require("datatables.net");
+@@ -61,14 +63,14 @@
+   public helpReference = "https://triply.cc/docs/yasgui#table";
+   public label = "Table";
+   public priority = 10;
+-  private readonly translate: (key: string, _parameters?: Record<string, string>[]) => string;
++  private readonly translationService: TranslationService;
+   public getIcon() {
+     return drawSvgStringAsElement(drawFontAwesomeIconAsSvg(faTableIcon));
+   }
+   constructor(yasr: Yasr) {
+     this.yasr = yasr;
+     //TODO read options from constructor
+-    this.translate = this.yasr.config.translate;
++    this.translationService = this.yasr.config.translationService;
+     this.config = Table.defaults;
+   }
+   public static defaults: PluginConfig = {
+@@ -208,12 +210,12 @@
+       data: rows,
+       columns: columns,
+       language: {
+-        info: this.translate("yasr.plugin.table.data_tables.info.result_info"),
++        info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
+         paginate: {
+-          first: this.translate("yasr.plugin.table.data_tables.paginate.first"),
+-          last: this.translate("yasr.plugin.table.data_tables.paginate.last"),
+-          next: this.translate("yasr.plugin.table.data_tables.paginate.next"),
+-          previous: this.translate("yasr.plugin.table.data_tables.paginate.previous"),
++          first: this.translationService.translate("yasr.plugin.table.data_tables.paginate.first"),
++          last: this.translationService.translate("yasr.plugin.table.data_tables.paginate.last"),
++          next: this.translationService.translate("yasr.plugin.table.data_tables.paginate.next"),
++          previous: this.translationService.translate("yasr.plugin.table.data_tables.paginate.previous"),
+         },
+       },
+     };
+@@ -328,7 +330,7 @@
+     const toggleWrapper = document.createElement("div");
+     const switchComponent = document.createElement("label");
+     const textComponent = document.createElement("span");
+-    textComponent.innerText = this.translate("yasr.plugin.table.simple_view.checkbox.label");
++    textComponent.innerText = this.translationService.translate("yasr.plugin.table.simple_view.checkbox.label");
+     addClass(textComponent, "label");
+     switchComponent.appendChild(textComponent);
+     addClass(switchComponent, "switch");
+@@ -344,7 +346,7 @@
+     const ellipseToggleWrapper = document.createElement("div");
+     const ellipseSwitchComponent = document.createElement("label");
+     const ellipseTextComponent = document.createElement("span");
+-    ellipseTextComponent.innerText = this.translate("yasr.plugin.table.ellipse.checkbox.label");
++    ellipseTextComponent.innerText = this.translationService.translate("yasr.plugin.table.ellipse.checkbox.label");
+     addClass(ellipseTextComponent, "label");
+     ellipseSwitchComponent.appendChild(ellipseTextComponent);
+     addClass(ellipseSwitchComponent, "switch");
+@@ -359,7 +361,7 @@
+     // Create table filter
+     this.tableFilterField = document.createElement("input");
+     this.tableFilterField.className = "tableFilter";
+-    let filterQueryLabel = this.translate("yasr.plugin.table.table_filter.input.placeholder");
++    let filterQueryLabel = this.translationService.translate("yasr.plugin.table.table_filter.input.placeholder");
+     this.tableFilterField.placeholder = filterQueryLabel;
+     this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
+     this.tableControls.appendChild(this.tableFilterField);
+@@ -371,7 +373,7 @@
+ 
+     // Create label for page size element
+     const pageSizerLabel = document.createElement("span");
+-    pageSizerLabel.textContent = this.translate("yasr.plugin.table.page_size.dropdown.label");
++    pageSizerLabel.textContent = this.translationService.translate("yasr.plugin.table.page_size.dropdown.label");
+     pageSizerLabel.className = "pageSizerLabel";
+     pageSizerWrapper.appendChild(pageSizerLabel);
+ 
+@@ -399,7 +401,7 @@
+     return {
+       getData: () => this.yasr.results?.asCsv() || "",
+       contentType: "text/csv",
+-      title: this.translate("yasr.plugin.table.download_result.btn.label"),
++      title: this.translationService.translate("yasr.plugin.table.download_result.btn.label"),
+       filename: `${filename || "queryResults"}.csv`,
+     } as DownloadInfo;
+   }
