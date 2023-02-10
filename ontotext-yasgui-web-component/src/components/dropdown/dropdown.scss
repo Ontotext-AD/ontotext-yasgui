@@ -1,6 +1,6 @@
 @import 'src/css/variables';
 
-.ontotext-yasgui-dropdown {
+.ontotext-dropdown {
   background-color: $color-ontotext-orange;
   display: inline-block;
 
@@ -20,7 +20,7 @@
     color: $color-onto-grey;
   }
 
-  .ontotext-yasgui-dropdown-menu-item {
+  .ontotext-dropdown-menu-item {
     font-size: 1.2em;
     font-weight: 400;
     padding: 0.2em 0.5em;
@@ -30,7 +30,7 @@
     background-color: $color-ontotext-orange;
   }
 
-  .ontotext-yasgui-dropdown-menu-item:hover {
+  .ontotext-dropdown-menu-item:hover {
     cursor: pointer;
     background-color: $color-ontotext-orange-dark;
   }
@@ -39,14 +39,14 @@
     cursor: pointer;
   }
 
-  .ontotext-yasgui-dropdown-menu {
+  .ontotext-dropdown-menu {
     position: absolute;
     margin: 0;
     padding: 0;
     z-index: 1000;
   }
 
-  .ontotext-yasgui-dropdown-menu.closed {
+  .ontotext-dropdown-menu.closed {
     display: none;
   }
 }

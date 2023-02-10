@@ -27,13 +27,13 @@
 
 ### Depends on
 
-- [ontotext-yasgui-dropdown](../dropdown)
+- [ontotext-dropdown](../dropdown)
 
 ### Graph
 ```mermaid
 graph TD;
-  ontotext-yasgui-download-as --> ontotext-yasgui-dropdown
-  style ontotext-yasgui-download-as fill:#f9f,stroke:#333,stroke-width:4px
+  ontotext-download-as --> ontotext-dropdown
+  style ontotext-download-as fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

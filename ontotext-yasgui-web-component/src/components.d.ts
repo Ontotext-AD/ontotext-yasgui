@@ -9,14 +9,14 @@ import { ServiceFactory } from "./services/service-factory";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { CopyLinkDialogConfig, CopyLinkObserver } from "./components/copy-link-dialog/copy-link-dialog";
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
-import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
-import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
-import { NotificationMessage, QueryEvent, QueryResponseEvent } from "./models/event";
-import { OutputEvent } from "./models/output-events/output-event";
 import { TranslationService } from "./services/translation.service";
 import { DropdownOption } from "./models/dropdown-option";
 import { InternalDownloadAsEvent } from "./models/internal-events/internal-download-as-event";
 import { InternalDropdownValueSelectedEvent } from "./models/internal-events/internal-dropdown-value-selected-event";
+import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
+import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
+import { NotificationMessage, QueryEvent, QueryResponseEvent } from "./models/event";
+import { OutputEvent } from "./models/output-events/output-event";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     interface ConfirmationDialog {
@@ -39,6 +39,18 @@ export namespace Components {
     }
     interface OntotextDialogWebComponent {
         "config": DialogConfig;
+    }
+    interface OntotextDownloadAs {
+        "items": DropdownOption[];
+        "nameLabelKey": string;
+        "pluginName": string;
+        "query": string;
+        "translationService": TranslationService;
+    }
+    interface OntotextDropdown {
+        "items": DropdownOption[];
+        "nameLabelKey": string;
+        "translationService": TranslationService;
     }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -92,18 +104,6 @@ export namespace Components {
          */
         "setQuery": (query: string) => Promise<void>;
     }
-    interface OntotextYasguiDownloadAs {
-        "items": DropdownOption[];
-        "nameLabelKey": string;
-        "pluginName": string;
-        "query": string;
-        "translationService": TranslationService;
-    }
-    interface OntotextYasguiDropdown {
-        "items": DropdownOption[];
-        "nameLabelKey": string;
-        "translationService": TranslationService;
-    }
     interface SaveQueryDialog {
         /**
           * Input holding the saved query data if available. This data is used to initialize the form.
@@ -132,17 +132,17 @@ export interface CopyResourceLinkDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCopyResourceLinkDialogElement;
 }
+export interface OntotextDownloadAsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLOntotextDownloadAsElement;
+}
+export interface OntotextDropdownCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLOntotextDropdownElement;
+}
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextYasguiElement;
-}
-export interface OntotextYasguiDownloadAsCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLOntotextYasguiDownloadAsElement;
-}
-export interface OntotextYasguiDropdownCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLOntotextYasguiDropdownElement;
 }
 export interface SaveQueryDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -187,6 +187,18 @@ declare global {
         prototype: HTMLOntotextDialogWebComponentElement;
         new (): HTMLOntotextDialogWebComponentElement;
     };
+    interface HTMLOntotextDownloadAsElement extends Components.OntotextDownloadAs, HTMLStencilElement {
+    }
+    var HTMLOntotextDownloadAsElement: {
+        prototype: HTMLOntotextDownloadAsElement;
+        new (): HTMLOntotextDownloadAsElement;
+    };
+    interface HTMLOntotextDropdownElement extends Components.OntotextDropdown, HTMLStencilElement {
+    }
+    var HTMLOntotextDropdownElement: {
+        prototype: HTMLOntotextDropdownElement;
+        new (): HTMLOntotextDropdownElement;
+    };
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
      * configure and extend the library without potentially breaking the component clients.
@@ -208,18 +220,6 @@ declare global {
     var HTMLOntotextYasguiElement: {
         prototype: HTMLOntotextYasguiElement;
         new (): HTMLOntotextYasguiElement;
-    };
-    interface HTMLOntotextYasguiDownloadAsElement extends Components.OntotextYasguiDownloadAs, HTMLStencilElement {
-    }
-    var HTMLOntotextYasguiDownloadAsElement: {
-        prototype: HTMLOntotextYasguiDownloadAsElement;
-        new (): HTMLOntotextYasguiDownloadAsElement;
-    };
-    interface HTMLOntotextYasguiDropdownElement extends Components.OntotextYasguiDropdown, HTMLStencilElement {
-    }
-    var HTMLOntotextYasguiDropdownElement: {
-        prototype: HTMLOntotextYasguiDropdownElement;
-        new (): HTMLOntotextYasguiDropdownElement;
     };
     interface HTMLSaveQueryDialogElement extends Components.SaveQueryDialog, HTMLStencilElement {
     }
@@ -251,9 +251,9 @@ declare global {
         "copy-resource-link-button": HTMLCopyResourceLinkButtonElement;
         "copy-resource-link-dialog": HTMLCopyResourceLinkDialogElement;
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
+        "ontotext-download-as": HTMLOntotextDownloadAsElement;
+        "ontotext-dropdown": HTMLOntotextDropdownElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
-        "ontotext-yasgui-download-as": HTMLOntotextYasguiDownloadAsElement;
-        "ontotext-yasgui-dropdown": HTMLOntotextYasguiDropdownElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
         "share-query-dialog": HTMLShareQueryDialogElement;
@@ -297,6 +297,20 @@ declare namespace LocalJSX {
     }
     interface OntotextDialogWebComponent {
         "config"?: DialogConfig;
+    }
+    interface OntotextDownloadAs {
+        "items"?: DropdownOption[];
+        "nameLabelKey"?: string;
+        "onInternalDownloadAsEvent"?: (event: OntotextDownloadAsCustomEvent<InternalDownloadAsEvent>) => void;
+        "pluginName"?: string;
+        "query"?: string;
+        "translationService"?: TranslationService;
+    }
+    interface OntotextDropdown {
+        "items"?: DropdownOption[];
+        "nameLabelKey"?: string;
+        "onValueChanged"?: (event: OntotextDropdownCustomEvent<InternalDropdownValueSelectedEvent>) => void;
+        "translationService"?: TranslationService;
     }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -372,20 +386,6 @@ declare namespace LocalJSX {
          */
         "savedQueryConfig"?: SavedQueryConfig;
     }
-    interface OntotextYasguiDownloadAs {
-        "items"?: DropdownOption[];
-        "nameLabelKey"?: string;
-        "onInternalDownloadAsEvent"?: (event: OntotextYasguiDownloadAsCustomEvent<InternalDownloadAsEvent>) => void;
-        "pluginName"?: string;
-        "query"?: string;
-        "translationService"?: TranslationService;
-    }
-    interface OntotextYasguiDropdown {
-        "items"?: DropdownOption[];
-        "nameLabelKey"?: string;
-        "onValueChanged"?: (event: OntotextYasguiDropdownCustomEvent<InternalDropdownValueSelectedEvent>) => void;
-        "translationService"?: TranslationService;
-    }
     interface SaveQueryDialog {
         /**
           * Input holding the saved query data if available. This data is used to initialize the form.
@@ -451,9 +451,9 @@ declare namespace LocalJSX {
         "copy-resource-link-button": CopyResourceLinkButton;
         "copy-resource-link-dialog": CopyResourceLinkDialog;
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
+        "ontotext-download-as": OntotextDownloadAs;
+        "ontotext-dropdown": OntotextDropdown;
         "ontotext-yasgui": OntotextYasgui;
-        "ontotext-yasgui-download-as": OntotextYasguiDownloadAs;
-        "ontotext-yasgui-dropdown": OntotextYasguiDropdown;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
         "share-query-dialog": ShareQueryDialog;
@@ -469,6 +469,8 @@ declare module "@stencil/core" {
             "copy-resource-link-button": LocalJSX.CopyResourceLinkButton & JSXBase.HTMLAttributes<HTMLCopyResourceLinkButtonElement>;
             "copy-resource-link-dialog": LocalJSX.CopyResourceLinkDialog & JSXBase.HTMLAttributes<HTMLCopyResourceLinkDialogElement>;
             "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
+            "ontotext-download-as": LocalJSX.OntotextDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextDownloadAsElement>;
+            "ontotext-dropdown": LocalJSX.OntotextDropdown & JSXBase.HTMLAttributes<HTMLOntotextDropdownElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to
              * configure and extend the library without potentially breaking the component clients.
@@ -486,8 +488,6 @@ declare module "@stencil/core" {
              * yasgui can be tweaked using the values from the configuration.
              */
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
-            "ontotext-yasgui-download-as": LocalJSX.OntotextYasguiDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextYasguiDownloadAsElement>;
-            "ontotext-yasgui-dropdown": LocalJSX.OntotextYasguiDropdown & JSXBase.HTMLAttributes<HTMLOntotextYasguiDropdownElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "saved-queries-popup": LocalJSX.SavedQueriesPopup & JSXBase.HTMLAttributes<HTMLSavedQueriesPopupElement>;
             "share-query-dialog": LocalJSX.ShareQueryDialog & JSXBase.HTMLAttributes<HTMLShareQueryDialogElement>;

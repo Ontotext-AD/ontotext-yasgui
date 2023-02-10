@@ -7,7 +7,7 @@ export class DownloadAsPageSteps {
   }
 
   static getDownloadAsDropdown() {
-    return YasguiSteps.getYasgui().find('ontotext-yasgui-download-as');
+    return YasguiSteps.getYasgui().find('ontotext-download-as');
   }
 
   static openDownloadAsDropdown() {
@@ -15,11 +15,11 @@ export class DownloadAsPageSteps {
   }
 
   static getDownloadAsOption(label: string) {
-    return DownloadAsPageSteps.getDownloadAsDropdown().find(`.ontotext-yasgui-dropdown-menu-item:contains(${label})`)
+    return DownloadAsPageSteps.getDownloadAsDropdown().find(`.ontotext-dropdown-menu-item:contains(${label})`)
   }
 
   static getDownloadAsOptions() {
-    return DownloadAsPageSteps.getDownloadAsDropdown().find('.ontotext-yasgui-dropdown-menu-item');
+    return DownloadAsPageSteps.getDownloadAsDropdown().find('.ontotext-dropdown-menu-item');
   }
 
   static getCsvDownloadOption() {

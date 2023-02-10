@@ -4,7 +4,7 @@ import {DropdownOption} from '../../models/dropdown-option';
 import {InternalDropdownValueSelectedEvent} from '../../models/internal-events/internal-dropdown-value-selected-event';
 
 @Component({
-  tag: 'ontotext-yasgui-dropdown',
+  tag: 'ontotext-dropdown',
   styleUrl: 'dropdown.scss',
   shadow: false,
 })
@@ -29,15 +29,15 @@ export class Dropdown {
 
   render() {
     return (
-      <div class="ontotext-yasgui-dropdown">
+      <div class="ontotext-dropdown">
         <button class={`ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}`}
                 onClick={() => this.toggleComponent()}>
           {this.translationService.translate(this.nameLabelKey)}
         </button>
 
-        <ul class={`ontotext-yasgui-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
+        <ul class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
           {this.items && this.items.map(item =>
-            <li class='ontotext-yasgui-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
+            <li class='ontotext-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
               {this.translationService.translate(item.labelKey)}
             </li>)}
         </ul>
