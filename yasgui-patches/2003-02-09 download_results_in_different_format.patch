@@ -1,4 +1,4 @@
-Subject: [PATCH] GDB-7891: Download results in different format
+Subject: [PATCH] - Refactoring translation. Old implementation used translation function set through configuration, now this function is replaced with TranslationService instance. - overrides drawPluginSelectors function of yasr. This function is called once per tab when plugin button is created. New implementation calls original one as it is, and after it finish creates an instance of "Download as" dropdown and add it to the list plugins elements. - overrides updatePluginSelectorNames. This function is called every time when yasr have to be re-rendered. The new implementation calls old one and after that updates properties of created dropdown.
 ---
 Index: Yasgui/packages/utils/src/index.ts
 IDEA additional info:
@@ -6,8 +6,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
---- a/Yasgui/packages/utils/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/utils/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/utils/src/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/utils/src/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -57,3 +57,18 @@
    if (typeof valueOrFn === "function") return (valueOrFn as any)(arg);
    return valueOrFn;
@@ -33,8 +33,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
---- a/Yasgui/packages/yasgui/src/Tab.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -354,7 +354,7 @@
      if (!this.yasqeWrapperEl) {
        throw new Error("Expected a wrapper element before instantiating yasqe");
@@ -64,8 +64,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasgui/src/TabContextMenu.ts b/Yasgui/packages/yasgui/src/TabContextMenu.ts
---- a/Yasgui/packages/yasgui/src/TabContextMenu.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasgui/src/TabContextMenu.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasgui/src/TabContextMenu.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasgui/src/TabContextMenu.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -41,21 +41,31 @@
      const dropDownList = document.createElement("ul");
      addClass(dropDownList, "context-menu-list");
@@ -110,8 +110,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
---- a/Yasgui/packages/yasgui/src/TabElements.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasgui/src/TabElements.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasgui/src/TabElements.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasgui/src/TabElements.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -1,6 +1,7 @@
  import Yasgui from "./";
  import TabContextMenu from "./TabContextMenu";
@@ -158,8 +158,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasgui/src/TabPanel.ts b/Yasgui/packages/yasgui/src/TabPanel.ts
---- a/Yasgui/packages/yasgui/src/TabPanel.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasgui/src/TabPanel.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasgui/src/TabPanel.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasgui/src/TabPanel.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -3,6 +3,7 @@
  import Tab from "./Tab";
  import { RequestConfig } from "@triply/yasqe";
@@ -354,8 +354,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasgui/src/defaults.ts b/Yasgui/packages/yasgui/src/defaults.ts
---- a/Yasgui/packages/yasgui/src/defaults.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasgui/src/defaults.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -2,10 +2,11 @@
  import Yasr from "@triply/yasr";
  import { default as Yasqe } from "@triply/yasqe";
@@ -375,8 +375,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
---- a/Yasgui/packages/yasgui/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasgui/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -10,6 +10,7 @@
  import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
  import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
@@ -418,8 +418,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasqe/src/autocompleters/index.ts b/Yasgui/packages/yasqe/src/autocompleters/index.ts
---- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -129,7 +129,7 @@
      if (!this.config.autoShow) {
        this.yasqe.showNotification(
@@ -453,8 +453,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
---- a/Yasgui/packages/yasqe/src/defaults.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -6,15 +6,14 @@
   */
  import { default as Yasqe, Config, PlainRequestConfig } from "./";
@@ -479,8 +479,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
---- a/Yasgui/packages/yasqe/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasqe/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -1,3 +1,5 @@
 +import { TranslationService } from "@triply/yasgui-utils";
 +
@@ -594,8 +594,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
---- a/Yasgui/packages/yasr/src/defaults.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -1,7 +1,8 @@
  import { Config } from "./";
 +import { TranslationService } from "@triply/yasgui-utils";
@@ -612,8 +612,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
---- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -1,5 +1,6 @@
  import Yasr, { Config } from "@triply/yasr";
 -import { addClass, removeClass } from "@triply/yasgui-utils";
@@ -664,7 +664,7 @@ diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/sr
 +  }
 +
 +  private createDownloadAsElement(): HTMLElement {
-+    const element = document.createElement("ontotext-yasgui-download-as");
++    const element = document.createElement("ontotext-download-as");
 +    const downloadAsComponent = this.toDownloadAs(element);
 +    if (downloadAsComponent) {
 +      downloadAsComponent.translationService = this.translationService;
@@ -839,8 +839,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
---- a/Yasgui/packages/yasr/src/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -47,7 +47,7 @@
    private drawnPlugin: string | undefined;
    private selectedPlugin: string | undefined;
@@ -1034,8 +1034,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/plugins/boolean/index.ts b/Yasgui/packages/yasr/src/plugins/boolean/index.ts
---- a/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -6,6 +6,7 @@
  require("./index.scss");
  export interface PluginConfig {}
@@ -1074,8 +1074,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/plugins/error/index.ts b/Yasgui/packages/yasr/src/plugins/error/index.ts
---- a/Yasgui/packages/yasr/src/plugins/error/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/plugins/error/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/plugins/error/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/plugins/error/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -4,14 +4,15 @@
  import { Plugin } from "../";
  import Yasr from "../../";
@@ -1142,8 +1142,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/plugins/response/index.ts b/Yasgui/packages/yasr/src/plugins/response/index.ts
---- a/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -19,6 +19,7 @@
  import * as faAlignIcon from "@fortawesome/free-solid-svg-icons/faAlignLeft";
  import { DeepReadonly } from "ts-essentials";
@@ -1204,8 +1204,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
---- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision a11a697e1657db0d2d225831b1c1909da0f962f8)
-+++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 1d9246f7dac6bcf9aa4ac5d633d4502e57af4f39)
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 33a50fd32d2b1eb3dfc6088828165e80993e2a9f)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 7e13e7f71d5bc2dd36babd13dc456be50b36f6da)
 @@ -1,6 +1,8 @@
  /**
   * Make sure not to include any deps from our main index file. That way, we can easily publish the plugin as standalone build
