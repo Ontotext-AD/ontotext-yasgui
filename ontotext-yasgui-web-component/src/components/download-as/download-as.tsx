@@ -5,7 +5,7 @@ import {InternalDownloadAsEvent} from '../../models/internal-events/internal-dow
 import {InternalDropdownValueSelectedEvent} from '../../models/internal-events/internal-dropdown-value-selected-event';
 
 @Component({
-  tag: 'ontotext-yasgui-download-as',
+  tag: 'ontotext-download-as',
   shadow: false,
 })
 export class DownloadAs {
@@ -26,12 +26,12 @@ export class DownloadAs {
 
   render() {
     return (
-      <ontotext-yasgui-dropdown
+      <ontotext-dropdown
         onValueChanged={ev => this.onInternalDropdownValueSelected(ev)}
         translationService={this.translationService}
         nameLabelKey={this.nameLabelKey ? this.nameLabelKey : DownloadAs.DEFAULT_NAME_LABEL}
         items={this.items}>
-      </ontotext-yasgui-dropdown>
+      </ontotext-dropdown>
     );
   }
 }

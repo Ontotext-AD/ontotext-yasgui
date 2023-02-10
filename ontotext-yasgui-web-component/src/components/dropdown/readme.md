@@ -25,13 +25,13 @@
 
 ### Used by
 
- - [ontotext-yasgui-download-as](../download-as)
+ - [ontotext-download-as](../download-as)
 
 ### Graph
 ```mermaid
 graph TD;
-  ontotext-yasgui-download-as --> ontotext-yasgui-dropdown
-  style ontotext-yasgui-dropdown fill:#f9f,stroke:#333,stroke-width:4px
+  ontotext-download-as --> ontotext-dropdown
+  style ontotext-dropdown fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------
