@@ -4,7 +4,7 @@
   background-color: $color-ontotext-orange;
   display: inline-block;
 
-  .ontotext-yasgui-dropdown-button {
+  .ontotext-dropdown-button {
     font-size: 1.2em;
     font-weight: 400;
     padding: 0.1em 0.5em;
@@ -15,7 +15,7 @@
     background-color: $color-ontotext-orange;
   }
 
-  .ontotext-yasgui-dropdown-button.icon-caret-down-after:after, .ontotext-yasgui-dropdown-button.icon-caret-up-after:after {
+  .ontotext-dropdown-button.icon-caret-down-after:after, .ontotext-dropdown-button.icon-caret-up-after:after {
     padding-left: 10px;
     color: $color-onto-grey;
   }
@@ -35,7 +35,7 @@
     background-color: $color-ontotext-orange-dark;
   }
 
-  .ontotext-yasgui-dropdown-button:hover {
+  .ontotext-dropdown-button:hover {
     cursor: pointer;
   }
 
