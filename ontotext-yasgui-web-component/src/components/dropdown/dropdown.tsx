@@ -30,7 +30,7 @@ export class Dropdown {
   render() {
     return (
       <div class="ontotext-yasgui-dropdown">
-        <button class={`ontotext-yasgui-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}`}
+        <button class={`ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}`}
                 onClick={() => this.toggleComponent()}>
           {this.translationService.translate(this.nameLabelKey)}
         </button>

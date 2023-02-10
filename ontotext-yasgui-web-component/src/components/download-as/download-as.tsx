@@ -6,7 +6,6 @@ import {InternalDropdownValueSelectedEvent} from '../../models/internal-events/i
 
 @Component({
   tag: 'ontotext-yasgui-download-as',
-  styleUrl: 'download-as.scss',
   shadow: false,
 })
 export class DownloadAs {
