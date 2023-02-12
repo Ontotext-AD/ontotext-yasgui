@@ -46,6 +46,7 @@ export interface Tab {
   emit(event: "autocompletionShown", tab: Tab, widget: any): boolean;
   on(event: "autocompletionClose", listener: (tab: Tab) => void): this;
   emit(event: "autocompletionClose", tab: Tab): boolean;
+  emit(event: "yasqeReady", tab: Tab, yasqe: Yasqe | undefined): boolean;
 }
 export class Tab extends EventEmitter {
   private persistentJson: PersistedJson;
@@ -105,6 +106,7 @@ export class Tab extends EventEmitter {
     this.rootEl.appendChild(wrapper);
     this.initControlbar();
     this.initYasqe();
+    this.emit("yasqeReady", this, this.getYasqe());
     this.initYasr();
     this.yasgui._setPanel(this.persistentJson.id, this.rootEl);
   }

@@ -82,6 +82,7 @@ export interface Yasgui {
   emit(event: "autocompletionShown", instance: Yasgui, tab: Tab, widget: any): boolean;
   on(event: "autocompletionClose", listener: (instance: Yasgui, tab: Tab) => void): this;
   emit(event: "autocompletionClose", instance: Yasgui, tab: Tab): boolean;
+  emit(event: "yasqeReady", tab: Tab, yasqe: Yasqe | undefined): boolean;
 }
 export class Yasgui extends EventEmitter {
   public rootEl: HTMLDivElement;
@@ -146,6 +147,7 @@ export class Yasgui extends EventEmitter {
       const newTab = this.addTab(true);
       this.persistentConfig.setActive(newTab.getId());
       this.emit("tabChange", this, newTab);
+      this.emit("yasqeReady", newTab, newTab.getYasqe());
     } else {
       for (const tabId of tabs) {
         this._tabs[tabId] = new Tab(this, this.persistentConfig.getTab(tabId));
@@ -210,6 +212,7 @@ export class Yasgui extends EventEmitter {
       this._tabs[tabId] = new Tab(this, Tab.getDefaults(this));
     }
     this._tabs[tabId].show();
+    this.emit("yasqeReady", this._tabs[tabId], this._tabs[tabId].getYasqe());
     for (const otherTabId in this._tabs) {
       if (otherTabId !== tabId) this._tabs[otherTabId].hide();
     }
@@ -277,7 +280,11 @@ export class Yasgui extends EventEmitter {
   }
 
   private _registerTabListeners(tab: Tab) {
-    tab.on("change", (tab) => this.emit("tabChange", this, tab));
+    tab.on("change", (tab) => {
+        this.emit("tabChange", this, tab);
+        this.emit("yasqeReady", tab, tab.getYasqe());
+    });
+    tab.on("yasqeReady", (tab, yasqe) => this.emit("yasqeReady", tab, yasqe));
     tab.on("query", (tab) => this.emit("query", this, tab));
     tab.on("queryAbort", (tab) => this.emit("queryAbort", this, tab));
     tab.on("queryResponse", (tab) => this.emit("queryResponse", this, tab));
@@ -335,6 +342,7 @@ export class Yasgui extends EventEmitter {
     if (setActive) {
       this.persistentConfig.setActive(tabId);
       this._tabs[tabId].show();
+      this.emit("yasqeReady", this._tabs[tabId], this._tabs[tabId].getYasqe());
     }
     return this._tabs[tabId];
   }
