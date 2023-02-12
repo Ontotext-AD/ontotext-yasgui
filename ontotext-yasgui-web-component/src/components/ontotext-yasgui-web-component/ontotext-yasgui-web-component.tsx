@@ -26,8 +26,6 @@ import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
 import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
 
-type EventArguments = [Yasqe, Request, number];
-
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
  * configure and extend the library without potentially breaking the component clients.
@@ -82,7 +80,14 @@ export class OntotextYasguiWebComponent {
     this.yasguiConfigurationBuilder = this.serviceFactory.get(YasguiConfigurationBuilder);
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
+
+    // Bound to the instance functions because we want to refer them when unsubscribing events
+    this.onQueryBound = this.onQuery.bind(this);
+    this.onQueryResponseBound = this.onQueryResponse.bind(this);
   }
+
+  onQueryBound: (yasqe: Yasqe, tab) => void;
+  onQueryResponseBound: (_instance: Yasqe, _req: Request, duration: number) => void;
 
   /**
    * The host html element for the yasgui.
@@ -505,8 +510,9 @@ export class OntotextYasguiWebComponent {
     VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation);
   }
 
-  private onQuery(): void {
-    this.queryExecuted.emit({query: this.ontotextYasgui.getQuery()});
+  // @ts-ignore
+  private onQuery(yasqe, request): void {
+    this.queryExecuted.emit({query: yasqe.getValue(), request: request});
     this.showQueryProgress = true;
   }
 
@@ -628,7 +634,23 @@ export class OntotextYasguiWebComponent {
     });
   }
 
-  private destroy() {
+  private initYasguiEventHandlers(yasqe: any): void {
+    yasqe.off('query', this.onQueryBound);
+    yasqe.on('query', this.onQueryBound);
+    yasqe.off('queryResponse', this.onQueryResponseBound);
+    yasqe.on('queryResponse', this.onQueryResponseBound);
+  }
+
+  private afterInit(): void {
+    // Configure the web component
+    this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+    // Register any needed event handlers
+    this.ontotextYasgui.getInstance().on('yasqeReady', (_tab: any, yasqe: any) => {
+      this.initYasguiEventHandlers(yasqe);
+    });
+  }
+
+  private destroy(): void {
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
       const yasgui = HtmlElementsUtil.getOntotextYasgui(this.hostElement);
@@ -649,7 +671,6 @@ export class OntotextYasguiWebComponent {
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
       // * Build a yasgui instance using the configuration
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-
       this.afterInit();
     }
   }
@@ -663,16 +684,7 @@ export class OntotextYasguiWebComponent {
     }
   }
 
-  private afterInit(): void {
-    // * Configure the web component
-    this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
-
-    // * Register any needed event handler
-    this.ontotextYasgui.registerYasqeEventListener('query', this.onQuery.bind(this));
-    this.ontotextYasgui.registerYasqeEventListener('queryResponse', (args: EventArguments) => this.onQueryResponse(args[0], args[1], args[2]));
-  }
-
-  componentWillLoad() {
+  componentWillLoad(): void {
     // @ts-ignore
     if (!window.Yasgui) {
       // Load the yasgui script once.
@@ -681,7 +693,7 @@ export class OntotextYasguiWebComponent {
     this.translationService.setLanguage(this.language);
   }
 
-  componentDidLoad() {
+  componentDidLoad(): void {
     // As documentation said "The @Watch() decorator does not fire when a component initially loads."
     // yasgui instance will not be created if we set configuration when component is loaded, which
     // will be most case of the component usage. So we call the method manually when component is
@@ -689,7 +701,7 @@ export class OntotextYasguiWebComponent {
     this.init(this.config);
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     this.destroy();
   }
 

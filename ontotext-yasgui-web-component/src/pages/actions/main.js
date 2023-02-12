@@ -9,6 +9,10 @@ let textAreaElement = document.createElement('textarea');
 textAreaElement.id = 'saveQueryPayload';
 document.body.appendChild(textAreaElement);
 
+let eventLog = document.createElement('textarea');
+eventLog.id = 'eventLog';
+document.body.appendChild(eventLog);
+
 const urlString = window.location;
 const url = new URL(urlString);
 const query = url.searchParams.get('query');
@@ -172,16 +176,13 @@ function openNewQueryAction() {
   });
 }
 
-ontoElement.addEventListener("queryExecuted", () => {
-  const div = document.createElement('div');
-  div.innerHTML = '<div id="queryRan">Query was Executed</div>';
-  document.body.appendChild(div);
+ontoElement.addEventListener("queryExecuted", (data) => {
+  console.log('%cqueryexecuted', 'background-color:red', data);
+  eventLog.value = eventLog.value + '\n' + JSON.stringify(data.detail.query);
 });
 
-ontoElement.addEventListener('queryResponse', () => {
-  const div = document.createElement('div');
-  div.innerHTML = '<div id="queryResponse">Query response</div>';
-  document.body.appendChild(div);
+ontoElement.addEventListener('queryResponse', (data) => {
+  // eventLog.value = eventLog.value + '\n' + JSON.stringify(data.details);
 });
 
 const savedQueryStorage = {
@@ -247,7 +248,6 @@ ontoElement.addEventListener('shareSavedQuery', (event) => {
 });
 
 ontoElement.addEventListener('shareQuery', (event) => {
-  console.log('shareQuery', event);
   let selectedQuery = event.detail;
   const url = [location.protocol, '//', location.host, location.pathname];
   url.push(...[

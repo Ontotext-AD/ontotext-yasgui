@@ -1,5 +1,6 @@
 export type QueryEvent = {
   query: string;
+  request: any;
 }
 
 export type QueryResponseEvent = {

@@ -27,8 +27,8 @@ export class YasqeSteps {
         return cy.get('.yasqe_queryButton');
     }
 
-    static executeQuery() {
-        this.getExecuteQueryButton().click();
+    static executeQuery(index = 0) {
+        this.getExecuteQueryButton().eq(index).click();
     }
 
     static getCreateSavedQueryButton() {

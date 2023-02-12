@@ -84,6 +84,14 @@ export class OntotextYasgui {
     this.yasgui = yasgui;
   }
 
+  getTab(tabId?: string) {
+    return this.getInstance().getTab(tabId);
+  }
+
+  getTabId(): string {
+    return this.getInstance().getTab().getId();
+  }
+
   getTabName(): string {
     return this.getInstance().getTab().getName();
   }
