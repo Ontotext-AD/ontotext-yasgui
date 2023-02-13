@@ -1,0 +1,25 @@
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 9092b60b7cd1abbd8a189a392f093cf0627492ad)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision d40bf17710f9cb5f67bf1116937f07058425eed7)
+@@ -332,6 +332,7 @@
+      */
+     if (this.config.showQueryButton) {
+       this.queryBtn = document.createElement("button");
++      this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
+       addClass(this.queryBtn, "yasqe_queryButton");
+ 
+       /**
+@@ -339,7 +340,7 @@
+        */
+       const queryEl = drawSvgStringAsElement(imgs.query);
+       addClass(queryEl, "queryIcon");
+-      this.queryBtn.appendChild(queryEl);
++      // this.queryBtn.appendChild(queryEl);
+ 
+       const warningIcon = drawSvgStringAsElement(imgs.warning);
+       addClass(warningIcon, "warningIcon");
