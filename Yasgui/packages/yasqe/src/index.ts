@@ -332,6 +332,7 @@ export class Yasqe extends CodeMirror {
      */
     if (this.config.showQueryButton) {
       this.queryBtn = document.createElement("button");
+      this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
       addClass(this.queryBtn, "yasqe_queryButton");
 
       /**
@@ -339,7 +340,7 @@ export class Yasqe extends CodeMirror {
        */
       const queryEl = drawSvgStringAsElement(imgs.query);
       addClass(queryEl, "queryIcon");
-      this.queryBtn.appendChild(queryEl);
+      // this.queryBtn.appendChild(queryEl);
 
       const warningIcon = drawSvgStringAsElement(imgs.warning);
       addClass(warningIcon, "warningIcon");
