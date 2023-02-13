@@ -511,8 +511,12 @@ export class OntotextYasguiWebComponent {
   }
 
   // @ts-ignore
-  private onQuery(yasqe, request): void {
-    this.queryExecuted.emit({query: yasqe.getValue(), request: request});
+  private onQuery(yasqe: Yasqe, request: Request): void {
+    this.queryExecuted.emit({
+      request: request,
+      query: yasqe.getValue(),
+      queryMode: this.ontotextYasgui.getQueryMode()
+    });
     this.showQueryProgress = true;
   }
 
