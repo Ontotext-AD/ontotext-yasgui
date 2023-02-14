@@ -29,7 +29,7 @@
   "yasgui.toolbar.orientation.btn.tooltip.switch_orientation_horizontal": "Basculer vers horizontal voir",
   "yasgui.toolbar.orientation.btn.tooltip.switch_orientation_vertical": "Basculer vers verticale voir",
   "yasqe.action.curl.btn.label": "CURL",
-  "yasqe.action.run_query.btn.label": "Run",
+  "yasqe.action.run_query.btn.label": "Exécuter",
   "yasqe.action.run_query.btn.tooltip": "Run query",
   "yasqe.action.share.btn.tooltip": "Partagez votre requête",
   "yasqe.action.share.error.general_message": "An error has occurred",
