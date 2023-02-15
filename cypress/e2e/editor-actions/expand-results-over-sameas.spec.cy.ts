@@ -13,25 +13,25 @@ describe('Expand results over sameAs', () => {
   it('Should be able to toggle the include inferred button state', () => {
     // When I open the editor
     // Then I expect that expand results should be enabled by default
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.attr', 'title', 'Expand results over owl:sameAs: ON');
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-sameas-on');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
     // When I click the expand results action
     YasqeSteps.expandResultsOverSameAs();
     // Then I expect it to be disabled
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.attr', 'title', 'Expand results over owl:sameAs: OFF');
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-sameas-off');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: OFF');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-off');
   });
 
   it('Should be able to configure the default value of the expand results config', () => {
     // When I open the editor
     // Then I expect that expand results should be enabled by default
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.attr', 'title', 'Expand results over owl:sameAs: ON');
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-sameas-on');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
     // When I change the default of the expand results config
-    ActionsPageSteps.toggleExpandResults();
+    YasqeSteps.toggleExpandResults();
     // Then I expect that the expand results value would be changed
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.attr', 'title', 'Expand results over owl:sameAs: OFF');
-    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-sameas-off');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: OFF');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-off');
   });
 
   it('Should toggle sameAs parameter in requests', () => {
@@ -57,8 +57,8 @@ describe('Expand results over sameAs', () => {
     // Then I expect that sameAs=false and inferred=false will be sent with the request
     cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=false&sameAs=false');
     // And expand results action should be disabled when inferred is disabled
-    YasqeSteps.getExpandResultsOverSameAsButton().should('be.disabled');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'disabled');
     YasqeSteps.includeInferredStatements();
-    YasqeSteps.getExpandResultsOverSameAsButton().should('be.enabled');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('not.have.class', 'disabled');
   });
 });

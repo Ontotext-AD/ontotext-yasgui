@@ -127,46 +127,6 @@ function hideIncludeInferredAction() {
   };
 }
 
-function toggleIncludeInferred() {
-  const infer = ontoElement.config.infer === undefined ? false : !ontoElement.config.infer
-  ontoElement.config = {
-    ...ontoElement.config,
-    infer: infer
-  };
-}
-
-function showExpandResultsAction() {
-  ontoElement.config = {
-    ...ontoElement.config,
-    yasqeActionButtons: [
-      {
-        name: 'expandResultsOverSameAs',
-        visible: true
-      }
-    ]
-  };
-}
-
-function hideExpandResultsAction() {
-  ontoElement.config = {
-    ...ontoElement.config,
-    yasqeActionButtons: [
-      {
-        name: 'expandResultsOverSameAs',
-        visible: false
-      }
-    ]
-  };
-}
-
-function toggleExpandResults() {
-  const sameAs = ontoElement.config.sameAs === undefined ? false : !ontoElement.config.sameAs
-  ontoElement.config = {
-    ...ontoElement.config,
-    sameAs: sameAs
-  };
-}
-
 function openNewQueryAction() {
   ontoElement.openTab({
     queryName: 'Clear graph',

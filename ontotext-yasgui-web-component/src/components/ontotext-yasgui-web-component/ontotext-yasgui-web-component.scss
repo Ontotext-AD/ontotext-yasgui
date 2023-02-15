@@ -60,6 +60,11 @@
           }
         }
       }
+
+      .yasqe_expandResultsButton.disabled {
+        cursor: not-allowed;
+        opacity: .65;
+      }
     }
   }
 

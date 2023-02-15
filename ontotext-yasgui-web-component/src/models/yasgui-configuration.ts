@@ -74,7 +74,6 @@ export interface YasguiConfiguration {
       endpoint?: string;
       method?: 'POST' | 'GET';
       headers?: () => Record<string, string>;
-      args?: Array<{ name: string; value: string }> | any;
     },
     copyEndpointOnNewTab?: boolean;
     persistenceLabelConfig?: string;
@@ -190,8 +189,7 @@ export const defaultYasqeConfig: Record<string, any> = {
     {name: 'createSavedQuery', visible: true},
     {name: 'showSavedQueries', visible: true},
     {name: 'shareQuery', visible: true},
-    {name: 'includeInferredStatements', visible: true},
-    {name: 'expandResultsOverSameAs', visible: true}
+    {name: 'includeInferredStatements', visible: true}
   ],
   prefixes: {
 

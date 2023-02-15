@@ -58,12 +58,6 @@ export class YasguiConfigurationBuilder {
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
-    config.yasguiConfig.requestConfig.args = () => {
-      return [
-        {name: 'infer', value: config.yasguiConfig.infer + ''},
-        {name: 'sameAs', value: config.yasguiConfig.sameAs + ''}
-      ];
-    }
     config.yasguiConfig.tabName = externalConfiguration.defaultTabName ||  this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
@@ -85,8 +79,9 @@ export class YasguiConfigurationBuilder {
       externalConfiguration.yasqeActionButtons !== undefined && externalConfiguration.yasqeActionButtons.length ?
         externalConfiguration.yasqeActionButtons : defaultYasqeConfig.yasqeActionButtons;
 
-    config.yasguiConfig.yasqe.pluginButtons = () => {
-      return this.getYasqeActionButtons(config, defaultYasqeConfig);
+    //@ts-ignore
+    config.yasguiConfig.yasqe.pluginButtons = (yasqe?: Yasqe) => {
+      return this.getYasqeActionButtons(config, defaultYasqeConfig, yasqe);
     };
     config.yasguiConfig.yasqe.showQueryButton = true;
 
@@ -97,7 +92,8 @@ export class YasguiConfigurationBuilder {
     return config;
   }
 
-  getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>): HTMLElement[] {
+  // @ts-ignore
+  getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>, yasqe: Yasqe): HTMLElement[] {
     const visibleDefaultButtonDefinitions: YasqeActionButtonDefinition[] = defaultYasqeConfig.yasqeActionButtons
       .filter((buttonDefinition: YasqeActionButtonDefinition) => buttonDefinition.visible);
 
@@ -119,8 +115,16 @@ export class YasguiConfigurationBuilder {
       });
     }
 
-    return visibleDefaultButtonDefinitions.map(
-      (buttonDefinition) => (this.yasqeService.getButtonInstance(buttonDefinition, yasguiConfiguration))
+    const buttons = []
+    visibleDefaultButtonDefinitions.forEach((buttonDefinition) => {
+        const buttonInstances = (this.yasqeService.getButtonInstance(buttonDefinition, yasguiConfiguration, yasqe));
+        if (Array.isArray(buttonInstances)) {
+          buttons.push(...buttonInstances);
+        } else {
+          buttons.push(buttonInstances);
+        }
+      }
     );
+    return buttons;
   }
 }

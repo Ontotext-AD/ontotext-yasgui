@@ -20,12 +20,6 @@ export class YasguiBuilder {
     return new OntotextYasgui(yasgui, yasguiConfiguration);
   }
 
-  rebuild(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration, ontotextYasgui: OntotextYasgui): void {
-    const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
-    ontotextYasgui.setInstance(yasgui);
-    ontotextYasgui.setConfig(yasguiConfiguration);
-  }
-
   private createYasguiInstance(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration): any {
     // @ts-ignore
     return new Yasgui(HtmlElementsUtil.getOntotextYasgui(hostElement), yasguiConfiguration.yasguiConfig);

@@ -184,9 +184,7 @@ Currently, the action buttons which are plugged in:
 "shareQuery" - obtains a shareable link for the current query and opens a copy link dialog  
 ```
 ```
-"includeInferredStatements" - include infered data in sparql results
-```
-```
+"includeInferredStatements" - include infered data in sparql results. When is true additional action button "expandResultsOverSameAs" will be added.
 "expandResultsOverSameAs" - expand results over owl:sameAs
 ```
 

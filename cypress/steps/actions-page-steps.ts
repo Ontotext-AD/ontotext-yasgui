@@ -1,3 +1,5 @@
+import {YasqeSteps} from './yasqe-steps';
+
 export default class ActionsPageSteps {
   static visit() {
     cy.visit('/pages/actions');
@@ -41,22 +43,6 @@ export default class ActionsPageSteps {
 
   static showIncludeInferredStatementsAction() {
     cy.get('#showIncludeInferredAction').click();
-  }
-
-  static toggleIncludeInferred() {
-    cy.get('#toggleIncludeInferred').click();
-  }
-
-  static hideExpandResultsAction() {
-    cy.get('#hideExpandResultsAction').click();
-  }
-
-  static showExpandResultsAction() {
-    cy.get('#showExpandResultsAction').click();
-  }
-
-  static toggleExpandResults() {
-    cy.get('#toggleExpandResults').click();
   }
 
   static getEventLog() {

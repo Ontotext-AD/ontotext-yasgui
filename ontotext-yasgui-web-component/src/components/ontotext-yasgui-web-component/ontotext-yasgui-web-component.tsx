@@ -1,5 +1,5 @@
 import {Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
-import {defaultOntotextYasguiConfig, defaultYasguiConfig, RenderingMode, YasguiConfiguration} from '../../models/yasgui-configuration';
+import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -442,29 +442,6 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Handles event for changing the include inferred statements config.
-   */
-  @Listen('internalIncludeInferredEvent')
-  includeInferredEventHandler() {
-    const yasguiConfiguration: YasguiConfiguration = this.ontotextYasgui.getConfig();
-    const infer = yasguiConfiguration.yasguiConfig.infer === undefined ? defaultYasguiConfig.infer : yasguiConfiguration.yasguiConfig.infer;
-    yasguiConfiguration.yasguiConfig.infer = !infer;
-    yasguiConfiguration.yasguiConfig.sameAs = !infer;
-    this.rebuild(yasguiConfiguration);
-  }
-
-  /**
-   * Handles event for changing the include inferred statements config.
-   */
-  @Listen('internalExpandResultsOverSameAsEvent')
-  expandResultsOverSameAsEventHandler() {
-    const yasguiConfiguration: YasguiConfiguration = this.ontotextYasgui.getConfig();
-    const sameAs = yasguiConfiguration.yasguiConfig.sameAs === undefined ? defaultYasguiConfig.sameAs : yasguiConfiguration.yasguiConfig.sameAs;
-    yasguiConfiguration.yasguiConfig.sameAs = !sameAs;
-    this.rebuild(yasguiConfiguration);
-  }
-
-  /**
    * Handler for the event fired when the copy link dialog is closed without copying the link to the clipboard.
    */
   @Listen('internalResourceLinkDialogClosedEvent')
@@ -675,15 +652,6 @@ export class OntotextYasguiWebComponent {
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
       // * Build a yasgui instance using the configuration
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-      this.afterInit();
-    }
-  }
-
-  private rebuild(yasguiConfiguration: YasguiConfiguration): void {
-    this.destroy();
-    // @ts-ignore
-    if (window.Yasgui) {
-      this.yasguiBuilder.rebuild(this.hostElement, yasguiConfiguration, this.ontotextYasgui);
       this.afterInit();
     }
   }

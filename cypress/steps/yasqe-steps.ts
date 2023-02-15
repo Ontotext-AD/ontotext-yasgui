@@ -23,6 +23,14 @@ export class YasqeSteps {
         return this.getActionButtons().eq(index);
     }
 
+    static getActionButtonsTooltips() {
+      return this.getActionsToolbar().find('yasgui-tooltip');
+    }
+
+    static getActionButtonTooltip(index: number) {
+      return this.getActionButtonsTooltips().eq(index);
+    }
+
     static getExecuteQueryButton() {
         return cy.get('.yasqe_queryButton');
     }
@@ -206,7 +214,19 @@ export class YasqeSteps {
       return cy.get('.yasqe_expandResultsButton');
     }
 
+  static getExpandResultsOverSameAsButtonTooltip() {
+    return cy.get('.yasqe_expandResultsButton').parent();
+  }
+
     static expandResultsOverSameAs() {
       this.getExpandResultsOverSameAsButton().click();
     }
+
+  static toggleIncludeInferred() {
+    this.getIncludeInferredStatementsButton().click();
+  }
+
+  static toggleExpandResults() {
+    this.getExpandResultsOverSameAsButton().click();
+  }
 }

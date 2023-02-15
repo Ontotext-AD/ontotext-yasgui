@@ -9,10 +9,12 @@
 
 | Property             | Attribute        | Description | Type                 | Default     |
 | -------------------- | ---------------- | ----------- | -------------------- | ----------- |
+| `infer`              | `infer`          |             | `boolean`            | `undefined` |
 | `items`              | --               |             | `DropdownOption[]`   | `undefined` |
 | `nameLabelKey`       | `name-label-key` |             | `string`             | `undefined` |
 | `pluginName`         | `plugin-name`    |             | `string`             | `undefined` |
 | `query`              | `query`          |             | `string`             | `undefined` |
+| `sameAs`             | `same-as`        |             | `boolean`            | `undefined` |
 | `translationService` | --               |             | `TranslationService` | `undefined` |
 
 
