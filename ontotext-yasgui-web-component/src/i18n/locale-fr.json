@@ -31,6 +31,7 @@
   "yasqe.action.curl.btn.label": "CURL",
   "yasqe.action.run_query.btn.label": "Exécuter",
   "yasqe.action.run_query.btn.tooltip": "Run query",
+  "yasqe.action.run_query.btn.disabled.tooltip": "Querying is disabled.",
   "yasqe.action.share.btn.tooltip": "Partagez votre requête",
   "yasqe.action.share.error.general_message": "An error has occurred",
   "yasqe.action.shorten.btn.label": "Raccourcir",

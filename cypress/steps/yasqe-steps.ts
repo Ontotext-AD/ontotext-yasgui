@@ -35,6 +35,10 @@ export class YasqeSteps {
         return cy.get('.yasqe_queryButton');
     }
 
+  static getExecuteQueryButtonTooltip() {
+    return this.getExecuteQueryButton().parent();
+  }
+
     static executeQuery(index = 0) {
         this.getExecuteQueryButton().eq(index).click();
     }

@@ -11,6 +11,7 @@ describe('Execute query action', () => {
 
   it('Should be able to execute a query', () => {
     ActionsPageSteps.visit();
+    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Run query');
     YasqeSteps.getExecuteQueryButton().should('be.visible');
     YasqeSteps.executeQuery();
     YasrSteps.getResults().should('have.length', 36);
