@@ -64,6 +64,9 @@ export class Yasqe extends CodeMirror {
   public persistentConfig: PersistentConfig | undefined;
   public superagent = superagent;
 
+  private infer?: boolean;
+  private sameAs?: boolean;
+
   public readonly translationService: TranslationService;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
@@ -156,6 +159,21 @@ export class Yasqe extends CodeMirror {
     this.updateQueryButton();
   }
 
+  public setInfer(infer: boolean) {
+    this.infer = infer;
+  }
+  public getInfer(): boolean | undefined {
+    return this.infer;
+  }
+
+  public setSameAs(sameAs: boolean) {
+    this.sameAs = sameAs;
+  }
+
+  public getSameAs(): boolean | undefined {
+    return this.sameAs;
+  }
+
   private registerEventListeners() {
     /**
      * Register listeners
@@ -209,7 +227,7 @@ export class Yasqe extends CodeMirror {
     this.getWrapperElement().appendChild(buttons);
 
     if (this.config.pluginButtons) {
-      const pluginButtons = this.config.pluginButtons();
+      const pluginButtons = this.config.pluginButtons(this);
       if (!pluginButtons) return;
       if (Array.isArray(pluginButtons)) {
         for (const button of pluginButtons) {
@@ -1057,7 +1075,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   persistencyExpire: number; //seconds
   showQueryButton: boolean;
   requestConfig: RequestConfig<Yasqe> | ((yasqe: Yasqe) => RequestConfig<Yasqe>);
-  pluginButtons: (() => HTMLElement[] | HTMLElement) | undefined;
+  pluginButtons: ((yasqe: Yasqe) => HTMLElement[] | HTMLElement) | undefined;
   //Addon specific addon ts defs, or missing props from codemirror conf
   highlightSelectionMatches: { showToken?: RegExp; annotateScrollbar?: boolean };
   tabMode: string;
