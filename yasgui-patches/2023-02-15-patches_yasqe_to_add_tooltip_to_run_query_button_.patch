@@ -1,0 +1,58 @@
+Subject: [PATCH] Patches yasqe to add tooltip to run query button. Fixes translation of run query button
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision b1b98bbe5cea22ce1336e74618a46ec2a7a0cb24)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 843859f4518a71f6b3c05f7d5a00ce6cd8096bd5)
+@@ -349,7 +349,10 @@
+      * Draw query btn
+      */
+     if (this.config.showQueryButton) {
++      const runButtonTooltip = document.createElement("yasgui-tooltip");
++      runButtonTooltip.setAttribute("placement", "top");
+       this.queryBtn = document.createElement("button");
++      runButtonTooltip.appendChild(this.queryBtn);
+       this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
+       addClass(this.queryBtn, "yasqe_queryButton");
+ 
+@@ -372,11 +375,8 @@
+           this.query().catch(() => {}); //catch this to avoid unhandled rejection
+         }
+       };
+-      let runQueryLabel = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
+-      this.queryBtn.title = runQueryLabel;
+-      this.queryBtn.setAttribute("aria-label", runQueryLabel);
+ 
+-      buttons.appendChild(this.queryBtn);
++      buttons.appendChild(runButtonTooltip);
+       this.updateQueryButton();
+     }
+   }
+@@ -435,15 +435,19 @@
+     /**
+      * Set query status (valid vs invalid)
+      */
++    let queryButtonTooltip: string;
+     if (this.config.queryingDisabled) {
+       addClass(this.queryBtn, "query_disabled");
+-      this.queryBtn.title = this.config.queryingDisabled;
++      queryButtonTooltip = this.translationService.translate("yasqe.action.run_query.btn.disabled.tooltip");
+     } else {
+       removeClass(this.queryBtn, "query_disabled");
+-      let runQueryLabel = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
+-      this.queryBtn.title = runQueryLabel;
+-      this.queryBtn.setAttribute("aria-label", runQueryLabel);
++      queryButtonTooltip = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
+     }
++
++    this.queryBtn.parentElement?.setAttribute("data-tooltip", queryButtonTooltip);
++    this.queryBtn.parentElement?.setAttribute("aria-label", queryButtonTooltip);
++    this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
++
+     if (!status) {
+       status = this.queryValid ? "valid" : "error";
+     }
