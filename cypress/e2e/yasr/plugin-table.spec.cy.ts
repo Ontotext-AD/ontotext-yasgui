@@ -175,7 +175,7 @@ describe('Plugin: Table', () => {
          YasrSteps.clickCopyLinkDialogCopyButton();
 
          // Then I expect the value from input to be copied into clipboard.
-         YasrSteps.getMessage().contains('{"code":"resource_link_copied_successfully","type":"success","message":"URL copied successfully to clipboard."}');
+         YasrSteps.getMessage().contains('{"TYPE":"notificationMessage","payload":{"code":"resource_link_copied_successfully","messageType":"success","message":"URL copied successfully to clipboard."}}');
       });
    });
 

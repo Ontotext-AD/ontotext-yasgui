@@ -15,7 +15,7 @@ import { InternalDownloadAsEvent } from "./models/internal-events/internal-downl
 import { InternalDropdownValueSelectedEvent } from "./models/internal-events/internal-dropdown-value-selected-event";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
-import { NotificationMessage, QueryEvent, QueryResponseEvent } from "./models/event";
+import { QueryEvent, QueryResponseEvent } from "./models/event";
 import { OutputEvent } from "./models/output-events/output-event";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
@@ -353,10 +353,6 @@ declare namespace LocalJSX {
           * Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
          */
         "onLoadSavedQueries"?: (event: OntotextYasguiCustomEvent<boolean>) => void;
-        /**
-          * Event emitted when there is a message which the client might want to show to the user or handle in some other way.
-         */
-        "onNotify"?: (event: OntotextYasguiCustomEvent<NotificationMessage>) => void;
         /**
           * Event emitter used to send message to the clients of component.
          */
