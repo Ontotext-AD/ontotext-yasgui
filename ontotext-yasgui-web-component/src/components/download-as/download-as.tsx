@@ -17,11 +17,13 @@ export class DownloadAs {
   @Prop() items: DropdownOption[];
   @Prop() pluginName: string;
   @Prop() query: string;
+  @Prop() infer: boolean;
+  @Prop() sameAs: boolean;
 
   @Event({eventName: 'internalDownloadAsEvent'}) downloadAs: EventEmitter<InternalDownloadAsEvent>;
 
   private onInternalDropdownValueSelected(event: CustomEvent<InternalDropdownValueSelectedEvent>) {
-    this.downloadAs.emit(new InternalDownloadAsEvent(event.detail.payload.value, this.pluginName, this.query));
+    this.downloadAs.emit(new InternalDownloadAsEvent(event.detail.payload.value, this.pluginName, this.query, this.infer, this.sameAs));
   }
 
   render() {

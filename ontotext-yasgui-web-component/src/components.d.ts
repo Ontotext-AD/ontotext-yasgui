@@ -41,10 +41,12 @@ export namespace Components {
         "config": DialogConfig;
     }
     interface OntotextDownloadAs {
+        "infer": boolean;
         "items": DropdownOption[];
         "nameLabelKey": string;
         "pluginName": string;
         "query": string;
+        "sameAs": boolean;
         "translationService": TranslationService;
     }
     interface OntotextDropdown {
@@ -299,11 +301,13 @@ declare namespace LocalJSX {
         "config"?: DialogConfig;
     }
     interface OntotextDownloadAs {
+        "infer"?: boolean;
         "items"?: DropdownOption[];
         "nameLabelKey"?: string;
         "onInternalDownloadAsEvent"?: (event: OntotextDownloadAsCustomEvent<InternalDownloadAsEvent>) => void;
         "pluginName"?: string;
         "query"?: string;
+        "sameAs"?: boolean;
         "translationService"?: TranslationService;
     }
     interface OntotextDropdown {

@@ -13,24 +13,24 @@ describe('Include inferred action', () => {
   it('Should be able to toggle the include inferred button state', () => {
     // When I open the editor
     // Then I expect that include inferred statements should be enabled by default
-    YasqeSteps.getActionButton(3).should('have.attr', 'title', 'Include inferred data in results: ON');
+    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
     YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
     // When I click in the include inferred action
     YasqeSteps.includeInferredStatements();
     // Then I expect it to be disabled
-    YasqeSteps.getActionButton(3).should('have.attr', 'title', 'Include inferred data in results: OFF');
+    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: OFF');
     YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-off');
   });
 
   it('Should be able to configure the default value of the infer config', () => {
     // When I open the editor
     // Then I expect that include inferred statements should be enabled by default
-    YasqeSteps.getActionButton(3).should('have.attr', 'title', 'Include inferred data in results: ON');
+    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
     YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
     // When I change the default inferred config
-    ActionsPageSteps.toggleIncludeInferred();
+    YasqeSteps.toggleIncludeInferred();
     // Then I expect that the include inferred value would be changed
-    YasqeSteps.getActionButton(3).should('have.attr', 'title', 'Include inferred data in results: OFF');
+    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: OFF');
     YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-off');
   });
 

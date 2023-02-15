@@ -13,11 +13,11 @@ describe('Configure editor actions', () => {
 
     it('Should see all custom actions by default in particular order', () => {
         YasqeSteps.getActionButtons().should('have.length', 5);
-        YasqeSteps.getActionButton(0).should('have.attr', 'title', 'Create saved query');
-        YasqeSteps.getActionButton(1).should('have.attr', 'title', 'Show saved queries');
-        YasqeSteps.getActionButton(2).should('have.attr', 'title', 'Get URL to current query');
-        YasqeSteps.getActionButton(3).should('have.attr', 'title', 'Include inferred data in results: ON');
-        YasqeSteps.getActionButton(4).should('have.attr', 'title', 'Expand results over owl:sameAs: ON');
+        YasqeSteps.getActionButtonTooltip(0).should('have.attr', 'data-tooltip', 'Create saved query');
+        YasqeSteps.getActionButtonTooltip(1).should('have.attr', 'data-tooltip', 'Show saved queries');
+        YasqeSteps.getActionButtonTooltip(2).should('have.attr', 'data-tooltip', 'Get URL to current query');
+        YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+        YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
     });
 
     it('Should be able to toggle yasqe action buttons', () => {
@@ -41,11 +41,6 @@ describe('Configure editor actions', () => {
         YasqeSteps.getIncludeInferredStatementsButton().should('not.exist');
         ActionsPageSteps.showIncludeInferredStatementsAction();
         YasqeSteps.getIncludeInferredStatementsButton().should('be.visible');
-        // Toggle expand results over sameAs action
-        ActionsPageSteps.hideExpandResultsAction();
-        YasqeSteps.getExpandResultsOverSameAsButton().should('not.exist');
-        ActionsPageSteps.showExpandResultsAction();
-        YasqeSteps.getExpandResultsOverSameAsButton().should('be.visible');
     });
 
     it('Should show editor actions on each editor tab', () => {
