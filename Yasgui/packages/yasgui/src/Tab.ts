@@ -19,6 +19,8 @@ export interface PersistedJson {
   id: string;
   yasqe: {
     value: string;
+    infer?: boolean;
+    sameAs?: boolean;
     editorHeight?: string;
   };
   yasr: {
@@ -381,14 +383,32 @@ export class Tab extends EventEmitter {
     this.yasqe?.destroy();
     this.yasqe = undefined;
   }
+
   handleYasqeBlur = (yasqe: Yasqe) => {
-    this.persistentJson.yasqe.value = yasqe.getValue();
+    this.updatePersistJson(yasqe);
     this.emit("change", this, this.persistentJson);
+  };
+
+  private updatePersistJson = (yasqe: Yasqe) => {
+    this.persistentJson.yasqe.value = yasqe.getValue();
+    if (yasqe.getSameAs() !== undefined) {
+      this.persistentJson.yasqe.sameAs = yasqe.getSameAs();
+    }
+    if (yasqe.getInfer() !== undefined) {
+      this.persistentJson.yasqe.infer = yasqe.getInfer();
+    }
+  };
+  private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
+    return (
+      yasqe.getValue() !== this.persistentJson.yasqe.value ||
+      yasqe.getInfer() !== this.persistentJson.yasqe.infer ||
+      yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs
+    );
   };
   handleYasqeQuery = (yasqe: Yasqe) => {
     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
-    if (yasqe.getValue() !== this.persistentJson.yasqe.value) {
-      this.persistentJson.yasqe.value = yasqe.getValue();
+    if (this.hasPersistenceJsonBeenChanged(yasqe)) {
+      this.updatePersistJson(yasqe);
       this.emit("change", this, this.persistentJson);
     }
     this.emit("query", this);

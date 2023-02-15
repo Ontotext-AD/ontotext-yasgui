@@ -101,6 +101,17 @@ export function getUrlArguments(yasqe: Yasqe, _config: Config["requestConfig"]):
   var queryArg = isFunction(config.queryArgument) ? config.queryArgument(yasqe) : config.queryArgument;
   if (!queryArg) queryArg = yasqe.getQueryMode();
   data[queryArg] = config.adjustQueryBeforeRequest ? config.adjustQueryBeforeRequest(yasqe) : yasqe.getValue();
+
+  const infer = yasqe.getInfer();
+  if (infer !== undefined) {
+    data["infer"] = `${infer}`;
+  }
+
+  const sameAs = yasqe.getSameAs();
+  if (sameAs !== undefined) {
+    data["sameAs"] = `${sameAs}`;
+  }
+
   /**
    * add named graphs to ajax config
    */

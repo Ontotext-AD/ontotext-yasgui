@@ -63,6 +63,15 @@ export class ExtendedYasr extends Yasr {
     }
     element.query = this.yasqe?.getValueWithoutComments();
     element.pluginName = this.getSelectedPluginName();
+
+    const infer = this.yasqe?.getInfer();
+    if (infer !== undefined) {
+      element.infer = infer;
+    }
+    const sameAs = this.yasqe?.getSameAs();
+    if (sameAs !== undefined) {
+      element.sameAs = sameAs;
+    }
     const downloadAsConfiguration = this.getDownloadAsConfiguration();
     if (downloadAsConfiguration) {
       element.items = downloadAsConfiguration.items ? [...downloadAsConfiguration.items] : [];
@@ -266,4 +275,6 @@ interface DownloadAs {
   query: string | undefined;
   pluginName: string;
   items: any[];
+  infer?: boolean;
+  sameAs?: boolean;
 }
