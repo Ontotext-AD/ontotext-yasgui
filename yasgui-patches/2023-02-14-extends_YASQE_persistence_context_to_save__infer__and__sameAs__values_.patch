@@ -1,0 +1,170 @@
+Subject: [PATCH] Extends YASQE persistence context to save "infer" and "sameAs" values.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 6826b08b907e9b16fa107eb51e9420ef036af3d5)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 02eeb6a52ce653a00bf1b0f3638d26450a6ce3ee)
+@@ -19,6 +19,8 @@
+   id: string;
+   yasqe: {
+     value: string;
++    infer?: boolean;
++    sameAs?: boolean;
+     editorHeight?: string;
+   };
+   yasr: {
+@@ -381,14 +383,32 @@
+     this.yasqe?.destroy();
+     this.yasqe = undefined;
+   }
++
+   handleYasqeBlur = (yasqe: Yasqe) => {
+-    this.persistentJson.yasqe.value = yasqe.getValue();
++    this.updatePersistJson(yasqe);
+     this.emit("change", this, this.persistentJson);
+   };
++
++  private updatePersistJson = (yasqe: Yasqe) => {
++    this.persistentJson.yasqe.value = yasqe.getValue();
++    if (yasqe.getSameAs() !== undefined) {
++      this.persistentJson.yasqe.sameAs = yasqe.getSameAs();
++    }
++    if (yasqe.getInfer() !== undefined) {
++      this.persistentJson.yasqe.infer = yasqe.getInfer();
++    }
++  };
++  private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
++    return (
++      yasqe.getValue() !== this.persistentJson.yasqe.value ||
++      yasqe.getInfer() !== this.persistentJson.yasqe.infer ||
++      yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs
++    );
++  };
+   handleYasqeQuery = (yasqe: Yasqe) => {
+     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
+-    if (yasqe.getValue() !== this.persistentJson.yasqe.value) {
+-      this.persistentJson.yasqe.value = yasqe.getValue();
++    if (this.hasPersistenceJsonBeenChanged(yasqe)) {
++      this.updatePersistJson(yasqe);
+       this.emit("change", this, this.persistentJson);
+     }
+     this.emit("query", this);
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 6826b08b907e9b16fa107eb51e9420ef036af3d5)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 02eeb6a52ce653a00bf1b0f3638d26450a6ce3ee)
+@@ -64,6 +64,9 @@
+   public persistentConfig: PersistentConfig | undefined;
+   public superagent = superagent;
+ 
++  private infer?: boolean;
++  private sameAs?: boolean;
++
+   public readonly translationService: TranslationService;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+@@ -156,6 +159,21 @@
+     this.updateQueryButton();
+   }
+ 
++  public setInfer(infer: boolean) {
++    this.infer = infer;
++  }
++  public getInfer(): boolean | undefined {
++    return this.infer;
++  }
++
++  public setSameAs(sameAs: boolean) {
++    this.sameAs = sameAs;
++  }
++
++  public getSameAs(): boolean | undefined {
++    return this.sameAs;
++  }
++
+   private registerEventListeners() {
+     /**
+      * Register listeners
+@@ -209,7 +227,7 @@
+     this.getWrapperElement().appendChild(buttons);
+ 
+     if (this.config.pluginButtons) {
+-      const pluginButtons = this.config.pluginButtons();
++      const pluginButtons = this.config.pluginButtons(this);
+       if (!pluginButtons) return;
+       if (Array.isArray(pluginButtons)) {
+         for (const button of pluginButtons) {
+@@ -1057,7 +1075,7 @@
+   persistencyExpire: number; //seconds
+   showQueryButton: boolean;
+   requestConfig: RequestConfig<Yasqe> | ((yasqe: Yasqe) => RequestConfig<Yasqe>);
+-  pluginButtons: (() => HTMLElement[] | HTMLElement) | undefined;
++  pluginButtons: ((yasqe: Yasqe) => HTMLElement[] | HTMLElement) | undefined;
+   //Addon specific addon ts defs, or missing props from codemirror conf
+   highlightSelectionMatches: { showToken?: RegExp; annotateScrollbar?: boolean };
+   tabMode: string;
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 6826b08b907e9b16fa107eb51e9420ef036af3d5)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision 02eeb6a52ce653a00bf1b0f3638d26450a6ce3ee)
+@@ -101,6 +101,17 @@
+   var queryArg = isFunction(config.queryArgument) ? config.queryArgument(yasqe) : config.queryArgument;
+   if (!queryArg) queryArg = yasqe.getQueryMode();
+   data[queryArg] = config.adjustQueryBeforeRequest ? config.adjustQueryBeforeRequest(yasqe) : yasqe.getValue();
++
++  const infer = yasqe.getInfer();
++  if (infer !== undefined) {
++    data["infer"] = `${infer}`;
++  }
++
++  const sameAs = yasqe.getSameAs();
++  if (sameAs !== undefined) {
++    data["sameAs"] = `${sameAs}`;
++  }
++
+   /**
+    * add named graphs to ajax config
+    */
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 6826b08b907e9b16fa107eb51e9420ef036af3d5)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 02eeb6a52ce653a00bf1b0f3638d26450a6ce3ee)
+@@ -63,6 +63,15 @@
+     }
+     element.query = this.yasqe?.getValueWithoutComments();
+     element.pluginName = this.getSelectedPluginName();
++
++    const infer = this.yasqe?.getInfer();
++    if (infer !== undefined) {
++      element.infer = infer;
++    }
++    const sameAs = this.yasqe?.getSameAs();
++    if (sameAs !== undefined) {
++      element.sameAs = sameAs;
++    }
+     const downloadAsConfiguration = this.getDownloadAsConfiguration();
+     if (downloadAsConfiguration) {
+       element.items = downloadAsConfiguration.items ? [...downloadAsConfiguration.items] : [];
+@@ -266,4 +275,6 @@
+   query: string | undefined;
+   pluginName: string;
+   items: any[];
++  infer?: boolean;
++  sameAs?: boolean;
+ }
