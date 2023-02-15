@@ -6,9 +6,6 @@ import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {
   InternalShowResourceCopyLinkDialogEvent,
   InternalShowSavedQueriesEvent,
-  NotificationMessage,
-  NotificationMessageCode,
-  NotificationMessageType,
   QueryEvent,
   QueryResponseEvent
 } from "../../models/event";
@@ -25,6 +22,7 @@ import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dial
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
 import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
+import {NotificationMessage, NotificationMessageCode, NotificationMessageType} from '../../models/output-events/notification-message';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -160,12 +158,6 @@ export class OntotextYasguiWebComponent {
    * back in order to be displayed.
    */
   @Event() loadSavedQueries: EventEmitter<boolean>;
-
-  /**
-   * Event emitted when there is a message which the client might want to show to the user or handle
-   * in some other way.
-   */
-  @Event() notify: EventEmitter<NotificationMessage>;
 
   /**
    * Event emitted when saved query share link has to be build by the client.
@@ -456,8 +448,7 @@ export class OntotextYasguiWebComponent {
   @Listen('internalResourceLinkCopiedEvent')
   resourceLinkCopiedHandler() {
     const resourceCopiedMessage = this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success');
-    const notificationMessage = new NotificationMessage(NotificationMessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, NotificationMessageType.SUCCESS, resourceCopiedMessage);
-    this.notify.emit(notificationMessage);
+    this.output.emit(new NotificationMessage(NotificationMessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, NotificationMessageType.SUCCESS, resourceCopiedMessage));
     this.showCopyResourceLinkDialog = false;
     this.copiedResourceLink = undefined;
   }

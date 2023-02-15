@@ -16,7 +16,7 @@ ontoElement.config = {
 };
 
 function attachMessageHandler() {
-  ontoElement.addEventListener('notify', (message) => {
+  ontoElement.addEventListener('output', (message) => {
     const div = document.createElement('div');
     div.innerHTML = `<div id="copy-resourc-link-successfully-message">${JSON.stringify(message.detail)}</div>`;
     document.body.appendChild(div);
