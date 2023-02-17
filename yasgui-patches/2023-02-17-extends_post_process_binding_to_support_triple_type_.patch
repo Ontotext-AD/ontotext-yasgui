@@ -1,0 +1,39 @@
+Subject: [PATCH] Extends post process binding to support triple type.
+---
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision 11cf5d9f5071b524e7b3941fd128c6e92a8b8e44)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision c56651354b2c6e45ce6035b32c79d05a5277b62b)
+@@ -46,14 +46,20 @@
+ const applyMustacheToLiterals: Parser.PostProcessBinding = (binding: Parser.Binding) => {
+   for (const lit in binding) {
+     if (binding[lit].type === "uri") continue;
+-    binding[lit].value = binding[lit].value.replace(/{{(.*?)}}/g, (variable) => {
+-      variable = variable.substring(2, variable.length - 2).trim();
+-      if (binding[variable]) {
+-        return binding[variable].value;
+-      } else {
+-        return variable;
+-      }
+-    });
++    //@ts-ignore
++    if (binding[lit].type === "triple") {
++      //@ts-ignore
++      applyMustacheToLiterals(binding[lit].value);
++    } else {
++      binding[lit].value = binding[lit].value.replace(/{{(.*?)}}/g, (variable) => {
++        variable = variable.substring(2, variable.length - 2).trim();
++        if (binding[variable]) {
++          return binding[variable].value;
++        } else {
++          return variable;
++        }
++      });
++    }
+   }
+   return binding;
+ };
