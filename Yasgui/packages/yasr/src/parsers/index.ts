@@ -46,14 +46,20 @@ namespace Parser {
 const applyMustacheToLiterals: Parser.PostProcessBinding = (binding: Parser.Binding) => {
   for (const lit in binding) {
     if (binding[lit].type === "uri") continue;
-    binding[lit].value = binding[lit].value.replace(/{{(.*?)}}/g, (variable) => {
-      variable = variable.substring(2, variable.length - 2).trim();
-      if (binding[variable]) {
-        return binding[variable].value;
-      } else {
-        return variable;
-      }
-    });
+    //@ts-ignore
+    if (binding[lit].type === "triple") {
+      //@ts-ignore
+      applyMustacheToLiterals(binding[lit].value);
+    } else {
+      binding[lit].value = binding[lit].value.replace(/{{(.*?)}}/g, (variable) => {
+        variable = variable.substring(2, variable.length - 2).trim();
+        if (binding[variable]) {
+          return binding[variable].value;
+        } else {
+          return variable;
+        }
+      });
+    }
   }
   return binding;
 };
