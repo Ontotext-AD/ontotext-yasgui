@@ -1,91 +1,105 @@
 export class YasrSteps {
-    static getYasr() {
-        return cy.get('.yasr');
-    }
+  static getYasr() {
+    return cy.get('.yasr');
+  }
 
-    static getResultHeader() {
-        return cy.get('.yasr_header');
-    }
+  static getResultHeader() {
+    return cy.get('.yasr_header');
+  }
 
-    static getErrorHeader() {
-        return cy.get('.errorHeader');
-    }
+  static getErrorHeader() {
+    return cy.get('.errorHeader');
+  }
 
-    static getResults() {
-        return cy.get('.yasr_results tbody').find('tr');
-    }
+  static getResults() {
+    return cy.get('.yasr_results tbody').find('tr');
+  }
 
-    static getResultRow(rowNumber: number) {
-        return this.getResults().eq(rowNumber);
-    }
+  static getResultRow(rowNumber: number) {
+    return this.getResults().eq(rowNumber);
+  }
 
-    static getResultCell(rowNumber: number, cellNumber: number) {
-        return this.getResultRow(rowNumber).find('td').eq(cellNumber);
-    }
+  static getResultCell(rowNumber: number, cellNumber: number) {
+    return this.getResultRow(rowNumber).find('td').eq(cellNumber);
+  }
 
-    static hoverCell(rowNumber: number, cellNumber: number) {
-        this.getResultCell(rowNumber, cellNumber).realHover();
-    }
+  static getTriple(rowNumber: number, tripleNumber: 0 | 1 | 2) {
+    return this.getResultCell(rowNumber, 1).find('.triple-list').find('li').eq(tripleNumber);
+  }
 
-    static showSharedResourceLink(rowNumber: number, cellNumber: number) {
-       return this.getResultCell(rowNumber, cellNumber)
-          .realHover()
-          .find('.resource-copy-link a');
-    }
+  static hoverTripleResource(rowNumber: number, tripleNumber: 0 | 1 | 2) {
+    this.getTriple(rowNumber, tripleNumber).realHover();
+  }
 
-    static getCopyResourceLink(rowNumber: number, cellNumber: number) {
-        return this.getResultCell(rowNumber, cellNumber)
-          .find('.resource-copy-link a');
-    }
+  static getTripleCopyResourceLink(rowNumber: number, tripleNumber: 0 | 1 | 2) {
+    return this.getTriple(rowNumber, tripleNumber)
+      .realHover()
+      .find('.resource-copy-link a');
+  }
 
-    static clickOnCopyResourceLink(rowNumber: number, cellNumber: number) {
-        this.showSharedResourceLink(rowNumber, cellNumber).realClick();
-    }
+  static hoverCell(rowNumber: number, cellNumber: number) {
+    this.getResultCell(rowNumber, cellNumber).realHover();
+  }
 
-    static clickCopyLinkDialogCloseButton() {
-        this.getCopyResourceLinkDialog().find('.close-button').realClick();
-    }
+  static showSharedResourceLink(rowNumber: number, cellNumber: number) {
+    return this.getResultCell(rowNumber, cellNumber)
+      .realHover()
+      .find('.resource-copy-link a');
+  }
 
-    static clickCopyLinkDialogCancelButton() {
-        this.getCopyResourceLinkDialog().find('.cancel-button').realClick();
-    }
+  static getCopyResourceLink(rowNumber: number, cellNumber: number) {
+    return this.getResultCell(rowNumber, cellNumber)
+      .find('.resource-copy-link a');
+  }
 
-    static clickCopyLinkDialogCopyButton() {
-        this.getCopyResourceLinkDialog().find('.copy-button').realClick();
-    }
+  static clickOnCopyResourceLink(rowNumber: number, cellNumber: number) {
+    this.showSharedResourceLink(rowNumber, cellNumber).realClick();
+  }
 
-    static clickOutsideCopyLinkDialog() {
-        cy.get('body').click(0,0).realClick();
-    }
+  static clickCopyLinkDialogCloseButton() {
+    this.getCopyResourceLinkDialog().find('.close-button').realClick();
+  }
 
-    static attachMessageHandler() {
-        cy.get('#attachMessageHandler').realClick();
-    }
+  static clickCopyLinkDialogCancelButton() {
+    this.getCopyResourceLinkDialog().find('.cancel-button').realClick();
+  }
 
-    static getMessage() {
-        return cy.get('#copy-resourc-link-successfully-message');
-    }
+  static clickCopyLinkDialogCopyButton() {
+    this.getCopyResourceLinkDialog().find('.copy-button').realClick();
+  }
 
-    static getCopyResourceLinkDialog() {
-        return cy.get('.copy-resource-link-dialog');
-    }
+  static clickOutsideCopyLinkDialog() {
+    cy.get('body').click(0, 0).realClick();
+  }
 
-    static getCopyResourceLinkInput() {
-       return this.getCopyResourceLinkDialog().find('input');
-    }
+  static attachMessageHandler() {
+    cy.get('#attachMessageHandler').realClick();
+  }
 
-    static getResultFilter() {
-        return cy.get('.tableFilter');
-    }
+  static getMessage() {
+    return cy.get('#copy-resourc-link-successfully-message');
+  }
 
-    static switchToPlugin(pluginName: string) {
-      YasrSteps.getYasr().find(`.select_${pluginName}`).realClick();
+  static getCopyResourceLinkDialog() {
+    return cy.get('.copy-resource-link-dialog');
+  }
 
-    }
+  static getCopyResourceLinkInput() {
+    return this.getCopyResourceLinkDialog().find('input');
+  }
 
-    static switchToExtendedTablePlugin() {
-      YasrSteps.switchToPlugin('extended_table');
-    }
+  static getResultFilter() {
+    return cy.get('.tableFilter');
+  }
+
+  static switchToPlugin(pluginName: string) {
+    YasrSteps.getYasr().find(`.select_${pluginName}`).realClick();
+
+  }
+
+  static switchToExtendedTablePlugin() {
+    YasrSteps.switchToPlugin('extended_table');
+  }
 
   static switchToRawResponsePlugin() {
     YasrSteps.switchToPlugin('response');

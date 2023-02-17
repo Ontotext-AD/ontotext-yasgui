@@ -73,10 +73,21 @@
       background-color: $color-onto-green;
     }
 
+    .dataTable td, .dataTable thead tr th {
+      border: 1px solid #eceeef;
+    }
+
     table.dataTable thead th:hover {
       background-color: $color-onto-green;
     }
 
+    table.dataTable tr.odd {
+      background-color: #f9f9f9;
+    }
+
+    table.dataTable tr.even {
+      background-color: white;
+    }
     .yasr_header > * {
       margin-left: 0;
     }

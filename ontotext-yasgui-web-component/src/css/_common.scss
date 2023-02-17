@@ -85,13 +85,44 @@
     display: none;
   }
 
-  table tbody td:hover .resource-copy-link {
+  /** Shows copy resource link when mouse is over a table row with resources of type uri */
+  table tbody td:hover:not(:has(.triple-cell)) div.uri-cell .resource-copy-link {
     display: inline;
     float: right;
     padding-right: 10px;
   }
 
+  /** Shows copy resource link when mouse is over a link with resource of type triple */
+  table tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link {
+    display: inline;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  table tbody td div.triple-cell ul.triple-list li {
+    list-style-type: none;
+  }
+
+  table.dataTable td div.triple-cell .triple-link {
+    color: #770088;
+    text-decoration: none;
+  }
+
   .uri-link:hover {
     text-decoration: none;
+  }
+
+  .nonUri {
+    color: #003663;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0
+  }
+
+  table.dataTable td div.triple-cell .triple-close:hover .resource-copy-link {
+    display: inline;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
