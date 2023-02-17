@@ -501,15 +501,15 @@
       {
         "s" : {
           "type" : "uri",
-          "value" : "http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine"
+          "value" : "https://swapi.co/resource/planet/56"
         },
         "p" : {
           "type" : "uri",
-          "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          "value" : "http://www.w3.org/2000/01/rdf-schema#label"
         },
         "o" : {
-          "type" : "uri",
-          "value" : "http://www.w3.org/2002/07/owl#Ontology"
+          "type" : "literal",
+          "value" : "Skako"
         }
       }
     ]

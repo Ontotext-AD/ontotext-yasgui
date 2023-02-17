@@ -1,4 +1,22 @@
+import {HtmlUtil} from '../utils/html-util';
+import {HtmlBuilder} from '../utils/html-builder';
+
 export class YasrService {
+
+  static readonly SHACL_GRAPH_URL = "http:%2F%2Frdf4j.org%2Fschema%2Frdf4j%23SHACLShapeGraph";
+  static readonly SHACL_GRAPH_URL_CONTEXT_PARAMETER: '&context=http%3A%2F%2Frdf4j.org%2Fschema%2Frdf4j%23SHACLShapeGraph"';
+  static readonly XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema#";
+  static readonly XML_SCHEMA_NS_STRING = YasrService.XML_SCHEMA_NS + 'string';
+  /**
+   * Escaped <<
+   */
+  static readonly ESCAPED_HTML_DOUBLE_LOWER = '&lt;&lt;';
+
+  /**
+   * Escaped >>
+   *
+   */
+  static readonly ESCAPED_HTML_DOUBLE_GREATER = '&gt;&gt';
 
   static disablePlugin(name: string) {
     this.setPluginEnable(name, false);
@@ -29,7 +47,7 @@ export class YasrService {
   private static addExtendedTableConfiguration(pluginsConfigurations: Map<string, any>, externalPluginsConfigurations: Map<string, any>) {
     const externalExtendedTableConfig = externalPluginsConfigurations ? externalPluginsConfigurations['extended_table'] : null;
     const configuration = {
-      getCellContent: YasrService.getCellContent.bind(this),
+      getCellContent: YasrService.getCellContent().bind(this),
       downloadAsConfig: {
         nameLabelKey: externalExtendedTableConfig?.downloadAsConfig?.nameLabelKey || defaultExtendedTableConfiguration.nameLabelKey,
         items: externalExtendedTableConfig?.downloadAsConfig?.items || defaultExtendedTableConfiguration.items
@@ -50,25 +68,43 @@ export class YasrService {
   }
 
   // @ts-ignore
-  private static getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
-    const isShacl = window.location.href.includes("http:%2F%2Frdf4j.org%2Fschema%2Frdf4j%23SHACLShapeGraph");
-    if ('uri' === binding.type) {
-      return YasrService.getUriCellContent(binding, isShacl, prefixes);
-    } else if ('triple' === binding.type) {
-      return YasrService.getTripleCellContent(binding, prefixes);
+  private static getCellContent(): (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => string {
+    const context = new CellContentContext();
+    //@ts-ignore
+    return (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => {
+      context.setPrefixes(prefixes);
+      return this.toCellContent(binding, context)
     }
-    return YasrService.getLiteralCellContent(binding, prefixes);
   }
 
   // @ts-ignore
-  private static getUriCellContent(binding: Parser.BindingValue, isShacl = false, prefixes?: { [label: string]: string }): string {
+  private static toCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
+    if ('uri' === binding.type) {
+      return YasrService.getUriCellContent(binding, context);
+    } else if ('triple' === binding.type) {
+      return YasrService.getTripleCellContent(binding, context);
+    }
+    return YasrService.getLiteralCellContent(binding);
+  }
 
+  // @ts-ignore
+  private static getUriCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
     const uri = binding.value;
-    const ontotext = window.location.origin + '/resource/';
-    let localHref;
-    let content;
+    if (!context.hasElement(uri)) {
+      const content = new HtmlBuilder()
+        .openDiv('uri-cell')
+        .addLink(uri, 'uri-link', this.getHref(uri, context), context.getShortUri(uri))
+        .addCopyResourceLinkButton(uri)
+        .closeDiv()
+        .build();
+      context.setElement(uri, content);
+    }
+    return context.getElement(uri);
+  }
 
-    if (uri.indexOf(ontotext) === 0 && uri.length > ontotext.length) {
+  private static getHref(uri: string, context: CellContentContext): string {
+    let localHref;
+    if (context.isOntotextResource(uri)) {
       // URI is within our URL space, use it as is
       localHref = uri;
     } else {
@@ -76,55 +112,91 @@ export class YasrService {
       localHref = "resource?uri=" + encodeURIComponent(uri);
     }
 
-    if (isShacl) {
-      localHref += ("&context=" + encodeURIComponent("http://rdf4j.org/schema/rdf4j#SHACLShapeGraph"));
+    if (context.isShacl()) {
+      localHref += YasrService.SHACL_GRAPH_URL_CONTEXT_PARAMETER;
     }
 
-    localHref = localHref.replace(/'/g, "&#39;");
-    const shortUri = YasrService.uriToPrefixWithLocalName(uri, prefixes);
-    content = `<a title="${uri}" class="uri-link" href="${localHref}">${shortUri}</a>`;
-    content += `<copy-resource-link-button uri=${uri} classes="resource-copy-link"></copy-resource-link-button>`;
-    return `<div>${content}</div>`;
+    return this.replaceSingleQuote(localHref);
   }
 
   // @ts-ignore
-  private static getTripleCellContent(_binding: Parser.BindingValue, _prefixes?: { [label: string]: string }): string {
-    // TODO implement it.
-    return `<div></div>`;
+  private static getTripleCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
+
+    const tripleAsString = this.getValueAsString(binding, false);
+    const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}`;
+    const tripleLinkTitle = HtmlUtil.encodeHTMLEntities(tripleAsString);
+
+    return new HtmlBuilder()
+      .openDiv('triple-cell')
+      .addLink(tripleLinkTitle, 'triple-link', tripleLinkHref, YasrService.ESCAPED_HTML_DOUBLE_LOWER)
+      .openUl('triple-list')
+      .addLi(this.toCellContent(binding.value['s'], context))
+      .addLi(this.toCellContent(binding.value['p'], context))
+      .addLi(this.toCellContent(binding.value['o'], context))
+      .closeUl()
+      .openDiv('triple-close')
+      .addLink(tripleLinkTitle, 'triple-link triple-link-end', tripleLinkHref, YasrService.ESCAPED_HTML_DOUBLE_GREATER)
+      .addCopyResourceLinkButton(HtmlUtil.encodeHTMLEntities(tripleAsString))
+      .closeDiv()
+      .closeDiv()
+      .build();
+  }
+
+  private static replaceSingleQuote(text: string): string {
+    return text.replace(/'/g, "&#39;");
   }
 
   // @ts-ignore
-  private static getLiteralCellContent(_binding: Parser.BindingValue, _prefixes?: { [label: string]: string }): string {
-    // TODO implement it.
-    return `<div></div>`;
+  private static getValueAsString(binding, forHtml: boolean): string {
+    if (binding.type === "uri") {
+      return `<${binding.value}>`;
+    }
+    if (binding.type === "triple") {
+      return `<<${this.getValueAsString(binding.value['s'], forHtml)} ${this.getValueAsString(binding.value['p'], forHtml)} ${this.getValueAsString(binding.value['o'], forHtml)}>>`;
+    }
+    return this.getLiteralAsString(binding, forHtml);
   }
 
-  /**
-   * Returns short uri of <code>uri</code>. For example: if <code>uri</code> is "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" then function
-   * will return "rdf:type". The "rdf" prefix have to be described in <code>prefixes</code> otherwise full <code>uri</code> will be returned.
-   * @param uri - full uri of a rdf resource. For example http://www.w3.org/1999/02/22-rdf-syntax-ns#type.
-   * @param prefixes - Object with uris and their corresponding prefixes.
-   * For example:
-   * <pre>
-   *    {
-   *      "gn": "http://www.geonames.org/ontology#",
-   *      "path": "http://www.ontotext.com/path#",
-   *      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-   *      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-   *      "xsd": "http://www.w3.org/2001/XMLSchema#",
-   *     }
-   * </pre>
-   */
-  private static uriToPrefixWithLocalName(uri: string, prefixes?: { [label: string]: string }): string {
-    if (prefixes) {
-      for (const prefixLabel in prefixes) {
-        const prefix = prefixes[prefixLabel];
-        if (uri.indexOf(prefix) == 0) {
-          return prefixLabel + ":" + uri.substring(prefix.length);
-        }
+  // @ts-ignore
+  private static getLiteralCellContent(binding: Parser.BindingValue): string {
+    return new HtmlBuilder()
+      .openDiv('literal-cell')
+      .addP(this.getLiteralAsString(binding, true), 'nonUri')
+      .closeDiv()
+      .build();
+  }
+
+  //@ts-ignore
+  private static getLiteralAsString(binding: Parser.BindingValue, forHtml: boolean) {
+
+    if (binding.type == "bnode") {
+      return `_:${HtmlUtil.encodeHTMLEntities(binding.value)}`;
+    }
+
+    const stringRepresentation = HtmlUtil.encodeHTMLEntities(binding.value);
+
+    if (binding["xml:lang"]) {
+      return `"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["xml:lang"]}${forHtml ? '</sup>' : ''}`;
+    }
+
+    if (binding["lang"]) {
+      return `"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["lang"]}${forHtml ? '</sup>' : ''}`;
+    }
+
+    if (binding.datatype && YasrService.XML_SCHEMA_NS_STRING !== binding.datatype) {
+      let dataType = binding.datatype;
+      if (forHtml && dataType.indexOf(YasrService.XML_SCHEMA_NS) === 0) {
+        dataType = `xsd:${dataType.substring(YasrService.XML_SCHEMA_NS.length)}`;
+      } else if (forHtml) {
+        dataType = `&lt;${dataType}&gt;`;
+      } else {
+        dataType = `<${dataType}>`;
       }
+
+      return `"${stringRepresentation}"${forHtml ? '<sup>' : ''}^^${dataType}${forHtml ? '</sup>' : ''}`;
     }
-    return uri;
+
+    return stringRepresentation.startsWith('"') ? stringRepresentation : `"${stringRepresentation}"`;
   }
 }
 
@@ -141,7 +213,7 @@ export const defaultExtendedTableConfiguration = {
       labelKey: 'yasr.plugin_control.download_as.sparql_results_xml.label',
       value: 'application/sparql-results+xml'
     }, {
-    labelKey: 'yasr.plugin_control.download_as.x_sparqlstar_results_xml.label',
+      labelKey: 'yasr.plugin_control.download_as.x_sparqlstar_results_xml.label',
       value: 'application/x-sparqlstar-results+xml'
     }, {
       labelKey: "yasr.plugin_control.download_as.csv.label",
@@ -170,4 +242,81 @@ export const defaultRawResponsePluginConfiguration = {
       value: "text/csv",
     },
   ]
+}
+
+class CellContentContext {
+  private readonly uriToCellElementMapping: Map<string, string> = new Map<string, string>();
+  private readonly fullUriToShortUri: Map<string, string> = new Map<string, string>();
+  private prefixes: { [label: string]: string } = {};
+  private readonly shacl: boolean;
+  private readonly ontotextResourceLocation: string
+
+  constructor() {
+    this.uriToCellElementMapping = new Map<string, string>();
+    this.shacl = window.location.href.includes(YasrService.SHACL_GRAPH_URL);
+    this.ontotextResourceLocation = window.location.origin + '/resource/';
+  }
+
+  /**
+   * Setter for prefixes.
+   *
+   * @param prefixes - Object with uris and their corresponding prefixes.
+   * For example:
+   * <pre>
+   *    {
+   *      "gn": "http://www.geonames.org/ontology#",
+   *      "path": "http://www.ontotext.com/path#",
+   *      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+   *      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *      "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *     }
+   * </pre>
+   * @param prefixes
+   */
+  setPrefixes(prefixes: { [label: string]: string } = {}) {
+    this.prefixes = prefixes;
+  }
+
+  getShortUri(uri: string) {
+    if (!this.fullUriToShortUri.has(uri)) {
+      this.fullUriToShortUri.set(uri, this.uriToPrefixWithLocalName(uri));
+    }
+    return this.fullUriToShortUri.get(uri);
+  }
+
+  hasElement(uri: string): boolean {
+    return this.uriToCellElementMapping.has(uri)
+  }
+
+  getElement(url: string): string {
+    return this.uriToCellElementMapping.get(url);
+  }
+
+  setElement(uri: string, cellHtmlElement: string): void {
+    this.uriToCellElementMapping.set(uri, cellHtmlElement);
+  }
+
+  isOntotextResource(uri: string) {
+    return uri.indexOf(this.ontotextResourceLocation) === 0 && uri.length > this.ontotextResourceLocation.length
+  }
+
+  isShacl() {
+    return this.shacl;
+  }
+
+  /**
+   * Returns short uri of <code>uri</code>. For example: if <code>uri</code> is "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" then function
+   * will return "rdf:type". The "rdf" prefix have to be described in <code>prefixes</code> otherwise full <code>uri</code> will be returned.
+   * @param uri - full uri of a rdf resource. For example http://www.w3.org/1999/02/22-rdf-syntax-ns#type.
+   */
+  private uriToPrefixWithLocalName(uri: string): string {
+    for (const prefixLabel in this.prefixes) {
+      const prefix = this.prefixes[prefixLabel];
+      if (uri.indexOf(prefix) == 0) {
+        return prefixLabel + ":" + uri.substring(prefix.length);
+      }
+    }
+    return uri;
+  }
+
 }

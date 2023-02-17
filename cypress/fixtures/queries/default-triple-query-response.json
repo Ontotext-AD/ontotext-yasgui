@@ -1,0 +1,942 @@
+{
+  "head" : {
+    "vars" : [
+      "t"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#subPropertyOf"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#subPropertyOf"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#TransitiveProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#subClassOf"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#subClassOf"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#TransitiveProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#domain"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#range"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#equivalentProperty"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#SymmetricProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#equivalentProperty"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#TransitiveProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#equivalentClass"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#SymmetricProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#equivalentClass"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#TransitiveProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://proton.semanticweb.org/protonsys#transitiveOver"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#inverseOf"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#inverseOf"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#SymmetricProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#object"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#first"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#List"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Datatype"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#differentFrom"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2002/07/owl#SymmetricProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Datatype"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Datatype"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#_1"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#_1"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Amphibian"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Artificial"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Character"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Gastropod"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Insectoid"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Mammal"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Reptile"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Reptilian"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Sentient"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Species"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Unknown"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#Class"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/resource/planet/25"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/Planet"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/climate"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/desc"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/diameter"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/gravity"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/orbitalPeriod"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      },
+      {
+        "t" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "https://swapi.co/vocabulary/population"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

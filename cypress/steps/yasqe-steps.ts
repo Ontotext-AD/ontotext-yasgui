@@ -11,6 +11,13 @@ export class YasqeSteps {
         return cy.get(".yasqe:visible");
     }
 
+    static setQueryInEditor(query: string) {
+      cy.get('ontotext-yasgui')
+        .then((el: JQuery<any>) => {
+          el.get(0).setQuery(query);
+        });
+    }
+
     static getActionsToolbar() {
         return this.getEditor().find('.yasqe_buttons');
     }
