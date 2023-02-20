@@ -97,7 +97,7 @@ export class Completer extends EventEmitter {
   public initialize(): Promise<void> {
     if (this.config.onInitialize) this.config.onInitialize(this.yasqe);
     if (this.config.bulk) {
-      if (this.config.get instanceof Array) {
+        if (this.config.get instanceof Array) {
         // we don't care whether the completions are already stored in
         // localstorage. just use this one
         this.storeBulkCompletions(this.config.get);
@@ -346,7 +346,8 @@ export const fetchFromLov = (
 };
 
 import variableCompleter from "./variables";
-import prefixCompleter from "./prefixes";
+// Replaced by our sesame-prefixes completer
+// import prefixCompleter from "./prefixes";
 import propertyCompleter from "./properties";
 import classCompleter from "./classes";
-export var completers: CompleterConfig[] = [variableCompleter, prefixCompleter, propertyCompleter, classCompleter];
+export var completers: CompleterConfig[] = [variableCompleter, propertyCompleter, classCompleter];
