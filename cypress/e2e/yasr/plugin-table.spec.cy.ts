@@ -85,7 +85,7 @@ describe('Plugin: Table', () => {
         YasrSteps.getTriple(1, 2).contains('rdf:Property');
       });
 
-      it.only('should copy url link be visible when the mouse is over a link with resource', () => {
+      it('should copy url link be visible when the mouse is over a link with resource', () => {
         // When I execute a query which return results and results type is triple.
         QueryStubs.stubDefaultTripleQueryResponse();
         YasqeSteps.setQueryInEditor(QueryStubs.BASE_TRIPLE_QUERY);

@@ -81,11 +81,11 @@
       background-color: $color-onto-green;
     }
 
-    table.dataTable tr.odd {
+    .dataTable tr.odd {
       background-color: #f9f9f9;
     }
 
-    table.dataTable tr.even {
+    .dataTable tr.even {
       background-color: white;
     }
     .yasr_header > * {
@@ -139,6 +139,54 @@
       color: #999;
       background-color: #f9f9f9;
     }
+
+    .yasr_results {
+      .resource-copy-link {
+        display: none;
+      }
+
+      /** Shows copy resource link when mouse is over a table row with resources of type uri */
+      .dataTable tbody td:hover:not(:has(.triple-cell)) div.uri-cell .resource-copy-link {
+        display: inline;
+        float: right;
+        padding-right: 10px;
+      }
+
+      /** Shows copy resource link when mouse is over a link with resource of type triple */
+      .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link {
+        display: inline;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .dataTable tbody td div.triple-cell ul.triple-list li {
+        list-style-type: none;
+      }
+
+      .dataTable td div.triple-cell .triple-link {
+        color: #770088;
+        text-decoration: none;
+      }
+
+      .uri-link:hover {
+        text-decoration: none;
+      }
+
+      .nonUri {
+        color: #003663;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+        margin: 0
+      }
+
+      .dataTable td div.triple-cell .triple-close:hover .resource-copy-link {
+        display: inline;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+
   }
 
   .hidden-control-bar {
