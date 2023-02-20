@@ -1,0 +1,19 @@
+Subject: [PATCH] GDB-7711 plugins issues
+---
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 262fc056a759c4039f50b97349008cbbf4cbda97)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 7f8922ffb96f3685a89e5921e1cc6246da26f0b6)
+@@ -91,7 +91,7 @@
+ 
+   private updateDownloadAsElementVisibility() {
+     removeClass(this.downloadAsElement, "hidden");
+-    if (!this.results || (this.downloadAsElement as any).items.length < 1) {
++    if (!this.results?.getBindings()?.length) {
+       addClass(this.downloadAsElement, "hidden");
+     }
+   }
