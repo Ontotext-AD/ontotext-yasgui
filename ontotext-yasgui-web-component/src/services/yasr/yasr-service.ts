@@ -69,7 +69,9 @@ export class YasrService {
 
   // @ts-ignore
   private static getCellContent(): (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => string {
-    const context = new CellContentContext();
+    const shacl = window.location.href.includes(YasrService.SHACL_GRAPH_URL);
+    const ontotextResourceLocation = window.location.origin + '/resource/';
+    const context = new CellContentContext(shacl, ontotextResourceLocation);
     //@ts-ignore
     return (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => {
       context.setPrefixes(prefixes);
@@ -251,10 +253,9 @@ class CellContentContext {
   private readonly shacl: boolean;
   private readonly ontotextResourceLocation: string
 
-  constructor() {
-    this.uriToCellElementMapping = new Map<string, string>();
-    this.shacl = window.location.href.includes(YasrService.SHACL_GRAPH_URL);
-    this.ontotextResourceLocation = window.location.origin + '/resource/';
+  constructor(shacl: boolean, ontotextResourceLocation: string) {
+    this.shacl = shacl;
+    this.ontotextResourceLocation = ontotextResourceLocation;
   }
 
   /**
