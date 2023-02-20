@@ -1,0 +1,28 @@
+Index: Yasgui/packages/yasqe/src/autocompleters/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/index.ts b/Yasgui/packages/yasqe/src/autocompleters/index.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision a19f504d96f049a87361cd08f3210b65f3b7ff3a)
++++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision d3c6273ae9054064cb6b000202ba9f5bd0cb3115)
+@@ -97,7 +97,7 @@
+   public initialize(): Promise<void> {
+     if (this.config.onInitialize) this.config.onInitialize(this.yasqe);
+     if (this.config.bulk) {
+-      if (this.config.get instanceof Array) {
++        if (this.config.get instanceof Array) {
+         // we don't care whether the completions are already stored in
+         // localstorage. just use this one
+         this.storeBulkCompletions(this.config.get);
+@@ -346,7 +346,8 @@
+ };
+ 
+ import variableCompleter from "./variables";
+-import prefixCompleter from "./prefixes";
++// Replaced by our sesame-prefixes completer
++// import prefixCompleter from "./prefixes";
+ import propertyCompleter from "./properties";
+ import classCompleter from "./classes";
+-export var completers: CompleterConfig[] = [variableCompleter, prefixCompleter, propertyCompleter, classCompleter];
++export var completers: CompleterConfig[] = [variableCompleter, propertyCompleter, classCompleter];
