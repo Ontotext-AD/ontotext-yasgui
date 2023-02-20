@@ -112,7 +112,7 @@ export interface YasguiConfiguration {
        *   }
        * </pre>
        */
-      prefixes: any,
+      prefixes: NamespaceMapping,
 
       /**
        * The name of plugin which have to be active when yasr is created.
@@ -140,6 +140,11 @@ export interface YasguiConfiguration {
     initialQuery?: string;
   }
 }
+
+// namespaces mapped to their prefixes as keys
+export type NamespaceMapping = Record<string, string>;
+// like ["rdf4j: <http://rdf4j.org/schema/rdf4j#>", ...]
+export type Namespaces = string[];
 
 export enum RenderingMode {
   YASGUI = 'mode-yasgui',
