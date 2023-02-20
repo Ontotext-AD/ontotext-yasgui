@@ -5,7 +5,7 @@ ontoElement.config = {
 
 ontoElement.addEventListener('output', (event) => {
   const div = document.getElementById('download-as-event');
-  div.innerHTML = JSON.stringify(event.detail);
+  div.innerText = JSON.stringify(event.detail);
 });
 
 function setConfiguration() {
