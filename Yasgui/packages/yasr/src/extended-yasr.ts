@@ -91,7 +91,7 @@ export class ExtendedYasr extends Yasr {
 
   private updateDownloadAsElementVisibility() {
     removeClass(this.downloadAsElement, "hidden");
-    if (!this.results || (this.downloadAsElement as any).items.length < 1) {
+    if (!this.results?.getBindings()?.length) {
       addClass(this.downloadAsElement, "hidden");
     }
   }
