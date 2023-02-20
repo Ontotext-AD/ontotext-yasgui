@@ -88,6 +88,7 @@
     .dataTable tr.even {
       background-color: white;
     }
+
     .yasr_header > * {
       margin-left: 0;
     }
@@ -104,6 +105,7 @@
         .spacer {
           width: 100%;
         }
+
         li {
           white-space: nowrap;
         }
@@ -250,5 +252,9 @@
         grid-template-columns: 0 1fr 1fr;
       }
     }
+  }
+
+  button, button:focus {
+    outline: none;
   }
 }

@@ -1,6 +1,8 @@
 import {DownloadAsPageSteps} from '../../steps/download-as-page-steps';
 import {YasqeSteps} from '../../steps/yasqe-steps';
 import {YasrSteps} from '../../steps/yasr-steps';
+import {QueryStubs} from '../../stubs/query-stubs';
+import {YasguiSteps} from '../../steps/yasgui-steps';
 
 describe('Download as', () => {
 
@@ -9,18 +11,33 @@ describe('Download as', () => {
     DownloadAsPageSteps.visit();
   });
 
-  it('Should dropdown not be visible if there isn\'t results', () => {
-    // When yasr has not result
-    // Then download dropdown should not be visible.
-    DownloadAsPageSteps.getDownloadAsDropdown().should('not.be.visible');
-  });
+  describe('"Download as" dropdown visibility', () => {
+    it('should not be visible if there aren\'t results', () => {
+      // When yasr is not initialized
+      // Then download dropdown should not be visible.
+      DownloadAsPageSteps.getDownloadAsDropdown().should('not.be.visible');
 
-  it('Should "Download as" dropdown be visible if there is results', () => {
-    // When execute a query witch returns results.
-    YasqeSteps.executeQuery();
+      // When I execute a query without result
+      QueryStubs.stubEmptyQueryResponse();
+      YasqeSteps.executeQuery();
 
-    // Then "Download as" dropdown should be visible.
-    DownloadAsPageSteps.getDownloadAsDropdown().should('be.visible');
+      // Then I expect the "Download as" dropdown to not be visible.
+      DownloadAsPageSteps.getDownloadAsDropdown().should('not.be.visible');
+
+      // When I open a bew tab
+      YasguiSteps.openANewTab();
+
+      // Then I expect the "Download as" dropdown to not be visible.
+      DownloadAsPageSteps.getDownloadAsDropdown().should('not.be.visible');
+    });
+
+    it('should be visible if there are results', () => {
+      // When execute a query witch returns results.
+      YasqeSteps.executeQuery();
+
+      // Then "Download as" dropdown should be visible.
+      DownloadAsPageSteps.getDownloadAsDropdown().should('be.visible');
+    });
   });
 
   it('Should emit "downloadAs" event with value the selected of selected option, current plugin name, and last executed query.', () => {
