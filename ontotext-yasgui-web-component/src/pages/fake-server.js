@@ -1,11 +1,139 @@
+const namespacesEndpoints = []
+
 module.exports = function (req, res, next) {
   if (req.url === '/repositories/test-repo') {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(queryResponse));
+  } else if (req.url.endsWith('/repositories/test-repo/namespaces')) {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(namespacesResponse));
   } else {
     // pass request on to the default dev server
     next();
+  }
+};
+
+const namespacesResponse = {
+  "head" : {
+    "vars" : [
+      "prefix",
+      "namespace"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "path"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.ontotext.com/path#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "wgs"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.w3.org/2003/01/geo/wgs84_pos#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "rdf"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "owl"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.w3.org/2002/07/owl#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "gn"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.geonames.org/ontology#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "xsd"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.w3.org/2001/XMLSchema#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "fn"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.w3.org/2005/xpath-functions#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "rdfs"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.w3.org/2000/01/rdf-schema#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "sesame"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://www.openrdf.org/schema/sesame#"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "dc"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://purl.org/dc/elements/1.1/"
+        }
+      },
+      {
+        "prefix" : {
+          "type" : "literal",
+          "value" : "rdf4j"
+        },
+        "namespace" : {
+          "type" : "literal",
+          "value" : "http://rdf4j.org/schema/rdf4j#"
+        }
+      }
+    ]
   }
 };
 

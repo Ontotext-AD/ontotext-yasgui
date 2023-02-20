@@ -12,6 +12,8 @@ import {YasqeService} from "../../yasqe/yasqe-service";
 import {ServiceFactory} from '../../service-factory';
 import {TranslationService} from '../../translation.service';
 import {YasrService} from '../../yasr/yasr-service';
+import SesamePrefixesAutocompleter from "../../yasqe/autocompleter/sesame-prefixes";
+import {NamespaceService} from "../../namespace-service";
 
 /**
  * Builder for yasgui configuration.
@@ -87,10 +89,21 @@ export class YasguiConfigurationBuilder {
 
     YasrService.disablePlugin('table');
 
+    // Register autocompleters
+    this.registerCustomAutocompleters(config);
+
     // prepare the yasr config
 
     return config;
   }
+
+  // @ts-ignore
+  private registerCustomAutocompleters(config: YasguiConfiguration): void {
+    const namespaces = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
+    // @ts-ignore
+    Yasqe.registerAutocompleter(SesamePrefixesAutocompleter(namespaces), true);
+  }
+
 
   // @ts-ignore
   getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>, yasqe: Yasqe): HTMLElement[] {
