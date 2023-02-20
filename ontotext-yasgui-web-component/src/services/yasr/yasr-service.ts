@@ -1,5 +1,4 @@
 import {HtmlUtil} from '../utils/html-util';
-import {HtmlBuilder} from '../utils/html-builder';
 
 export class YasrService {
 
@@ -93,12 +92,9 @@ export class YasrService {
   private static getUriCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
     const uri = binding.value;
     if (!context.hasElement(uri)) {
-      const content = new HtmlBuilder()
-        .openDiv('uri-cell')
-        .addLink(uri, 'uri-link', this.getHref(uri, context), context.getShortUri(uri))
-        .addCopyResourceLinkButton(uri)
-        .closeDiv()
-        .build();
+      const content = '<div class="uri-cell">' +
+        `<a title="${uri}" class="uri-link" href="${this.getHref(uri, context)}">${context.getShortUri(uri)}</a>` +
+        `<copy-resource-link-button class="resource-copy-link" uri="${uri}"></copy-resource-link-button></div>`;
       context.setElement(uri, content);
     }
     return context.getElement(uri);
@@ -128,20 +124,17 @@ export class YasrService {
     const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}`;
     const tripleLinkTitle = HtmlUtil.encodeHTMLEntities(tripleAsString);
 
-    return new HtmlBuilder()
-      .openDiv('triple-cell')
-      .addLink(tripleLinkTitle, 'triple-link', tripleLinkHref, YasrService.ESCAPED_HTML_DOUBLE_LOWER)
-      .openUl('triple-list')
-      .addLi(this.toCellContent(binding.value['s'], context))
-      .addLi(this.toCellContent(binding.value['p'], context))
-      .addLi(this.toCellContent(binding.value['o'], context))
-      .closeUl()
-      .openDiv('triple-close')
-      .addLink(tripleLinkTitle, 'triple-link triple-link-end', tripleLinkHref, YasrService.ESCAPED_HTML_DOUBLE_GREATER)
-      .addCopyResourceLinkButton(HtmlUtil.encodeHTMLEntities(tripleAsString))
-      .closeDiv()
-      .closeDiv()
-      .build();
+    return '<div class="triple-cell">' +
+      `<a title="${tripleLinkTitle}" class="triple-link" href="${tripleLinkHref}">YasrService.ESCAPED_HTML_DOUBLE_LOWER</a>` +
+      '<ul class="triple-list">' +
+      `<li>${this.toCellContent(binding.value['s'], context)}</li>` +
+      `<li>${this.toCellContent(binding.value['p'], context)}</li>` +
+      `<li>${this.toCellContent(binding.value['o'], context)}</li>` +
+      '</ul><div class"triple-close">' +
+      `<a title="${tripleLinkTitle}" class="triple-link triple-link-end" href="${tripleLinkHref}">YasrService.ESCAPED_HTML_DOUBLE_GREATER</a>` +
+      `<copy-resource-link-button class="resource-copy-link" uri="${HtmlUtil.encodeHTMLEntities(tripleAsString)}"></copy-resource-link-button>` +
+      '</div></div>'
+
   }
 
   private static replaceSingleQuote(text: string): string {
@@ -161,11 +154,7 @@ export class YasrService {
 
   // @ts-ignore
   private static getLiteralCellContent(binding: Parser.BindingValue): string {
-    return new HtmlBuilder()
-      .openDiv('literal-cell')
-      .addP(this.getLiteralAsString(binding, true), 'nonUri')
-      .closeDiv()
-      .build();
+    return `<div><p class="nonUri">${this.getLiteralAsString(binding, true)}</p></div>`;
   }
 
   //@ts-ignore
@@ -319,5 +308,4 @@ class CellContentContext {
     }
     return uri;
   }
-
 }
