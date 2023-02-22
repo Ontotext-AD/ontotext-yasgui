@@ -294,7 +294,7 @@ export class OntotextYasguiWebComponent {
   }
 
   @Listen('resize', { target: 'window' })
-  handleScroll() {
+  onResize() {
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.refresh();
