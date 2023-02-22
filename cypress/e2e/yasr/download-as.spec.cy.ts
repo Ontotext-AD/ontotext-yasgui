@@ -23,12 +23,16 @@ describe('Download as', () => {
 
       // Then I expect the "Download as" dropdown to not be visible.
       DownloadAsPageSteps.getDownloadAsDropdown().should('not.be.visible');
+      DownloadAsPageSteps.getDownloadAsDropdownButton().should('not.be.visible');
+      DownloadAsPageSteps.getDropdownAsIcon().should('not.be.visible');
 
       // When I open a bew tab
       YasguiSteps.openANewTab();
 
       // Then I expect the "Download as" dropdown to not be visible.
       DownloadAsPageSteps.getDownloadAsDropdown().should('not.be.visible');
+      DownloadAsPageSteps.getDownloadAsDropdownButton().should('not.be.visible');
+      DownloadAsPageSteps.getDropdownAsIcon().should('not.be.visible');
     });
 
     it('should be visible if there are results', () => {
@@ -37,6 +41,22 @@ describe('Download as', () => {
 
       // Then "Download as" dropdown should be visible.
       DownloadAsPageSteps.getDownloadAsDropdown().should('be.visible');
+      DownloadAsPageSteps.getDownloadAsButtonName().should('be.visible');
+      DownloadAsPageSteps.getDropdownAsIcon().should('be.visible');
+    });
+
+    it('should icon be visible when screen is small', () => {
+      // When execute a query witch returns results.
+      YasqeSteps.executeQuery();
+      // And screen is less than 768px
+      cy.viewport(767, 750);
+
+      // Then "Download as" dropdown should be visible.
+      DownloadAsPageSteps.getDownloadAsDropdown().should('be.visible');
+      // And I expect the button of dropdown to not be visible.
+      DownloadAsPageSteps.getDownloadAsButtonName().should('not.be.visible');
+      // And expect icon to be visible.
+      DownloadAsPageSteps.getDropdownAsIcon().should('be.visible');
     });
   });
 

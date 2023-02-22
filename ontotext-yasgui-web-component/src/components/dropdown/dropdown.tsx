@@ -11,10 +11,13 @@ import {InternalDropdownValueSelectedEvent} from '../../models/internal-events/i
 export class Dropdown {
 
   @State() open = false;
+  @State() showTooltip = false;
 
   @Prop() translationService: TranslationService;
   @Prop() nameLabelKey: string;
+  @Prop() tooltipLabelKey: string;
   @Prop() items: DropdownOption[];
+  @Prop() iconClass = '';
 
   @Event() valueChanged: EventEmitter<InternalDropdownValueSelectedEvent>;
 
@@ -28,20 +31,25 @@ export class Dropdown {
   }
 
   render() {
+    const showToolbar = this.tooltipLabelKey && window.innerWidth < 768;
+    const dropdownButtonClass = `ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}
+    ${this.iconClass ? `ontotext-dropdown-icon ${this.iconClass}` : ''}`;
     return (
-      <div class="ontotext-dropdown">
-        <button class={`ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}`}
-                onClick={() => this.toggleComponent()}>
-          {this.translationService.translate(this.nameLabelKey)}
-        </button>
-
-        <ul class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
-          {this.items && this.items.map(item =>
-            <li class='ontotext-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
-              {this.translationService.translate(item.labelKey)}
-            </li>)}
-        </ul>
-      </div>
+      <yasgui-tooltip
+        data-tooltip={showToolbar ? this.translationService.translate(this.nameLabelKey) : ''}>
+        <div class='ontotext-dropdown'>
+          <button class={dropdownButtonClass}
+                  onClick={() => this.toggleComponent()}>
+            <span class='button-name'>{this.translationService.translate(this.nameLabelKey)}</span>
+          </button>
+          <div class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
+            {this.items && this.items.map(item =>
+              <a href="#" class='ontotext-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
+                {this.translationService.translate(item.labelKey)}
+              </a>)}
+          </div>
+        </div>
+      </yasgui-tooltip>
     );
   }
 }

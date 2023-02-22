@@ -10,6 +10,18 @@ export class DownloadAsPageSteps {
     return YasguiSteps.getYasgui().find('ontotext-download-as');
   }
 
+  static getDownloadAsDropdownButton() {
+    return DownloadAsPageSteps.getDownloadAsDropdown().find('.ontotext-dropdown-button');
+  }
+
+  static getDownloadAsButtonName() {
+    return this.getDownloadAsDropdownButton().find('.button-name');
+  }
+
+  static getDropdownAsIcon() {
+    return DownloadAsPageSteps.getDownloadAsDropdown().find('.icon-download');
+  }
+
   static openDownloadAsDropdown() {
     DownloadAsPageSteps.getDownloadAsDropdown().click();
   }

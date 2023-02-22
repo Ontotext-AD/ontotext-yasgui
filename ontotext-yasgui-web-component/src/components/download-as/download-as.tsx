@@ -6,6 +6,7 @@ import {InternalDropdownValueSelectedEvent} from '../../models/internal-events/i
 
 @Component({
   tag: 'ontotext-download-as',
+  styleUrl: 'download-as.scss',
   shadow: false,
 })
 export class DownloadAs {
@@ -14,6 +15,7 @@ export class DownloadAs {
 
   @Prop() translationService: TranslationService;
   @Prop() nameLabelKey: string;
+  @Prop() tooltipLabelKey: string;
   @Prop() items: DropdownOption[];
   @Prop() pluginName: string;
   @Prop() query: string;
@@ -29,9 +31,12 @@ export class DownloadAs {
   render() {
     return (
       <ontotext-dropdown
+        class='ontotext-download-as'
         onValueChanged={ev => this.onInternalDropdownValueSelected(ev)}
         translationService={this.translationService}
+        tooltipLabelKey={this.tooltipLabelKey}
         nameLabelKey={this.nameLabelKey ? this.nameLabelKey : DownloadAs.DEFAULT_NAME_LABEL}
+        iconClass='icon-download'
         items={this.items}>
       </ontotext-dropdown>
     );
