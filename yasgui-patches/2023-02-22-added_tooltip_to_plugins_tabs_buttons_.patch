@@ -1,0 +1,74 @@
+Subject: [PATCH] Added tooltip to plugins tabs buttons.
+---
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 542cd147517cac965b943c757b6007b2958f00b5)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision e6094506a85c1f584abbc634b7d09f7acb08b023)
+@@ -78,6 +78,7 @@
+       if (downloadAsConfiguration.hasOwnProperty("nameLabelKey")) {
+         element.nameLabelKey = downloadAsConfiguration.nameLabelKey;
+       }
++      element.tooltipLabelKey = downloadAsConfiguration.tooltipLabelKey || downloadAsConfiguration.nameLabelKey;
+     } else {
+       element.items = [];
+     }
+@@ -272,6 +273,7 @@
+ interface DownloadAs {
+   translationService: TranslationService;
+   nameLabelKey: string;
++  tooltipLabelKey: string;
+   query: string | undefined;
+   pluginName: string;
+   items: any[];
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 542cd147517cac965b943c757b6007b2958f00b5)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision e6094506a85c1f584abbc634b7d09f7acb08b023)
+@@ -296,7 +296,6 @@
+       );
+       const button = document.createElement("button");
+       addClass(button, "yasr_btn", "select_" + pluginName);
+-      button.title = name;
+       button.type = "button";
+       button.setAttribute(
+         "aria-label",
+@@ -317,7 +316,11 @@
+       button.appendChild(nameEl);
+       button.addEventListener("click", () => this.selectPlugin(pluginName));
+       const li = document.createElement("li");
+-      li.appendChild(button);
++      const buttonPluginTooltip: any = document.createElement("yasgui-tooltip");
++      buttonPluginTooltip.dataTooltip = window.innerWidth < 768 ? name : "";
++      buttonPluginTooltip.placement = "top";
++      buttonPluginTooltip.appendChild(button);
++      li.appendChild(buttonPluginTooltip);
+       this.pluginSelectorsEl.appendChild(li);
+     }
+ 
+@@ -478,7 +481,6 @@
+           const name = this.translationService.translate(
+             `yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase()
+           );
+-          button.setAttribute("title", name);
+           button.setAttribute(
+             "aria-label",
+             this.translationService.translate("yasr.plugin_control.shows_view.btn.aria_label", [
+@@ -489,6 +491,10 @@
+           if (nameEl) {
+             nameEl.innerText = name;
+           }
++          const buttonPluginTooltip = button.parentElement;
++          if (buttonPluginTooltip) {
++            (buttonPluginTooltip as any).dataTooltip = window.innerWidth < 768 ? name : "";
++          }
+         }
+       }
+     }
