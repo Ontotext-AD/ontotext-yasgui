@@ -296,7 +296,6 @@ export class Yasr extends EventEmitter {
       );
       const button = document.createElement("button");
       addClass(button, "yasr_btn", "select_" + pluginName);
-      button.title = name;
       button.type = "button";
       button.setAttribute(
         "aria-label",
@@ -317,7 +316,11 @@ export class Yasr extends EventEmitter {
       button.appendChild(nameEl);
       button.addEventListener("click", () => this.selectPlugin(pluginName));
       const li = document.createElement("li");
-      li.appendChild(button);
+      const buttonPluginTooltip: any = document.createElement("yasgui-tooltip");
+      buttonPluginTooltip.dataTooltip = window.innerWidth < 768 ? name : "";
+      buttonPluginTooltip.placement = "top";
+      buttonPluginTooltip.appendChild(button);
+      li.appendChild(buttonPluginTooltip);
       this.pluginSelectorsEl.appendChild(li);
     }
 
@@ -478,7 +481,6 @@ export class Yasr extends EventEmitter {
           const name = this.translationService.translate(
             `yasr.plugin_control.plugin.name.${plugin.label || pluginName}`.toLowerCase()
           );
-          button.setAttribute("title", name);
           button.setAttribute(
             "aria-label",
             this.translationService.translate("yasr.plugin_control.shows_view.btn.aria_label", [
@@ -488,6 +490,10 @@ export class Yasr extends EventEmitter {
           let nameEl = button.querySelector("span");
           if (nameEl) {
             nameEl.innerText = name;
+          }
+          const buttonPluginTooltip = button.parentElement;
+          if (buttonPluginTooltip) {
+            (buttonPluginTooltip as any).dataTooltip = window.innerWidth < 768 ? name : "";
           }
         }
       }

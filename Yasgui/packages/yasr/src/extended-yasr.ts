@@ -78,6 +78,7 @@ export class ExtendedYasr extends Yasr {
       if (downloadAsConfiguration.hasOwnProperty("nameLabelKey")) {
         element.nameLabelKey = downloadAsConfiguration.nameLabelKey;
       }
+      element.tooltipLabelKey = downloadAsConfiguration.tooltipLabelKey || downloadAsConfiguration.nameLabelKey;
     } else {
       element.items = [];
     }
@@ -272,6 +273,7 @@ export class ExtendedYasr extends Yasr {
 interface DownloadAs {
   translationService: TranslationService;
   nameLabelKey: string;
+  tooltipLabelKey: string;
   query: string | undefined;
   pluginName: string;
   items: any[];
