@@ -47,11 +47,14 @@ export namespace Components {
         "pluginName": string;
         "query": string;
         "sameAs": boolean;
+        "tooltipLabelKey": string;
         "translationService": TranslationService;
     }
     interface OntotextDropdown {
+        "iconClass": string;
         "items": DropdownOption[];
         "nameLabelKey": string;
+        "tooltipLabelKey": string;
         "translationService": TranslationService;
     }
     /**
@@ -308,12 +311,15 @@ declare namespace LocalJSX {
         "pluginName"?: string;
         "query"?: string;
         "sameAs"?: boolean;
+        "tooltipLabelKey"?: string;
         "translationService"?: TranslationService;
     }
     interface OntotextDropdown {
+        "iconClass"?: string;
         "items"?: DropdownOption[];
         "nameLabelKey"?: string;
         "onValueChanged"?: (event: OntotextDropdownCustomEvent<InternalDropdownValueSelectedEvent>) => void;
+        "tooltipLabelKey"?: string;
         "translationService"?: TranslationService;
     }
     /**

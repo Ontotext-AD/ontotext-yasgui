@@ -68,7 +68,11 @@ export class OntotextTooltipWebComponent {
   }
 
   private createShowFunction(tooltip: Instance) {
-    return () => tooltip.show();
+    return () => {
+      if (this.dataTooltip) {
+        tooltip.show();
+      }
+    }
   }
 
   private createHideFunction(tooltip: Instance) {

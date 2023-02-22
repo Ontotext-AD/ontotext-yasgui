@@ -7,11 +7,13 @@
 
 ## Properties
 
-| Property             | Attribute        | Description | Type                 | Default     |
-| -------------------- | ---------------- | ----------- | -------------------- | ----------- |
-| `items`              | --               |             | `DropdownOption[]`   | `undefined` |
-| `nameLabelKey`       | `name-label-key` |             | `string`             | `undefined` |
-| `translationService` | --               |             | `TranslationService` | `undefined` |
+| Property             | Attribute           | Description | Type                 | Default     |
+| -------------------- | ------------------- | ----------- | -------------------- | ----------- |
+| `iconClass`          | `icon-class`        |             | `string`             | `''`        |
+| `items`              | --                  |             | `DropdownOption[]`   | `undefined` |
+| `nameLabelKey`       | `name-label-key`    |             | `string`             | `undefined` |
+| `tooltipLabelKey`    | `tooltip-label-key` |             | `string`             | `undefined` |
+| `translationService` | --                  |             | `TranslationService` | `undefined` |
 
 
 ## Events
@@ -27,9 +29,14 @@
 
  - [ontotext-download-as](../download-as)
 
+### Depends on
+
+- [yasgui-tooltip](../ontotext-tooltip-web-component)
+
 ### Graph
 ```mermaid
 graph TD;
+  ontotext-dropdown --> yasgui-tooltip
   ontotext-download-as --> ontotext-dropdown
   style ontotext-dropdown fill:#f9f,stroke:#333,stroke-width:4px
 ```

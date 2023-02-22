@@ -293,6 +293,14 @@ export class OntotextYasguiWebComponent {
     });
   }
 
+  @Listen('resize', { target: 'window' })
+  handleScroll() {
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.refresh();
+      });
+  }
+
   /**
    * Handler for the event fired when the save query button in the yasqe toolbar is triggered.
    */

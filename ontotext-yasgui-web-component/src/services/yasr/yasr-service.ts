@@ -224,6 +224,7 @@ export const defaultExtendedTableConfiguration = {
 
 export const defaultRawResponsePluginConfiguration = {
   nameLabelKey: 'yasr.plugin_control.download_as.raw_response.dropdown.label',
+  tooltipLabelKey: "yasr.plugin_control.download_as.raw_response.dropdown.label",
   items: [
     {
       labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
