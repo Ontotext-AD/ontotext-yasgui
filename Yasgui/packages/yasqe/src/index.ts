@@ -1086,6 +1086,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   foldGutter: any; //This should be of type boolean, or an object. However, setting it to any to avoid
   //ts complaining about incorrectly extending, as the cm def only defined it has having a boolean type.
   matchBrackets: boolean;
+  autoCloseBrackets: boolean;
   autocompleters: string[];
   hintConfig: Partial<HintConfig>;
   resizeable: boolean;
