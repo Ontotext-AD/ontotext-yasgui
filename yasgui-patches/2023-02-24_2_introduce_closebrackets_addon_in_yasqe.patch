@@ -1,0 +1,48 @@
+Index: Yasgui/packages/yasqe/src/CodeMirror.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/CodeMirror.ts b/Yasgui/packages/yasqe/src/CodeMirror.ts
+--- a/Yasgui/packages/yasqe/src/CodeMirror.ts	(revision 08f0ab5bf572102ae9c362da0b63642d544f87ca)
++++ b/Yasgui/packages/yasqe/src/CodeMirror.ts	(revision fc21f2eede30c538608027cc4464e80a1ac62ed9)
+@@ -22,6 +22,7 @@
+ require("codemirror/addon/search/searchcursor.js");
+ require("codemirror/addon/search/match-highlighter.js");
+ require("codemirror/addon/edit/matchbrackets.js");
++require('codemirror/addon/edit/closebrackets.js');
+ require("codemirror/addon/runmode/runmode.js");
+ require("codemirror/lib/codemirror.css");
+ require("codemirror/addon/fold/foldgutter.css");
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 08f0ab5bf572102ae9c362da0b63642d544f87ca)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision fc21f2eede30c538608027cc4464e80a1ac62ed9)
+@@ -32,6 +32,7 @@
+     collapsePrefixesOnLoad: false,
+     gutters: ["gutterErrorBar", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+     matchBrackets: true,
++    autoCloseBrackets: true,
+     fixedGutter: true,
+     syntaxErrorCheck: true,
+     autocompleters: [],
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 08f0ab5bf572102ae9c362da0b63642d544f87ca)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision fc21f2eede30c538608027cc4464e80a1ac62ed9)
+@@ -1086,6 +1086,7 @@
+   foldGutter: any; //This should be of type boolean, or an object. However, setting it to any to avoid
+   //ts complaining about incorrectly extending, as the cm def only defined it has having a boolean type.
+   matchBrackets: boolean;
++  autoCloseBrackets: boolean;
+   autocompleters: string[];
+   hintConfig: Partial<HintConfig>;
+   resizeable: boolean;
