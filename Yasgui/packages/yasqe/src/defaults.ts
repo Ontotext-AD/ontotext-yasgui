@@ -45,6 +45,10 @@ SELECT * WHERE {
         const yasqe: Yasqe = _yasqe;
         yasqe.autocomplete();
       },
+      "Alt-Enter": function (_yasqe: any) {
+        const yasqe: Yasqe = _yasqe;
+        yasqe.autocomplete();
+      },
       "Shift-Ctrl-K": function (_yasqe: any) {
         const yasqe: Yasqe = _yasqe;
         const lineNumber = yasqe.getDoc().getCursor().line;
