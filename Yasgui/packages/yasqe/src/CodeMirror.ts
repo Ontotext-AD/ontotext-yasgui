@@ -22,6 +22,7 @@ require("codemirror/addon/hint/show-hint.js");
 require("codemirror/addon/search/searchcursor.js");
 require("codemirror/addon/search/match-highlighter.js");
 require("codemirror/addon/edit/matchbrackets.js");
+require('codemirror/addon/edit/closebrackets.js');
 require("codemirror/addon/runmode/runmode.js");
 require("codemirror/lib/codemirror.css");
 require("codemirror/addon/fold/foldgutter.css");

@@ -32,6 +32,7 @@ SELECT * WHERE {
     collapsePrefixesOnLoad: false,
     gutters: ["gutterErrorBar", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     matchBrackets: true,
+    autoCloseBrackets: true,
     fixedGutter: true,
     syntaxErrorCheck: true,
     autocompleters: [],
