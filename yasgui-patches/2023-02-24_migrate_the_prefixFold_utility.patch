@@ -1,0 +1,16 @@
+Index: Yasgui/packages/yasqe/src/prefixFold.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/prefixFold.ts b/Yasgui/packages/yasqe/src/prefixFold.ts
+--- a/Yasgui/packages/yasqe/src/prefixFold.ts	(revision 3d6154afb962567cf3c99a624f2f2763a24581ae)
++++ b/Yasgui/packages/yasqe/src/prefixFold.ts	(revision 6e047cb376e569c105c10a7323c2f9f321eb69eb)
+@@ -14,6 +14,7 @@
+ }
+ 
+ export function findFirstPrefix(yasqe: Yasqe, line: number, startFromCharIndex = 0, lineText?: string) {
++  if (lineText && (lineText.charAt(0) === "#" || (lineText.startsWith('"') && lineText.endsWith('"')))) return;
+   if (!lineText) lineText = yasqe.getDoc().getLine(line);
+   lineText = lineText.toUpperCase();
+   const charIndex = lineText.indexOf(PREFIX_KEYWORD, startFromCharIndex);
