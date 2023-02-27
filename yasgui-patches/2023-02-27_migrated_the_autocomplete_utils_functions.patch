@@ -1,0 +1,40 @@
+Index: Yasgui/packages/yasqe/src/autocompleters/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/index.ts b/Yasgui/packages/yasqe/src/autocompleters/index.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision f50c900b9aebfc29fe7ea8ce8074f664f0305195)
++++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision d467ffe95b00687fb46c2c204088ef1a4cf4652e)
+@@ -289,13 +289,28 @@
+   return token;
+ }
+ 
+-export function postprocessIriCompletion(_yasqe: Yasqe, token: AutocompletionToken, suggestedString: string) {
++export function postprocessIriCompletion(yasqe: Yasqe, token: AutocompletionToken, suggestedString: string) {
+   if (token.tokenPrefix && token.autocompletionString && token.tokenPrefixUri) {
+     // we need to get the suggested string back to prefixed form
+     suggestedString = token.tokenPrefix + suggestedString.substring(token.tokenPrefixUri.length);
+   } else {
+-    // it is a regular uri. add '<' and '>' to string
+-    suggestedString = "<" + suggestedString + ">";
++      // it is a regular uri. add '<' and '>' to string
++      const queryPrefixes = yasqe.getPrefixesFromQuery();
++      const existingPrefix = Object.values(queryPrefixes).filter((prefix) => suggestedString.startsWith(prefix));
++      if (existingPrefix.length > 0) {
++          const prefixFound = Object.keys(queryPrefixes).find((key) => existingPrefix[0] === key)!;
++          suggestedString = prefixFound + ":" + suggestedString.substring(queryPrefixes[prefixFound].length);
++      } else {
++          // Do not put brackets to prefixes
++          if (suggestedString.indexOf("<b>" + token.string) === 0) {
++              return suggestedString;
++          }
++          // Do not put brackets on nested triples
++          if (suggestedString.startsWith("<<") && suggestedString.endsWith(">>")) {
++              return suggestedString;
++          }
++          suggestedString = "<" + suggestedString + ">";
++      }
+   }
+   return suggestedString;
+ }
