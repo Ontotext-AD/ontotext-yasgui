@@ -289,13 +289,28 @@ export function preprocessIriForCompletion(yasqe: Yasqe, token: AutocompletionTo
   return token;
 }
 
-export function postprocessIriCompletion(_yasqe: Yasqe, token: AutocompletionToken, suggestedString: string) {
+export function postprocessIriCompletion(yasqe: Yasqe, token: AutocompletionToken, suggestedString: string) {
   if (token.tokenPrefix && token.autocompletionString && token.tokenPrefixUri) {
     // we need to get the suggested string back to prefixed form
     suggestedString = token.tokenPrefix + suggestedString.substring(token.tokenPrefixUri.length);
   } else {
-    // it is a regular uri. add '<' and '>' to string
-    suggestedString = "<" + suggestedString + ">";
+      // it is a regular uri. add '<' and '>' to string
+      const queryPrefixes = yasqe.getPrefixesFromQuery();
+      const existingPrefix = Object.values(queryPrefixes).filter((prefix) => suggestedString.startsWith(prefix));
+      if (existingPrefix.length > 0) {
+          const prefixFound = Object.keys(queryPrefixes).find((key) => existingPrefix[0] === key)!;
+          suggestedString = prefixFound + ":" + suggestedString.substring(queryPrefixes[prefixFound].length);
+      } else {
+          // Do not put brackets to prefixes
+          if (suggestedString.indexOf("<b>" + token.string) === 0) {
+              return suggestedString;
+          }
+          // Do not put brackets on nested triples
+          if (suggestedString.startsWith("<<") && suggestedString.endsWith(">>")) {
+              return suggestedString;
+          }
+          suggestedString = "<" + suggestedString + ">";
+      }
   }
   return suggestedString;
 }
