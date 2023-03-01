@@ -255,6 +255,34 @@ of the client to handle properly and to respond in the expected way.
     }
   }
   ```
+
+# YASQE SPARQL grammar
+
+Sparql grammar definition file can be found in `Yasgui/packages/yasqe/grammar/sparql11-grammar.pl`. We did a couple of
+changes in the grammar related with the embedded triples support. 
+
+## Grammar update
+
+When grammar definition is updated, the `_tokenizer-table.js` file must be rebuilt. This can be done with SWI Prolog as
+stated in the README file. It happened that prolog installation on unix/linux is quite cumbersome. Also, there is a docker
+image published in docker hub although it appeared that the prolog grammar build script throws some errors during 
+execution with the latest prolog versions 8.4 and above and unfortunately there isn't any tagged image with a lower 
+version. So, the easiest way to rebuild the tokenizer table is to download a windows installer and use it for the task.
+Follow the steps below:
+
+* Download the installer from https://eu.swi-prolog.org/download/stable/bin/swipl-8.2.4-1.x64.exe.envelope
+* Install it on 64bit windows 7 or greater. During the installation, choose to register the executable in PATH.
+* Open terminal in the `grammar` folder and run the following command. The whole folder can be copied on the 
+  windows machine if needed.
+
+  ```
+  swipl  -s util/gen_sparql11.pl -t go
+  ```
+
+* If everything is OK, `_tokenizer-table.js` should be regenerated. 
+* At the end, YASGUI must be rebuilt too using the npm build command.
+
+
 # Yasr plugins
   ## Common configurations of yasr plugins:
 - **prefixes**: object with uris and their corresponding prefixes. If uris have to be shown with short uri this object have to be set. Example of configuration prefixes: 
