@@ -68,7 +68,7 @@ constructQuery ==>
 	 [*(datasetClause),'WHERE','{',?(triplesTemplate),'}',solutionModifier]].
 
 describeQuery ==>
-	['DESCRIBE',+(varOrIRIref) or '*',
+	['DESCRIBE',+(varOrIRIref or embeddedTriple) or '*',
 	*(describeDatasetClause),?(whereClause),solutionModifier].
 
 askQuery ==>
@@ -102,7 +102,7 @@ groupClause ==>
 %[20]
 groupCondition ==>
 	[builtInCall].
-groupCondition ==>
+ groupCondition ==>
 	[functionCall].
 groupCondition ==>
 	['(',expression,?(['AS',var]),')'].
@@ -300,6 +300,8 @@ dataBlockValue ==> [iriRef].
 dataBlockValue ==> [rdfLiteral].
 dataBlockValue ==> [numericLiteral].
 dataBlockValue ==> [booleanLiteral].
+% SPARQL* extension
+dataBlockValue ==> [disallowVars,embeddedTriple,allowVars].
 dataBlockValue ==> ['UNDEF'].
 
 %[66]
@@ -345,7 +347,7 @@ propertyList ==> [propertyListNotEmpty].
 propertyList ==> [].
 %[77]
 propertyListNotEmpty ==>
-	[verb,objectList,*([';',?([verb,objectList])])].
+	[verbPath or verbSimple,objectList,*([';',?([verbPath or verbSimple,objectList])])].
 % storeProperty is a dummy for side-effect of remembering property
 storeProperty==>[].
 %[78]
@@ -367,7 +369,7 @@ propertyListPath ==> [].
 propertyListPathNotEmpty ==>
 	[verbPath or verbSimple,
 	objectListPath,
-	*([';',?([verbPath or verbSimple,objectListPath])])].
+	*([';',?([verbPath or verbSimple,objectList])])].
 %[84]
 verbPath ==> [path].
 %[85]
@@ -469,6 +471,8 @@ graphTerm ==> [rdfLiteral].
 graphTerm ==> [numericLiteral].
 graphTerm ==> [booleanLiteral].
 graphTerm ==> [blankNode].
+% SPARQL* extension
+graphTerm ==> [embeddedTriple].
 graphTerm ==> ['NIL'].
 %[110]
 expression ==> [conditionalOrExpression].
@@ -515,6 +519,8 @@ primaryExpression ==> [iriRefOrFunction].
 primaryExpression ==> [rdfLiteral].
 primaryExpression ==> [numericLiteral].
 primaryExpression ==> [booleanLiteral].
+% SPARQL* extension
+primaryExpression ==> [embeddedTriple].
 primaryExpression ==> [var].
 primaryExpression ==> [aggregate].
 %[120]
@@ -530,7 +536,7 @@ builtInCall ==> ['URI','(',expression,')'].
 %builtInCall ==> ['BNODE','(',?(expression),')'].  % Avoided use of NIL
 %builtInCall ==> ['RAND','(',')'].                 % Avoided use of NIL
 builtInCall ==> ['BNODE',['(',expression,')'] or 'NIL'].
-builtInCall ==> ['RAND',['(',expression,')'] or 'NIL'].
+builtInCall ==> ['RAND','NIL'].
 builtInCall ==> ['ABS','(',expression,')'].
 builtInCall ==> ['CEIL','(',expression,')'].
 builtInCall ==> ['FLOOR','(',expression,')'].
@@ -642,7 +648,8 @@ prefixedName ==> ['PNAME_NS'].
 %[138]
 blankNode ==> ['BLANK_NODE_LABEL'].
 blankNode ==> ['ANON'].
-
+% SPARQL* extension
+embeddedTriple ==> ['<<',varOrTerm,verb,varOrTerm,'>>'].
 
 % tokens defined by regular expressions elsewhere
 tm_regex([
@@ -793,7 +800,11 @@ tm_keywords([
 'SAMPLE',
 'SEPARATOR',
 
-'STR'
+'STR',
+
+% SPARQL* extension
+'<<',
+'>>'
 ]).
 
 % Other tokens representing fixed, case sensitive, strings
