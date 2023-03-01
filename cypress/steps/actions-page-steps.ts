@@ -1,5 +1,3 @@
-import {YasqeSteps} from './yasqe-steps';
-
 export default class ActionsPageSteps {
   static visit() {
     cy.visit('/pages/actions');

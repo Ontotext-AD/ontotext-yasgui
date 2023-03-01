@@ -1,4 +1,4 @@
-import {QueryStubs} from '../../stubs/query-stubs';
+import {QueryStubDescription, QueryStubs, ResultType} from '../../stubs/query-stubs';
 import {YasrTablePluginSteps} from '../../steps/yasr-table-plugin-steps';
 import {YasqeSteps} from '../../steps/yasqe-steps';
 import DefaultViewPageSteps from '../../steps/default-view-page-steps';
@@ -26,13 +26,13 @@ describe('Plugin: Table', () => {
 
     it('Should display message described how many results are returned when a query returns results', () => {
       // When I execute a query which return results.
-      QueryStubs.stubDefaultQueryResponse();
+      QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
       YasqeSteps.executeQuery();
 
       // Then I expect the data table with results to not be empty.
-      YasrTablePluginSteps.getResults().should('have.length', 36);
+      YasrTablePluginSteps.getResults().should('have.length', 10);
       // And result info message have to describe how many results are returned and to inform client when the query was executed.
-      YasrTablePluginSteps.getQueryResultInfo().contains(/36 results Query took \d{1}\.\d{1}s, moments ago\./);
+      YasrTablePluginSteps.getQueryResultInfo().contains(/10 results Query took \d{1}\.\d{1}s, moments ago\./);
 
       // When I go to other page
       DefaultViewPageSteps.visitDefaultViewPage();
@@ -40,7 +40,7 @@ describe('Plugin: Table', () => {
       YasrTablePluginSteps.visit();
 
       // Then I expect result info message to be same.
-      YasrTablePluginSteps.getQueryResultInfo().contains(/36 results Query took \d{1}\.\d{1}s, moments ago\./);
+      YasrTablePluginSteps.getQueryResultInfo().contains(/10 results Query took \d{1}\.\d{1}s, moments ago\./);
     });
   });
 
@@ -73,16 +73,16 @@ describe('Plugin: Table', () => {
     describe('Triple result formatting', () => {
       it('should format results when results are of type triple', () => {
         // When I execute a query which return results and results type is triple.
-        QueryStubs.stubDefaultTripleQueryResponse();
+        QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16).setResultType(ResultType.TRIPLE));
         YasqeSteps.setQueryInEditor(QueryStubs.BASE_TRIPLE_QUERY);
         YasqeSteps.executeQuery();
         // Then I expect to have 49 results
-        YasrSteps.getResults().should('have.length', 49);
+        YasrSteps.getResults().should('have.length', 10);
 
         // Then I expect results to be formatted as triple.
-        YasrSteps.getTriple(1, 0).contains('rdfs:subPropertyOf');
-        YasrSteps.getTriple(1, 1).contains('rdf:type');
-        YasrSteps.getTriple(1, 2).contains('rdf:Property');
+        YasrSteps.getTriple(1, 0).contains('ontogen:page_1-row_2-column_1');
+        YasrSteps.getTriple(1, 1).contains('ontogen:page_1-row_2-column_2');
+        YasrSteps.getTriple(1, 2).contains('ontogen:page_1-row_2-column_3');
       });
 
       it('should copy url link be visible when the mouse is over a link with resource', () => {

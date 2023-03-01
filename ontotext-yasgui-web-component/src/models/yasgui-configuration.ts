@@ -80,6 +80,8 @@ export interface YasguiConfiguration {
     populateFromUrl?: boolean;
     infer: boolean;
     sameAs: boolean;
+    paginationOn: true,
+    pageSize: 10,
     yasqe?: {
       /**
        * Default query when a tab is opened.
@@ -130,6 +132,11 @@ export interface YasguiConfiguration {
        * the plugin configuration.
        */
       externalPluginsConfigurations: Map<string, any>;
+
+      /**
+       * Flag that disabled download as dropdown. When it is true then the dropdown will not be created.
+       */
+      downloadAsOn: boolean;
     }
   };
 
@@ -177,6 +184,8 @@ export const defaultYasguiConfig: Record<string, any> = {
   method: 'POST',
   infer: true,
   sameAs: true,
+  pageSize: 10,
+  paginationOn: true,
   headers: () => {
     return {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -203,5 +212,6 @@ export const defaultYasqeConfig: Record<string, any> = {
 
 export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
-  pluginOrder: ["extended_table", "response"]
+  pluginOrder: ["extended_table", "response"],
+  downloadAsOn: true
 }

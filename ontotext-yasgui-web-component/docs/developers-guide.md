@@ -223,9 +223,9 @@ export class ServiceName {
 In result of certain operations in the yasgui component are raised events that are responsibility
 of the client to handle properly and to respond in the expected way.
 
-* **queryExecuted: EventEmitter\<QueryEvent>**: 
-  * Description: Event emitted when before query to be executed.
-  * Response: None
+There are two kind of event communication with client. One event emitter per an event and an emitter for many events.
+## One emitter per event
+
 * **queryResponse: EventEmitter\<QueryResponseEvent>**
   * Description: Event emitted when after query response is returned.
   * Response: None
@@ -255,6 +255,50 @@ of the client to handle properly and to respond in the expected way.
     }
   }
   ```
+## One emitter for many events
+
+* **output: EventEmitter<OutputEvent>**: used for communication with the client. All events emitted by output emitter have tobe subclasses
+of OutputEvent. Every output event have two properties: **Type** a unique string and **payload** data of the event. 
+
+### Output events
+
+* **QueryEvent**: emitted before a query to be executed. The payload of event is the request, which will be sent to the backend server. Client can modify what is necessary, endpoint, query parameters, headers e.t.
+* **CountQueryEvent**: emitted before count query (if pagination is turned on see query flow below) to be executed. The payload of event is the request, which will be sent to the backend server. Client can modify what is necessary, endpoint, query parameters, headers e.t.
+* **CountQueryResponseEvent**: emitted after a count query (if pagination is turned on see query flow below) was executed. The payload of event is the server response. Responsibility of client is to process response (if needed) and modify it, as result response have to contain filled property **totalElements**.
+* **NotificationMessageEvent**: emitted when a message have to be shown. Display of the message is the customer's responsibility. Payload properties are:
+  * code - unique code of a message;
+  * messageType - message type. Can be: "success", "warning" or "error";
+  * message - translated message.
+
+# Query flow
+Ontotext yasgui component query execution can be configured in two ways.
+## Query without pagination
+In this mode all results are displayed without pagination. To turn on this mode configuration **paginationOn** have to be set to false.
+In this mode a query will be sent to the backend server.
+Sequence of query execution:
+1. A user click on button "Run";
+2. Ontotext-yasgui-component emits QueryEvent through the output emitter;
+3. The client can modify the request passed as event payload;
+4. Ontotext-yasgui-component sends request to the backend server;
+5. Ontotext-yasgui-component displays results.
+   ![](./resources/query-flow/query-without-pagination.jpg)
+## Query with pagination
+In this mode results are displayed with pagination. To turn on this mode configuration **paginationOn** have to be set to true.
+1. A user click on button "Run";
+2. Ontotext-yasgui-component emits QueryEvent through the output emitter. The request of event payload will contain query parameters "pageSize" and "pageNumber". **<span style="color:red">pageSize value is configured pageSize plus one</style>**. If result of query not contains "totalElements", then second query "countQuery" is going to be sent. The second query is asynchronous, can be slow or be aborted by server. This is why page size is plus one, if count of the results is equal to page size plus one, this mean that there is more results.
+3. The client can modify the request passed as event payload;
+4. Ontotext-yasgui-component sends request to the backend server;
+5. If the response of the server has the property "totalElements";
+  5.1 Ontotext-yasgui-component displays results and results info.
+6. Else <br>
+  6.1 Ontotext-yasgui-component emits CountQueryEvent through the output emitter;<br>
+  6.2 The client can modify the request passed as event payload;<br>
+  6.3 Ontotext-yasgui-component sends request to the backend server;
+  6.4 The client can modify the server response passed as event payload;<br>. The response have to contain filed totalElements property.
+  6.5 Ontotext-yasgui-component updates results info.
+![](./resources/query-flow/query-with-pagination.jpg)
+
+
 
 # YASQE SPARQL grammar
 

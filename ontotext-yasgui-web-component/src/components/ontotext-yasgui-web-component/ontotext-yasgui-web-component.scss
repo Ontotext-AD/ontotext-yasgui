@@ -189,6 +189,9 @@
       }
     }
 
+    .pageSizeWrapper, .dataTables_info, .dataTables_paginate {
+      display: none;
+    }
   }
 
   .hidden-control-bar {

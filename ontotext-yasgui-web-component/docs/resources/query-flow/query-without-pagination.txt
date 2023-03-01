@@ -1,0 +1,16 @@
+// Copy the source below and paste it in editor of "https://www.websequencediagrams.com/#".
+
+actor User
+User->*WebBrowser: Open page with \n ontotext-yasgui-component
+WebBrowser->*OntotextYasguiClient: Create an Instance
+OntotextYasguiClient->*OntotextYasguiComponent: Create an Instance
+OntotextYasguiComponent-->OntotextYasguiClient:
+OntotextYasguiClient-->WebBrowser:
+WebBrowser-->User:
+User->OntotextYasguiComponent: Click on "Run" button\n (execute a SPARQL query)
+OntotextYasguiComponent->OntotextYasguiClient: Emit event "query"
+OntotextYasguiClient->OntotextYasguiClient: Client can change headers,\n query parameters or something else
+OntotextYasguiClient-->OntotextYasguiComponent:
+OntotextYasguiComponent->Backend Server: Send query request
+Backend Server-->OntotextYasguiComponent: response
+OntotextYasguiComponent-->User: results of the query is rendered into YASR

@@ -1,5 +1,5 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
-import {QueryStubs} from "../../stubs/query-stubs";
+import {QueryStubDescription, QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/actions-page-steps";
 
 describe('Expand results over sameAs', () => {
@@ -35,27 +35,29 @@ describe('Expand results over sameAs', () => {
   });
 
   it('Should toggle sameAs parameter in requests', () => {
+    QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
     // Given I have executed the query without changing configs
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=true will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'sameAs=true');
+    cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'sameAs=true');
     // When I disable expand results statements
     YasqeSteps.expandResultsOverSameAs();
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=false will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'sameAs=false');
+    cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'sameAs=false');
   });
 
   it('Should toggle sameAs parameter when include inferred is changed', () => {
+    QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
     // Given I have executed the query without changing configs
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=true and inferred=true will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=true&sameAs=true');
+    cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=true&sameAs=true');
     // When I disable include inferred statements
     YasqeSteps.includeInferredStatements();
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=false and inferred=false will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=false&sameAs=false');
+    cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=false&sameAs=false');
     // And expand results action should be disabled when inferred is disabled
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'disabled');
     YasqeSteps.includeInferredStatements();

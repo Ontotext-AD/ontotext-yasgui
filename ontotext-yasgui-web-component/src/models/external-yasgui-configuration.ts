@@ -186,6 +186,21 @@ export interface ExternalYasguiConfiguration {
    * the plugin configuration.
    */
   pluginsConfigurations: Map<string, any>;
+
+  /**
+   * Defines pageSize of pagination. Default value is 10.
+   */
+  pageSize: number;
+
+  /**
+   * Flag that controls usage of pagination. When it is true then pagination will be used.
+   */
+  paginationOn: boolean;
+
+  /**
+   * Flag that disabled download as dropdown. When it is true then the dropdown will not be created.
+   */
+  downloadAsOn: boolean;
 }
 
 export enum RenderingMode {

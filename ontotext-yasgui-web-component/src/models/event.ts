@@ -1,9 +1,3 @@
-export type QueryEvent = {
-  query: string;
-  request: Request;
-  queryMode: string;
-}
-
 export type QueryResponseEvent = {
   duration: number;
 }

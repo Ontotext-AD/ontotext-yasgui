@@ -8,12 +8,15 @@
     <script type="module" src="/build/ontotext-yasgui-web-component.esm.js"></script>
     <script nomodule src="/build/ontotext-yasgui-web-component.js"></script>
     <script src="../js/ontotext-yasgui-tests-util.js"></script>
-    <script src="./yasr-plugins/main.js" defer></script>
+    <script src="./pagination/main.js" defer></script>
   </head>
   <body>
+  <button id="paginationOne" onclick="changeComponentId('paginationOne')">Component one</button>
+  <button id="paginationTwo" onclick="changeComponentId('paginationTwo')">Component two</button>
+  <button id="paginationThree" onclick="changeComponentId('paginationThree')">Component three</button>
+  <button id="paginationFour" onclick="changeComponentId('paginationFour')">Component one</button>
+  <button id="turnOffPagination" onclick="turnOffPagination()">Turn off pagination</button>
   <hr/>
-  <button id="attachMessageHandler" onclick="attachMessageHandler()">Attach message handler</button>
-
   <ontotext-yasgui data-cy="ontotext-yasgui-tag"></ontotext-yasgui>
   </body>
 </html>

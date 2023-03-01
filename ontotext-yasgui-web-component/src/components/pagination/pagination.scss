@@ -1,0 +1,33 @@
+@import 'src/css/variables';
+
+.ontotext-pagination {
+
+  .page-selectors {
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    min-width: 100px;
+  }
+
+  .page-selector {
+    color: $onto-blue-light;
+    padding: 2px 5px;
+    background-color: $background-onto-default;
+    border: none;
+    cursor: pointer;
+  }
+
+  .page-selector:disabled {
+    cursor: unset;
+  }
+
+  .previous-button:disabled, .next-button:disabled {
+    opacity: 0.4;
+  }
+
+  .selected-page {
+    background-color: $color-ontotext-orange;
+    color: $color-onto-white;
+  }
+}

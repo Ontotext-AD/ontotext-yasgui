@@ -1,0 +1,28 @@
+// Copy the source below and paste it in editor of "https://www.websequencediagrams.com/#".
+
+actor User
+User->*WebBrowser: Open page with \n ontotext-yasgui-component
+WebBrowser->*OntotextYasguiClient: Create an Instance
+OntotextYasguiClient->*OntotextYasguiComponent: Create an Instance
+OntotextYasguiComponent-->OntotextYasguiClient:
+OntotextYasguiClient-->WebBrowser:
+WebBrowser-->User:
+User->OntotextYasguiComponent: Click on "Run" button\n (execute a SPARQL query)
+OntotextYasguiComponent->OntotextYasguiClient: Emit event "QueryEvent" \n with parameters pageSize and pageNumber
+OntotextYasguiClient->OntotextYasguiClient: Client can change headers,\n query parameters or something else
+OntotextYasguiClient-->OntotextYasguiComponent:
+OntotextYasguiComponent->Backend Server: Send query request
+Backend Server-->OntotextYasguiComponent: response
+alt If response contains totalElements
+    OntotextYasguiComponent-->User: results of query and result info are render in YASR
+else If response don't contains totalElements
+    OntotextYasguiComponent->OntotextYasguiClient: Emit "CountQueryEvent" \n with parameters pageSize and pageNumber
+    OntotextYasguiClient->OntotextYasguiClient: Client can change headers,\n query parameters or something else
+    OntotextYasguiClient-->OntotextYasguiComponent:
+    OntotextYasguiComponent->Backend Server: Send count request
+    Backend Server-->OntotextYasguiComponent: count response
+    OntotextYasguiComponent->OntotextYasguiClient: Emit "CountQueryResponseEvent" \n with server response
+    OntotextYasguiClient->OntotextYasguiClient: Process response if needed\n After modification response have to\n contains "totalElements"\n
+    OntotextYasguiClient-->OntotextYasguiComponent:
+    OntotextYasguiComponent-->User: result info is rendered in YASR
+end

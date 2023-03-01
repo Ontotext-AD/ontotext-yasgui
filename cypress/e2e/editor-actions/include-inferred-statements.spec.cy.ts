@@ -1,5 +1,5 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
-import {QueryStubs} from "../../stubs/query-stubs";
+import {QueryStubDescription, QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/actions-page-steps";
 
 describe('Include inferred action', () => {
@@ -35,14 +35,15 @@ describe('Include inferred action', () => {
   });
 
   it('Should toggle infer request parameter in requests', () => {
+    QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
     // Given I have executing the query without changing configs
     YasqeSteps.executeQuery();
     // Then I expect that infer=true will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=true');
+    cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=true');
     // When I disable include inferred statements
     YasqeSteps.includeInferredStatements();
     YasqeSteps.executeQuery();
     // Then I expect that infer=false will be sent with the request
-    cy.wait('@getDefaultQueryResponse').its('request.body').should('contain', 'infer=false');
+    cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=false');
   });
 });

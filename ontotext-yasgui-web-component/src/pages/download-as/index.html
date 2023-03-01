@@ -7,10 +7,12 @@
 
     <script type="module" src="/build/ontotext-yasgui-web-component.esm.js"></script>
     <script nomodule src="/build/ontotext-yasgui-web-component.js"></script>
+    <script src="../js/ontotext-yasgui-tests-util.js"></script>
     <script src="./download-as/main.js" defer></script>
   </head>
   <body>
   <button id="external-configuration" onclick="setConfiguration()">Configure</button>
+  <button id="turnOffDownloadAs" onclick="turnOffDownloadAs()">Turn off "Download as" dropdown</button>
   <hr/>
   <ontotext-yasgui data-cy="ontotext-yasgui-tag"></ontotext-yasgui>
   <div id="download-as-event"></div>

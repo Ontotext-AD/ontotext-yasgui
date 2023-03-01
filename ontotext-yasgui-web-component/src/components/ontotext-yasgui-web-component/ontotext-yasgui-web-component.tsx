@@ -6,7 +6,6 @@ import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {
   InternalShowResourceCopyLinkDialogEvent,
   InternalShowSavedQueriesEvent,
-  QueryEvent,
   QueryResponseEvent
 } from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
@@ -22,7 +21,10 @@ import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dial
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
 import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
-import {NotificationMessage, NotificationMessageCode, NotificationMessageType} from '../../models/output-events/notification-message';
+import {NotificationMessageEvent, NotificationMessageCode, NotificationMessageType} from '../../models/output-events/notification-message-event';
+import {CountQueryEvent} from '../../models/output-events/count-query-event';
+import {CountQueryResponseEvent} from '../../models/output-events/count-query-response-event';
+import {QueryEvent} from '../../models/output-events/query-event';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -82,10 +84,14 @@ export class OntotextYasguiWebComponent {
     // Bound to the instance functions because we want to refer them when unsubscribing events
     this.onQueryBound = this.onQuery.bind(this);
     this.onQueryResponseBound = this.onQueryResponse.bind(this);
+    this.onCountQueryBound = this.onCountQuery.bind(this);
+    this.onCountQueryResponseBound = this.onCountQueryResponse.bind(this);
   }
 
   onQueryBound: (yasqe: Yasqe, tab) => void;
   onQueryResponseBound: (_instance: Yasqe, _req: Request, duration: number) => void;
+  onCountQueryBound: (yasqe: Yasqe, tab) => void;
+  onCountQueryResponseBound: (yasqe: Yasqe, countQueryResponse: any) => void;
 
   /**
    * The host html element for the yasgui.
@@ -124,11 +130,6 @@ export class OntotextYasguiWebComponent {
     this.shouldShowSavedQueriesPopup();
     this.saveQueryData = this.initSaveQueryData();
   }
-
-  /**
-   * Event emitted when before query to be executed.
-   */
-  @Event() queryExecuted: EventEmitter<QueryEvent>;
 
   /**
    * Event emitted when after query response is returned.
@@ -456,7 +457,7 @@ export class OntotextYasguiWebComponent {
   @Listen('internalResourceLinkCopiedEvent')
   resourceLinkCopiedHandler() {
     const resourceCopiedMessage = this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success');
-    this.output.emit(new NotificationMessage(NotificationMessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, NotificationMessageType.SUCCESS, resourceCopiedMessage));
+    this.output.emit(new NotificationMessageEvent(NotificationMessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, NotificationMessageType.SUCCESS, resourceCopiedMessage));
     this.showCopyResourceLinkDialog = false;
     this.copiedResourceLink = undefined;
   }
@@ -481,6 +482,14 @@ export class OntotextYasguiWebComponent {
       this.translationService.translate('yasgui.toolbar.orientation.btn.tooltip.switch_orientation_vertical');
   }
 
+  private onCountQuery(yasqe: Yasqe, request: Request) {
+    this.output.emit(new CountQueryEvent(request, yasqe.getValue(), this.ontotextYasgui.getQueryMode()));
+  }
+
+  private onCountQueryResponse(_yasqe: Yasqe, countQueryResponse: any) {
+    this.output.emit(new CountQueryResponseEvent(countQueryResponse));
+  }
+
   private changeOrientation() {
     this.isVerticalOrientation = !this.isVerticalOrientation;
     VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation);
@@ -488,11 +497,7 @@ export class OntotextYasguiWebComponent {
 
   // @ts-ignore
   private onQuery(yasqe: Yasqe, request: Request): void {
-    this.queryExecuted.emit({
-      request: request,
-      query: yasqe.getValue(),
-      queryMode: this.ontotextYasgui.getQueryMode()
-    });
+    this.output.emit(new QueryEvent(request, yasqe.getValue(), this.ontotextYasgui.getQueryMode()));
     this.showQueryProgress = true;
   }
 
@@ -617,8 +622,15 @@ export class OntotextYasguiWebComponent {
   private initYasguiEventHandlers(yasqe: any): void {
     yasqe.off('query', this.onQueryBound);
     yasqe.on('query', this.onQueryBound);
+
     yasqe.off('queryResponse', this.onQueryResponseBound);
     yasqe.on('queryResponse', this.onQueryResponseBound);
+
+    yasqe.off('countQuery', this.onCountQueryBound);
+    yasqe.on('countQuery', this.onCountQueryBound);
+
+    yasqe.off('countQueryResponse', this.onCountQueryResponseBound);
+    yasqe.on('countQueryResponse', this.onCountQueryResponseBound);
   }
 
   private afterInit(): void {
@@ -704,19 +716,19 @@ export class OntotextYasguiWebComponent {
         <div class="ontotext-yasgui"></div>
 
         {this.showSaveQueryDialog &&
-        <save-query-dialog data={this.getSaveQueryData()}
-                           serviceFactory={this.serviceFactory}>&nbsp;</save-query-dialog>}
+          <save-query-dialog data={this.getSaveQueryData()}
+                             serviceFactory={this.serviceFactory}>&nbsp;</save-query-dialog>}
 
         {this.showSavedQueriesPopup &&
-        <saved-queries-popup config={this.getSaveQueriesData()}></saved-queries-popup>}
+          <saved-queries-popup config={this.getSaveQueriesData()}></saved-queries-popup>}
 
         {this.showConfirmationDialog &&
-        <confirmation-dialog serviceFactory={this.serviceFactory}
-                             config={this.getDeleteQueryConfirmationConfig()}></confirmation-dialog>}
+          <confirmation-dialog serviceFactory={this.serviceFactory}
+                               config={this.getDeleteQueryConfirmationConfig()}></confirmation-dialog>}
 
         {this.showShareQueryDialog &&
-        <share-query-dialog serviceFactory={this.serviceFactory}
-                                  config={this.getShareLinkDialogConfig()}></share-query-dialog>}
+          <share-query-dialog serviceFactory={this.serviceFactory}
+                              config={this.getShareLinkDialogConfig()}></share-query-dialog>}
         {this.showCopyResourceLinkDialog &&
           <copy-resource-link-dialog serviceFactory={this.serviceFactory}
                                      resourceLink={this.copiedResourceLink}>

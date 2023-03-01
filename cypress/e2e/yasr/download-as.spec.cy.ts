@@ -58,6 +58,16 @@ describe('Download as', () => {
       // And expect icon to be visible.
       DownloadAsPageSteps.getDropdownAsIcon().should('be.visible');
     });
+
+    it('should not exist when is turned off in configuration', () => {
+      // When visit a page with ontotext-yasgui component in it which is configured to turnoff download as dropdown.
+      DownloadAsPageSteps.turnOffDownloadAsDropdown();
+      // and execute a query witch returns results.
+      YasqeSteps.executeQuery();
+
+      // Then "Download as" dropdown should not exist.
+      DownloadAsPageSteps.getDownloadAsDropdown().should('not.exist');
+    });
   });
 
   it('Should emit "downloadAs" event with value the selected of selected option, current plugin name, and last executed query.', () => {
