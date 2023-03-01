@@ -17,6 +17,8 @@ ontoElement.config = {
   }
 };
 
+setQueryListener(ontoElement);
+
 let textAreaElement = document.createElement('textarea');
 textAreaElement.id = 'saveQueryPayload';
 document.body.appendChild(textAreaElement);

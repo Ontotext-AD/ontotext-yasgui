@@ -50,11 +50,14 @@ export class YasguiConfigurationBuilder {
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},
+      paginationOn: externalConfiguration.paginationOn !== undefined ? externalConfiguration.paginationOn : defaultYasguiConfig.paginationOn,
+      pageSize: externalConfiguration.pageSize !== undefined ? externalConfiguration.pageSize : defaultYasguiConfig.pageSize,
       yasqe: {},
       yasr: {
         prefixes: {},
         defaultPlugin: '',
         pluginOrder: [],
+        downloadAsOn: externalConfiguration.downloadAsOn !== undefined ? externalConfiguration.downloadAsOn : defaultYasrConfig.downloadAsOn,
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration.pluginsConfigurations),
       }
     };

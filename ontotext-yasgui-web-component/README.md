@@ -101,6 +101,9 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - <b>yasqePluginButtons</b>: Plugin definitions configurations for yasqe action buttons; 
 - <b>componentId</b>: An unique identifier of an instance of the component. This config is optional.
   A unique identifier of the component instance. This configuration is optional. A unique value should be passed only if the component's internal state (open tabs, completed requests, etc.) should not be shared with its other instances.
+- **paginationOn**: If true pagination will be used to display results.
+- **pageSize**: the size of a page. Default value is 10.
+- **downloadAsOn**: if false "Download as" dropdown will not be shown.
 
 ## Developers guide
 

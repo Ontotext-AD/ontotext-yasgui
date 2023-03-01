@@ -23,6 +23,10 @@ export class YasrSteps {
     return this.getResultRow(rowNumber).find('td').eq(cellNumber);
   }
 
+  static getResultLink(rowNumber: number, cellNumber: number) {
+    return YasrSteps.getResultCell(rowNumber, cellNumber).find('a');
+  }
+
   static getTriple(rowNumber: number, tripleNumber: 0 | 1 | 2) {
     return this.getResultCell(rowNumber, 1).find('.triple-list').find('li').eq(tripleNumber);
   }
@@ -103,5 +107,9 @@ export class YasrSteps {
 
   static switchToRawResponsePlugin() {
     YasrSteps.switchToPlugin('response');
+  }
+
+  static getPagination() {
+    return YasrSteps.getYasr().find('.ontotext-pagination');
   }
 }

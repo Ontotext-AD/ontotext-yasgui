@@ -10,6 +10,10 @@ export class DownloadAsPageSteps {
     return YasguiSteps.getYasgui().find('ontotext-download-as');
   }
 
+  static turnOffDownloadAsDropdown() {
+    cy.get('#turnOffDownloadAs').realClick();
+  }
+
   static getDownloadAsDropdownButton() {
     return DownloadAsPageSteps.getDownloadAsDropdown().find('.ontotext-dropdown-button');
   }

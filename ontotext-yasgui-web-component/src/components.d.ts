@@ -13,9 +13,10 @@ import { TranslationService } from "./services/translation.service";
 import { DropdownOption } from "./models/dropdown-option";
 import { InternalDownloadAsEvent } from "./models/internal-events/internal-download-as-event";
 import { InternalDropdownValueSelectedEvent } from "./models/internal-events/internal-dropdown-value-selected-event";
+import { Page } from "./models/page";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
-import { QueryEvent, QueryResponseEvent } from "./models/event";
+import { QueryResponseEvent } from "./models/event";
 import { OutputEvent } from "./models/output-events/output-event";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
@@ -56,6 +57,13 @@ export namespace Components {
         "nameLabelKey": string;
         "tooltipLabelKey": string;
         "translationService": TranslationService;
+    }
+    interface OntotextPagination {
+        "hasMorePages": boolean | undefined;
+        "pageElements": number;
+        "pageNumber": number;
+        "pageSize": number;
+        "totalElements": number;
     }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -145,6 +153,10 @@ export interface OntotextDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextDropdownElement;
 }
+export interface OntotextPaginationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLOntotextPaginationElement;
+}
 export interface OntotextYasguiCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextYasguiElement;
@@ -204,6 +216,12 @@ declare global {
         prototype: HTMLOntotextDropdownElement;
         new (): HTMLOntotextDropdownElement;
     };
+    interface HTMLOntotextPaginationElement extends Components.OntotextPagination, HTMLStencilElement {
+    }
+    var HTMLOntotextPaginationElement: {
+        prototype: HTMLOntotextPaginationElement;
+        new (): HTMLOntotextPaginationElement;
+    };
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
      * configure and extend the library without potentially breaking the component clients.
@@ -258,6 +276,7 @@ declare global {
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-download-as": HTMLOntotextDownloadAsElement;
         "ontotext-dropdown": HTMLOntotextDropdownElement;
+        "ontotext-pagination": HTMLOntotextPaginationElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
@@ -322,6 +341,14 @@ declare namespace LocalJSX {
         "tooltipLabelKey"?: string;
         "translationService"?: TranslationService;
     }
+    interface OntotextPagination {
+        "hasMorePages"?: boolean | undefined;
+        "onPageSelected"?: (event: OntotextPaginationCustomEvent<Page>) => void;
+        "pageElements"?: number;
+        "pageNumber"?: number;
+        "pageSize"?: number;
+        "totalElements"?: number;
+    }
     /**
      * This is the custom web component which is adapter for the yasgui library. It allows as to
      * configure and extend the library without potentially breaking the component clients.
@@ -363,10 +390,6 @@ declare namespace LocalJSX {
           * Event emitter used to send message to the clients of component.
          */
         "onOutput"?: (event: OntotextYasguiCustomEvent<OutputEvent>) => void;
-        /**
-          * Event emitted when before query to be executed.
-         */
-        "onQueryExecuted"?: (event: OntotextYasguiCustomEvent<QueryEvent>) => void;
         /**
           * Event emitted when after query response is returned.
          */
@@ -459,6 +482,7 @@ declare namespace LocalJSX {
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-download-as": OntotextDownloadAs;
         "ontotext-dropdown": OntotextDropdown;
+        "ontotext-pagination": OntotextPagination;
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
@@ -477,6 +501,7 @@ declare module "@stencil/core" {
             "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
             "ontotext-download-as": LocalJSX.OntotextDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextDownloadAsElement>;
             "ontotext-dropdown": LocalJSX.OntotextDropdown & JSXBase.HTMLAttributes<HTMLOntotextDropdownElement>;
+            "ontotext-pagination": LocalJSX.OntotextPagination & JSXBase.HTMLAttributes<HTMLOntotextPaginationElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to
              * configure and extend the library without potentially breaking the component clients.

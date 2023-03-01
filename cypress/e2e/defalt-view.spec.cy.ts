@@ -1,18 +1,18 @@
 import DefaultViewPageSteps from '../steps/default-view-page-steps';
 import {YasqeSteps} from '../steps/yasqe-steps';
 import {YasrSteps} from '../steps/yasr-steps';
-import {QueryStubs} from "../stubs/query-stubs";
+import {QueryStubDescription, QueryStubs} from "../stubs/query-stubs";
 
 describe('Default view', () => {
 
   beforeEach(() => {
-    QueryStubs.stubDefaultQueryResponse();
     DefaultViewPageSteps.visitDefaultViewPage();
+    QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(6));
   });
 
   it('Should load component with default configuration', () => {
     YasqeSteps.executeQuery();
-    YasrSteps.getResults().should('have.length', 36);
+    YasrSteps.getResults().should('have.length', 6);
   });
 
   context('Instance methods', () => {
