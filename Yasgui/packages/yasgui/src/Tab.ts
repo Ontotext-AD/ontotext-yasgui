@@ -22,6 +22,8 @@ export interface PersistedJson {
     infer?: boolean;
     sameAs?: boolean;
     editorHeight?: string;
+    pageSize?: number;
+    pageNumber?: number;
   };
   yasr: {
     settings: YasrPersistentConfig;
@@ -312,6 +314,11 @@ export class Tab extends EventEmitter {
       ...this.yasgui.config.yasqe,
       value: this.persistentJson.yasqe.value,
       editorHeight: this.persistentJson.yasqe.editorHeight ? this.persistentJson.yasqe.editorHeight : undefined,
+      infer: this.persistentJson.yasqe.infer,
+      sameAs: this.persistentJson.yasqe.sameAs,
+      pageNumber: this.persistentJson.yasqe.pageNumber || this.yasgui.config.pageNumber,
+      pageSize: this.persistentJson.yasqe.pageSize || this.yasgui.config.pageSize,
+      paginationOn: this.yasgui.config.paginationOn,
       persistenceId: null, //yasgui handles persistent storing
       consumeShareLink: null, //not handled by this tab, but by parent yasgui instance
       createShareableLink: () => this.getShareableLink(),
@@ -370,6 +377,7 @@ export class Tab extends EventEmitter {
     this.yasqe.on("autocompletionClose", this.handleAutocompletionClose);
 
     this.yasqe.on("queryResponse", this.handleQueryResponse);
+    this.yasqe.on("totalElementChanged", this.handleTotalElementChanged);
   }
   private destroyYasqe() {
     // As Yasqe extends of CM instead of eventEmitter, it doesn't expose the removeAllListeners function, so we should unregister all events manually
@@ -380,6 +388,7 @@ export class Tab extends EventEmitter {
     this.yasqe?.off("autocompletionShown", this.handleAutocompletionShown);
     this.yasqe?.off("autocompletionClose", this.handleAutocompletionClose);
     this.yasqe?.off("queryResponse", this.handleQueryResponse);
+    this.yasqe?.off("totalElementChanged", this.handleTotalElementChanged);
     this.yasqe?.destroy();
     this.yasqe = undefined;
   }
@@ -391,18 +400,30 @@ export class Tab extends EventEmitter {
 
   private updatePersistJson = (yasqe: Yasqe) => {
     this.persistentJson.yasqe.value = yasqe.getValue();
-    if (yasqe.getSameAs() !== undefined) {
-      this.persistentJson.yasqe.sameAs = yasqe.getSameAs();
+    const sameAs = yasqe.getSameAs();
+    if (sameAs !== undefined) {
+      this.persistentJson.yasqe.sameAs = sameAs;
     }
-    if (yasqe.getInfer() !== undefined) {
-      this.persistentJson.yasqe.infer = yasqe.getInfer();
+    const infer = yasqe.getInfer();
+    if (infer !== undefined) {
+      this.persistentJson.yasqe.infer = infer;
+    }
+    const pageSize = yasqe.getPageSize();
+    if (pageSize !== undefined) {
+      this.persistentJson.yasqe.pageSize = pageSize;
+    }
+    const pageNumber = yasqe.getPageNumber();
+    if (pageNumber !== undefined) {
+      this.persistentJson.yasqe.pageNumber = pageNumber;
     }
   };
   private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
     return (
       yasqe.getValue() !== this.persistentJson.yasqe.value ||
       yasqe.getInfer() !== this.persistentJson.yasqe.infer ||
-      yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs
+      yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs ||
+      yasqe.getPageSize() !== this.persistentJson.yasqe.pageSize ||
+      yasqe.getPageNumber() !== this.persistentJson.yasqe.pageNumber
     );
   };
   handleYasqeQuery = (yasqe: Yasqe) => {
@@ -426,10 +447,16 @@ export class Tab extends EventEmitter {
   handleAutocompletionClose = (_yasqe: Yasqe) => {
     this.emit("autocompletionClose", this);
   };
-  handleQueryResponse = (_yasqe: Yasqe, response: any, duration: number, queryStartedTime: number) => {
+  handleQueryResponse = (
+    _yasqe: Yasqe,
+    response: any,
+    duration: number,
+    queryStartedTime: number,
+    hasMorePages?: boolean
+  ) => {
     this.emit("queryResponse", this);
     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
-    this.yasr.setResponse(response, duration, queryStartedTime);
+    this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages);
     if (!this.yasr.results) return;
     if (!this.yasr.results.hasError()) {
       this.persistentJson.yasr.response = this.yasr.results.getAsStoreObject(
@@ -440,6 +467,18 @@ export class Tab extends EventEmitter {
       this.persistentJson.yasr.response = undefined;
     }
     this.emit("change", this, this.persistentJson);
+  };
+
+  handleTotalElementChanged = (_yasqe: Yasqe, totalElements = -1) => {
+    if (this.yasr?.results) {
+      const response = this.persistentJson.yasr.response;
+      if (response) {
+        if (response.totalElements !== totalElements) {
+          response.totalElements = totalElements;
+          this.emit("change", this, this.persistentJson);
+        }
+      }
+    }
   };
 
   private initYasr() {
@@ -460,6 +499,7 @@ export class Tab extends EventEmitter {
       },
       defaultPlugin: this.persistentJson.yasr.settings.selectedPlugin,
       pluginOrder: this.yasgui.config.yasr.pluginOrder,
+      downloadAsOn: this.yasgui.config.yasr.downloadAsOn,
       getPlainQueryLinkToEndpoint: () => {
         if (this.yasqe) {
           return shareLink.appendArgsToUrl(
@@ -486,17 +526,19 @@ export class Tab extends EventEmitter {
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
 
-    this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
+    if (this.yasqe) {
+      this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson);
 
-    //populate our own persistent config
-    this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
-    this.yasr.on("change", () => {
-      if (this.yasr) {
-        this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
-      }
+      //populate our own persistent config
+      this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
+      this.yasr.on("change", () => {
+        if (this.yasr) {
+          this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
+        }
 
-      this.emit("change", this, this.persistentJson);
-    });
+        this.emit("change", this, this.persistentJson);
+      });
+    }
   }
   destroy() {
     this.removeAllListeners();

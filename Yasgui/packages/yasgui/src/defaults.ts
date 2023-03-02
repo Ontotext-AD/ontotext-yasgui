@@ -7,6 +7,7 @@ import { TranslationService } from "@triply/yasgui-utils";
 export default function initialize(): Config<CatalogueItem> {
   return {
     translationService: TranslationService.INSTANCE,
+    pageNumber: 1,
     autofocus: true,
     endpointInfo: undefined,
     persistenceId: function (yasgui) {

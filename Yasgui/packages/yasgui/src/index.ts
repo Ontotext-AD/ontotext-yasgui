@@ -46,6 +46,9 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   contextMenuContainer: HTMLElement | undefined;
   nonSslDomain?: string;
   translationService: TranslationService;
+  paginationOn?: boolean;
+  pageSize?: number;
+  pageNumber: number;
 }
 export type PartialConfig = {
   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
@@ -281,8 +284,8 @@ export class Yasgui extends EventEmitter {
 
   private _registerTabListeners(tab: Tab) {
     tab.on("change", (tab) => {
-        this.emit("tabChange", this, tab);
-        this.emit("yasqeReady", tab, tab.getYasqe());
+      this.emit("tabChange", this, tab);
+      this.emit("yasqeReady", tab, tab.getYasqe());
     });
     tab.on("yasqeReady", (tab, yasqe) => this.emit("yasqeReady", tab, yasqe));
     tab.on("query", (tab) => this.emit("query", this, tab));
