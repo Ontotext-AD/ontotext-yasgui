@@ -40,6 +40,8 @@ namespace Parser {
     contentType?: string;
     executionTime?: number;
     queryStartedTime?: number;
+    totalElements?: number;
+    hasMorePages?: boolean;
   }
   export type PostProcessBinding = (binding: Binding) => Binding;
 }
@@ -72,10 +74,12 @@ class Parser {
   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
   private executionTime: number | undefined;
   private queryStartedTime: number | undefined;
+  private readonly hasMorePages?: boolean;
   constructor(
     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
     executionTime?: number,
-    queryStartedTime?: number
+    queryStartedTime?: number,
+    hasMorePages?: boolean
   ) {
     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
     if (executionTime) this.executionTime = executionTime; // Parameter has priority
@@ -85,6 +89,7 @@ class Parser {
     } else {
       this.queryStartedTime = responseOrObject.queryStartedTime;
     }
+    this.hasMorePages = hasMorePages;
 
     if (responseOrObject instanceof Error) {
       this.error = responseOrObject;
@@ -177,6 +182,10 @@ class Parser {
 
   public getQueryStartedTime() {
     return this.queryStartedTime;
+  }
+
+  public getHasMorePages() {
+    return this.hasMorePages;
   }
 
   private getParserFromContentType(): boolean {
@@ -303,6 +312,7 @@ class Parser {
         status: this.getStatus(),
         executionTime: this.getResponseTime(),
         queryStartedTime: this.getQueryStartedTime(),
+        hasMorePages: this.getHasMorePages(),
       };
     }
     if (summary) {
@@ -317,6 +327,7 @@ class Parser {
         error: this.getError(),
         executionTime: this.getResponseTime(),
         queryStartedTime: this.getQueryStartedTime(),
+        hasMorePages: this.getHasMorePages(),
       };
     }
   }

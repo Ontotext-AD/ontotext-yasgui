@@ -48,13 +48,15 @@ export class Yasr extends EventEmitter {
   private selectedPlugin: string | undefined;
 
   protected readonly translationService: TranslationService;
+  protected readonly yasqe: Yasqe;
 
   // Utils
   public utils = { addScript: addScript, addCSS: addCss, sanitize: sanitize };
 
-  constructor(parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
+  constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASR");
+    this.yasqe = yasqe;
     this.rootEl = document.createElement("div");
     this.rootEl.className = "yasr";
     parent.appendChild(this.rootEl);
@@ -594,9 +596,9 @@ export class Yasr extends EventEmitter {
       }
     }
   }
-  public setResponse(data: any, duration?: number, queryStartedTime?: number) {
+  public setResponse(data: any, duration?: number, queryStartedTime?: number, hasMorePages?: boolean) {
     if (!data) return;
-    this.results = new Parser(data, duration, queryStartedTime);
+    this.results = new Parser(data, duration, queryStartedTime, hasMorePages);
 
     this.draw();
 
@@ -658,6 +660,7 @@ export interface Config {
   translationService: TranslationService;
   externalPluginsConfigurations?: Map<string, any>;
   downloadAsOptions?: { labelKey: string; value: any }[];
+  downloadAsOn?: boolean;
   /**
    * Custom renderers for errors.
    * Allow multiple to be able to add new custom renderers without having to
@@ -681,6 +684,7 @@ import * as YasrPluginResponse from "./plugins/response";
 import * as YasrPluginError from "./plugins/error";
 import { ExtendedTable } from "./plugins/extended-table/extended-table";
 import { TranslationService } from "@triply/yasgui-utils";
+import Yasqe from "@triply/yasqe";
 
 Yasr.registerPlugin("table", YasrPluginTable.default as any);
 Yasr.registerPlugin("boolean", YasrPluginBoolean.default as any);

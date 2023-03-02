@@ -206,7 +206,7 @@ export default class Table implements Plugin<PluginConfig> {
     // reset some default config properties as they couldn't be initialized beforehand
     const dtConfig: DataTables.Settings = {
       ...((cloneDeep(this.config.tableConfig) as unknown) as DataTables.Settings),
-      pageLength: persistentConfig?.pageSize ? persistentConfig.pageSize : DEFAULT_PAGE_SIZE,
+      pageLength: -1,
       data: rows,
       columns: columns,
       language: {

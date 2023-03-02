@@ -73,7 +73,23 @@ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Prom
     yasqe.emit("query", req, populatedConfig);
     return await req.then(
       (result) => {
-        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart);
+        let hasMorePage = false;
+        if (yasqe.config.paginationOn) {
+          // If client hadn't set total Element we will execute count query.
+          if (!result.body.totalElements) {
+            executeCountQuery(yasqe, config);
+          } else {
+            yasqe.emit("totalElementChanged", parseInt(result.body.totalElements));
+          }
+          const pageSize = yasqe.getPageSize();
+          if (pageSize) {
+            hasMorePage = result.body.results.bindings.length > pageSize;
+            if (hasMorePage) {
+              result.body.results.bindings.pop();
+            }
+          }
+        }
+        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart, hasMorePage);
         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
         return result.body;
       },
@@ -90,6 +106,39 @@ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Prom
   } catch (e) {
     console.error(e);
   }
+}
+
+export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void {
+  let req: superagent.SuperAgentRequest;
+  const populatedConfig = getAjaxConfig(yasqe, config);
+  if (!populatedConfig) {
+    //nothing to query
+    return;
+  }
+  if (populatedConfig.reqMethod === "POST") {
+    req = superagent.post(populatedConfig.url).type("form").send(populatedConfig.args);
+  } else {
+    req = superagent.get(populatedConfig.url).query(populatedConfig.args);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  req.accept(populatedConfig.accept).set(populatedConfig.headers || {});
+
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  if (populatedConfig.withCredentials) req.withCredentials();
+
+  yasqe.emit("countQuery", req, populatedConfig);
+  req.then(
+    (countResponse) => {
+      yasqe.emit("countQueryResponse", countResponse);
+      yasqe.emit("totalElementChanged", parseInt(countResponse.body.totalElements));
+      yasqe.emit("countQueryReady", parseInt(countResponse.body.totalElements));
+    },
+    (error) => {
+      // Nothing to do. In tab persistence "totalElements" will stay undefined.
+      // This will be taken into account when generating information message about the results.
+      console.log(error);
+    }
+  );
 }
 
 export type RequestArgs = { [argName: string]: string | string[] };
@@ -110,6 +159,17 @@ export function getUrlArguments(yasqe: Yasqe, _config: Config["requestConfig"]):
   const sameAs = yasqe.getSameAs();
   if (sameAs !== undefined) {
     data["sameAs"] = `${sameAs}`;
+  }
+
+  if (yasqe.config.paginationOn) {
+    const pageSize = yasqe.getPageSize();
+    if (pageSize) {
+      data["pageSize"] = `${pageSize + 1}`;
+    }
+    const pageNumber = yasqe.getPageNumber();
+    if (pageNumber) {
+      data["pageNumber"] = `${pageNumber}`;
+    }
   }
 
   /**

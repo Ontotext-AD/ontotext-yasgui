@@ -32,6 +32,8 @@ export interface Yasqe {
     eventName: "queryResponse",
     handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
   ): void;
+  on(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
+  off(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
   showHint: (conf: HintConfig) => void;
   on(eventName: "error", handler: (instance: Yasqe) => void): void;
   off(eventName: "error", handler: (instance: Yasqe) => void): void;
@@ -66,6 +68,8 @@ export class Yasqe extends CodeMirror {
 
   private infer?: boolean;
   private sameAs?: boolean;
+  private pageSize?: number;
+  private pageNumber?: number;
 
   public readonly translationService: TranslationService;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
@@ -76,6 +80,10 @@ export class Yasqe extends CodeMirror {
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasqe.defaults, conf);
     this.translationService = this.config.translationService;
+    this.infer = this.config.infer;
+    this.sameAs = this.config.sameAs;
+    this.pageNumber = this.config.pageNumber;
+    this.pageSize = this.config.pageSize;
     //inherit codemirror props
     const cm = (CodeMirror as any)(this.rootEl, this.config);
     //Assign our functions to the cm object. This is needed, as some functions (like the ctrl-enter callback)
@@ -172,6 +180,22 @@ export class Yasqe extends CodeMirror {
 
   public getSameAs(): boolean | undefined {
     return this.sameAs;
+  }
+
+  public setPageNumber(pageNumber: number) {
+    this.pageNumber = pageNumber;
+  }
+
+  public getPageNumber(): number | undefined {
+    return this.pageNumber;
+  }
+
+  public setPageSize(pageSize: number) {
+    this.pageSize = pageSize;
+  }
+
+  public getPageSize(): number | undefined {
+    return this.pageSize;
   }
 
   private registerEventListeners() {
@@ -372,6 +396,7 @@ export class Yasqe extends CodeMirror {
         if (this.req) {
           this.abortQuery();
         } else {
+          this.pageNumber = 1;
           this.query().catch(() => {}); //catch this to avoid unhandled rejection
         }
       };
@@ -1094,10 +1119,17 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   queryingDisabled: string | undefined; // The string will be the message displayed when hovered
   prefixCcApi: string; // the suggested default prefixes URL API getter
   translationService: TranslationService;
+  infer?: boolean;
+  sameAs?: boolean;
+  pageSize?: number;
+  pageNumber?: number;
+  paginationOn?: boolean;
 }
 export interface PersistentConfig {
   query: string;
   editorHeight: string;
+  pageSize?: number;
+  pageNumber?: number;
 }
 // export var _Yasqe = _Yasqe;
 

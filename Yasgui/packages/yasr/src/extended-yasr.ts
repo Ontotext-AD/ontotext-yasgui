@@ -14,35 +14,107 @@ export class ExtendedYasr extends Yasr {
   downloadAsElement: HTMLElement | undefined;
 
   externalPluginsConfigurations: Map<string, any> | undefined;
+  resultQueryPaginationElement: Page | undefined;
+  private eventsListeners: Map<string, Function> | undefined;
+  private persistentJson: any;
 
-  private yasqe?: Yasqe;
-
-  constructor(yasqe: Yasqe | undefined, parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
-    super(parent, conf, data);
-    this.yasqe = yasqe;
+  constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
+    super(yasqe, parent, conf, persistentJson?.yasr.response);
+    this.persistentJson = persistentJson;
     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
+    if (yasqe.config.paginationOn) {
+      this.yasqe.on("queryResponse", this.updateQueryResultPaginationElementHandler.bind(this));
+      this.yasqe.on("countQueryReady", this.updateQueryResultPaginationElementHandler.bind(this));
+      this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
+    }
   }
 
+  //=================================
+  //       Overridden functions.
+  //=================================
   drawPluginSelectors() {
     super.drawPluginSelectors();
-    const downloadAsLiElement = document.createElement("li");
-    this.downloadAsElement = this.createDownloadAsElement();
-    this.updateDownloadAsElementVisibility();
 
-    downloadAsLiElement.appendChild(this.downloadAsElement);
+    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn) {
+      return;
+    }
     const pluginSelectorsEl = this.getPluginSelectorsEl();
-    const testElement = document.createElement("li");
-    testElement.classList.add("spacer");
-    pluginSelectorsEl.appendChild(testElement);
-    pluginSelectorsEl.appendChild(downloadAsLiElement);
+    const spacerElement = document.createElement("li");
+    spacerElement.classList.add("spacer");
+    pluginSelectorsEl.appendChild(spacerElement);
+
+    if (this.config.downloadAsOn) {
+      const downloadAsLiElement = document.createElement("li");
+      this.downloadAsElement = this.createDownloadAsElement();
+      this.updateDownloadAsElementVisibility();
+      pluginSelectorsEl.appendChild(downloadAsLiElement);
+      downloadAsLiElement.appendChild(this.downloadAsElement);
+    }
+
+    if (this.yasqe.config.paginationOn) {
+      const resultPaginationLiElement = document.createElement("li");
+      this.resultQueryPaginationElement = this.createResultPaginationElement();
+      resultPaginationLiElement.appendChild(this.resultQueryPaginationElement);
+      pluginSelectorsEl.appendChild(resultPaginationLiElement);
+    }
   }
 
   updatePluginSelectorNames() {
     super.updatePluginSelectorNames();
-    this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
-    this.updateDownloadAsElementVisibility();
+    if (this.downloadAsElement) {
+      this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
+      this.updateDownloadAsElementVisibility();
+    }
   }
 
+  //==================================================
+  //       Functions that extend YASR functionality
+  //==================================================
+
+  createResultPaginationElement(): Page {
+    const element: Page = (document.createElement("ontotext-pagination") as unknown) as Page;
+    const pageSelectedListener = this.pageSelectedHandler(this);
+    this.getEventsListeners().set("pageSelected", pageSelectedListener);
+    element.addEventListener("pageSelected", pageSelectedListener);
+    this.updateQueryResultPaginationElement(element);
+    return element;
+  }
+
+  updateQueryResultPaginationElementHandler() {
+    this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
+  }
+
+  updateQueryResultPaginationElement(resultQueryPaginationElement: Page | undefined) {
+    if (!resultQueryPaginationElement) {
+      return;
+    }
+    resultQueryPaginationElement.pageNumber = this.yasqe?.getPageNumber();
+    resultQueryPaginationElement.pageSize = this.yasqe?.getPageSize();
+    resultQueryPaginationElement.pageElements = this.results?.getBindings()?.length || 0;
+    resultQueryPaginationElement.totalElements = this.persistentJson?.yasr.response?.totalElements || -1;
+    resultQueryPaginationElement.hasMorePages = this.results?.getHasMorePages();
+    this.updateQueryResultPaginationVisibility(resultQueryPaginationElement);
+  }
+
+  updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page) {
+    removeClass(resultQueryPaginationElement, "hidden");
+    const hasNotResults = !this.results?.getBindings()?.length;
+    if (
+      (hasNotResults && resultQueryPaginationElement.pageNumber === 1) ||
+      !this.hasMoreElements(resultQueryPaginationElement)
+    ) {
+      addClass(resultQueryPaginationElement, "hidden");
+    }
+  }
+
+  private getEventsListeners(): Map<string, Function> {
+    if (!this.eventsListeners) {
+      this.eventsListeners = new Map();
+    }
+    return this.eventsListeners;
+  }
+
+  // Private functions
   private toDownloadAs(element: HTMLElement | undefined): DownloadAs | undefined {
     return element ? ((element as any) as DownloadAs) : undefined;
   }
@@ -95,6 +167,40 @@ export class ExtendedYasr extends Yasr {
     if (!this.results?.getBindings()?.length) {
       addClass(this.downloadAsElement, "hidden");
     }
+  }
+
+  private hasMoreElements(resultQueryPaginationElement: Page): boolean {
+    if (resultQueryPaginationElement.pageNumber && resultQueryPaginationElement.pageNumber > 1) {
+      return true;
+    }
+    if (resultQueryPaginationElement.hasMorePages !== undefined) {
+      return resultQueryPaginationElement.hasMorePages;
+    }
+
+    if (resultQueryPaginationElement.pageSize && resultQueryPaginationElement.totalElements) {
+      return resultQueryPaginationElement.pageSize < resultQueryPaginationElement.totalElements;
+    }
+    return false;
+  }
+
+  public destroy() {
+    super.destroy();
+    const pageSelected: any = this.getEventsListeners().get("pageSelected");
+    if (pageSelected) {
+      this.resultQueryPaginationElement?.removeEventListener("pageSelected", pageSelected);
+    }
+  }
+
+  private pageSelectedHandler(yasr: ExtendedYasr) {
+    return (pageEvent: any) => {
+      const page: Page = pageEvent.detail;
+      const yasqe = yasr.yasqe;
+      if (yasqe) {
+        yasqe.setPageNumber(page.pageNumber || 1);
+        yasqe.setPageSize(page.pageSize || 10);
+        yasqe.query();
+      }
+    };
   }
 
   updateResponseInfo() {
@@ -279,4 +385,12 @@ interface DownloadAs {
   items: any[];
   infer?: boolean;
   sameAs?: boolean;
+}
+
+interface Page extends HTMLElement {
+  pageSize?: number;
+  pageNumber?: number;
+  totalElements?: number;
+  pageElements?: number;
+  hasMorePages?: boolean;
 }
