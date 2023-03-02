@@ -1,0 +1,702 @@
+Subject: [PATCH] Added pagination to yasgui source code.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -22,6 +22,8 @@
+     infer?: boolean;
+     sameAs?: boolean;
+     editorHeight?: string;
++    pageSize?: number;
++    pageNumber?: number;
+   };
+   yasr: {
+     settings: YasrPersistentConfig;
+@@ -312,6 +314,11 @@
+       ...this.yasgui.config.yasqe,
+       value: this.persistentJson.yasqe.value,
+       editorHeight: this.persistentJson.yasqe.editorHeight ? this.persistentJson.yasqe.editorHeight : undefined,
++      infer: this.persistentJson.yasqe.infer,
++      sameAs: this.persistentJson.yasqe.sameAs,
++      pageNumber: this.persistentJson.yasqe.pageNumber || this.yasgui.config.pageNumber,
++      pageSize: this.persistentJson.yasqe.pageSize || this.yasgui.config.pageSize,
++      paginationOn: this.yasgui.config.paginationOn,
+       persistenceId: null, //yasgui handles persistent storing
+       consumeShareLink: null, //not handled by this tab, but by parent yasgui instance
+       createShareableLink: () => this.getShareableLink(),
+@@ -370,6 +377,7 @@
+     this.yasqe.on("autocompletionClose", this.handleAutocompletionClose);
+ 
+     this.yasqe.on("queryResponse", this.handleQueryResponse);
++    this.yasqe.on("totalElementChanged", this.handleTotalElementChanged);
+   }
+   private destroyYasqe() {
+     // As Yasqe extends of CM instead of eventEmitter, it doesn't expose the removeAllListeners function, so we should unregister all events manually
+@@ -380,6 +388,7 @@
+     this.yasqe?.off("autocompletionShown", this.handleAutocompletionShown);
+     this.yasqe?.off("autocompletionClose", this.handleAutocompletionClose);
+     this.yasqe?.off("queryResponse", this.handleQueryResponse);
++    this.yasqe?.off("totalElementChanged", this.handleTotalElementChanged);
+     this.yasqe?.destroy();
+     this.yasqe = undefined;
+   }
+@@ -391,18 +400,30 @@
+ 
+   private updatePersistJson = (yasqe: Yasqe) => {
+     this.persistentJson.yasqe.value = yasqe.getValue();
+-    if (yasqe.getSameAs() !== undefined) {
+-      this.persistentJson.yasqe.sameAs = yasqe.getSameAs();
++    const sameAs = yasqe.getSameAs();
++    if (sameAs !== undefined) {
++      this.persistentJson.yasqe.sameAs = sameAs;
++    }
++    const infer = yasqe.getInfer();
++    if (infer !== undefined) {
++      this.persistentJson.yasqe.infer = infer;
+     }
+-    if (yasqe.getInfer() !== undefined) {
+-      this.persistentJson.yasqe.infer = yasqe.getInfer();
++    const pageSize = yasqe.getPageSize();
++    if (pageSize !== undefined) {
++      this.persistentJson.yasqe.pageSize = pageSize;
++    }
++    const pageNumber = yasqe.getPageNumber();
++    if (pageNumber !== undefined) {
++      this.persistentJson.yasqe.pageNumber = pageNumber;
+     }
+   };
+   private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
+     return (
+       yasqe.getValue() !== this.persistentJson.yasqe.value ||
+       yasqe.getInfer() !== this.persistentJson.yasqe.infer ||
+-      yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs
++      yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs ||
++      yasqe.getPageSize() !== this.persistentJson.yasqe.pageSize ||
++      yasqe.getPageNumber() !== this.persistentJson.yasqe.pageNumber
+     );
+   };
+   handleYasqeQuery = (yasqe: Yasqe) => {
+@@ -426,10 +447,16 @@
+   handleAutocompletionClose = (_yasqe: Yasqe) => {
+     this.emit("autocompletionClose", this);
+   };
+-  handleQueryResponse = (_yasqe: Yasqe, response: any, duration: number, queryStartedTime: number) => {
++  handleQueryResponse = (
++    _yasqe: Yasqe,
++    response: any,
++    duration: number,
++    queryStartedTime: number,
++    hasMorePages?: boolean
++  ) => {
+     this.emit("queryResponse", this);
+     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
+-    this.yasr.setResponse(response, duration, queryStartedTime);
++    this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages);
+     if (!this.yasr.results) return;
+     if (!this.yasr.results.hasError()) {
+       this.persistentJson.yasr.response = this.yasr.results.getAsStoreObject(
+@@ -441,6 +468,18 @@
+     }
+     this.emit("change", this, this.persistentJson);
+   };
++
++  handleTotalElementChanged = (_yasqe: Yasqe, totalElements = -1) => {
++    if (this.yasr?.results) {
++      const response = this.persistentJson.yasr.response;
++      if (response) {
++        if (response.totalElements !== totalElements) {
++          response.totalElements = totalElements;
++          this.emit("change", this, this.persistentJson);
++        }
++      }
++    }
++  };
+ 
+   private initYasr() {
+     if (!this.yasrWrapperEl) throw new Error("Wrapper for yasr does not exist");
+@@ -460,6 +499,7 @@
+       },
+       defaultPlugin: this.persistentJson.yasr.settings.selectedPlugin,
+       pluginOrder: this.yasgui.config.yasr.pluginOrder,
++      downloadAsOn: this.yasgui.config.yasr.downloadAsOn,
+       getPlainQueryLinkToEndpoint: () => {
+         if (this.yasqe) {
+           return shareLink.appendArgsToUrl(
+@@ -486,17 +526,19 @@
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+ 
+-    this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson.yasr.response);
++    if (this.yasqe) {
++      this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson);
+ 
+-    //populate our own persistent config
+-    this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
+-    this.yasr.on("change", () => {
+-      if (this.yasr) {
+-        this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
+-      }
++      //populate our own persistent config
++      this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
++      this.yasr.on("change", () => {
++        if (this.yasr) {
++          this.persistentJson.yasr.settings = this.yasr.getPersistentConfig();
++        }
+ 
+-      this.emit("change", this, this.persistentJson);
+-    });
++        this.emit("change", this, this.persistentJson);
++      });
++    }
+   }
+   destroy() {
+     this.removeAllListeners();
+Index: Yasgui/packages/yasgui/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/defaults.ts b/Yasgui/packages/yasgui/src/defaults.ts
+--- a/Yasgui/packages/yasgui/src/defaults.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -7,6 +7,7 @@
+ export default function initialize(): Config<CatalogueItem> {
+   return {
+     translationService: TranslationService.INSTANCE,
++    pageNumber: 1,
+     autofocus: true,
+     endpointInfo: undefined,
+     persistenceId: function (yasgui) {
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -46,6 +46,9 @@
+   contextMenuContainer: HTMLElement | undefined;
+   nonSslDomain?: string;
+   translationService: TranslationService;
++  paginationOn?: boolean;
++  pageSize?: number;
++  pageNumber: number;
+ }
+ export type PartialConfig = {
+   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
+@@ -281,8 +284,8 @@
+ 
+   private _registerTabListeners(tab: Tab) {
+     tab.on("change", (tab) => {
+-        this.emit("tabChange", this, tab);
+-        this.emit("yasqeReady", tab, tab.getYasqe());
++      this.emit("tabChange", this, tab);
++      this.emit("yasqeReady", tab, tab.getYasqe());
+     });
+     tab.on("yasqeReady", (tab, yasqe) => this.emit("yasqeReady", tab, yasqe));
+     tab.on("query", (tab) => this.emit("query", this, tab));
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -32,6 +32,8 @@
+     eventName: "queryResponse",
+     handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
+   ): void;
++  on(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
++  off(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
+   showHint: (conf: HintConfig) => void;
+   on(eventName: "error", handler: (instance: Yasqe) => void): void;
+   off(eventName: "error", handler: (instance: Yasqe) => void): void;
+@@ -66,6 +68,8 @@
+ 
+   private infer?: boolean;
+   private sameAs?: boolean;
++  private pageSize?: number;
++  private pageNumber?: number;
+ 
+   public readonly translationService: TranslationService;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+@@ -76,6 +80,10 @@
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasqe.defaults, conf);
+     this.translationService = this.config.translationService;
++    this.infer = this.config.infer;
++    this.sameAs = this.config.sameAs;
++    this.pageNumber = this.config.pageNumber;
++    this.pageSize = this.config.pageSize;
+     //inherit codemirror props
+     const cm = (CodeMirror as any)(this.rootEl, this.config);
+     //Assign our functions to the cm object. This is needed, as some functions (like the ctrl-enter callback)
+@@ -174,6 +182,22 @@
+     return this.sameAs;
+   }
+ 
++  public setPageNumber(pageNumber: number) {
++    this.pageNumber = pageNumber;
++  }
++
++  public getPageNumber(): number | undefined {
++    return this.pageNumber;
++  }
++
++  public setPageSize(pageSize: number) {
++    this.pageSize = pageSize;
++  }
++
++  public getPageSize(): number | undefined {
++    return this.pageSize;
++  }
++
+   private registerEventListeners() {
+     /**
+      * Register listeners
+@@ -372,6 +396,7 @@
+         if (this.req) {
+           this.abortQuery();
+         } else {
++          this.pageNumber = 1;
+           this.query().catch(() => {}); //catch this to avoid unhandled rejection
+         }
+       };
+@@ -1094,10 +1119,17 @@
+   queryingDisabled: string | undefined; // The string will be the message displayed when hovered
+   prefixCcApi: string; // the suggested default prefixes URL API getter
+   translationService: TranslationService;
++  infer?: boolean;
++  sameAs?: boolean;
++  pageSize?: number;
++  pageNumber?: number;
++  paginationOn?: boolean;
+ }
+ export interface PersistentConfig {
+   query: string;
+   editorHeight: string;
++  pageSize?: number;
++  pageNumber?: number;
+ }
+ // export var _Yasqe = _Yasqe;
+ 
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -73,7 +73,23 @@
+     yasqe.emit("query", req, populatedConfig);
+     return await req.then(
+       (result) => {
+-        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart);
++        let hasMorePage = false;
++        if (yasqe.config.paginationOn) {
++          // If client hadn't set total Element we will execute count query.
++          if (!result.body.totalElements) {
++            executeCountQuery(yasqe, config);
++          } else {
++            yasqe.emit("totalElementChanged", parseInt(result.body.totalElements));
++          }
++          const pageSize = yasqe.getPageSize();
++          if (pageSize) {
++            hasMorePage = result.body.results.bindings.length > pageSize;
++            if (hasMorePage) {
++              result.body.results.bindings.pop();
++            }
++          }
++        }
++        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart, hasMorePage);
+         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
+         return result.body;
+       },
+@@ -92,6 +108,39 @@
+   }
+ }
+ 
++export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void {
++  let req: superagent.SuperAgentRequest;
++  const populatedConfig = getAjaxConfig(yasqe, config);
++  if (!populatedConfig) {
++    //nothing to query
++    return;
++  }
++  if (populatedConfig.reqMethod === "POST") {
++    req = superagent.post(populatedConfig.url).type("form").send(populatedConfig.args);
++  } else {
++    req = superagent.get(populatedConfig.url).query(populatedConfig.args);
++  }
++  // eslint-disable-next-line @typescript-eslint/no-floating-promises
++  req.accept(populatedConfig.accept).set(populatedConfig.headers || {});
++
++  // eslint-disable-next-line @typescript-eslint/no-floating-promises
++  if (populatedConfig.withCredentials) req.withCredentials();
++
++  yasqe.emit("countQuery", req, populatedConfig);
++  req.then(
++    (countResponse) => {
++      yasqe.emit("countQueryResponse", countResponse);
++      yasqe.emit("totalElementChanged", parseInt(countResponse.body.totalElements));
++      yasqe.emit("countQueryReady", parseInt(countResponse.body.totalElements));
++    },
++    (error) => {
++      // Nothing to do. In tab persistence "totalElements" will stay undefined.
++      // This will be taken into account when generating information message about the results.
++      console.log(error);
++    }
++  );
++}
++
+ export type RequestArgs = { [argName: string]: string | string[] };
+ export function getUrlArguments(yasqe: Yasqe, _config: Config["requestConfig"]): RequestArgs {
+   var queryMode = yasqe.getQueryMode();
+@@ -112,6 +161,17 @@
+     data["sameAs"] = `${sameAs}`;
+   }
+ 
++  if (yasqe.config.paginationOn) {
++    const pageSize = yasqe.getPageSize();
++    if (pageSize) {
++      data["pageSize"] = `${pageSize + 1}`;
++    }
++    const pageNumber = yasqe.getPageNumber();
++    if (pageNumber) {
++      data["pageNumber"] = `${pageNumber}`;
++    }
++  }
++
+   /**
+    * add named graphs to ajax config
+    */
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -14,35 +14,107 @@
+   downloadAsElement: HTMLElement | undefined;
+ 
+   externalPluginsConfigurations: Map<string, any> | undefined;
++  resultQueryPaginationElement: Page | undefined;
++  private eventsListeners: Map<string, Function> | undefined;
++  private persistentJson: any;
+ 
+-  private yasqe?: Yasqe;
+-
+-  constructor(yasqe: Yasqe | undefined, parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
+-    super(parent, conf, data);
+-    this.yasqe = yasqe;
++  constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
++    super(yasqe, parent, conf, persistentJson?.yasr.response);
++    this.persistentJson = persistentJson;
+     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
++    if (yasqe.config.paginationOn) {
++      this.yasqe.on("queryResponse", this.updateQueryResultPaginationElementHandler.bind(this));
++      this.yasqe.on("countQueryReady", this.updateQueryResultPaginationElementHandler.bind(this));
++      this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
++    }
+   }
+ 
++  //=================================
++  //       Overridden functions.
++  //=================================
+   drawPluginSelectors() {
+     super.drawPluginSelectors();
+-    const downloadAsLiElement = document.createElement("li");
+-    this.downloadAsElement = this.createDownloadAsElement();
+-    this.updateDownloadAsElementVisibility();
+-
+-    downloadAsLiElement.appendChild(this.downloadAsElement);
+-    const pluginSelectorsEl = this.getPluginSelectorsEl();
+-    const testElement = document.createElement("li");
+-    testElement.classList.add("spacer");
+-    pluginSelectorsEl.appendChild(testElement);
+-    pluginSelectorsEl.appendChild(downloadAsLiElement);
++
++    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn) {
++      return;
++    }
++    const pluginSelectorsEl = this.getPluginSelectorsEl();
++    const spacerElement = document.createElement("li");
++    spacerElement.classList.add("spacer");
++    pluginSelectorsEl.appendChild(spacerElement);
++
++    if (this.config.downloadAsOn) {
++      const downloadAsLiElement = document.createElement("li");
++      this.downloadAsElement = this.createDownloadAsElement();
++      this.updateDownloadAsElementVisibility();
++      pluginSelectorsEl.appendChild(downloadAsLiElement);
++      downloadAsLiElement.appendChild(this.downloadAsElement);
++    }
++
++    if (this.yasqe.config.paginationOn) {
++      const resultPaginationLiElement = document.createElement("li");
++      this.resultQueryPaginationElement = this.createResultPaginationElement();
++      resultPaginationLiElement.appendChild(this.resultQueryPaginationElement);
++      pluginSelectorsEl.appendChild(resultPaginationLiElement);
++    }
+   }
+ 
+   updatePluginSelectorNames() {
+     super.updatePluginSelectorNames();
+-    this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
+-    this.updateDownloadAsElementVisibility();
++    if (this.downloadAsElement) {
++      this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
++      this.updateDownloadAsElementVisibility();
++    }
+   }
++
++  //==================================================
++  //       Functions that extend YASR functionality
++  //==================================================
++
++  createResultPaginationElement(): Page {
++    const element: Page = (document.createElement("ontotext-pagination") as unknown) as Page;
++    const pageSelectedListener = this.pageSelectedHandler(this);
++    this.getEventsListeners().set("pageSelected", pageSelectedListener);
++    element.addEventListener("pageSelected", pageSelectedListener);
++    this.updateQueryResultPaginationElement(element);
++    return element;
++  }
++
++  updateQueryResultPaginationElementHandler() {
++    this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
++  }
++
++  updateQueryResultPaginationElement(resultQueryPaginationElement: Page | undefined) {
++    if (!resultQueryPaginationElement) {
++      return;
++    }
++    resultQueryPaginationElement.pageNumber = this.yasqe?.getPageNumber();
++    resultQueryPaginationElement.pageSize = this.yasqe?.getPageSize();
++    resultQueryPaginationElement.pageElements = this.results?.getBindings()?.length || 0;
++    resultQueryPaginationElement.totalElements = this.persistentJson?.yasr.response?.totalElements || -1;
++    resultQueryPaginationElement.hasMorePages = this.results?.getHasMorePages();
++    this.updateQueryResultPaginationVisibility(resultQueryPaginationElement);
++  }
+ 
++  updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page) {
++    removeClass(resultQueryPaginationElement, "hidden");
++    const hasNotResults = !this.results?.getBindings()?.length;
++    if (
++      (hasNotResults && resultQueryPaginationElement.pageNumber === 1) ||
++      !this.hasMoreElements(resultQueryPaginationElement)
++    ) {
++      addClass(resultQueryPaginationElement, "hidden");
++    }
++  }
++
++  private getEventsListeners(): Map<string, Function> {
++    if (!this.eventsListeners) {
++      this.eventsListeners = new Map();
++    }
++    return this.eventsListeners;
++  }
++
++  // Private functions
+   private toDownloadAs(element: HTMLElement | undefined): DownloadAs | undefined {
+     return element ? ((element as any) as DownloadAs) : undefined;
+   }
+@@ -97,6 +169,40 @@
+     }
+   }
+ 
++  private hasMoreElements(resultQueryPaginationElement: Page): boolean {
++    if (resultQueryPaginationElement.pageNumber && resultQueryPaginationElement.pageNumber > 1) {
++      return true;
++    }
++    if (resultQueryPaginationElement.hasMorePages !== undefined) {
++      return resultQueryPaginationElement.hasMorePages;
++    }
++
++    if (resultQueryPaginationElement.pageSize && resultQueryPaginationElement.totalElements) {
++      return resultQueryPaginationElement.pageSize < resultQueryPaginationElement.totalElements;
++    }
++    return false;
++  }
++
++  public destroy() {
++    super.destroy();
++    const pageSelected: any = this.getEventsListeners().get("pageSelected");
++    if (pageSelected) {
++      this.resultQueryPaginationElement?.removeEventListener("pageSelected", pageSelected);
++    }
++  }
++
++  private pageSelectedHandler(yasr: ExtendedYasr) {
++    return (pageEvent: any) => {
++      const page: Page = pageEvent.detail;
++      const yasqe = yasr.yasqe;
++      if (yasqe) {
++        yasqe.setPageNumber(page.pageNumber || 1);
++        yasqe.setPageSize(page.pageSize || 10);
++        yasqe.query();
++      }
++    };
++  }
++
+   updateResponseInfo() {
+     let resultInfo = "";
+     const responseInfoElement = this.getResponseInfoElement();
+@@ -280,3 +386,11 @@
+   infer?: boolean;
+   sameAs?: boolean;
+ }
++
++interface Page extends HTMLElement {
++  pageSize?: number;
++  pageNumber?: number;
++  totalElements?: number;
++  pageElements?: number;
++  hasMorePages?: boolean;
++}
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -48,13 +48,15 @@
+   private selectedPlugin: string | undefined;
+ 
+   protected readonly translationService: TranslationService;
++  protected readonly yasqe: Yasqe;
+ 
+   // Utils
+   public utils = { addScript: addScript, addCSS: addCss, sanitize: sanitize };
+ 
+-  constructor(parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
++  constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, data?: any) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASR");
++    this.yasqe = yasqe;
+     this.rootEl = document.createElement("div");
+     this.rootEl.className = "yasr";
+     parent.appendChild(this.rootEl);
+@@ -594,9 +596,9 @@
+       }
+     }
+   }
+-  public setResponse(data: any, duration?: number, queryStartedTime?: number) {
++  public setResponse(data: any, duration?: number, queryStartedTime?: number, hasMorePages?: boolean) {
+     if (!data) return;
+-    this.results = new Parser(data, duration, queryStartedTime);
++    this.results = new Parser(data, duration, queryStartedTime, hasMorePages);
+ 
+     this.draw();
+ 
+@@ -658,6 +660,7 @@
+   translationService: TranslationService;
+   externalPluginsConfigurations?: Map<string, any>;
+   downloadAsOptions?: { labelKey: string; value: any }[];
++  downloadAsOn?: boolean;
+   /**
+    * Custom renderers for errors.
+    * Allow multiple to be able to add new custom renderers without having to
+@@ -681,6 +684,7 @@
+ import * as YasrPluginError from "./plugins/error";
+ import { ExtendedTable } from "./plugins/extended-table/extended-table";
+ import { TranslationService } from "@triply/yasgui-utils";
++import Yasqe from "@triply/yasqe";
+ 
+ Yasr.registerPlugin("table", YasrPluginTable.default as any);
+ Yasr.registerPlugin("boolean", YasrPluginBoolean.default as any);
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -40,6 +40,8 @@
+     contentType?: string;
+     executionTime?: number;
+     queryStartedTime?: number;
++    totalElements?: number;
++    hasMorePages?: boolean;
+   }
+   export type PostProcessBinding = (binding: Binding) => Binding;
+ }
+@@ -72,10 +74,12 @@
+   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
+   private executionTime: number | undefined;
+   private queryStartedTime: number | undefined;
++  private readonly hasMorePages?: boolean;
+   constructor(
+     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
+     executionTime?: number,
+-    queryStartedTime?: number
++    queryStartedTime?: number,
++    hasMorePages?: boolean
+   ) {
+     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
+     if (executionTime) this.executionTime = executionTime; // Parameter has priority
+@@ -85,6 +89,7 @@
+     } else {
+       this.queryStartedTime = responseOrObject.queryStartedTime;
+     }
++    this.hasMorePages = hasMorePages;
+ 
+     if (responseOrObject instanceof Error) {
+       this.error = responseOrObject;
+@@ -179,6 +184,10 @@
+     return this.queryStartedTime;
+   }
+ 
++  public getHasMorePages() {
++    return this.hasMorePages;
++  }
++
+   private getParserFromContentType(): boolean {
+     const contentType = this.getContentType();
+     if (contentType) {
+@@ -303,6 +312,7 @@
+         status: this.getStatus(),
+         executionTime: this.getResponseTime(),
+         queryStartedTime: this.getQueryStartedTime(),
++        hasMorePages: this.getHasMorePages(),
+       };
+     }
+     if (summary) {
+@@ -317,6 +327,7 @@
+         error: this.getError(),
+         executionTime: this.getResponseTime(),
+         queryStartedTime: this.getQueryStartedTime(),
++        hasMorePages: this.getHasMorePages(),
+       };
+     }
+   }
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision f9f40a0f1be11927c694cffdbfe72b5985240f3b)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision b28331cbf8cfcc96f90eff08c41cd51d1a0833df)
+@@ -206,7 +206,7 @@
+     // reset some default config properties as they couldn't be initialized beforehand
+     const dtConfig: DataTables.Settings = {
+       ...((cloneDeep(this.config.tableConfig) as unknown) as DataTables.Settings),
+-      pageLength: persistentConfig?.pageSize ? persistentConfig.pageSize : DEFAULT_PAGE_SIZE,
++      pageLength: -1,
+       data: rows,
+       columns: columns,
+       language: {
