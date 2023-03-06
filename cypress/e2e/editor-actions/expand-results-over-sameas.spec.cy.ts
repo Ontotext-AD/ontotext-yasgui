@@ -37,11 +37,13 @@ describe('Expand results over sameAs', () => {
   it('Should toggle sameAs parameter in requests', () => {
     QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
     // Given I have executed the query without changing configs
+    YasqeSteps.getIncludeInferredStatementsButton().should('have.class', 'icon-inferred-on');
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=true will be sent with the request
     cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'sameAs=true');
     // When I disable expand results statements
     YasqeSteps.expandResultsOverSameAs();
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-off');
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=false will be sent with the request
     cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'sameAs=false');
@@ -50,17 +52,20 @@ describe('Expand results over sameAs', () => {
   it('Should toggle sameAs parameter when include inferred is changed', () => {
     QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
     // Given I have executed the query without changing configs
+    YasqeSteps.getIncludeInferredStatementsButton().should('have.class', 'icon-inferred-on');
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=true and inferred=true will be sent with the request
     cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=true&sameAs=true');
     // When I disable include inferred statements
     YasqeSteps.includeInferredStatements();
+    YasqeSteps.getIncludeInferredStatementsButton().should('have.class', 'icon-inferred-off');
     YasqeSteps.executeQuery();
     // Then I expect that sameAs=false and inferred=false will be sent with the request
     cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=false&sameAs=false');
     // And expand results action should be disabled when inferred is disabled
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'disabled');
     YasqeSteps.includeInferredStatements();
+    YasqeSteps.getIncludeInferredStatementsButton().should('have.class', 'icon-inferred-on');
     YasqeSteps.getExpandResultsOverSameAsButton().should('not.have.class', 'disabled');
   });
 });
