@@ -201,6 +201,12 @@ export interface ExternalYasguiConfiguration {
    * Flag that disabled download as dropdown. When it is true then the dropdown will not be created.
    */
   downloadAsOn: boolean;
+
+  /**
+   * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local store.
+   * Default value is 100000.
+   */
+  maxPersistentResponseSize: number;
 }
 
 export enum RenderingMode {

@@ -73,6 +73,9 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.yasr.prefixes = externalConfiguration.prefixes || defaultYasrConfig.prefixes;
     config.yasguiConfig.yasr.defaultPlugin = externalConfiguration.defaultPlugin || defaultYasrConfig.defaultPlugin;
     config.yasguiConfig.yasr.pluginOrder = externalConfiguration.pluginOrder || defaultYasrConfig.pluginOrder;
+    if (externalConfiguration.maxPersistentResponseSize) {
+      config.yasguiConfig.yasr.maxPersistentResponseSize = externalConfiguration.maxPersistentResponseSize;
+    }
 
     // prepare the yasqe config
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
