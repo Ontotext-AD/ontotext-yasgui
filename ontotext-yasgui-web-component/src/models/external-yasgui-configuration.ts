@@ -198,7 +198,7 @@ export interface ExternalYasguiConfiguration {
   paginationOn: boolean;
 
   /**
-   * Flag that disabled download as dropdown. When it is true then the dropdown will not be created.
+   * A flag that controls creation of "Download as" dropdown. When false, the dropdown will not be created. Default value is true.
    */
   downloadAsOn: boolean;
 

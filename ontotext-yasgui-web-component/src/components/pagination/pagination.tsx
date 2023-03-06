@@ -21,27 +21,6 @@ export class Pagination {
     this.selectPage(this.pageNumber);
   }
 
-  render() {
-    return (
-      <Host class="ontotext-pagination">
-        <div class="page-selectors">
-          <button class="page-selector previous-button"
-                  onClick={() => this.previousPage()}
-                  disabled={this.previousButtonDisabled()}>&lsaquo;</button>
-          {
-            this.getShownPageNumbers().map(pageNumber => {
-              return <button class={`page-button page-selector ${this.pageNumber === pageNumber ? 'selected-page' : ''}`}
-                             onClick={() => this.selectPage(pageNumber)}
-                             disabled={this.pageNumber === pageNumber}>{pageNumber}</button>
-            })}
-          <button class="page-selector next-button"
-                  onClick={() => this.nextPage()}
-                  disabled={this.nextButtonDisabled()}>&rsaquo;</button>
-        </div>
-      </Host>
-    )
-  }
-
   private getShownPageNumbers(): number[] {
     const firstShownPage = this.fetchFirstShownPage();
     const lastShownPage = this.fetchLastShownPage();
@@ -94,5 +73,26 @@ export class Pagination {
     if (this.pageNumber !== pageNumber) {
       this.pageSelected.emit(new Page(this.pageSize, pageNumber));
     }
+  }
+
+  render() {
+    return (
+      <Host class="ontotext-pagination">
+        <div class="page-selectors">
+          <button class="page-selector previous-button"
+                  onClick={() => this.previousPage()}
+                  disabled={this.previousButtonDisabled()}>&lsaquo;</button>
+          {
+            this.getShownPageNumbers().map(pageNumber => {
+              return <button class={`page-button page-selector ${this.pageNumber === pageNumber ? 'selected-page' : ''}`}
+                             onClick={() => this.selectPage(pageNumber)}
+                             disabled={this.pageNumber === pageNumber}>{pageNumber}</button>
+            })}
+          <button class="page-selector next-button"
+                  onClick={() => this.nextPage()}
+                  disabled={this.nextButtonDisabled()}>&rsaquo;</button>
+        </div>
+      </Host>
+    )
   }
 }
