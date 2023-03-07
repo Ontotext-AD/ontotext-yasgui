@@ -82,6 +82,7 @@ export class ExtendedYasr extends Yasr {
 
   updateQueryResultPaginationElementHandler() {
     this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
+    this.updateResponseInfo();
   }
 
   updateQueryResultPaginationElement(resultQueryPaginationElement: Page | undefined) {
@@ -218,33 +219,77 @@ export class ExtendedYasr extends Yasr {
       if (!bindings || bindings.length === 0) {
         resultInfo = this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
       } else {
-        // TODO fix message and parameters when server side paging is implemented.
-        // message key have to be "yasr.plugin_control.response_chip.message.result_info"
-        const params = [{ key: "countResults", value: `${bindings.length}` }];
-        resultInfo +=
-          bindings.length === 1
-            ? this.translationService.translate("yasr.plugin_control.info.count_result", params)
-            : this.translationService.translate("yasr.plugin_control.info.count_results", params);
-      }
+        if (this.yasqe.config.paginationOn) {
+          const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
+          const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
+          const totalElements = this.persistentJson?.yasr.response?.totalElements;
+          const from = pageSize * (pageNumber - 1);
+          let to = from + bindings.length;
 
-      const params = [
-        {
-          key: "seconds",
-          value: this.getHumanReadableSeconds(responseTime, true),
-        },
-        {
-          key: "timestamp",
-          value: this.getHumanReadableTimestamp(queryFinishedTime),
-        },
-      ];
-      resultInfo += ` ${this.translationService.translate(
-        "yasr.plugin_control.response_chip.message.result_time",
-        params
-      )}`;
+          resultInfo += this.getFromToMessage(from, to);
+          if (totalElements) {
+            resultInfo += this.getTotalResultsMessage(totalElements);
+          } else {
+            if (this.persistentJson?.yasr.response?.hasMorePages) {
+              resultInfo += this.getHasMoreResultsMessage(to + 1);
+            }
+          }
+          resultInfo += ".";
+        } else {
+          resultInfo += this.getCountResultMessage(bindings);
+        }
+      }
+      resultInfo += this.getResultTimeMessage(responseTime, queryFinishedTime);
     } else {
       addClass(responseInfoElement, "empty");
     }
     responseInfoElement.innerHTML = resultInfo;
+  }
+
+  private getCountResultMessage(bindings: any[]): string {
+    const params = [{ key: "countResults", value: `${bindings.length}` }];
+    return bindings.length === 1
+      ? this.translationService.translate("yasr.plugin_control.info.count_result", params)
+      : this.translationService.translate("yasr.plugin_control.info.count_results", params);
+  }
+
+  private getFromToMessage(from: number, to: number): string {
+    let params = [
+      { key: "from", value: `${from}` },
+      { key: "to", value: `${to}` },
+    ];
+
+    return this.translationService.translate("yasr.plugin_control.response_chip.message.result_info", params);
+  }
+
+  private getTotalResultsMessage(totalElements: number): string {
+    const params = [{ key: "totalResults", value: `${totalElements}` }];
+    return this.translationService.translate(
+      "yasr.plugin_control.response_chip.message.result_info.total_results",
+      params
+    );
+  }
+
+  private getHasMoreResultsMessage(knownResults: number): string {
+    const params = [{ key: "atLeastResults", value: `${knownResults}` }];
+    return this.translationService.translate(
+      "yasr.plugin_control.response_chip.message.result_info.at_least_results",
+      params
+    );
+  }
+
+  private getResultTimeMessage(responseTime: number, queryFinishedTime: number): string {
+    const params = [
+      {
+        key: "seconds",
+        value: this.getHumanReadableSeconds(responseTime, true),
+      },
+      {
+        key: "timestamp",
+        value: this.getHumanReadableTimestamp(queryFinishedTime),
+      },
+    ];
+    return ` ${this.translationService.translate("yasr.plugin_control.response_chip.message.result_time", params)}`;
   }
 
   private getHumanReadableTimestamp(time: number) {
