@@ -55,10 +55,10 @@ export class Pagination {
   }
 
   private nextButtonDisabled(): boolean {
-    if (this.totalElements) {
+    if (this.totalElements && this.totalElements >= 0) {
       return this.pageNumber * this.pageSize >= this.totalElements;
     }
-    return this.hasMorePages;
+    return !this.hasMorePages;
   }
 
   private nextPage(): void {
