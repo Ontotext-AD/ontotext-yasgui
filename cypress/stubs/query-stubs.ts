@@ -28,34 +28,38 @@ export class QueryStubs {
     const elementsForLastPage = totalElements % pageSize;
     const limit = countQuery ? pageSize + 1 : pageSize;
 
-    // Stubs responses for all fully filled pages.
-    for (let pageNumber = 0; pageNumber < fullyFiledPages; pageNumber++) {
-      const offset = pageNumber * pageSize;
-      let returnElements = pageSize;
+    if (totalElements < 1) {
+      QueryStubs.stubQueryWithResults(1, 0, limit, 0, resultType);
+    } else {
+      // Stubs responses for all fully filled pages.
+      for (let pageNumber = 0; pageNumber < fullyFiledPages; pageNumber++) {
+        const offset = pageNumber * pageSize;
+        let returnElements = pageSize;
 
-      if (QueryStubs.isLastPage(pageNumber, fullyFiledPages)) {
-        // Check if there are more results, if yes the query must return one more result.
-        if (elementsForLastPage > 0 && countQuery) {
-          returnElements += 1;
+        if (QueryStubs.isLastPage(pageNumber, fullyFiledPages)) {
+          // Check if there are more results, if yes the query must return one more result.
+          if (elementsForLastPage > 0 && countQuery) {
+            returnElements += 1;
+          }
+        } else {
+          if (countQuery) {
+            // If there are more pages the query must return one more result.
+            returnElements += 1;
+          }
         }
-      } else {
-        if (countQuery) {
-          // If there are more pages the query must return one more result.
-          returnElements += 1;
-        }
+        const page = pageNumber + 1;
+        QueryStubs.stubQueryWithResults(page, offset, limit, returnElements, resultType);
       }
-      const page = pageNumber + 1;
-      QueryStubs.stubQueryWithResults(page, offset, limit, returnElements, resultType);
+
+      // Stubs the last page with.
+      if (elementsForLastPage > 0) {
+        const offset = fullyFiledPages * pageSize;
+        const page = fullyFiledPages + 1;
+        QueryStubs.stubQueryWithResults(page, offset, limit, elementsForLastPage, resultType);
+      }
     }
 
-    // Stubs the last page with.
-    if (elementsForLastPage > 0) {
-      const offset = fullyFiledPages * pageSize;
-      const page = fullyFiledPages + 1;
-      QueryStubs.stubQueryWithResults(page, offset, limit, elementsForLastPage, resultType);
-    }
-
-    QueryStubs.stubTotalQueryCount(totalElements, resultType);
+    QueryStubs.stubTotalQueryCount(totalElements, resultType, queryDescription.countQueryError);
   }
 
   private static isLastPage(currentPage: number, allPage: number): boolean {
@@ -72,12 +76,16 @@ export class QueryStubs {
     }).as(`query-${page}_${offset}_${limit}_${returnResult}`);
   }
 
-  private static stubTotalQueryCount(totalElements: number, resultType: ResultType, delay = 0) {
+  private static stubTotalQueryCount(totalElements: number, resultType: ResultType, failed = false) {
     cy.intercept('/repositories/test-repo', (req) => {
       if (req.body.indexOf('count=1') > -1) {
-        const result = QueryStubs.createEmptyResponse(resultType);
-        result.results.bindings = [QueryStubs.createTotalResultsCount(resultType, totalElements)];
-        req.reply(result);
+        if (failed) {
+          req.reply(500);
+        } else {
+          const result = QueryStubs.createEmptyResponse(resultType);
+          result.results.bindings = [QueryStubs.createTotalResultsCount(resultType, totalElements)];
+          req.reply(result);
+        }
       }
     }).as(`countQuery-${totalElements}`);
   }
@@ -214,6 +222,7 @@ export class QueryStubDescription {
   pageSize: number;
   totalElements: number;
   countQuery = true;
+  countQueryError = false;
   resultType = ResultType.URI;
 
   setPageSize(pageSize: number): QueryStubDescription {
@@ -233,6 +242,11 @@ export class QueryStubDescription {
 
   setResultType(resultType: ResultType): QueryStubDescription {
     this.resultType = resultType;
+    return this;
+  }
+
+  setCountQueryFailed(): QueryStubDescription {
+    this.countQueryError = true;
     return this;
   }
 }
