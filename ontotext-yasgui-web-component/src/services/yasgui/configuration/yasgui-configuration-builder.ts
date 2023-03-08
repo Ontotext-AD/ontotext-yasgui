@@ -12,6 +12,7 @@ import {YasqeService} from "../../yasqe/yasqe-service";
 import {ServiceFactory} from '../../service-factory';
 import {TranslationService} from '../../translation.service';
 import {YasrService} from '../../yasr/yasr-service';
+import SesamePrefixesAutocompleter from "../../yasqe/autocompleter/sesame-prefixes";
 import {NamespaceService} from "../../namespace-service";
 
 /**
@@ -51,9 +52,7 @@ export class YasguiConfigurationBuilder {
       requestConfig: {},
       paginationOn: externalConfiguration.paginationOn !== undefined ? externalConfiguration.paginationOn : defaultYasguiConfig.paginationOn,
       pageSize: externalConfiguration.pageSize !== undefined ? externalConfiguration.pageSize : defaultYasguiConfig.pageSize,
-      yasqe: {
-        prefixes: []
-      },
+      yasqe: {},
       yasr: {
         prefixes: {},
         defaultPlugin: '',
@@ -80,7 +79,6 @@ export class YasguiConfigurationBuilder {
 
     // prepare the yasqe config
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
-    config.yasguiConfig.yasqe.prefixes = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
     config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
@@ -97,10 +95,21 @@ export class YasguiConfigurationBuilder {
 
     YasrService.disablePlugin('table');
 
+    // Register autocompleters
+    this.registerCustomAutocompleters(config);
+
     // prepare the yasr config
 
     return config;
   }
+
+  // @ts-ignore
+  private registerCustomAutocompleters(config: YasguiConfiguration): void {
+    const namespaces = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
+    // @ts-ignore
+    Yasqe.registerAutocompleter(SesamePrefixesAutocompleter(namespaces), true);
+  }
+
 
   // @ts-ignore
   getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>, yasqe: Yasqe): HTMLElement[] {

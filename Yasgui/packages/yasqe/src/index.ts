@@ -1118,7 +1118,6 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   editorHeight: string;
   queryingDisabled: string | undefined; // The string will be the message displayed when hovered
   prefixCcApi: string; // the suggested default prefixes URL API getter
-  prefixes: string[];
   translationService: TranslationService;
   infer?: boolean;
   sameAs?: boolean;
