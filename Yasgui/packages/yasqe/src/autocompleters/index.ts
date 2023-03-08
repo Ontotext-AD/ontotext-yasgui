@@ -363,6 +363,7 @@ export const fetchFromLov = (
 import variableCompleter from "./variables";
 // Replaced by our sesame-prefixes completer
 // import prefixCompleter from "./prefixes";
+import sesamePrefixes from "./sesame-prefixes";
 import propertyCompleter from "./properties";
 import classCompleter from "./classes";
-export var completers: CompleterConfig[] = [variableCompleter, propertyCompleter, classCompleter];
+export var completers: CompleterConfig[] = [variableCompleter, sesamePrefixes, propertyCompleter, classCompleter];
