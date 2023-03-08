@@ -99,6 +99,8 @@ export interface YasguiConfiguration {
       createShareableLink?: (yasqe: any) => string | null;
 
       showQueryButton?: boolean;
+
+      prefixes: string[];
     }
     yasr: {
       /**
