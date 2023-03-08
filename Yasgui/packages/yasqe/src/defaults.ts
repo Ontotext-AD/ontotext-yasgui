@@ -138,7 +138,6 @@ SELECT * WHERE {
     editorHeight: "300px",
     queryingDisabled: undefined,
     prefixCcApi: prefixCcApi,
-    prefixes: []
   };
   const requestConfig: PlainRequestConfig = {
     queryArgument: undefined, //undefined means: get query argument based on query mode
