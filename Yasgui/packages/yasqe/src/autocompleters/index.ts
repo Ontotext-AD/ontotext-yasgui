@@ -364,6 +364,7 @@ import variableCompleter from "./variables";
 // Replaced by our sesame-prefixes completer
 // import prefixCompleter from "./prefixes";
 import sesamePrefixes from "./sesame-prefixes";
+import sparqlFunctions from "./sparql-functions";
 import propertyCompleter from "./properties";
 import classCompleter from "./classes";
-export var completers: CompleterConfig[] = [variableCompleter, sesamePrefixes, propertyCompleter, classCompleter];
+export var completers: CompleterConfig[] = [variableCompleter, sesamePrefixes, sparqlFunctions, propertyCompleter, classCompleter];
