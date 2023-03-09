@@ -101,6 +101,35 @@ export interface YasguiConfiguration {
       showQueryButton?: boolean;
 
       prefixes: string[];
+
+      /**
+       * A flag that enable/disable keyboard shortcuts. Default value is true;
+       */
+      keyboardShortcutEnabled: boolean;
+
+      /**
+       * Object contains pair keyboard shortcut and function to be executed when user press the keyboard shortcut.
+       * Example:
+       * <pre>
+       *   {
+       *     "Ctrl-Space": function (_yasqe: any) {
+       *         const yasqe: Yasqe = _yasqe;
+       *         yasqe.autocomplete();
+       *       },
+       *       "Alt-Enter": function (_yasqe: any) {
+       *         const yasqe: Yasqe = _yasqe;
+       *         yasqe.autocomplete();
+       *       },
+       *   }
+       *   </pre>
+       */
+      //@ts-ignore
+      extraKeys: {[keyboardShortcut:string]: (yasqe: Yasqe) => void}
+
+      /**
+       * Array with keyboard shortcut names {@link KeyboardShortcutName}.
+       */
+      keyboardShortcutDescriptions: string[]
     }
     yasr: {
       /**
@@ -215,7 +244,8 @@ export const defaultYasqeConfig: Record<string, any> = {
   ],
   prefixes: {
 
-  }
+  },
+  keyboardShortcutEnabled: true
 }
 
 export const defaultYasrConfig: Record<string, any> = {

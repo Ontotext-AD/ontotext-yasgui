@@ -207,6 +207,11 @@ export interface ExternalYasguiConfiguration {
    * Default value is 100000.
    */
   maxPersistentResponseSize: number;
+
+  /**
+   * A flag that enable/disable keyboard shortcuts. Default value is true;
+   */
+  keyboardShortcutEnabled: boolean;
 }
 
 export enum RenderingMode {
