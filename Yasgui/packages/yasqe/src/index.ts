@@ -66,6 +66,7 @@ export class Yasqe extends CodeMirror {
   public persistentConfig: PersistentConfig | undefined;
   public superagent = superagent;
 
+  private keyboardShortcutsButton: HTMLElement | undefined;
   private infer?: boolean;
   private sameAs?: boolean;
   private pageSize?: number;
@@ -125,6 +126,7 @@ export class Yasqe extends CodeMirror {
     }
 
     if (this.config.resizeable) this.drawResizer();
+    this.drawKeyboardShortcutsButton();
     if (this.config.collapsePrefixesOnLoad) this.collapsePrefixes(true);
     this.registerEventListeners();
   }
@@ -151,6 +153,7 @@ export class Yasqe extends CodeMirror {
     this.checkSyntax();
     this.updateQueryButton();
     this.updateButtonsLabels();
+    this.updateKeyboardShortcuts();
   }
 
   private handleQuery(_yasqe: Yasqe, req: superagent.SuperAgentRequest) {
@@ -415,6 +418,22 @@ export class Yasqe extends CodeMirror {
     this.resizeWrapper.addEventListener("mousedown", this.initDrag, false);
     this.resizeWrapper.addEventListener("dblclick", this.expandEditor);
     this.rootEl.appendChild(this.resizeWrapper);
+  }
+  private drawKeyboardShortcutsButton() {
+    if (this.config.keyboardShortcutDescriptions) {
+      this.keyboardShortcutsButton = document.createElement("keyboard-shortcuts-dialog");
+      if (this.config.resizeable) {
+        addClass(this.keyboardShortcutsButton, "resizeable-on");
+      }
+      (this.keyboardShortcutsButton as any).translationService = this.translationService;
+      this.updateKeyboardShortcuts();
+      this.rootEl.appendChild(this.keyboardShortcutsButton);
+    }
+  }
+  updateKeyboardShortcuts() {
+    if (this.config.keyboardShortcutDescriptions) {
+      (this.keyboardShortcutsButton as any).items = [...this.config.keyboardShortcutDescriptions];
+    }
   }
   private initDrag() {
     document.documentElement.addEventListener("mousemove", this.doDrag, false);
@@ -1125,6 +1144,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   pageSize?: number;
   pageNumber?: number;
   paginationOn?: boolean;
+  keyboardShortcutDescriptions?: [];
 }
 export interface PersistentConfig {
   query: string;
