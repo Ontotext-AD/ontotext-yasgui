@@ -13,6 +13,7 @@ import {ServiceFactory} from '../../service-factory';
 import {TranslationService} from '../../translation.service';
 import {YasrService} from '../../yasr/yasr-service';
 import {NamespaceService} from "../../namespace-service";
+import {KeyboardShortcutService} from '../../keyboard-shortcut-service';
 
 /**
  * Builder for yasgui configuration.
@@ -52,7 +53,10 @@ export class YasguiConfigurationBuilder {
       paginationOn: externalConfiguration.paginationOn !== undefined ? externalConfiguration.paginationOn : defaultYasguiConfig.paginationOn,
       pageSize: externalConfiguration.pageSize !== undefined ? externalConfiguration.pageSize : defaultYasguiConfig.pageSize,
       yasqe: {
-        prefixes: []
+        prefixes: [],
+        keyboardShortcutEnabled: externalConfiguration.keyboardShortcutEnabled !== undefined ? externalConfiguration.keyboardShortcutEnabled : defaultYasqeConfig.keyboardShortcutEnabled,
+        extraKeys:{},
+        keyboardShortcutDescriptions: []
       },
       yasr: {
         prefixes: {},
@@ -79,6 +83,7 @@ export class YasguiConfigurationBuilder {
     }
 
     // prepare the yasqe config
+    this.initShortcuts(config);
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
     config.yasguiConfig.yasqe.prefixes = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
     config.yasqeConfig = {};
@@ -101,6 +106,27 @@ export class YasguiConfigurationBuilder {
 
     return config;
   }
+
+  private initShortcuts(config: YasguiConfiguration): void {
+    const keyboardShortcutDescriptions = KeyboardShortcutService.initKeyboardShortcutMapping();
+    const extraKeys = {};
+    keyboardShortcutDescriptions.forEach(keyboardShortcutDescription => {
+      keyboardShortcutDescription.keyboardShortcuts.forEach(keyboardShortcut => {
+        extraKeys[keyboardShortcut] = keyboardShortcutDescription.executeFunction;
+      });
+    });
+    config.yasguiConfig.yasqe.extraKeys = extraKeys;
+
+    config.yasguiConfig.yasqe.keyboardShortcutDescriptions = keyboardShortcutDescriptions.map(keyboardShortcutDescription => keyboardShortcutDescription.NAME.toString());
+  }
+
+  // @ts-ignore
+  private registerCustomAutocompleters(config: YasguiConfiguration): void {
+    const namespaces = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
+    // @ts-ignore
+    Yasqe.registerAutocompleter(SesamePrefixesAutocompleter(namespaces), true);
+  }
+
 
   // @ts-ignore
   getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>, yasqe: Yasqe): HTMLElement[] {

@@ -8,8 +8,8 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { ServiceFactory } from "./services/service-factory";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { CopyLinkDialogConfig, CopyLinkObserver } from "./components/copy-link-dialog/copy-link-dialog";
-import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { TranslationService } from "./services/translation.service";
+import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { DropdownOption } from "./models/dropdown-option";
 import { InternalDownloadAsEvent } from "./models/internal-events/internal-download-as-event";
 import { InternalDropdownValueSelectedEvent } from "./models/internal-events/internal-dropdown-value-selected-event";
@@ -37,6 +37,10 @@ export namespace Components {
     interface CopyResourceLinkDialog {
         "resourceLink": string;
         "serviceFactory": ServiceFactory;
+    }
+    interface KeyboardShortcutsDialog {
+        "items": string[];
+        "translationService": TranslationService;
     }
     interface OntotextDialogWebComponent {
         "config": DialogConfig;
@@ -198,6 +202,12 @@ declare global {
         prototype: HTMLCopyResourceLinkDialogElement;
         new (): HTMLCopyResourceLinkDialogElement;
     };
+    interface HTMLKeyboardShortcutsDialogElement extends Components.KeyboardShortcutsDialog, HTMLStencilElement {
+    }
+    var HTMLKeyboardShortcutsDialogElement: {
+        prototype: HTMLKeyboardShortcutsDialogElement;
+        new (): HTMLKeyboardShortcutsDialogElement;
+    };
     interface HTMLOntotextDialogWebComponentElement extends Components.OntotextDialogWebComponent, HTMLStencilElement {
     }
     var HTMLOntotextDialogWebComponentElement: {
@@ -273,6 +283,7 @@ declare global {
         "copy-link-dialog": HTMLCopyLinkDialogElement;
         "copy-resource-link-button": HTMLCopyResourceLinkButtonElement;
         "copy-resource-link-dialog": HTMLCopyResourceLinkDialogElement;
+        "keyboard-shortcuts-dialog": HTMLKeyboardShortcutsDialogElement;
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-download-as": HTMLOntotextDownloadAsElement;
         "ontotext-dropdown": HTMLOntotextDropdownElement;
@@ -318,6 +329,10 @@ declare namespace LocalJSX {
         "onInternalResourceLinkDialogClosedEvent"?: (event: CopyResourceLinkDialogCustomEvent<any>) => void;
         "resourceLink"?: string;
         "serviceFactory"?: ServiceFactory;
+    }
+    interface KeyboardShortcutsDialog {
+        "items"?: string[];
+        "translationService"?: TranslationService;
     }
     interface OntotextDialogWebComponent {
         "config"?: DialogConfig;
@@ -479,6 +494,7 @@ declare namespace LocalJSX {
         "copy-link-dialog": CopyLinkDialog;
         "copy-resource-link-button": CopyResourceLinkButton;
         "copy-resource-link-dialog": CopyResourceLinkDialog;
+        "keyboard-shortcuts-dialog": KeyboardShortcutsDialog;
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-download-as": OntotextDownloadAs;
         "ontotext-dropdown": OntotextDropdown;
@@ -498,6 +514,7 @@ declare module "@stencil/core" {
             "copy-link-dialog": LocalJSX.CopyLinkDialog & JSXBase.HTMLAttributes<HTMLCopyLinkDialogElement>;
             "copy-resource-link-button": LocalJSX.CopyResourceLinkButton & JSXBase.HTMLAttributes<HTMLCopyResourceLinkButtonElement>;
             "copy-resource-link-dialog": LocalJSX.CopyResourceLinkDialog & JSXBase.HTMLAttributes<HTMLCopyResourceLinkDialogElement>;
+            "keyboard-shortcuts-dialog": LocalJSX.KeyboardShortcutsDialog & JSXBase.HTMLAttributes<HTMLKeyboardShortcutsDialogElement>;
             "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
             "ontotext-download-as": LocalJSX.OntotextDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextDownloadAsElement>;
             "ontotext-dropdown": LocalJSX.OntotextDropdown & JSXBase.HTMLAttributes<HTMLOntotextDropdownElement>;

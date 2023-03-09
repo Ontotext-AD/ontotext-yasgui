@@ -1,0 +1,53 @@
+@import "src/css/variables";
+.keyboard-shortcut-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  margin-top: -9px;
+  margin-right: 1px;
+  z-index: 100;
+
+  .keyboard-shortcut-button {
+    background-color: #f7f7f7;
+    outline: none;
+    border: 0.5px solid #EBEBEB;
+    cursor: pointer;
+  }
+
+  .dialog {
+    width: 800px;
+    min-width: 800px;
+    .dialog-footer {
+      display: none;
+    }
+  }
+
+  .keyboard-shortcut-description-item {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+
+  .keyboard-shortcut-description-item-label {
+    width: 40%;
+    text-align: end;
+    font-size: 14px;
+  }
+
+  .keyboard-shortcut-description-item-label span {
+    color: #fff;
+    background-color: #333;
+    border-radius: 0.2rem;
+    padding: 4px;
+  }
+
+  .keyboard-shortcut-description-item-description {
+    width: 60%;
+    font-size: 20px;
+  }
+}
+
+.keyboard-shortcut-wrapper.resizeable-on {
+  margin-top: -29px;
+}
