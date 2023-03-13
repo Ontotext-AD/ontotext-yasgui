@@ -71,7 +71,7 @@ export class KeyboardShortcutsDialog {
           </ontotext-dialog-web-component>
         }
         {
-          !this.open && <button class='keyboard-shortcut-button'
+          !this.open && <button class='keyboard-shortcuts-dialog-button'
                                 onClick={() => this.openDialog()}>{this.translate('yasqe.keyboard_shortcuts.btn.label')}</button>
         }
       </Host>

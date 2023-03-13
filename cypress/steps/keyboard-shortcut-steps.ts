@@ -1,7 +1,7 @@
 export class KeyboardShortcutSteps {
 
   static getInfoDialogButton() {
-    return cy.get('.keyboard-shortcut-button');
+    return cy.get('.keyboard-shortcuts-dialog-button');
   }
 
   static getInfoDialog() {
