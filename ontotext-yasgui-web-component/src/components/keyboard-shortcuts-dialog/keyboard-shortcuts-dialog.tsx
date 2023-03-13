@@ -22,7 +22,7 @@ export class KeyboardShortcutsDialog {
   private closeDialog(evt) {
     const target = evt.target as HTMLElement;
     evt.stopPropagation();
-    if (target.classList.contains('dialog-overlay')) {
+    if (target.classList.contains('close-button') || target.classList.contains('dialog-overlay')) {
       this.open = false;
     }
   }
@@ -53,7 +53,7 @@ export class KeyboardShortcutsDialog {
     return (
       <Host class='keyboard-shortcuts-dialog-wrapper'>
         {this.open &&
-          <div class='keyboard-shortcut-dialog'>
+          <div>
             <ontotext-dialog-web-component class='keyboard-shortcut-dialog'
                                            config={this.buildDialogConfig()}>
               <div slot="body">
