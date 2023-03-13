@@ -1,7 +1,8 @@
+@import 'src/css/variables';
 @import 'src/css/common';
 
 :host {
-  display: block;
+  //display: block;
 }
 
 .dialog-overlay {
@@ -26,12 +27,15 @@
 
 .dialog {
   z-index: 1001;
-  width: 600px;
-  max-width: 600px;
-  background-color: #fff;
+  max-width: 90vw;
+  max-height: 90vh;
+  background-color: $background-onto-default;
   box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
   font-family: inherit;
   font-weight: inherit;
+  display: flex;
+  flex-direction: column;
+  position: unset;
 
   .dialog-header {
     display: flex;
@@ -60,6 +64,7 @@
 
   .dialog-body {
     padding: 15px;
+    overflow: auto;
   }
 
   .dialog-footer {
