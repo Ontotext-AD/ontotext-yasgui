@@ -7,7 +7,7 @@ describe('Keyboard Shortcuts', () => {
     KeyboardShortcutPageSteps.visit();
   });
 
-  describe('Keyboard shortcuts dialog info', () => {
+  describe('Dialog info', () => {
     it('should open dialog', () => {
       // When I visit a page with "ontotext-yasgui-web-component" in it.
       // Then I expect to see the "keyboard shortcuts" button in it.

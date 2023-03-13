@@ -5,7 +5,7 @@ export class KeyboardShortcutSteps {
   }
 
   static getInfoDialog() {
-    return cy.get('.keyboard-shortcut-wrapper .dialog');
+    return cy.get('.keyboard-shortcuts-dialog-wrapper .dialog');
   }
 
   static getInfoDialogTitle() {
