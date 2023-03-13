@@ -1,5 +1,5 @@
 @import "src/css/variables";
-.keyboard-shortcut-wrapper {
+.keyboard-shortcuts-dialog-wrapper {
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -48,6 +48,6 @@
   }
 }
 
-.keyboard-shortcut-wrapper.resizeable-on {
+.keyboard-shortcuts-dialog-wrapper.resizeable-on {
   margin-top: -29px;
 }

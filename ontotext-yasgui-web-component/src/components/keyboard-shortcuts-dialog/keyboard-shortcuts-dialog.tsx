@@ -51,7 +51,7 @@ export class KeyboardShortcutsDialog {
 
   render() {
     return (
-      <Host class='keyboard-shortcut-wrapper'>
+      <Host class='keyboard-shortcuts-dialog-wrapper'>
         {this.open &&
           <div class='keyboard-shortcut-dialog'>
             <ontotext-dialog-web-component class='keyboard-shortcut-dialog'
