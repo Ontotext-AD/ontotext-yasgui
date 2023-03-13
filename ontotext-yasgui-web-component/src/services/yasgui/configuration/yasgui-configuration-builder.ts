@@ -55,7 +55,7 @@ export class YasguiConfigurationBuilder {
       yasqe: {
         prefixes: [],
         keyboardShortcutEnabled: externalConfiguration.keyboardShortcutEnabled !== undefined ? externalConfiguration.keyboardShortcutEnabled : defaultYasqeConfig.keyboardShortcutEnabled,
-        extraKeys:{},
+        extraKeys: {},
         keyboardShortcutDescriptions: []
       },
       yasr: {
@@ -68,7 +68,7 @@ export class YasguiConfigurationBuilder {
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
-    config.yasguiConfig.tabName = externalConfiguration.defaultTabName ||  this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
+    config.yasguiConfig.tabName = externalConfiguration.defaultTabName || this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;
@@ -109,13 +109,13 @@ export class YasguiConfigurationBuilder {
 
   private initShortcuts(config: YasguiConfiguration): void {
     const keyboardShortcutDescriptions = KeyboardShortcutService.initKeyboardShortcutMapping();
-    const extraKeys = {};
-    keyboardShortcutDescriptions.forEach(keyboardShortcutDescription => {
-      keyboardShortcutDescription.keyboardShortcuts.forEach(keyboardShortcut => {
-        extraKeys[keyboardShortcut] = keyboardShortcutDescription.executeFunction;
-      });
-    });
-    config.yasguiConfig.yasqe.extraKeys = extraKeys;
+    config.yasguiConfig.yasqe.extraKeys = keyboardShortcutDescriptions.reduce((extra, keyboardShortcutDescription) => {
+      keyboardShortcutDescription.keyboardShortcuts
+        .forEach(keyboardShortcut => {
+          extra[keyboardShortcut] = keyboardShortcutDescription.executeFunction;
+        });
+      return extra;
+    }, {});
 
     config.yasguiConfig.yasqe.keyboardShortcutDescriptions = keyboardShortcutDescriptions.map(keyboardShortcutDescription => keyboardShortcutDescription.NAME.toString());
   }
