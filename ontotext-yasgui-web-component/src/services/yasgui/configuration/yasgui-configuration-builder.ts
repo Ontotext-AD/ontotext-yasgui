@@ -109,13 +109,13 @@ export class YasguiConfigurationBuilder {
 
   private initShortcuts(config: YasguiConfiguration): void {
     const keyboardShortcutDescriptions = KeyboardShortcutService.initKeyboardShortcutMapping();
-    config.yasguiConfig.yasqe.extraKeys = keyboardShortcutDescriptions.reduce((extra, keyboardShortcutDescription) => {
-      keyboardShortcutDescription.keyboardShortcuts
-        .forEach(keyboardShortcut => {
-          extra[keyboardShortcut] = keyboardShortcutDescription.executeFunction;
-        });
-      return extra;
-    }, {});
+
+    config.yasguiConfig.yasqe.extraKeys = keyboardShortcutDescriptions
+      .flatMap(description => description.keyboardShortcuts.map(keyboardShortcut => ({keyboardShortcut, executeFunction: description.executeFunction})))
+      .reduce((result, keyboardShortcutMapping) => {
+        result[keyboardShortcutMapping.keyboardShortcut] = keyboardShortcutMapping.executeFunction;
+        return result;
+      }, {});
 
     config.yasguiConfig.yasqe.keyboardShortcutDescriptions = keyboardShortcutDescriptions.map(keyboardShortcutDescription => keyboardShortcutDescription.NAME.toString());
   }
