@@ -53,25 +53,22 @@ export class KeyboardShortcutsDialog {
     return (
       <Host class='keyboard-shortcuts-dialog-wrapper'>
         {this.open &&
-          <div>
-            <ontotext-dialog-web-component class='keyboard-shortcut-dialog'
-                                           config={this.buildDialogConfig()}>
-              <div slot="body">
-                {
-                  this.items.map(keyboardShortcutDescriptionLabelKey =>
-                    <div class='keyboard-shortcut-description-item'>
-                      <kbd class='keyboard-shortcut-description-item-label'>
-                        <span>{this.translateLabel(keyboardShortcutDescriptionLabelKey)}</span>
-                      </kbd>
-                      <div class='keyboard-shortcut-description-item-description'>
-                        {this.translateDescription(keyboardShortcutDescriptionLabelKey)}
-                      </div>
+          <ontotext-dialog-web-component config={this.buildDialogConfig()}>
+            <div slot="body">
+              {
+                this.items.map(keyboardShortcutDescriptionLabelKey =>
+                  <div class='keyboard-shortcut-description-item'>
+                    <kbd class='keyboard-shortcut-description-item-label'>
+                      <span>{this.translateLabel(keyboardShortcutDescriptionLabelKey)}</span>
+                    </kbd>
+                    <div class='keyboard-shortcut-description-item-description'>
+                      {this.translateDescription(keyboardShortcutDescriptionLabelKey)}
                     </div>
-                  )
-                }
-              </div>
-            </ontotext-dialog-web-component>
-          </div>
+                  </div>
+                )
+              }
+            </div>
+          </ontotext-dialog-web-component>
         }
         {
           !this.open && <button class='keyboard-shortcut-button'
