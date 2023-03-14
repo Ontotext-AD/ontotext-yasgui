@@ -18,8 +18,4 @@ export class KeyboardShortcutSteps {
   static openInfoDialog() {
     KeyboardShortcutSteps.getInfoDialogButton().realClick();
   }
-
-  static switchOfKeyboardShortcuts() {
-    cy.get("#switchOffKeyboardShortcuts").realClick();
-  }
 }

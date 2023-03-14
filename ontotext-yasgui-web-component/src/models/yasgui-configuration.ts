@@ -103,11 +103,6 @@ export interface YasguiConfiguration {
       prefixes: string[];
 
       /**
-       * A flag that enable/disable keyboard shortcuts. Default value is true;
-       */
-      keyboardShortcutEnabled: boolean;
-
-      /**
        * Object contains pair keyboard shortcut and function to be executed when user press the keyboard shortcut.
        * Example:
        * <pre>
@@ -244,8 +239,7 @@ export const defaultYasqeConfig: Record<string, any> = {
   ],
   prefixes: {
 
-  },
-  keyboardShortcutEnabled: true
+  }
 }
 
 export const defaultYasrConfig: Record<string, any> = {

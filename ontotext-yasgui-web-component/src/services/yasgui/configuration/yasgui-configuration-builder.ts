@@ -54,7 +54,6 @@ export class YasguiConfigurationBuilder {
       pageSize: externalConfiguration.pageSize !== undefined ? externalConfiguration.pageSize : defaultYasguiConfig.pageSize,
       yasqe: {
         prefixes: [],
-        keyboardShortcutEnabled: externalConfiguration.keyboardShortcutEnabled !== undefined ? externalConfiguration.keyboardShortcutEnabled : defaultYasqeConfig.keyboardShortcutEnabled,
         extraKeys: {},
         keyboardShortcutDescriptions: []
       },
