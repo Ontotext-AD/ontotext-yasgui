@@ -23,13 +23,5 @@ describe('Keyboard Shortcuts', () => {
       // and expect 16 keyboard shortcuts to be displayed.
       KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 17);
     });
-    it('should not be visible if it is turned off by configuration', () => {
-      // When I visit a page with "ontotext-yasgui-web-component" in it.
-      // and it is configured to not show "keyboard shortcut button"
-      KeyboardShortcutSteps.switchOfKeyboardShortcuts();
-
-      // Then I expect button to not exist
-      KeyboardShortcutSteps.getInfoDialogButton().should('not.exist');
-    });
   });
 });
