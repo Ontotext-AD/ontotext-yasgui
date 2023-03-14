@@ -8,6 +8,10 @@
 
 .copy-link-dialog {
 
+  .dialog {
+    min-width: 40vw;
+  }
+
   .copy-link-form {
     @include formField;
   }
