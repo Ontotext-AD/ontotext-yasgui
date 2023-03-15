@@ -1,4 +1,4 @@
-import { TranslationService } from "@triply/yasgui-utils";
+import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
 
 require("./scss/yasqe.scss");
 require("./scss/buttons.scss");
@@ -81,6 +81,7 @@ export class Yasqe extends CodeMirror {
   private pageNumber?: number;
 
   public readonly translationService: TranslationService;
+  public readonly notificationMessageService: NotificationMessageService;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -89,6 +90,7 @@ export class Yasqe extends CodeMirror {
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasqe.defaults, conf);
     this.translationService = this.config.translationService;
+    this.notificationMessageService = this.config.notificationMessageService;
     this.infer = this.config.infer;
     this.sameAs = this.config.sameAs;
     this.pageNumber = this.config.pageNumber;
@@ -207,6 +209,10 @@ export class Yasqe extends CodeMirror {
 
   public getPageSize(): number | undefined {
     return this.pageSize;
+  }
+
+  isQueryRunning() {
+    return !!this.req;
   }
 
   private registerEventListeners() {
@@ -1147,6 +1153,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   prefixCcApi: string; // the suggested default prefixes URL API getter
   prefixes: string[];
   translationService: TranslationService;
+  notificationMessageService: NotificationMessageService;
   infer?: boolean;
   sameAs?: boolean;
   pageSize?: number;

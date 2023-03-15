@@ -370,6 +370,7 @@ export class Tab extends EventEmitter {
       throw new Error("Expected a wrapper element before instantiating yasqe");
     }
     yasqeConf.translationService = this.yasgui.config.translationService;
+    yasqeConf.notificationMessageService = this.yasgui.config.notificationMessageService;
     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
 
     this.yasqe.on("blur", this.handleYasqeBlur);
