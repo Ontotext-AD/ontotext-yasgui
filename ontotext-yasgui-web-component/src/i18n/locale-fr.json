@@ -23,6 +23,7 @@
   "yasgui.tab_list.menu.new_tab.btn.label": "New Tab",
   "yasgui.tab_list.menu.rename_tab.btn.label": "Rename Tab",
   "yasgui.tab_list.menu.undo_close_tab.btn.label": "Undo close Tab",
+  "yasqe.tab_list.new_tab.query_running.warning.message": "Il est impossible d'ouvrir de nouveaux onglets pendant l'exécution d'une requête ou d'une mise à jour.",
   "yasgui.toolbar.mode_yasgui.btn.label": "Éditeur et résultats",
   "yasgui.toolbar.mode_yasqe.btn.label": "Éditeur seulement",
   "yasgui.toolbar.mode_yasr.btn.label": "Résultats seulement",

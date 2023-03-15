@@ -21,10 +21,11 @@ import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dial
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
 import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
-import {NotificationMessageEvent, NotificationMessageCode, NotificationMessageType} from '../../models/output-events/notification-message-event';
 import {CountQueryEvent} from '../../models/output-events/count-query-event';
 import {CountQueryResponseEvent} from '../../models/output-events/count-query-response-event';
 import {QueryEvent} from '../../models/output-events/query-event';
+import {NotificationMessageService} from '../../services/notification-message-service';
+import {InternalNotificationMessageEvent, MessageCode} from '../../models/internal-events/internal-notification-message-event';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -58,6 +59,7 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiConfigurationBuilder: YasguiConfigurationBuilder;
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
+  private readonly notificationMessageService: NotificationMessageService
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -80,6 +82,7 @@ export class OntotextYasguiWebComponent {
     this.yasguiConfigurationBuilder = this.serviceFactory.get(YasguiConfigurationBuilder);
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
+    this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
 
     // Bound to the instance functions because we want to refer them when unsubscribing events
     this.onQueryBound = this.onQuery.bind(this);
@@ -457,7 +460,7 @@ export class OntotextYasguiWebComponent {
   @Listen('internalResourceLinkCopiedEvent')
   resourceLinkCopiedHandler() {
     const resourceCopiedMessage = this.translationService.translate('yasqe.share.copy_link.dialog.copy.message.success');
-    this.output.emit(new NotificationMessageEvent(NotificationMessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, NotificationMessageType.SUCCESS, resourceCopiedMessage));
+    this.notificationMessageService.success(MessageCode.RESOURCE_LINK_COPIED_SUCCESSFULLY, resourceCopiedMessage);
     this.showCopyResourceLinkDialog = false;
     this.copiedResourceLink = undefined;
   }
@@ -474,6 +477,11 @@ export class OntotextYasguiWebComponent {
   @Listen('internalDownloadAsEvent')
   onDownloadAsEventHandler(downloadAsEvent: CustomEvent<InternalDownloadAsEvent>) {
     this.output.emit(toOutputEvent(downloadAsEvent));
+  }
+
+  @Listen('internalNotificationMessageEvent')
+  notificationMessageHandler(event: CustomEvent<InternalNotificationMessageEvent>) {
+    this.output.emit(toOutputEvent(event));
   }
 
   private resolveOrientationButtonTooltip(): string {
