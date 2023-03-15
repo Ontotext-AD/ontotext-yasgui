@@ -305,7 +305,12 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkDialog().should('not.exist');
     });
 
-    it('Should close copy link dialog when click on cancel button', () => {
+    it('Should close copy link dialog when click on cancel button', {
+      retries: {
+        runMode: 1,
+        openMode: 0,
+      },
+    },() => {
       // When I execute a query which returns results of type is uri.
       QueryStubs.stubDefaultQueryResponse();
       YasqeSteps.executeQuery();
@@ -389,7 +394,7 @@ describe('Plugin: Table', () => {
   });
 
   function openCopyResourceLinkDialog(rowNumber = 10, cellNumber = 2) {
-    YasrSteps.clickOnCopyResourceLink(10, 2);
+    YasrSteps.clickOnCopyResourceLink(rowNumber, cellNumber);
     YasrSteps.getCopyResourceLinkDialog().should('be.visible');
   }
 });

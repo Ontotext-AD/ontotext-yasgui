@@ -1,5 +1,5 @@
 export class KeyboardShortcutPageSteps {
   static visit() {
-    cy.visit('/pages/keyboard-shortcut');
+    cy.visit('/pages/keyboard-shortcuts');
   }
 }

@@ -72,7 +72,7 @@
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.label": "[Ctrl|Cmd]-Alt-Left",
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.description": "Passer à l'onglet suivant",
   "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.label": "Shift-Left-Mouse",
-  "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Un clic sur l'icône de fermeture de l'onglet ferme tous les onglets, sauf celui sur lequel on a cliqué",
+  "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Ferme tous les onglets sauf celui en cours",
   "yasqe.keyboard_shortcuts.dialog.item.f11.label": "F11",
   "yasqe.keyboard_shortcuts.dialog.item.f11.description": "press F11 full screen/exit full screen",
   "yasqe.keyboard_shortcuts.dialog.item.esc.label": "Esc",
