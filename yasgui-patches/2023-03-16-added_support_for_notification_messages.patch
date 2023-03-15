@@ -1,0 +1,243 @@
+Subject: [PATCH] Updates functionality of yasqe: - added support for message notifications. - expose a new function isQueryRunning();
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision 979aae4792f5beaef5be6014b6bcae7d8b4d4fcf)
++++ b/Yasgui/packages/utils/src/index.ts	(revision 32698d73adb6a4fec104b4a292e71bddaf8144ca)
+@@ -72,3 +72,22 @@
+     return key;
+   }
+ }
++
++export class NotificationMessageService {
++  private static _INSTANCE: NotificationMessageService;
++
++  static get INSTANCE(): NotificationMessageService {
++    if (!NotificationMessageService._INSTANCE) {
++      NotificationMessageService._INSTANCE = new NotificationMessageService();
++    }
++    return NotificationMessageService._INSTANCE;
++  }
++
++  info(code: string, message: string): void {}
++
++  success(code: string, message: string): void {}
++
++  warning(code: string, message: string): void {}
++
++  error(code: string, message: string): void {}
++}
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 979aae4792f5beaef5be6014b6bcae7d8b4d4fcf)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 32698d73adb6a4fec104b4a292e71bddaf8144ca)
+@@ -370,6 +370,7 @@
+       throw new Error("Expected a wrapper element before instantiating yasqe");
+     }
+     yasqeConf.translationService = this.yasgui.config.translationService;
++    yasqeConf.notificationMessageService = this.yasgui.config.notificationMessageService;
+     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
+ 
+     this.yasqe.on("blur", this.handleYasqeBlur);
+Index: Yasgui/packages/yasgui/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/defaults.ts b/Yasgui/packages/yasgui/src/defaults.ts
+--- a/Yasgui/packages/yasgui/src/defaults.ts	(revision 979aae4792f5beaef5be6014b6bcae7d8b4d4fcf)
++++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision 32698d73adb6a4fec104b4a292e71bddaf8144ca)
+@@ -2,11 +2,12 @@
+ import Yasr from "@triply/yasr";
+ import { default as Yasqe } from "@triply/yasqe";
+ import { CatalogueItem } from "./endpointSelect";
+-import { TranslationService } from "@triply/yasgui-utils";
++import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ 
+ export default function initialize(): Config<CatalogueItem> {
+   return {
+     translationService: TranslationService.INSTANCE,
++    notificationMessageService: NotificationMessageService.INSTANCE,
+     pageNumber: 1,
+     autofocus: true,
+     endpointInfo: undefined,
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 979aae4792f5beaef5be6014b6bcae7d8b4d4fcf)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 32698d73adb6a4fec104b4a292e71bddaf8144ca)
+@@ -9,7 +9,7 @@
+ import TabElements from "./TabElements";
+ import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
+ import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
+-import { addClass, removeClass } from "@triply/yasgui-utils";
++import { addClass, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
+ import { TranslationService } from "@triply/yasgui-utils";
+ require("./index.scss");
+ require("@triply/yasr/src/scss/global.scss");
+@@ -46,6 +46,7 @@
+   contextMenuContainer: HTMLElement | undefined;
+   nonSslDomain?: string;
+   translationService: TranslationService;
++  notificationMessageService: NotificationMessageService;
+   paginationOn?: boolean;
+   pageSize?: number;
+   pageNumber: number;
+@@ -97,6 +98,7 @@
+   public static Tab = Tab;
+ 
+   public readonly translationService: TranslationService;
++  public readonly notificationMessageService: NotificationMessageService;
+   constructor(parent: HTMLElement, config: PartialConfig) {
+     super();
+     this.rootEl = document.createElement("div");
+@@ -105,6 +107,7 @@
+ 
+     this.config = merge({}, Yasgui.defaults, config);
+     this.translationService = this.config.translationService;
++    this.notificationMessageService = this.config.notificationMessageService;
+     this.persistentConfig = new PersistentConfig(this);
+ 
+     this.tabElements = new TabElements(this);
+@@ -148,9 +151,11 @@
+     const tabs = this.persistentConfig.getTabs();
+     if (!tabs.length && this.config.autoAddOnInit) {
+       const newTab = this.addTab(true);
+-      this.persistentConfig.setActive(newTab.getId());
+-      this.emit("tabChange", this, newTab);
+-      this.emit("yasqeReady", newTab, newTab.getYasqe());
++      if (newTab) {
++        this.persistentConfig.setActive(newTab.getId());
++        this.emit("tabChange", this, newTab);
++        this.emit("yasqeReady", newTab, newTab.getYasqe());
++      }
+     } else {
+       for (const tabId of tabs) {
+         this._tabs[tabId] = new Tab(this, this.persistentConfig.getTab(tabId));
+@@ -341,6 +346,18 @@
+   public _removePanel(panel: HTMLDivElement | undefined) {
+     if (panel) this.tabPanelsEl.removeChild(panel);
+   }
++
++  isQueryRunning() {
++    let queryRunning = false;
++    if (this._tabs) {
++      Object.values(this._tabs).forEach((tab) => {
++        if (tab.getYasqe()?.isQueryRunning()) {
++          queryRunning = true;
++        }
++      });
++    }
++    return queryRunning;
++  }
+   /**
+    * Adds a tab to yasgui
+    * @param setActive if the tab should become active when added
+@@ -353,7 +370,12 @@
+     setActive: boolean,
+     partialTabConfig?: Partial<PersistedTabJson>,
+     opts: { atIndex?: number; avoidDuplicateTabs?: boolean } = {}
+-  ): Tab {
++  ): Tab | undefined {
++    if (this.isQueryRunning()) {
++      const message = this.translationService.translate("yasqe.tab_list.new_tab.query_running.warning.message");
++      this.notificationMessageService.info("query_is_running", message);
++      return;
++    }
+     const tabConfig = merge({}, Tab.getDefaults(this), partialTabConfig);
+     if (tabConfig.id && this.getTab(tabConfig.id)) {
+       throw new Error("Duplicate tab ID");
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 979aae4792f5beaef5be6014b6bcae7d8b4d4fcf)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision 32698d73adb6a4fec104b4a292e71bddaf8144ca)
+@@ -6,7 +6,7 @@
+  */
+ import { default as Yasqe, Config, PlainRequestConfig } from "./";
+ import * as queryString from "query-string";
+-import { TranslationService } from "@triply/yasgui-utils";
++import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
+ export default function get() {
+   const prefixCcApi =
+@@ -14,6 +14,7 @@
+   const CodeMirror = require("codemirror");
+   const config: Omit<Config, "requestConfig"> = {
+     translationService: TranslationService.INSTANCE,
++    notificationMessageService: NotificationMessageService.INSTANCE,
+     mode: "sparql11",
+     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+@@ -138,7 +139,7 @@
+     editorHeight: "300px",
+     queryingDisabled: undefined,
+     prefixCcApi: prefixCcApi,
+-    prefixes: []
++    prefixes: [],
+   };
+   const requestConfig: PlainRequestConfig = {
+     queryArgument: undefined, //undefined means: get query argument based on query mode
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 979aae4792f5beaef5be6014b6bcae7d8b4d4fcf)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 32698d73adb6a4fec104b4a292e71bddaf8144ca)
+@@ -1,4 +1,4 @@
+-import { TranslationService } from "@triply/yasgui-utils";
++import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ 
+ require("./scss/yasqe.scss");
+ require("./scss/buttons.scss");
+@@ -81,6 +81,7 @@
+   private pageNumber?: number;
+ 
+   public readonly translationService: TranslationService;
++  public readonly notificationMessageService: NotificationMessageService;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
+@@ -89,6 +90,7 @@
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasqe.defaults, conf);
+     this.translationService = this.config.translationService;
++    this.notificationMessageService = this.config.notificationMessageService;
+     this.infer = this.config.infer;
+     this.sameAs = this.config.sameAs;
+     this.pageNumber = this.config.pageNumber;
+@@ -209,6 +211,10 @@
+     return this.pageSize;
+   }
+ 
++  isQueryRunning() {
++    return !!this.req;
++  }
++
+   private registerEventListeners() {
+     /**
+      * Register listeners
+@@ -1147,6 +1153,7 @@
+   prefixCcApi: string; // the suggested default prefixes URL API getter
+   prefixes: string[];
+   translationService: TranslationService;
++  notificationMessageService: NotificationMessageService;
+   infer?: boolean;
+   sameAs?: boolean;
+   pageSize?: number;
