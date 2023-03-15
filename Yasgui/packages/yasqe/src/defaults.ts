@@ -6,7 +6,7 @@
  */
 import { default as Yasqe, Config, PlainRequestConfig } from "./";
 import * as queryString from "query-string";
-import { TranslationService } from "@triply/yasgui-utils";
+import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
 //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
 export default function get() {
   const prefixCcApi =
@@ -14,6 +14,7 @@ export default function get() {
   const CodeMirror = require("codemirror");
   const config: Omit<Config, "requestConfig"> = {
     translationService: TranslationService.INSTANCE,
+    notificationMessageService: NotificationMessageService.INSTANCE,
     mode: "sparql11",
     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -138,7 +139,7 @@ SELECT * WHERE {
     editorHeight: "300px",
     queryingDisabled: undefined,
     prefixCcApi: prefixCcApi,
-    prefixes: []
+    prefixes: [],
   };
   const requestConfig: PlainRequestConfig = {
     queryArgument: undefined, //undefined means: get query argument based on query mode

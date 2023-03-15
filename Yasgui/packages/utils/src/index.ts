@@ -72,3 +72,22 @@ export class TranslationService {
     return key;
   }
 }
+
+export class NotificationMessageService {
+  private static _INSTANCE: NotificationMessageService;
+
+  static get INSTANCE(): NotificationMessageService {
+    if (!NotificationMessageService._INSTANCE) {
+      NotificationMessageService._INSTANCE = new NotificationMessageService();
+    }
+    return NotificationMessageService._INSTANCE;
+  }
+
+  info(code: string, message: string): void {}
+
+  success(code: string, message: string): void {}
+
+  warning(code: string, message: string): void {}
+
+  error(code: string, message: string): void {}
+}

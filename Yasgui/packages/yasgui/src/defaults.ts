@@ -2,11 +2,12 @@ import { Config } from "./";
 import Yasr from "@triply/yasr";
 import { default as Yasqe } from "@triply/yasqe";
 import { CatalogueItem } from "./endpointSelect";
-import { TranslationService } from "@triply/yasgui-utils";
+import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
 
 export default function initialize(): Config<CatalogueItem> {
   return {
     translationService: TranslationService.INSTANCE,
+    notificationMessageService: NotificationMessageService.INSTANCE,
     pageNumber: 1,
     autofocus: true,
     endpointInfo: undefined,

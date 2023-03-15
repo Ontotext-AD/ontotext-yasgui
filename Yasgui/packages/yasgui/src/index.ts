@@ -9,7 +9,7 @@ import * as shareLink from "./linkUtils";
 import TabElements from "./TabElements";
 import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
 import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
-import { addClass, removeClass } from "@triply/yasgui-utils";
+import { addClass, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
 require("./index.scss");
 require("@triply/yasr/src/scss/global.scss");
@@ -46,6 +46,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   contextMenuContainer: HTMLElement | undefined;
   nonSslDomain?: string;
   translationService: TranslationService;
+  notificationMessageService: NotificationMessageService;
   paginationOn?: boolean;
   pageSize?: number;
   pageNumber: number;
@@ -97,6 +98,7 @@ export class Yasgui extends EventEmitter {
   public static Tab = Tab;
 
   public readonly translationService: TranslationService;
+  public readonly notificationMessageService: NotificationMessageService;
   constructor(parent: HTMLElement, config: PartialConfig) {
     super();
     this.rootEl = document.createElement("div");
@@ -105,6 +107,7 @@ export class Yasgui extends EventEmitter {
 
     this.config = merge({}, Yasgui.defaults, config);
     this.translationService = this.config.translationService;
+    this.notificationMessageService = this.config.notificationMessageService;
     this.persistentConfig = new PersistentConfig(this);
 
     this.tabElements = new TabElements(this);
@@ -148,9 +151,11 @@ export class Yasgui extends EventEmitter {
     const tabs = this.persistentConfig.getTabs();
     if (!tabs.length && this.config.autoAddOnInit) {
       const newTab = this.addTab(true);
-      this.persistentConfig.setActive(newTab.getId());
-      this.emit("tabChange", this, newTab);
-      this.emit("yasqeReady", newTab, newTab.getYasqe());
+      if (newTab) {
+        this.persistentConfig.setActive(newTab.getId());
+        this.emit("tabChange", this, newTab);
+        this.emit("yasqeReady", newTab, newTab.getYasqe());
+      }
     } else {
       for (const tabId of tabs) {
         this._tabs[tabId] = new Tab(this, this.persistentConfig.getTab(tabId));
@@ -341,6 +346,18 @@ export class Yasgui extends EventEmitter {
   public _removePanel(panel: HTMLDivElement | undefined) {
     if (panel) this.tabPanelsEl.removeChild(panel);
   }
+
+  isQueryRunning() {
+    let queryRunning = false;
+    if (this._tabs) {
+      Object.values(this._tabs).forEach((tab) => {
+        if (tab.getYasqe()?.isQueryRunning()) {
+          queryRunning = true;
+        }
+      });
+    }
+    return queryRunning;
+  }
   /**
    * Adds a tab to yasgui
    * @param setActive if the tab should become active when added
@@ -353,7 +370,12 @@ export class Yasgui extends EventEmitter {
     setActive: boolean,
     partialTabConfig?: Partial<PersistedTabJson>,
     opts: { atIndex?: number; avoidDuplicateTabs?: boolean } = {}
-  ): Tab {
+  ): Tab | undefined {
+    if (this.isQueryRunning()) {
+      const message = this.translationService.translate("yasqe.tab_list.new_tab.query_running.warning.message");
+      this.notificationMessageService.info("query_is_running", message);
+      return;
+    }
     const tabConfig = merge({}, Tab.getDefaults(this), partialTabConfig);
     if (tabConfig.id && this.getTab(tabConfig.id)) {
       throw new Error("Duplicate tab ID");
