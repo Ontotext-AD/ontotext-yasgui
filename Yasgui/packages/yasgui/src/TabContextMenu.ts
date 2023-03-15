@@ -1,6 +1,5 @@
 import { addClass } from "@triply/yasgui-utils";
 import { default as Yasgui, getRandomId } from "./";
-import Tab from "./Tab";
 import { TabListEl } from "./TabElements";
 import { cloneDeep } from "lodash-es";
 require("./TabContextMenu.scss");
@@ -125,9 +124,7 @@ export default class TabContextMenu {
       addClass(this.closeOtherTabsEl, "disabled");
     } else {
       this.closeOtherTabsEl.onclick = () => {
-        for (const tabId of Object.keys(this.yasgui._tabs)) {
-          if (tabId !== currentTabId) (this.yasgui.getTab(tabId) as Tab).close();
-        }
+        this.yasgui.closeOtherTabs(currentTabId);
       };
     }
     if (this.yasgui.persistentConfig && this.yasgui.persistentConfig.hasLastClosedTab()) {
