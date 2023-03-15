@@ -232,6 +232,13 @@ export class Yasgui extends EventEmitter {
     }
     return tab;
   }
+  public closeOtherTabs(currentTabId: string): void {
+    for (const tabId of Object.keys(this._tabs)) {
+      if (tabId !== currentTabId) {
+        this.getTab(tabId)?.close();
+      }
+    }
+  }
   /**
    * Checks if two persistent tab configuration are the same based.
    * It isnt a strict equality, as falsy values (e.g. a header that isnt set in one tabjson) isnt taken into consideration
@@ -288,12 +295,43 @@ export class Yasgui extends EventEmitter {
       this.emit("yasqeReady", tab, tab.getYasqe());
     });
     tab.on("yasqeReady", (tab, yasqe) => this.emit("yasqeReady", tab, yasqe));
+    tab.on("openNewTab", (tab) => this.addTab(true));
+    tab.on("openNextTab", (tab: Tab) => this.openNextTab(tab));
+    tab.on("openPreviousTab", (tab: Tab) => this.openPreviousTab(tab));
+    tab.on("closeOtherTabs", (tab) => this.closeOtherTabs(tab.getId()));
     tab.on("query", (tab) => this.emit("query", this, tab));
     tab.on("queryAbort", (tab) => this.emit("queryAbort", this, tab));
     tab.on("queryResponse", (tab) => this.emit("queryResponse", this, tab));
     tab.on("autocompletionShown", (tab, widget) => this.emit("autocompletionShown", this, tab, widget));
     tab.on("autocompletionClose", (tab) => this.emit("autocompletionClose", this, tab));
   }
+
+  public openNextTab(tab: Tab) {
+    const nextTabId = this.getNextTabId(tab);
+    if (nextTabId) {
+      this.selectTabId(nextTabId);
+    }
+  }
+
+  public openPreviousTab(tab: Tab) {
+    const nextTabId = this.getPreviousTabId(tab);
+    if (nextTabId) {
+      this.selectTabId(nextTabId);
+    }
+  }
+
+  public getNextTabId(tab: Tab): string | undefined {
+    const allTabsIds = Object.keys(this._tabs);
+    const nextIndex = allTabsIds.indexOf(tab.getId()) + 1;
+    return allTabsIds[nextIndex];
+  }
+
+  public getPreviousTabId(tab: Tab): string | undefined {
+    const allTabsIds = Object.keys(this._tabs);
+    const nextIndex = allTabsIds.indexOf(tab.getId()) - 1;
+    return allTabsIds[nextIndex];
+  }
+
   public _setPanel(panelId: string, panel: HTMLDivElement) {
     for (const id in this._tabs) {
       if (id !== panelId) this._tabs[id].hide();

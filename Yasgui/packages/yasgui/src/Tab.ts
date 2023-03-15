@@ -51,6 +51,10 @@ export interface Tab {
   on(event: "autocompletionClose", listener: (tab: Tab) => void): this;
   emit(event: "autocompletionClose", tab: Tab): boolean;
   emit(event: "yasqeReady", tab: Tab, yasqe: Yasqe | undefined): boolean;
+  emit(event: "openNewTab", tab: Tab): void;
+  emit(event: "openNextTab", tab: Tab): void;
+  emit(event: "openPreviousTab", tab: Tab): void;
+  emit(event: "closeOtherTabs", tab: Tab): void;
 }
 export class Tab extends EventEmitter {
   private persistentJson: PersistedJson;
@@ -378,6 +382,10 @@ export class Tab extends EventEmitter {
 
     this.yasqe.on("queryResponse", this.handleQueryResponse);
     this.yasqe.on("totalElementChanged", this.handleTotalElementChanged);
+    this.yasqe.on("openNewTab", this.handleOpenNewTab);
+    this.yasqe.on("openNextTab", this.handleOpenNextTab);
+    this.yasqe.on("openPreviousTab", this.handleOpenPreviousTab);
+    this.yasqe.on("closeOtherTabs", this.handlerCloseOtherTabs);
   }
   private destroyYasqe() {
     // As Yasqe extends of CM instead of eventEmitter, it doesn't expose the removeAllListeners function, so we should unregister all events manually
@@ -389,9 +397,29 @@ export class Tab extends EventEmitter {
     this.yasqe?.off("autocompletionClose", this.handleAutocompletionClose);
     this.yasqe?.off("queryResponse", this.handleQueryResponse);
     this.yasqe?.off("totalElementChanged", this.handleTotalElementChanged);
+    this.yasqe?.off("openNewTab", this.handleOpenNewTab);
+    this.yasqe?.off("openNextTab", this.handleOpenNextTab);
+    this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
+    this.yasqe?.on("closeOtherTabs", this.handlerCloseOtherTabs);
     this.yasqe?.destroy();
     this.yasqe = undefined;
   }
+
+  handleOpenNewTab = () => {
+    this.emit("openNewTab", this);
+  };
+
+  handleOpenNextTab = () => {
+    this.emit("openNextTab", this);
+  };
+
+  handleOpenPreviousTab = () => {
+    this.emit("openPreviousTab", this);
+  };
+
+  handlerCloseOtherTabs = () => {
+    this.emit("closeOtherTabs", this);
+  };
 
   handleYasqeBlur = (yasqe: Yasqe) => {
     this.updatePersistJson(yasqe);

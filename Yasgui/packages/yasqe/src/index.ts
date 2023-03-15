@@ -48,6 +48,14 @@ export interface Yasqe {
   on(eventName: "resize", handler: (instance: Yasqe, newSize: string) => void): void;
   off(eventName: "resize", handler: (instance: Yasqe, newSize: string) => void): void;
   on(eventName: string, handler: () => void): void;
+  on(eventName: "openNewTab", handler: () => void): void;
+  off(eventName: "openNewTab", handler: () => void): void;
+  on(eventName: "openNextTab", handler: () => void): void;
+  off(eventName: "openNextTab", handler: () => void): void;
+  on(eventName: "openPreviousTab", handler: () => void): void;
+  off(eventName: "openPreviousTab", handler: () => void): void;
+  on(eventName: "closeOtherTabs", handler: () => void): void;
+  off(eventName: "closeOtherTabs", handler: () => void): void;
 }
 
 export class Yasqe extends CodeMirror {
