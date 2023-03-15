@@ -1,0 +1,124 @@
+{
+  "total_results": 9,
+  "page": 1,
+  "page_size": "50",
+  "results": [
+    {
+      "prefixedName": [
+        "rdf:rest"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"
+      ],
+      "localName": [
+        "rest"
+      ],
+      "type": "property",
+      "score": 6.512422
+    },
+    {
+      "prefixedName": [
+        "rdf:type"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      ],
+      "localName": [
+        "type"
+      ],
+      "type": "property",
+      "score": 6.512422
+    },
+    {
+      "prefixedName": [
+        "rdf:first"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#first"
+      ],
+      "localName": [
+        "first"
+      ],
+      "type": "property",
+      "score": 6.0021815
+    },
+    {
+      "prefixedName": [
+        "rdf:language"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#language"
+      ],
+      "localName": [
+        "language"
+      ],
+      "type": "property",
+      "score": 6.0021815
+    },
+    {
+      "prefixedName": [
+        "rdf:predicate"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
+      ],
+      "localName": [
+        "predicate"
+      ],
+      "type": "property",
+      "score": 6.0021815
+    },
+    {
+      "prefixedName": [
+        "rdf:subject"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"
+      ],
+      "localName": [
+        "subject"
+      ],
+      "type": "property",
+      "score": 6.0021815
+    },
+    {
+      "prefixedName": [
+        "rdf:direction"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#direction"
+      ],
+      "localName": [
+        "direction"
+      ],
+      "type": "property",
+      "score": 5.999919
+    },
+    {
+      "prefixedName": [
+        "rdf:object"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#object"
+      ],
+      "localName": [
+        "object"
+      ],
+      "type": "property",
+      "score": 5.932184
+    },
+    {
+      "prefixedName": [
+        "rdf:value"
+      ],
+      "uri": [
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+      ],
+      "localName": [
+        "value"
+      ],
+      "type": "property",
+      "score": 5.932184
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import {TranslationService} from '../services/translation.service';
-import {YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 import {NotificationMessageService} from '../services/notification-message-service';
+import {AutocompleteLoader, YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -58,6 +58,11 @@ export interface YasguiConfiguration {
    * }
    */
   i18n?: Translations;
+
+  /**
+   * Registered yasqe autocomplete handlers. Every handler is mapped by its name.
+   */
+  yasqeAutocomplete?: Record<string, AutocompleteLoader>;
 
   // ***********************************************************
   //

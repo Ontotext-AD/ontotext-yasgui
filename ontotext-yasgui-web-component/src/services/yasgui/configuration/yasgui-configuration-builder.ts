@@ -15,6 +15,7 @@ import {YasrService} from '../../yasr/yasr-service';
 import {NamespaceService} from "../../namespace-service";
 import {KeyboardShortcutService} from '../../keyboard-shortcut-service';
 import {NotificationMessageService} from '../../notification-message-service';
+import LocalNamesAutocompleter from "../../yasqe/autocompleter/local-names";
 
 /**
  * Builder for yasgui configuration.
@@ -44,6 +45,13 @@ export class YasguiConfigurationBuilder {
     config.showResultTabs = externalConfiguration.showResultTabs !== undefined ? externalConfiguration.showResultTabs : defaultOntotextYasguiConfig.showResultTabs;
     config.showToolbar = externalConfiguration.showToolbar !== undefined ? externalConfiguration.showToolbar : defaultOntotextYasguiConfig.showToolbar;
     config.i18n = externalConfiguration.i18n;
+
+    config.yasqeAutocomplete = {};
+    if (externalConfiguration.yasqeAutocomplete) {
+      Object.keys(externalConfiguration.yasqeAutocomplete).map((name) => {
+        config.yasqeAutocomplete[name] = externalConfiguration.yasqeAutocomplete[name];
+      });
+    }
 
     // prepare the yasgui config
     config.yasguiConfig = {
@@ -103,9 +111,17 @@ export class YasguiConfigurationBuilder {
 
     YasrService.disablePlugin('table');
 
+    // Register autocompleters
+    this.registerCustomAutocompleters(config);
+
     // prepare the yasr config
 
     return config;
+  }
+
+  private registerCustomAutocompleters(config: YasguiConfiguration): void {
+    // @ts-ignore
+    Yasqe.registerAutocompleter(LocalNamesAutocompleter(config.yasqeAutocomplete['LocalNamesAutocompleter']), true);
   }
 
   private initShortcuts(config: YasguiConfiguration): void {
@@ -120,14 +136,6 @@ export class YasguiConfigurationBuilder {
 
     config.yasguiConfig.yasqe.keyboardShortcutDescriptions = keyboardShortcutDescriptions.map(keyboardShortcutDescription => keyboardShortcutDescription.NAME.toString());
   }
-
-  // @ts-ignore
-  private registerCustomAutocompleters(config: YasguiConfiguration): void {
-    const namespaces = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
-    // @ts-ignore
-    Yasqe.registerAutocompleter(SesamePrefixesAutocompleter(namespaces), true);
-  }
-
 
   // @ts-ignore
   getYasqeActionButtons(yasguiConfiguration: YasguiConfiguration, defaultYasqeConfig: Record<string, any>, yasqe: Yasqe): HTMLElement[] {
