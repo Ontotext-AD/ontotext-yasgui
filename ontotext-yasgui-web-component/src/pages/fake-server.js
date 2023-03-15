@@ -8,6 +8,9 @@ module.exports = function (req, res, next) {
   } else if (req.url.endsWith('/repositories/test-repo/namespaces')) {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(namespacesResponse));
+  } else if (req.url.includes('/autocomplete/query')) {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(autocompleteResponse));
   } else if (req.url === 'https://lov.linkeddata.es/dataset/lov/api/v2/autocomplete/terms?q=rdf&page_size=50&type=property') {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(localNamesResponse));
@@ -15,6 +18,86 @@ module.exports = function (req, res, next) {
     // pass request on to the default dev server
     next();
   }
+};
+
+const autocompleteResponse = {
+  "suggestions": [{
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#li",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#li"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#_1",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#_1"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#List",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#List"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#first"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+  }, {
+    "type": "uri",
+    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
+    "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"
+  }]
 };
 
 const localNamesResponse = {

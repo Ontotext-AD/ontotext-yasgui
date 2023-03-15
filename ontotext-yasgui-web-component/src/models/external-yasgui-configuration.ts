@@ -207,7 +207,14 @@ export interface ExternalYasguiConfiguration {
    * Default value is 100000.
    */
   maxPersistentResponseSize: number;
+
+  /**
+   * Registered yasqe autocomplete handlers. Every handler is mapped by its name.
+   */
+  yasqeAutocomplete?: Record<string, AutocompleteLoader>;
 }
+
+export type AutocompleteLoader = () => any;
 
 export enum RenderingMode {
   YASGUI = 'mode-yasgui',
