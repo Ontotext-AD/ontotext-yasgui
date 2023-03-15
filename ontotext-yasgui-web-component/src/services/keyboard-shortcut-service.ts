@@ -184,8 +184,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-T');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      // TODO check if a query is run.
-      yasqe.emit('openNewTab');
+     yasqe.emit('openNewTab');
     };
     return keyboardShortcut;
   }

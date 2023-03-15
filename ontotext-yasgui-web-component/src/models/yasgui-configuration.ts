@@ -1,5 +1,6 @@
 import {TranslationService} from '../services/translation.service';
 import {YasqeActionButtonDefinition} from "./external-yasgui-configuration";
+import {NotificationMessageService} from '../services/notification-message-service';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -70,6 +71,7 @@ export interface YasguiConfiguration {
   yasguiConfig?: {
     tabName?: string,
     translationService: TranslationService;
+    notificationMessageService: NotificationMessageService;
     requestConfig: {
       endpoint?: string;
       method?: 'POST' | 'GET';

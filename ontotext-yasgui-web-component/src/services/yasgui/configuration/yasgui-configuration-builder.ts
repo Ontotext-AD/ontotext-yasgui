@@ -14,6 +14,7 @@ import {TranslationService} from '../../translation.service';
 import {YasrService} from '../../yasr/yasr-service';
 import {NamespaceService} from "../../namespace-service";
 import {KeyboardShortcutService} from '../../keyboard-shortcut-service';
+import {NotificationMessageService} from '../../notification-message-service';
 
 /**
  * Builder for yasgui configuration.
@@ -47,6 +48,7 @@ export class YasguiConfigurationBuilder {
     // prepare the yasgui config
     config.yasguiConfig = {
       translationService: this.serviceFactory.get(TranslationService),
+      notificationMessageService: this.serviceFactory.get(NotificationMessageService),
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},
