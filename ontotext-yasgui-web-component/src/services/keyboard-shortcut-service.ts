@@ -170,7 +170,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-Enter');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
       // TODO implement query
       console.log('EXECUTE_EXPLAIN_PLAN_FOR_QUERY not implemented yet');
     };
@@ -196,7 +196,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-S');
     keyboardShortcut.keyboardShortcuts.push('Cmd-S');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
       // TODO implement query
       console.log('CREATE_SAVE_QUERY not implemented yet');
     };
@@ -243,7 +243,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.NAME = KeyboardShortcutName.F11;
     keyboardShortcut.keyboardShortcuts.push('F11');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
       // TODO implement query
       console.log('F11 not implemented yet');
     };
@@ -255,7 +255,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.NAME = KeyboardShortcutName.ESC;
     keyboardShortcut.keyboardShortcuts.push('Esc');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
       // TODO implement query
       console.log('ESC not implemented yet');
     };
