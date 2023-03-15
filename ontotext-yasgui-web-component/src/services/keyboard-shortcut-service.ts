@@ -30,9 +30,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Alt-Enter');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Space');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('TRIGGER_AUTOCOMPLETION not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.autocomplete();
     };
     return keyboardShortcut;
   }
@@ -45,9 +44,9 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Cmd-D');
     keyboardShortcut.keyboardShortcuts.push('Cmd-K');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('DELETE_CURRENT_LINE not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      //@ts-ignore
+      Yasqe.defaults.extraKeys['Shift-Ctrl-K'](yasqe);
     };
     return keyboardShortcut;
   }
@@ -58,9 +57,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-/');
     keyboardShortcut.keyboardShortcuts.push('Cmd-/');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('COMMENT_SELECTED_LINE not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.commentLines();
     };
     return keyboardShortcut;
   }
@@ -71,9 +69,15 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Down');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Down');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('COPY_LINE_DOWN not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      let cursor = yasqe.getCursor();
+      const cursorLinePosition = cursor.ch;
+      yasqe.duplicateLine();
+      // Sets cursor in same position.
+      cursor = yasqe.getCursor();
+      cursor.ch = cursorLinePosition;
+      yasqe.setCursor(cursor);
+
     };
     return keyboardShortcut;
   }
@@ -84,9 +88,30 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Up');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Up');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('COPY_LINE_UP not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      let cursor = yasqe.getCursor();
+      if (!cursor) {
+        return;
+      }
+
+      const currentLine = yasqe.getDoc().getLine(cursor.line);
+      if (!currentLine) {
+        return;
+      }
+      const cursorLinePosition = cursor.ch;
+      cursor.line--;
+      yasqe.setCursor(cursor);
+
+      const line = yasqe.getDoc().getLine(cursor.line);
+      if (!line) {
+        return;
+      }
+
+      yasqe.getDoc().replaceRange(line + "\n" + currentLine, { ch: 0, line: cursor.line }, { ch: line.length, line: cursor.line });
+      // Sets cursor in same position.
+      cursor = yasqe.getCursor();
+      cursor.ch = cursorLinePosition;
+      yasqe.setCursor(cursor);
     };
     return keyboardShortcut;
   }
@@ -97,9 +122,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-F');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('AUTO_FORMAT_SELECTED_LINE not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.autoformat();
     };
     return keyboardShortcut;
   }
@@ -110,9 +134,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-]');
     keyboardShortcut.keyboardShortcuts.push('Cmd-]');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('INDENT_CURRENT_LINE_MORE not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.indentSelection('add');
     };
     return keyboardShortcut;
   }
@@ -123,9 +146,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-[');
     keyboardShortcut.keyboardShortcuts.push('Cmd-[');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('INDENT_CURRENT_LINE_LESS not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.indentSelection('subtract');
     };
     return keyboardShortcut;
   }
@@ -136,9 +158,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Enter');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('EXECUTE_QUERY_OR_UPDATE not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.query().then().catch();
     };
     return keyboardShortcut;
   }
@@ -149,7 +170,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-Enter');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       // TODO implement query
       console.log('EXECUTE_EXPLAIN_PLAN_FOR_QUERY not implemented yet');
     };
@@ -162,9 +183,9 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-T');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-T');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('CREATE_TAB not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      // TODO check if a query is run.
+      yasqe.emit('openNewTab');
     };
     return keyboardShortcut;
   }
@@ -175,7 +196,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-S');
     keyboardShortcut.keyboardShortcuts.push('Cmd-S');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       // TODO implement query
       console.log('CREATE_SAVE_QUERY not implemented yet');
     };
@@ -188,9 +209,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Right');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Right');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('SWITCH_NEXT_TAB not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.emit('openNextTab');
     };
     return keyboardShortcut;
   }
@@ -201,9 +221,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Left');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Left');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('SWITCH_PREVIOUS_TAB not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.emit('openPreviousTab');
     };
     return keyboardShortcut;
   }
@@ -211,11 +230,10 @@ export class KeyboardShortcutService {
   private static createCloseAllTabs(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_ALL_TABS;
-    keyboardShortcut.keyboardShortcuts.push('Shift-Left-Mouse');
+    keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F4');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('CLOSES_ALL_TABS not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.emit('closeOtherTabs')
     };
     return keyboardShortcut;
   }
@@ -225,7 +243,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.NAME = KeyboardShortcutName.F11;
     keyboardShortcut.keyboardShortcuts.push('F11');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       // TODO implement query
       console.log('F11 not implemented yet');
     };
@@ -237,7 +255,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.NAME = KeyboardShortcutName.ESC;
     keyboardShortcut.keyboardShortcuts.push('Esc');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       // TODO implement query
       console.log('ESC not implemented yet');
     };

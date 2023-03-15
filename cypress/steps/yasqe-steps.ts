@@ -7,6 +7,10 @@ export class YasqeSteps {
     return cy.get('.tabsList');
   }
 
+  static getTabs() {
+    return YasqeSteps.getQueryTabs().find('.tab');
+  }
+
   static getEditor() {
     return cy.get(".yasqe:visible");
   }
@@ -50,9 +54,9 @@ export class YasqeSteps {
     return this.getExecuteQueryButton().parent();
   }
 
-    static getCreateSavedQueryButton() {
-        return cy.get('.yasqe_createSavedQueryButton');
-    }
+  static getCreateSavedQueryButton() {
+    return cy.get('.yasqe_createSavedQueryButton');
+  }
 
   static createSavedQuery(index = 0) {
     this.getCreateSavedQueryButton().eq(index).click();
@@ -261,7 +265,45 @@ export class YasqeSteps {
     })
   }
 
-  static writeInEditor(text: string) {
-    this.getEditor().find('textarea').type(text, {force: true, parseSpecialCharSequences: true})
+  static writeInEditor(text: string, parseSpecialCharSequences = true) {
+    this.getEditor().find('textarea').type(text, {force: true, parseSpecialCharSequences})
+  }
+
+  static setCursorOnLine(line: number) {
+    this.getCodeMirror().then((cm) => {
+      cm.getDoc().setCursor(--line);
+    });
+  }
+
+  static getCursorLine() {
+    return this.getCodeMirror().then((cm) => {
+      return cm.getCursor().line + 1;
+    });
+  }
+
+  static setCursorLine(line: number) {
+    this.getCodeMirror().then((cm) => {
+      const cursor = cm.getCursor();
+      if (cursor) {
+        cursor.line = line;
+        cm.setCursor(cursor);
+      }
+    });
+  }
+
+  static getCursorLinePosition() {
+    return this.getCodeMirror().then((cm) => {
+      return cm.getCursor().ch;
+    });
+  }
+
+  static setCursorLinePosition(linePosition: number) {
+    this.getCodeMirror().then((cm) => {
+      const cursor = cm.getCursor();
+      if (cursor) {
+        cursor.ch = linePosition;
+        cm.setCursor(cursor);
+      }
+    });
   }
 }

@@ -72,7 +72,7 @@
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.label": "[Ctrl|Cmd]-Alt-Left",
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.description": "Switch to previous tab",
   "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.label": "Shift-Left-Mouse",
-  "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Click at close tab icon closes all the tabs except the clicked one",
+  "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Closes all the tabs except the current one",
   "yasqe.keyboard_shortcuts.dialog.item.f11.label": "F11",
   "yasqe.keyboard_shortcuts.dialog.item.f11.description": "press F11 full screen/exit full screen",
   "yasqe.keyboard_shortcuts.dialog.item.esc.label": "Esc",
