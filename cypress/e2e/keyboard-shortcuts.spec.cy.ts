@@ -48,8 +48,7 @@ describe('Keyboard Shortcuts', () => {
       // When cursor is on first line,
       YasqeSteps.setCursorOnLine(1);
       // and press the first "Delete the current line" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnKKey();
+      KeyboardShortcutSteps.clickOnDeleteCurrentLineShortcut();
 
       // Then I expect.
       YasqeSteps.getQuery().should('eq', 'Third line');
@@ -64,15 +63,13 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.setCursorOnLine(2);
 
       // When press the first "Comment the current line" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnForwardSlash();
+      KeyboardShortcutSteps.clickOnCommentCurrentLineShortcut();
 
       // Then I expect second line to be commented.
       YasqeSteps.getQuery().should('eq', 'First line\n#Second line\nThird line');
 
       // When press the first "Comment the current line" keyboard shortcut again.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnForwardSlash();
+      KeyboardShortcutSteps.clickOnCommentCurrentLineShortcut();
 
       // Then I expect second line to be uncommented.
       YasqeSteps.getQuery().should('eq', 'First line\nSecond line\nThird line');
@@ -89,9 +86,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.setCursorLinePosition(5);
 
       // When press the "Copy line down" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnDownArrow();
+      KeyboardShortcutSteps.clickOnCopyLineDownShortcut();
 
       // Then I expect second line to be copied and pasted after current line,
       YasqeSteps.getQuery().should('eq', 'First line\nSecond line\nSecond line\nThird line');
@@ -112,10 +107,8 @@ describe('Keyboard Shortcuts', () => {
       // and cursor is after fifth character
       YasqeSteps.setCursorLinePosition(5);
 
-      // When press the "Copy line down" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnUpArrow();
+      // When press the "Copy line up" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnCopyLineUpShortcut();
 
       // Then I expect second line to be copied and pasted before current line,
       YasqeSteps.getQuery().should('eq', 'First line\nSecond line\nSecond line\nThird line');
@@ -131,10 +124,8 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.clearEditor();
       YasqeSteps.writeInEditor('select * where {?s ?p ?o.} limit 100', false);
 
-      // When press the "Auto format selected line" keyboard shortcut.
-      KeyboardShortcutSteps.pressShiftKey();
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnFKey();
+      // When press the "Auto format selected lines" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnAutoformatLinesShortcut();
 
       // Then I expect the query to be formatted.
       YasqeSteps.getQuery().should('eq', 'select * where {\n  ?s ?p ?o.\n} limit 100');
@@ -147,8 +138,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.writeInEditor('select * where { \n?s ?p ?o. \n} limit 100', false);
 
       // When press the "Indent current line more" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnClosingSquareBracketKey();
+      KeyboardShortcutSteps.clickOnIndentCurrentLineMoreShortcut();
 
       // Then I expect third line to have got more indent.
       YasqeSteps.getQuery().should('eq', 'select * where { \n?s ?p ?o. \n  } limit 100');
@@ -160,9 +150,8 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.clearEditor();
       YasqeSteps.writeInEditor('select * where { \n?s ?p ?o. \n  } limit 100', false);
 
-      // When press the "Indent current line more" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnOpenSquareBracketKey();
+      // When press the "Indent current line less" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnIndentCurrentLineLessShortcut();
 
       // Then I expect third line to have got less indent.
       YasqeSteps.getQuery().should('eq', 'select * where { \n?s ?p ?o. \n} limit 100');
@@ -175,8 +164,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.writeInEditor('select * where { \n?s ?p ?o. \n  } limit 100', false);
 
       // When press the "Run query button" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.clickOnEnterKey();
+      KeyboardShortcutSteps.clickOnRunQueryShortcut();
 
       // Then I expect the query to be executed.
       YasrSteps.getResults().should('have.length', 75);
@@ -187,9 +175,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.clearEditor();
 
       // When press the "Create tab" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnTKey();
+      KeyboardShortcutSteps.clickOnCreateTabShortcut();
 
       // Then I expect a new tab be created.
       YasqeSteps.getTabs().should('have.length', 2);
@@ -205,18 +191,13 @@ describe('Keyboard Shortcuts', () => {
       YasguiSteps.openTab(1);
 
       // When press the "Switch to the next tab" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnRightKey();
+      KeyboardShortcutSteps.clickOnSwitchToNextTabShortcut();
 
       // Then I expect last tab to be active.
       YasguiSteps.getCurrentTab().contains( 'Unnamed 2');
 
       // When press the "Switch to the next tab" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnRightKey();
-
+      KeyboardShortcutSteps.clickOnSwitchToNextTabShortcut();
       // Then I expect last tab to be active.
       YasguiSteps.getCurrentTab().contains( 'Unnamed 2');
     });
@@ -230,18 +211,14 @@ describe('Keyboard Shortcuts', () => {
       // and I open second tab
       YasguiSteps.openTab(1);
 
-      // When press the "Switch to the next tab" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnLeftKey();
+      // When press the "Switch to the previous tab" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnSwitchToPreviousTabShortcut();
 
       // Then I expect last tab to be active.
       YasguiSteps.getCurrentTab().contains( 'Unnamed');
 
       // When press the "Switch to the next tab" keyboard shortcut.
-      KeyboardShortcutSteps.pressCntrlKey();
-      KeyboardShortcutSteps.pressAltKey();
-      KeyboardShortcutSteps.clickOnLeftKey();
+      KeyboardShortcutSteps.clickOnSwitchToPreviousTabShortcut();
 
       // Then I expect last tab to be active.
       YasguiSteps.getCurrentTab().contains( 'Unnamed');
