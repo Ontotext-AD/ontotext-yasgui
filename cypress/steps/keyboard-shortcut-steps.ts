@@ -138,4 +138,8 @@ export class KeyboardShortcutSteps {
   static clickOnSwitchToPreviousTabShortcut() {
     cy.get('body').type('{ctrl+alt+leftArrow}');
   }
+
+  static clickOnCreateQueryShortcut() {
+    cy.get('body').type('{ctrl+s}');
+  }
 }
