@@ -1,0 +1,25 @@
+Index: Yasgui/packages/yasqe/src/autocompleters/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/index.ts b/Yasgui/packages/yasqe/src/autocompleters/index.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision 50bbc0de5b90af85db6cd5dac1f8a68e9d499307)
++++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision c99acadb9a49eed44d85bf24e9eb9741d3c406e3)
+@@ -160,6 +160,16 @@
+       displayText: suggestedString,
+       from: from,
+       to: to,
++      render: (el: HTMLElement, _self: Hint, data: any) => {
++          let text: string = data.displayText;
++          if (text.startsWith('<')) {
++              text = text.substring(1, text.length);
++          }
++          if (text.endsWith('>')) {
++              text = text.substring(0, text.length - 1);
++          }
++          el.innerHTML = text;
++      }
+     };
+   }
+ 
