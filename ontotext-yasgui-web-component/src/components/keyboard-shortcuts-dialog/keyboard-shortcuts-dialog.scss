@@ -1,8 +1,8 @@
 @import "src/css/variables";
+
 .keyboard-shortcuts-dialog-wrapper {
   display: flex;
   justify-content: flex-end;
-  position: relative;
   margin-top: -9px;
   margin-right: 1px;
   z-index: 100;
@@ -12,9 +12,12 @@
     outline: none;
     border: 0.5px solid #EBEBEB;
     cursor: pointer;
+    position: relative;
+    z-index: 6;
   }
 
   .dialog {
+    min-width: 50vw;
     .dialog-footer {
       display: none;
     }
@@ -43,6 +46,10 @@
   .keyboard-shortcut-description-item-description {
     width: 60%;
     font-size: 20px;
+  }
+
+  kbd {
+    background-color: $background-onto-default;
   }
 }
 
