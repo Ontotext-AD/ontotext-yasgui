@@ -94,4 +94,48 @@ export class KeyboardShortcutSteps {
   static getActionOutputField() {
     return cy.get('actionOutputField');
   }
+
+  static clickOnDeleteCurrentLineShortcut() {
+    cy.get('body').type('{ctrl+k}');
+  }
+
+  static clickOnCommentCurrentLineShortcut() {
+    cy.get('body').type('{ctrl+/}');
+  }
+
+  static clickOnCopyLineDownShortcut() {
+    cy.get('body').type('{ctrl+alt+downArrow}');
+  }
+
+  static clickOnCopyLineUpShortcut() {
+    cy.get('body').type('{ctrl+alt+upArrow}');
+  }
+
+  static clickOnAutoformatLinesShortcut() {
+    cy.get('body').type('{shift+ctrl+f}');
+  }
+
+  static clickOnIndentCurrentLineMoreShortcut() {
+    cy.get('body').type('{ctrl+]}');
+  }
+
+  static clickOnIndentCurrentLineLessShortcut() {
+    cy.get('body').type('{ctrl+[}');
+  }
+
+  static clickOnRunQueryShortcut() {
+    cy.get('body').type('{ctrl+enter}');
+  }
+
+  static clickOnCreateTabShortcut() {
+    cy.get('body').type('{ctrl+alt+t}');
+  }
+
+  static clickOnSwitchToNextTabShortcut() {
+    cy.get('body').type('{ctrl+alt+rightArrow}');
+  }
+
+  static clickOnSwitchToPreviousTabShortcut() {
+    cy.get('body').type('{ctrl+alt+leftArrow}');
+  }
 }
