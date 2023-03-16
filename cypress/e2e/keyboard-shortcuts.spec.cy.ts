@@ -223,5 +223,16 @@ describe('Keyboard Shortcuts', () => {
       // Then I expect last tab to be active.
       YasguiSteps.getCurrentTab().contains( 'Unnamed');
     });
+
+    it('should trigger "CREATE_SAVE_QUERY" action', () => {
+      // Given: I visit a page with "ontotext-yasgui-web-component" in it,
+      YasqeSteps.clearEditor();
+
+      // When press the "Create saved query" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnCreateQueryShortcut();
+
+      // Then I expect "Create New Saved Query" to be visible.
+      YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+    });
   });
 });

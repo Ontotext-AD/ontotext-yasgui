@@ -195,9 +195,12 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-S');
     keyboardShortcut.keyboardShortcuts.push('Cmd-S');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('CREATE_SAVE_QUERY not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      const wrapperElement = yasqe.getWrapperElement();
+      const querySelector = wrapperElement.querySelector('.yasqe_createSavedQueryButton');
+      if (querySelector) {
+        querySelector.click();
+      }
     };
     return keyboardShortcut;
   }
