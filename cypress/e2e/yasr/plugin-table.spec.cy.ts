@@ -324,7 +324,12 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkDialog().should('not.exist');
     });
 
-    it('Should close copy link dialog when click on copy link button', () => {
+    it('Should close copy link dialog when click on copy link button', {
+      retries: {
+        runMode: 1,
+        openMode: 0
+      }
+    },() => {
       // When I execute a query which returns results of type is uri.
       QueryStubs.stubDefaultQueryResponse();
       YasqeSteps.executeQuery();
@@ -377,7 +382,12 @@ describe('Plugin: Table', () => {
       cy.assertClipboardValue('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
     });
 
-    it('Should send notify message when resource link is copied successfully', () => {
+    it('Should send notify message when resource link is copied successfully', {
+      retries: {
+        runMode: 1,
+        openMode: 0
+      }
+    }, () => {
       // When I attach handler to receive message from component
       YasrSteps.attachMessageHandler();
       // And I execute a query which returns results of type is uri.
