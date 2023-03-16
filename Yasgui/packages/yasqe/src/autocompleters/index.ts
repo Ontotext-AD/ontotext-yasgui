@@ -160,6 +160,16 @@ export class Completer extends EventEmitter {
       displayText: suggestedString,
       from: from,
       to: to,
+      render: (el: HTMLElement, _self: Hint, data: any) => {
+          let text: string = data.displayText;
+          if (text.startsWith('<')) {
+              text = text.substring(1, text.length);
+          }
+          if (text.endsWith('>')) {
+              text = text.substring(0, text.length - 1);
+          }
+          el.innerHTML = text;
+      }
     };
   }
 
