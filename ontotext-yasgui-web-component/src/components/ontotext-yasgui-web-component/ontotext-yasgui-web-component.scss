@@ -33,9 +33,10 @@
 
 .CodeMirror-hint b {
   color: #ED4F2F;
+  font-weight: bold;
 }
 
-li.CodeMirror-hint-active {
+.CodeMirror-hint-active {
   background: #3385ff;
   color: white;
 }
