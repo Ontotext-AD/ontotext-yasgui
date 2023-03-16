@@ -8,6 +8,7 @@ describe('Keyboard Shortcuts', () => {
   beforeEach(() => {
     // Given: Visit a page with "ontotext-yasgui-web-component" in it.
     KeyboardShortcutPageSteps.visit();
+    YasqeSteps.getYasqe().should('be.visible');
   });
 
   describe('Dialog info', () => {
@@ -75,7 +76,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.getQuery().should('eq', 'First line\nSecond line\nThird line');
     });
 
-    it('should trigger "COPY_LINE_DOWN"', () => {
+    it('should trigger "COPY_LINE_DOWN" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a query is typed,
       YasqeSteps.clearEditor();
@@ -97,7 +98,7 @@ describe('Keyboard Shortcuts', () => {
 
     });
 
-    it('should trigger "COPY_LINE_UP"', () => {
+    it('should trigger "COPY_LINE_UP" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a query is typed,
       YasqeSteps.clearEditor();
@@ -118,7 +119,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.getCursorLinePosition().should('eq', 5);
     });
 
-    it('should trigger "AUTO_FORMAT_SELECTED_LINE"', () => {
+    it('should trigger "AUTO_FORMAT_SELECTED_LINE" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a not formatted query is typed.
       YasqeSteps.clearEditor();
@@ -131,7 +132,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.getQuery().should('eq', 'select * where {\n  ?s ?p ?o.\n} limit 100');
     });
 
-    it('should trigger "INDENT_CURRENT_LINE_MORE"', () => {
+    it('should trigger "INDENT_CURRENT_LINE_MORE" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a not formatted query is typed.
       YasqeSteps.clearEditor();
@@ -144,7 +145,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.getQuery().should('eq', 'select * where { \n?s ?p ?o. \n  } limit 100');
     });
 
-    it('should trigger "INDENT_CURRENT_LINE_LESS"', () => {
+    it('should trigger "INDENT_CURRENT_LINE_LESS" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a not formatted query is typed.
       YasqeSteps.clearEditor();
@@ -157,7 +158,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.getQuery().should('eq', 'select * where { \n?s ?p ?o. \n} limit 100');
     });
 
-    it('should trigger "EXECUTE_QUERY_OR_UPDATE"', () => {
+    it('should trigger "EXECUTE_QUERY_OR_UPDATE" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a query is typed.
       YasqeSteps.clearEditor();
@@ -170,7 +171,7 @@ describe('Keyboard Shortcuts', () => {
       YasrSteps.getResults().should('have.length', 75);
     });
 
-    it('should trigger "CREATE_TAB"', () => {
+    it('should trigger "CREATE_TAB" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it.
       YasqeSteps.clearEditor();
 
@@ -181,7 +182,7 @@ describe('Keyboard Shortcuts', () => {
       YasqeSteps.getTabs().should('have.length', 2);
     });
 
-    it('should trigger "SWITCH_NEXT_TAB"', () => {
+    it('should trigger "SWITCH_NEXT_TAB" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       YasqeSteps.clearEditor();
       // with more than one tab
@@ -202,7 +203,7 @@ describe('Keyboard Shortcuts', () => {
       YasguiSteps.getCurrentTab().contains( 'Unnamed 2');
     });
 
-    it('should trigger "SWITCH_PREVIOUS_TAB"', () => {
+    it('should trigger "SWITCH_PREVIOUS_TAB" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       YasqeSteps.clearEditor();
       // with more than one tab
@@ -224,7 +225,7 @@ describe('Keyboard Shortcuts', () => {
       YasguiSteps.getCurrentTab().contains( 'Unnamed');
     });
 
-    it('should trigger "CREATE_SAVE_QUERY" action', () => {
+    it('should trigger "CREATE_SAVE_QUERY" action action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       YasqeSteps.clearEditor();
 
