@@ -98,14 +98,24 @@ export class ExtendedYasr extends Yasr {
   }
 
   updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page) {
-    removeClass(resultQueryPaginationElement, "hidden");
-    const hasNotResults = !this.results?.getBindings()?.length;
-    if (
-      (hasNotResults && resultQueryPaginationElement.pageNumber === 1) ||
-      !this.hasMoreElements(resultQueryPaginationElement)
-    ) {
-      addClass(resultQueryPaginationElement, "hidden");
+    addClass(resultQueryPaginationElement, "hidden");
+
+    // Pagination is not visible
+    // when executed query is for explain plan query,
+    if (this.yasqe.getIsExplainPlanQuery()) {
+      return;
     }
+    // or pagination is on first page and page hasn't results,
+    const hasNotResults = !this.results?.getBindings()?.length;
+    if (hasNotResults && resultQueryPaginationElement.pageNumber === 1) {
+      return;
+    }
+    // or has fewer results than one page.
+    if (!this.hasMoreThanOnePageElements(resultQueryPaginationElement)) {
+      return;
+    }
+
+    removeClass(resultQueryPaginationElement, "hidden");
   }
 
   private getEventsListeners(): Map<string, Function> {
@@ -164,13 +174,21 @@ export class ExtendedYasr extends Yasr {
   }
 
   private updateDownloadAsElementVisibility() {
-    removeClass(this.downloadAsElement, "hidden");
-    if (!this.results?.getBindings()?.length) {
-      addClass(this.downloadAsElement, "hidden");
+    addClass(this.downloadAsElement, "hidden");
+
+    // Download as dropdown is not visible
+    // when executed query is for explain plan query,
+    if (this.yasqe.getIsExplainPlanQuery()) {
+      return;
     }
+    // or there is no results.
+    if (!this.results?.getBindings()?.length) {
+      return;
+    }
+    removeClass(this.downloadAsElement, "hidden");
   }
 
-  private hasMoreElements(resultQueryPaginationElement: Page): boolean {
+  private hasMoreThanOnePageElements(resultQueryPaginationElement: Page): boolean {
     if (resultQueryPaginationElement.pageNumber && resultQueryPaginationElement.pageNumber > 1) {
       return true;
     }

@@ -79,7 +79,7 @@ export class Yasqe extends CodeMirror {
   private sameAs?: boolean;
   private pageSize?: number;
   private pageNumber?: number;
-
+  private isExplainPlanQuery?: boolean;
   public readonly translationService: TranslationService;
   public readonly notificationMessageService: NotificationMessageService;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
@@ -93,6 +93,7 @@ export class Yasqe extends CodeMirror {
     this.notificationMessageService = this.config.notificationMessageService;
     this.infer = this.config.infer;
     this.sameAs = this.config.sameAs;
+    this.isExplainPlanQuery = this.config.isExplainPlanQuery;
     this.pageNumber = this.config.pageNumber;
     this.pageSize = this.config.pageSize;
     //inherit codemirror props
@@ -209,6 +210,14 @@ export class Yasqe extends CodeMirror {
 
   public getPageSize(): number | undefined {
     return this.pageSize;
+  }
+
+  public setIsExplainPlanQuery(isExplainPlanQuery: boolean): void {
+    this.isExplainPlanQuery = isExplainPlanQuery;
+  }
+
+  public getIsExplainPlanQuery(): boolean | undefined {
+    return this.isExplainPlanQuery;
   }
 
   isQueryRunning() {
@@ -945,12 +954,40 @@ export class Yasqe extends CodeMirror {
   /**
    * Querying
    */
-  public query(config?: Sparql.YasqeAjaxConfig) {
+  public query(config?: Sparql.YasqeAjaxConfig, isExplainPlanQuery = false) {
     if (this.config.queryingDisabled) return Promise.reject("Querying is disabled.");
+
+    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery())) {
+      const message = this.translationService.translate(
+        "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message"
+      );
+      this.notificationMessageService.warning("explain_not_allowed", message);
+      return Promise.reject();
+    }
+
+    if (isExplainPlanQuery && this.isUpdateQuery()) {
+      const message = this.translationService.translate(
+        "yasqe.keyboard_shortcuts.action.explain_plan_query.error.message"
+      );
+      this.notificationMessageService.warning("explain_not_allowed", message);
+      return Promise.reject();
+    }
+
     // Abort previous request
     this.abortQuery();
+    this.setIsExplainPlanQuery(isExplainPlanQuery);
     return Sparql.executeQuery(this, config);
   }
+  private isSelectQuery(): boolean {
+    return "select" === this.getQueryType()?.toLowerCase();
+  }
+  private isConstructQuery(): boolean {
+    return "construct" === this.getQueryType()?.toLowerCase();
+  }
+  private isUpdateQuery(): boolean {
+    return "update" === this.getQueryType()?.toLowerCase();
+  }
+
   public getUrlParams() {
     //first try hash
     let urlParams: queryString.ParsedQuery = {};
@@ -1158,6 +1195,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   sameAs?: boolean;
   pageSize?: number;
   pageNumber?: number;
+  isExplainPlanQuery?: boolean;
   paginationOn?: boolean;
   keyboardShortcutDescriptions?: [];
 }
