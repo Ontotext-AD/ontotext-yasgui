@@ -170,9 +170,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-Enter');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('EXECUTE_EXPLAIN_PLAN_FOR_QUERY not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.query(undefined, true).catch();
     };
     return keyboardShortcut;
   }

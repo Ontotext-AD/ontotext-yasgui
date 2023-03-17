@@ -78,6 +78,8 @@
   "yasqe.keyboard_shortcuts.dialog.item.f11.description": "Press F11 full screen/exit full screen",
   "yasqe.keyboard_shortcuts.dialog.item.esc.label": "Esc",
   "yasqe.keyboard_shortcuts.dialog.item.esc.description": "Press Esc to exit full screen",
+  "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message": "Explain only works with SELECT or CONSTRUCT queries.",
+  "yasqe.keyboard_shortcuts.action.explain_plan_query.error.message": "Cannot execute updates from this editor.",
   "yasr.plugin_control.disabled.btn.tooltip": "Download not supported for this result representation",
   "yasr.plugin_control.download_results.btn.label": "Download as",
   "yasr.plugin_control.info.count_result": "{{countResults}} result",

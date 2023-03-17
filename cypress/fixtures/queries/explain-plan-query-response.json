@@ -1,0 +1,17 @@
+{
+  "head" : {
+    "vars" : [
+      "plan"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "plan" : {
+          "type" : "literal",
+          "value" : "SELECT ?s ?p ?o\n{\n  \n  { # ----- Begin optimization group 1 -----\n    \n    ?s ?p ?o . # \tCollection size: 4,391\tPredicate collection size: 4,391\tUnique subjects: 3,341\tUnique objects: 1,899\tCurrent complexity: 4,391\n    \n  } # ----- End optimization group 1 -----\n  # ESTIMATED NUMBER OF ITERATIONS: 4,391\n  \n}\n\n# NOTE: Optimization groups are evaluated one after another exactly in the given order.\n# If there are too many optimization groups consisting of a single statement pattern,\n# then one should try to relocate the following clauses by hand:\n# VALUES, BIND, OPTIONAL, property paths with '*' and/or '+' (the latter can be also surrounded with brackets).\n# Sub-SELECTs will always be evaluated first."
+        }
+      }
+    ]
+  }
+}

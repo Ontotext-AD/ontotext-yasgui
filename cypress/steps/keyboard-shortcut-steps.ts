@@ -1,3 +1,5 @@
+import {YasqeSteps} from './yasqe-steps';
+
 export class KeyboardShortcutSteps {
 
   static getInfoDialogButton() {
@@ -141,5 +143,9 @@ export class KeyboardShortcutSteps {
 
   static clickOnCreateQueryShortcut() {
     cy.get('body').type('{ctrl+s}');
+  }
+
+  static clickOnExplainPlanQueryShortcut() {
+    YasqeSteps.getYasqe().type('{ctrl+shift+enter}');
   }
 }
