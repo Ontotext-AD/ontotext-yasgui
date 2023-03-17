@@ -1,0 +1,260 @@
+Subject: [PATCH] Extends YASGUI with explain functionality.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision c8d20bdda78016dafd15d6f05429d3f12aeb8637)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision de892e41fcb737f297b6885125b89522f52c1b54)
+@@ -21,6 +21,7 @@
+     value: string;
+     infer?: boolean;
+     sameAs?: boolean;
++    isExplainPlanQuery?: boolean;
+     editorHeight?: string;
+     pageSize?: number;
+     pageNumber?: number;
+@@ -320,6 +321,7 @@
+       editorHeight: this.persistentJson.yasqe.editorHeight ? this.persistentJson.yasqe.editorHeight : undefined,
+       infer: this.persistentJson.yasqe.infer,
+       sameAs: this.persistentJson.yasqe.sameAs,
++      isExplainPlanQuery: this.persistentJson.yasqe.isExplainPlanQuery,
+       pageNumber: this.persistentJson.yasqe.pageNumber || this.yasgui.config.pageNumber,
+       pageSize: this.persistentJson.yasqe.pageSize || this.yasgui.config.pageSize,
+       paginationOn: this.yasgui.config.paginationOn,
+@@ -445,6 +447,7 @@
+     if (pageNumber !== undefined) {
+       this.persistentJson.yasqe.pageNumber = pageNumber;
+     }
++    this.persistentJson.yasqe.isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
+   };
+   private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
+     return (
+@@ -452,7 +455,8 @@
+       yasqe.getInfer() !== this.persistentJson.yasqe.infer ||
+       yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs ||
+       yasqe.getPageSize() !== this.persistentJson.yasqe.pageSize ||
+-      yasqe.getPageNumber() !== this.persistentJson.yasqe.pageNumber
++      yasqe.getPageNumber() !== this.persistentJson.yasqe.pageNumber ||
++      yasqe.getIsExplainPlanQuery() !== this.persistentJson.yasqe.isExplainPlanQuery
+     );
+   };
+   handleYasqeQuery = (yasqe: Yasqe) => {
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision c8d20bdda78016dafd15d6f05429d3f12aeb8637)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision de892e41fcb737f297b6885125b89522f52c1b54)
+@@ -79,7 +79,7 @@
+   private sameAs?: boolean;
+   private pageSize?: number;
+   private pageNumber?: number;
+-
++  private isExplainPlanQuery?: boolean;
+   public readonly translationService: TranslationService;
+   public readonly notificationMessageService: NotificationMessageService;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+@@ -93,6 +93,7 @@
+     this.notificationMessageService = this.config.notificationMessageService;
+     this.infer = this.config.infer;
+     this.sameAs = this.config.sameAs;
++    this.isExplainPlanQuery = this.config.isExplainPlanQuery;
+     this.pageNumber = this.config.pageNumber;
+     this.pageSize = this.config.pageSize;
+     //inherit codemirror props
+@@ -211,6 +212,14 @@
+     return this.pageSize;
+   }
+ 
++  public setIsExplainPlanQuery(isExplainPlanQuery: boolean): void {
++    this.isExplainPlanQuery = isExplainPlanQuery;
++  }
++
++  public getIsExplainPlanQuery(): boolean | undefined {
++    return this.isExplainPlanQuery;
++  }
++
+   isQueryRunning() {
+     return !!this.req;
+   }
+@@ -945,12 +954,40 @@
+   /**
+    * Querying
+    */
+-  public query(config?: Sparql.YasqeAjaxConfig) {
++  public query(config?: Sparql.YasqeAjaxConfig, isExplainPlanQuery = false) {
+     if (this.config.queryingDisabled) return Promise.reject("Querying is disabled.");
++
++    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery())) {
++      const message = this.translationService.translate(
++        "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message"
++      );
++      this.notificationMessageService.warning("explain_not_allowed", message);
++      return Promise.reject();
++    }
++
++    if (isExplainPlanQuery && this.isUpdateQuery()) {
++      const message = this.translationService.translate(
++        "yasqe.keyboard_shortcuts.action.explain_plan_query.error.message"
++      );
++      this.notificationMessageService.warning("explain_not_allowed", message);
++      return Promise.reject();
++    }
++
+     // Abort previous request
+     this.abortQuery();
++    this.setIsExplainPlanQuery(isExplainPlanQuery);
+     return Sparql.executeQuery(this, config);
+   }
++  private isSelectQuery(): boolean {
++    return "select" === this.getQueryType()?.toLowerCase();
++  }
++  private isConstructQuery(): boolean {
++    return "construct" === this.getQueryType()?.toLowerCase();
++  }
++  private isUpdateQuery(): boolean {
++    return "update" === this.getQueryType()?.toLowerCase();
++  }
++
+   public getUrlParams() {
+     //first try hash
+     let urlParams: queryString.ParsedQuery = {};
+@@ -1158,6 +1195,7 @@
+   sameAs?: boolean;
+   pageSize?: number;
+   pageNumber?: number;
++  isExplainPlanQuery?: boolean;
+   paginationOn?: boolean;
+   keyboardShortcutDescriptions?: [];
+ }
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision c8d20bdda78016dafd15d6f05429d3f12aeb8637)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision de892e41fcb737f297b6885125b89522f52c1b54)
+@@ -161,6 +161,11 @@
+     data["sameAs"] = `${sameAs}`;
+   }
+ 
++  const isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
++  if (isExplainPlanQuery) {
++    data["explain"] = "true";
++  }
++
+   if (yasqe.config.paginationOn) {
+     const pageSize = yasqe.getPageSize();
+     if (pageSize) {
+@@ -168,7 +173,7 @@
+     }
+     const pageNumber = yasqe.getPageNumber();
+     if (pageNumber) {
+-      data["pageNumber"] = `${pageNumber}`;
++      data["pageNumber"] = `${isExplainPlanQuery ? 1 : pageNumber}`;
+     }
+   }
+ 
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision c8d20bdda78016dafd15d6f05429d3f12aeb8637)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision de892e41fcb737f297b6885125b89522f52c1b54)
+@@ -98,14 +98,24 @@
+   }
+ 
+   updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page) {
++    addClass(resultQueryPaginationElement, "hidden");
++
++    // Pagination is not visible
++    // when executed query is for explain plan query,
++    if (this.yasqe.getIsExplainPlanQuery()) {
++      return;
++    }
++    // or pagination is on first page and page hasn't results,
++    const hasNotResults = !this.results?.getBindings()?.length;
++    if (hasNotResults && resultQueryPaginationElement.pageNumber === 1) {
++      return;
++    }
++    // or has fewer results than one page.
++    if (!this.hasMoreThanOnePageElements(resultQueryPaginationElement)) {
++      return;
++    }
++
+     removeClass(resultQueryPaginationElement, "hidden");
+-    const hasNotResults = !this.results?.getBindings()?.length;
+-    if (
+-      (hasNotResults && resultQueryPaginationElement.pageNumber === 1) ||
+-      !this.hasMoreElements(resultQueryPaginationElement)
+-    ) {
+-      addClass(resultQueryPaginationElement, "hidden");
+-    }
+   }
+ 
+   private getEventsListeners(): Map<string, Function> {
+@@ -164,13 +174,21 @@
+   }
+ 
+   private updateDownloadAsElementVisibility() {
+-    removeClass(this.downloadAsElement, "hidden");
+-    if (!this.results?.getBindings()?.length) {
+-      addClass(this.downloadAsElement, "hidden");
++    addClass(this.downloadAsElement, "hidden");
++
++    // Download as dropdown is not visible
++    // when executed query is for explain plan query,
++    if (this.yasqe.getIsExplainPlanQuery()) {
++      return;
+     }
++    // or there is no results.
++    if (!this.results?.getBindings()?.length) {
++      return;
++    }
++    removeClass(this.downloadAsElement, "hidden");
+   }
+ 
+-  private hasMoreElements(resultQueryPaginationElement: Page): boolean {
++  private hasMoreThanOnePageElements(resultQueryPaginationElement: Page): boolean {
+     if (resultQueryPaginationElement.pageNumber && resultQueryPaginationElement.pageNumber > 1) {
+       return true;
+     }
+Index: Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts	(revision c8d20bdda78016dafd15d6f05429d3f12aeb8637)
++++ b/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts	(revision de892e41fcb737f297b6885125b89522f52c1b54)
+@@ -1,6 +1,7 @@
+-import Table from "../table";
++import Table, { PersistentConfig } from "../table";
+ import Parser from "../../parsers";
+ import Yasr from "@triply/yasr";
++import Yasqe from "@triply/yasqe";
+ 
+ export class ExtendedTable extends Table {
+   public label = "Extended_Table";
+@@ -25,4 +26,13 @@
+     }
+     return super.getCellContent(binding, prefixes);
+   }
++
++  public draw(persistentConfig: PersistentConfig) {
++    super.draw(persistentConfig);
++    const explainPlanQueryElement = document.getElementById("explainPlanQuery");
++    if (!explainPlanQueryElement) {
++      return;
++    }
++    Yasqe.runMode(explainPlanQueryElement.innerText, "sparql11", explainPlanQueryElement);
++  }
+ }
