@@ -161,6 +161,11 @@ export function getUrlArguments(yasqe: Yasqe, _config: Config["requestConfig"]):
     data["sameAs"] = `${sameAs}`;
   }
 
+  const isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
+  if (isExplainPlanQuery) {
+    data["explain"] = "true";
+  }
+
   if (yasqe.config.paginationOn) {
     const pageSize = yasqe.getPageSize();
     if (pageSize) {
@@ -168,7 +173,7 @@ export function getUrlArguments(yasqe: Yasqe, _config: Config["requestConfig"]):
     }
     const pageNumber = yasqe.getPageNumber();
     if (pageNumber) {
-      data["pageNumber"] = `${pageNumber}`;
+      data["pageNumber"] = `${isExplainPlanQuery ? 1 : pageNumber}`;
     }
   }
 
