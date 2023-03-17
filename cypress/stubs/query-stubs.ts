@@ -6,6 +6,10 @@ export class QueryStubs {
     QueryStubs.stubQueryResponse('/queries/default-query-response.json', 'getDefaultQueryResponse', withDelay);
   }
 
+  static stubExplainPlanQueryResponse(withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/explain-plan-query-response.json', 'getExplainPlanQueryQueryResponse', withDelay);
+  }
+
   static stubEmptyQueryResponse(withDelay: number = 0) {
     QueryStubs.stubQueryResponse('/queries/empty-query-response.json', 'getEmptyResponse', withDelay);
   }

@@ -300,4 +300,8 @@
   button, button:focus {
     outline: none;
   }
+
+  #explainPlanQuery {
+    white-space: pre-wrap;
+  }
 }

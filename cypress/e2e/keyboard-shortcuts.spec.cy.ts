@@ -3,6 +3,7 @@ import {KeyboardShortcutSteps} from '../steps/keyboard-shortcut-steps';
 import {YasqeSteps} from '../steps/yasqe-steps';
 import {YasrSteps} from '../steps/yasr-steps';
 import {YasguiSteps} from '../steps/yasgui-steps';
+import {QueryStubs} from '../stubs/query-stubs';
 
 describe('Keyboard Shortcuts', () => {
   beforeEach(() => {
@@ -225,7 +226,7 @@ describe('Keyboard Shortcuts', () => {
       YasguiSteps.getCurrentTab().contains( 'Unnamed');
     });
 
-    it('should trigger "CREATE_SAVE_QUERY" action action', () => {
+    it('should trigger "CREATE_SAVE_QUERY" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       YasqeSteps.clearEditor();
 
@@ -233,7 +234,17 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnCreateQueryShortcut();
 
       // Then I expect "Create New Saved Query" to be visible.
-      YasqeSteps.getCreateSavedQueryButton().should('be.visible');
+      YasqeSteps.getSaveQueryDialog().should('be.visible');
+    });
+
+    it('should trigger "EXECUTE_EXPLAIN_PLAN_FOR_QUERY" action', () => {
+      // Given: I visit a page with "ontotext-yasgui-web-component" in it,
+      QueryStubs.stubExplainPlanQueryResponse();
+      // When press the "Create saved query" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnExplainPlanQueryShortcut();
+
+      // Then I expect "Create New Saved Query" to be visible.
+      YasrSteps.getResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
     });
   });
 });

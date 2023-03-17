@@ -13,7 +13,8 @@ export type NotificationMessageCode = (typeof MessageCode)[keyof typeof MessageC
 
 export const MessageCode = {
   RESOURCE_LINK_COPIED_SUCCESSFULLY: 'resource_link_copied_successfully',
-  QUERY_IS_RUNNING: 'query_is_running'
+  QUERY_IS_RUNNING: 'query_is_running',
+  EXPLAIN_NOT_ALLOWED: 'explain_not_allowed'
 }
 
 export class InternalNotificationMessageEvent implements InternalEvent {
