@@ -167,6 +167,28 @@ export class Yasqe extends CodeMirror {
     this.updateKeyboardShortcuts();
   }
 
+  public toggleFullScreen(): void {
+    if (this.rootEl.classList.contains("yasqe-fullscreen")) {
+      this.leaveFullScreen();
+    } else {
+      const message = this.translationService.translate(
+        "yasqe.keyboard_shortcuts.dialog.item.explain_exit_fullscreen.message"
+      );
+      this.notificationMessageService.info("explain_exit_fullscreen", message);
+      this.enterFullScreen();
+    }
+  }
+
+  public enterFullScreen(): void {
+    addClass(this.rootEl, "yasqe-fullscreen");
+    addClass(document.body, "scroll-hidden");
+  }
+
+  public leaveFullScreen(): void {
+    removeClass(this.rootEl, "yasqe-fullscreen");
+    removeClass(document.body, "scroll-hidden");
+  }
+
   private handleQuery(_yasqe: Yasqe, req: superagent.SuperAgentRequest) {
     this.req = req;
     this.updateQueryButton();
