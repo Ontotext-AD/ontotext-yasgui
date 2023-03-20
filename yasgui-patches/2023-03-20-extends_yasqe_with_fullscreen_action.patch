@@ -1,0 +1,39 @@
+Subject: [PATCH] Extends yasqe with functionality which add/removes "yasqe-fullscreen" class to yasqe element.
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 2f255c4ef0c7f4fb4481f02a9bf5571dfa300fe5)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 1434a7c8904c3a5a0b7696b6b4557f567d133cb6)
+@@ -167,6 +167,28 @@
+     this.updateKeyboardShortcuts();
+   }
+ 
++  public toggleFullScreen(): void {
++    if (this.rootEl.classList.contains("yasqe-fullscreen")) {
++      this.leaveFullScreen();
++    } else {
++      const message = this.translationService.translate(
++        "yasqe.keyboard_shortcuts.dialog.item.explain_exit_fullscreen.message"
++      );
++      this.notificationMessageService.info("explain_exit_fullscreen", message);
++      this.enterFullScreen();
++    }
++  }
++
++  public enterFullScreen(): void {
++    addClass(this.rootEl, "yasqe-fullscreen");
++    addClass(document.body, "scroll-hidden");
++  }
++
++  public leaveFullScreen(): void {
++    removeClass(this.rootEl, "yasqe-fullscreen");
++    removeClass(document.body, "scroll-hidden");
++  }
++
+   private handleQuery(_yasqe: Yasqe, req: superagent.SuperAgentRequest) {
+     this.req = req;
+     this.updateQueryButton();
