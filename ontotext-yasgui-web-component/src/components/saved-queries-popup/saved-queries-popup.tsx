@@ -77,10 +77,19 @@ export class SavedQueriesPopup {
   private setPopupPosition(): void {
     const panelRect = this.hostElement.getBoundingClientRect();
     const buttonRect = this.config.popupTarget.getBoundingClientRect();
-    this.hostElement.style.top = ((buttonRect.top + buttonRect.height / 2) - panelRect.height / 2) + 'px';
-    this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
+
+    const isFullScreen = this.hostElement.closest('ontotext-yasgui').querySelector('.yasqe').classList.contains('yasqe-fullscreen');
+
     const arrowEl: HTMLElement = this.hostElement.querySelector('.arrow');
-    arrowEl.style.top = panelRect.height / 2 - 16 + 'px';
+    if (isFullScreen) {
+      this.hostElement.style.top = '13px';
+      this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
+      arrowEl.style.top = '40px';
+    } else {
+      this.hostElement.style.top = ((buttonRect.top + buttonRect.height / 2) - panelRect.height / 2) + 'px';
+      this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
+      arrowEl.style.top = panelRect.height / 2 - 16 + 'px';
+    }
   }
 
   render() {

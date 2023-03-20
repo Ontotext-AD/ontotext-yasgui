@@ -7,7 +7,7 @@
 .saved-queries-container {
   position: absolute;
   // prevent CodeMirror stuff to overlap the popup
-  z-index: 10;
+  z-index: 1015;
   border: 1px solid #ccc;
   font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 300;

@@ -76,6 +76,7 @@
   "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Closes all the tabs except the current one",
   "yasqe.keyboard_shortcuts.dialog.item.f11.label": "F11",
   "yasqe.keyboard_shortcuts.dialog.item.f11.description": "Press F11 full screen/exit full screen",
+  "yasqe.keyboard_shortcuts.dialog.item.explain_exit_fullscreen.message": "Press F11 or Esc to exit full screen",
   "yasqe.keyboard_shortcuts.dialog.item.esc.label": "Esc",
   "yasqe.keyboard_shortcuts.dialog.item.esc.description": "Press Esc to exit full screen",
   "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message": "Explain only works with SELECT or CONSTRUCT queries.",

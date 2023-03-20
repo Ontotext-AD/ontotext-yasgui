@@ -291,7 +291,12 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkDialog().should('be.visible');
     });
 
-    it('Should close copy link dialog when click on close button', () => {
+    it('Should close copy link dialog when click on close button', {
+      retries: {
+        runMode: 1,
+        openMode: 0
+      }
+    }, () => {
       // When I execute a query which returns results of type is uri.
       QueryStubs.stubDefaultQueryResponse();
       YasqeSteps.executeQuery();

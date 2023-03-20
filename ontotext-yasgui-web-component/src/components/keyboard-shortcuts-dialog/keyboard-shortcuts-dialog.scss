@@ -5,7 +5,7 @@
   justify-content: flex-end;
   margin-top: -9px;
   margin-right: 1px;
-  z-index: 100;
+  z-index: 1015;
 
   .keyboard-shortcuts-dialog-button {
     background-color: #f7f7f7;
@@ -13,7 +13,7 @@
     border: 0.5px solid #EBEBEB;
     cursor: pointer;
     position: relative;
-    z-index: 6;
+    z-index: 1015;
   }
 
   .dialog {
@@ -55,4 +55,10 @@
 
 .keyboard-shortcuts-dialog-wrapper.resizeable-on {
   margin-top: -29px;
+}
+
+.yasqe-fullscreen .keyboard-shortcuts-dialog-wrapper .keyboard-shortcuts-dialog-button {
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
