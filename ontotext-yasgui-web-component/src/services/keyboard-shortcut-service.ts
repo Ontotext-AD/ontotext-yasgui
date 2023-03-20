@@ -244,9 +244,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.NAME = KeyboardShortcutName.F11;
     keyboardShortcut.keyboardShortcuts.push('F11');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('F11 not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.toggleFullScreen();
     };
     return keyboardShortcut;
   }
@@ -256,9 +255,8 @@ export class KeyboardShortcutService {
     keyboardShortcut.NAME = KeyboardShortcutName.ESC;
     keyboardShortcut.keyboardShortcuts.push('Esc');
     //@ts-ignore
-    keyboardShortcut.executeFunction = (_yasqe: Yasqe) => {
-      // TODO implement query
-      console.log('ESC not implemented yet');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.leaveFullScreen();
     };
     return keyboardShortcut;
   }
