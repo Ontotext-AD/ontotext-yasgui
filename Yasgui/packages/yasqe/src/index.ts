@@ -82,6 +82,7 @@ export class Yasqe extends CodeMirror {
   private isExplainPlanQuery?: boolean;
   public readonly translationService: TranslationService;
   public readonly notificationMessageService: NotificationMessageService;
+  private readonly isVirtualRepository: boolean;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -90,6 +91,7 @@ export class Yasqe extends CodeMirror {
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasqe.defaults, conf);
     this.translationService = this.config.translationService;
+    this.isVirtualRepository = this.config.isVirtualRepository;
     this.notificationMessageService = this.config.notificationMessageService;
     this.infer = this.config.infer;
     this.sameAs = this.config.sameAs;
@@ -987,10 +989,14 @@ export class Yasqe extends CodeMirror {
       return Promise.reject();
     }
 
-    if (isExplainPlanQuery && this.isUpdateQuery()) {
-      const message = this.translationService.translate(
-        "yasqe.keyboard_shortcuts.action.explain_plan_query.error.message"
-      );
+    if (isExplainPlanQuery && this.isVirtualRepository) {
+      const message = this.translationService.translate("yasqe.explain_query.virtual_repository.error.message");
+      this.notificationMessageService.warning("explain_not_allowed", message);
+      return Promise.reject();
+    }
+
+    if (this.isUpdateQuery() && this.isVirtualRepository) {
+      const message = this.translationService.translate("yasqe.update_query.virtual_repository.error.message");
       this.notificationMessageService.warning("explain_not_allowed", message);
       return Promise.reject();
     }
@@ -1000,6 +1006,7 @@ export class Yasqe extends CodeMirror {
     this.setIsExplainPlanQuery(isExplainPlanQuery);
     return Sparql.executeQuery(this, config);
   }
+
   private isSelectQuery(): boolean {
     return "select" === this.getQueryType()?.toLowerCase();
   }
@@ -1007,7 +1014,7 @@ export class Yasqe extends CodeMirror {
     return "construct" === this.getQueryType()?.toLowerCase();
   }
   private isUpdateQuery(): boolean {
-    return "update" === this.getQueryType()?.toLowerCase();
+    return "update" === this.getQueryMode()?.toLowerCase();
   }
 
   public getUrlParams() {
@@ -1220,6 +1227,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   isExplainPlanQuery?: boolean;
   paginationOn?: boolean;
   keyboardShortcutDescriptions?: [];
+  isVirtualRepository: boolean;
 }
 export interface PersistentConfig {
   query: string;
