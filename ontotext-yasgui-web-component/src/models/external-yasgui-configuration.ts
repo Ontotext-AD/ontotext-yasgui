@@ -212,6 +212,12 @@ export interface ExternalYasguiConfiguration {
    * Registered yasqe autocomplete handlers. Every handler is mapped by its name.
    */
   yasqeAutocomplete?: Record<string, AutocompleteLoader>;
+
+  /**
+   * Flag that controls update operations. If this flag is set to true, then all update operations will be disabled.
+   * For virtual repositories only select queries are allowed.
+   */
+  isVirtualRepository?: boolean;
 }
 
 export type AutocompleteLoader = () => any;

@@ -65,7 +65,8 @@ export class YasguiConfigurationBuilder {
       yasqe: {
         prefixes: [],
         extraKeys: {},
-        keyboardShortcutDescriptions: []
+        keyboardShortcutDescriptions: [],
+        isVirtualRepository: externalConfiguration.isVirtualRepository !== undefined ? externalConfiguration.isVirtualRepository : defaultYasqeConfig.isVirtualRepository
       },
       yasr: {
         prefixes: {},
@@ -120,8 +121,11 @@ export class YasguiConfigurationBuilder {
   }
 
   private registerCustomAutocompleters(config: YasguiConfiguration): void {
-    // @ts-ignore
-    Yasqe.registerAutocompleter(LocalNamesAutocompleter(config.yasqeAutocomplete['LocalNamesAutocompleter']), true);
+    const localNamesLoader = config.yasqeAutocomplete['LocalNamesAutocompleter'];
+    if ('function' === typeof localNamesLoader) {
+      // @ts-ignore
+      Yasqe.registerAutocompleter(LocalNamesAutocompleter(localNamesLoader), true);
+    }
   }
 
   private initShortcuts(config: YasguiConfiguration): void {

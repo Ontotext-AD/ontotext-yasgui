@@ -107,7 +107,7 @@ export class KeyboardShortcutService {
         return;
       }
 
-      yasqe.getDoc().replaceRange(line + "\n" + currentLine, { ch: 0, line: cursor.line }, { ch: line.length, line: cursor.line });
+      yasqe.getDoc().replaceRange(line + "\n" + currentLine, {ch: 0, line: cursor.line}, {ch: line.length, line: cursor.line});
       // Sets cursor in same position.
       cursor = yasqe.getCursor();
       cursor.ch = cursorLinePosition;
@@ -159,7 +159,9 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Cmd-Enter');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      yasqe.query().then().catch();
+      yasqe.query().then().catch(() => {
+        // catch this to avoid unhandled rejection
+      });
     };
     return keyboardShortcut;
   }
@@ -171,7 +173,9 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-Enter');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      yasqe.query(undefined, true).catch();
+      yasqe.query(undefined, true).catch(() => {
+        // catch this to avoid unhandled rejection
+      });
     };
     return keyboardShortcut;
   }
@@ -183,7 +187,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-T');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-     yasqe.emit('openNewTab');
+      yasqe.emit('openNewTab');
     };
     return keyboardShortcut;
   }

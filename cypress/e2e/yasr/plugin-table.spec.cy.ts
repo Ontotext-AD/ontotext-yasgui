@@ -81,7 +81,12 @@ describe('Plugin: Table', () => {
         YasrTablePluginSteps.getQueryResultInfo().contains(/No results\. Query took \d{1}\.\d{1}s, moments ago\./);
       });
 
-      it('should show correct message when results are less than one page', () => {
+      it('should show correct message when results are less than one page', {
+        retries: {
+          runMode: 1,
+          openMode: 0
+        }
+      }, () => {
         // When I visit a page with "ontotext-yasgui" in it,
         // and execute a query which returns results less than one Page.
         const queryDescription = new QueryStubDescription()

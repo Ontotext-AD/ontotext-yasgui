@@ -165,5 +165,7 @@
   "yasqe.share.copy_link.dialog.copy.btn.label": "Copy to clipboard",
   "yasqe.share.copy_link.dialog.copy.btn.title": "Copy to clipboard",
   "yasqe.share.copy_link.dialog.copy.message.success": "URL copied successfully to clipboard.",
-  "yasqe.share.saved_query.dialog.copy.btn.label": "Copy to clipboard"
+  "yasqe.share.saved_query.dialog.copy.btn.label": "Copy to clipboard",
+  "yasqe.update_query.virtual_repository.error.message": "Updates are not supported for Virtual repositories.",
+  "yasqe.explain_query.virtual_repository.error.message": "Explain not supported for Virtual repositories."
 }

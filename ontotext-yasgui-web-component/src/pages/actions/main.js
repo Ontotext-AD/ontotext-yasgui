@@ -150,9 +150,11 @@ function openNewQueryAction() {
   });
 }
 
-ontoElement.addEventListener("queryExecuted", (data) => {
-  console.log('%cqueryexecuted', 'background-color:red', data);
-  eventLog.value = eventLog.value + '\n' + JSON.stringify(data.detail.query);
+ontoElement.addEventListener("output", (evt) => {
+  console.log('%cqueryexecuted', 'background-color:red', evt);
+  if ("query" === evt.detail.TYPE) {
+    eventLog.value = eventLog.value + '\n' + JSON.stringify(evt.detail.payload.query);
+  }
 });
 
 ontoElement.addEventListener('queryResponse', (data) => {

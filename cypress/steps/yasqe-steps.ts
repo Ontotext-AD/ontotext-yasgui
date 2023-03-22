@@ -11,6 +11,10 @@ export class YasqeSteps {
     return YasqeSteps.getQueryTabs().find('.tab');
   }
 
+  static getTabWithProgressBar() {
+    return cy.get('.tab.active.querying');
+  }
+
   static getEditor() {
     return cy.get(".yasqe:visible");
   }
