@@ -131,7 +131,13 @@ export interface YasguiConfiguration {
       /**
        * Array with keyboard shortcut names {@link KeyboardShortcutName}.
        */
-      keyboardShortcutDescriptions: string[]
+      keyboardShortcutDescriptions: string[],
+
+      /**
+       * Flag that controls update operations. If this flag is set to true, then all update operations will be disabled.
+       * For virtual repositories only select queries are allowed.
+       */
+      isVirtualRepository: boolean;
     }
     yasr: {
       /**
@@ -246,7 +252,8 @@ export const defaultYasqeConfig: Record<string, any> = {
   ],
   prefixes: {
 
-  }
+  },
+  isVirtualRepository: false
 }
 
 export const defaultYasrConfig: Record<string, any> = {

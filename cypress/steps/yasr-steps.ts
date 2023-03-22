@@ -11,6 +11,10 @@ export class YasrSteps {
     return cy.get('.errorHeader');
   }
 
+  static getResultsTable() {
+    return YasrSteps.getYasr().find('.yasr_results tbody');
+  }
+
   static getResults() {
     return cy.get('.yasr_results tbody').find('tr');
   }

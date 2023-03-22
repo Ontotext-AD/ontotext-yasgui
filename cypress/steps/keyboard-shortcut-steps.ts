@@ -93,10 +93,6 @@ export class KeyboardShortcutSteps {
     KeyboardShortcutSteps.clickOn('t');
   }
 
-  static getActionOutputField() {
-    return cy.get('actionOutputField');
-  }
-
   static clickOnDeleteCurrentLineShortcut() {
     cy.get('body').type('{ctrl+k}');
   }
