@@ -217,7 +217,12 @@ export class ExtendedYasr extends Yasr {
       if (yasqe) {
         yasqe.setPageNumber(page.pageNumber || 1);
         yasqe.setPageSize(page.pageSize || 10);
-        yasqe.query();
+        yasqe
+          .query()
+          .then()
+          .catch(() => {
+            // catch this to avoid unhandled rejection
+          });
       }
     };
   }

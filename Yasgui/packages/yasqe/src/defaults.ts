@@ -15,6 +15,7 @@ export default function get() {
   const config: Omit<Config, "requestConfig"> = {
     translationService: TranslationService.INSTANCE,
     notificationMessageService: NotificationMessageService.INSTANCE,
+    isVirtualRepository: false,
     mode: "sparql11",
     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
