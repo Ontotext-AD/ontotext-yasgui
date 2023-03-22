@@ -1,0 +1,108 @@
+Subject: [PATCH] GDB-8020: stop execution of query
+---
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision f537e9daa8fcc0b5498553a04827fafb96cd08fe)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision e273fb8062f4dbbe588acf6a97001ce4aaf1e332)
+@@ -15,6 +15,7 @@
+   const config: Omit<Config, "requestConfig"> = {
+     translationService: TranslationService.INSTANCE,
+     notificationMessageService: NotificationMessageService.INSTANCE,
++    isVirtualRepository: false,
+     mode: "sparql11",
+     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision f537e9daa8fcc0b5498553a04827fafb96cd08fe)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision e273fb8062f4dbbe588acf6a97001ce4aaf1e332)
+@@ -82,6 +82,7 @@
+   private isExplainPlanQuery?: boolean;
+   public readonly translationService: TranslationService;
+   public readonly notificationMessageService: NotificationMessageService;
++  private readonly isVirtualRepository: boolean;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
+@@ -90,6 +91,7 @@
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasqe.defaults, conf);
+     this.translationService = this.config.translationService;
++    this.isVirtualRepository = this.config.isVirtualRepository;
+     this.notificationMessageService = this.config.notificationMessageService;
+     this.infer = this.config.infer;
+     this.sameAs = this.config.sameAs;
+@@ -987,10 +989,14 @@
+       return Promise.reject();
+     }
+ 
+-    if (isExplainPlanQuery && this.isUpdateQuery()) {
+-      const message = this.translationService.translate(
+-        "yasqe.keyboard_shortcuts.action.explain_plan_query.error.message"
+-      );
++    if (isExplainPlanQuery && this.isVirtualRepository) {
++      const message = this.translationService.translate("yasqe.explain_query.virtual_repository.error.message");
++      this.notificationMessageService.warning("explain_not_allowed", message);
++      return Promise.reject();
++    }
++
++    if (this.isUpdateQuery() && this.isVirtualRepository) {
++      const message = this.translationService.translate("yasqe.update_query.virtual_repository.error.message");
+       this.notificationMessageService.warning("explain_not_allowed", message);
+       return Promise.reject();
+     }
+@@ -1000,6 +1006,7 @@
+     this.setIsExplainPlanQuery(isExplainPlanQuery);
+     return Sparql.executeQuery(this, config);
+   }
++
+   private isSelectQuery(): boolean {
+     return "select" === this.getQueryType()?.toLowerCase();
+   }
+@@ -1007,7 +1014,7 @@
+     return "construct" === this.getQueryType()?.toLowerCase();
+   }
+   private isUpdateQuery(): boolean {
+-    return "update" === this.getQueryType()?.toLowerCase();
++    return "update" === this.getQueryMode()?.toLowerCase();
+   }
+ 
+   public getUrlParams() {
+@@ -1220,6 +1227,7 @@
+   isExplainPlanQuery?: boolean;
+   paginationOn?: boolean;
+   keyboardShortcutDescriptions?: [];
++  isVirtualRepository: boolean;
+ }
+ export interface PersistentConfig {
+   query: string;
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision f537e9daa8fcc0b5498553a04827fafb96cd08fe)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision e273fb8062f4dbbe588acf6a97001ce4aaf1e332)
+@@ -217,7 +217,12 @@
+       if (yasqe) {
+         yasqe.setPageNumber(page.pageNumber || 1);
+         yasqe.setPageSize(page.pageSize || 10);
+-        yasqe.query();
++        yasqe
++          .query()
++          .then()
++          .catch(() => {
++            // catch this to avoid unhandled rejection
++          });
+       }
+     };
+   }
