@@ -151,7 +151,6 @@ function openNewQueryAction() {
 }
 
 ontoElement.addEventListener("output", (evt) => {
-  console.log('%cqueryexecuted', 'background-color:red', evt);
   if ("query" === evt.detail.TYPE) {
     eventLog.value = eventLog.value + '\n' + JSON.stringify(evt.detail.payload.query);
   }
