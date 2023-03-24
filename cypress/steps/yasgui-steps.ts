@@ -27,6 +27,11 @@ export class YasguiSteps {
         this.getTabs().eq(index).find('.closeTab').click();
     }
 
+    static openTabContextMenu(index: number) {
+      this.getTabs().eq(index).rightclick();
+      return TabContextMenu.getContextMenu();
+    }
+
     static isVerticalOrientation() {
         this.getYasguiTag().should('have.class', 'orientation-vertical');
     }
@@ -34,4 +39,14 @@ export class YasguiSteps {
     static isHorizontalOrientation() {
         this.getYasguiTag().should('have.class', 'orientation-horizontal');
     }
+}
+
+export class TabContextMenu {
+  static getContextMenu() {
+    return cy.get('.yasgui .context-menu');
+  }
+
+  static closeTab() {
+    this.getContextMenu().contains('Close Tab').click();
+  }
 }
