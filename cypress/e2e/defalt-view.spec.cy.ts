@@ -26,5 +26,5 @@ describe('Default view', () => {
       DefaultViewPageSteps.getQueryType();
       DefaultViewPageSteps.getOutputField().should('have.value', 'SELECT');
     });
-  })
+  });
 })

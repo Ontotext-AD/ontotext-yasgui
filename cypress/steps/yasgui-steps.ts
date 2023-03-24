@@ -23,6 +23,10 @@ export class YasguiSteps {
         this.getTabs().eq(index).click();
     }
 
+    static closeTab(index: number) {
+        this.getTabs().eq(index).find('.closeTab').click();
+    }
+
     static isVerticalOrientation() {
         this.getYasguiTag().should('have.class', 'orientation-vertical');
     }
