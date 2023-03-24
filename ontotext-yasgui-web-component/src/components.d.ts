@@ -5,10 +5,10 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { ServiceFactory } from "./services/service-factory";
+import { TranslationService } from "./services/translation.service";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { CopyLinkDialogConfig, CopyLinkObserver } from "./components/copy-link-dialog/copy-link-dialog";
-import { TranslationService } from "./services/translation.service";
+import { ServiceFactory } from "./services/service-factory";
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { DropdownOption } from "./models/dropdown-option";
 import { InternalDownloadAsEvent } from "./models/internal-events/internal-download-as-event";
@@ -22,7 +22,7 @@ import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-qu
 export namespace Components {
     interface ConfirmationDialog {
         "config": ConfirmationDialogConfig;
-        "serviceFactory": ServiceFactory;
+        "translationService": TranslationService;
     }
     interface CopyLinkDialog {
         "classes": string;
@@ -306,7 +306,7 @@ declare namespace LocalJSX {
           * Event fired when confirmation is rejected and the dialog should be closed.
          */
         "onInternalConfirmationRejectedEvent"?: (event: ConfirmationDialogCustomEvent<any>) => void;
-        "serviceFactory"?: ServiceFactory;
+        "translationService"?: TranslationService;
     }
     interface CopyLinkDialog {
         "classes"?: string;

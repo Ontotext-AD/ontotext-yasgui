@@ -1,6 +1,5 @@
 import {Component, Event, EventEmitter, h, Host, Prop} from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
-import {ServiceFactory} from "../../services/service-factory";
 
 export type ConfirmationDialogConfig = {
   title: string;
@@ -14,9 +13,7 @@ export type ConfirmationDialogConfig = {
 })
 export class ConfirmationDialog {
 
-  private translationService: TranslationService;
-
-  @Prop() serviceFactory: ServiceFactory
+  @Prop() translationService: TranslationService;
 
   @Prop() config: ConfirmationDialogConfig = {
     title: 'Confirmation',
@@ -32,10 +29,6 @@ export class ConfirmationDialog {
    * Event fired when confirmation is rejected and the dialog should be closed.
    */
   @Event() internalConfirmationApprovedEvent: EventEmitter;
-
-  componentWillLoad(): void {
-    this.translationService = this.serviceFactory.get(TranslationService);
-  }
 
   onClose(evt: MouseEvent): void {
     const target = evt.target as HTMLElement;

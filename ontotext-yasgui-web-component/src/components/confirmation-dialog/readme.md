@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property         | Attribute | Description | Type                                  | Default                                                       |
-| ---------------- | --------- | ----------- | ------------------------------------- | ------------------------------------------------------------- |
-| `config`         | --        |             | `{ title: string; message: string; }` | `{     title: 'Confirmation',     message: 'Confirming?'   }` |
-| `serviceFactory` | --        |             | `ServiceFactory`                      | `undefined`                                                   |
+| Property             | Attribute | Description | Type                                  | Default                                                       |
+| -------------------- | --------- | ----------- | ------------------------------------- | ------------------------------------------------------------- |
+| `config`             | --        |             | `{ title: string; message: string; }` | `{     title: 'Confirmation',     message: 'Confirming?'   }` |
+| `translationService` | --        |             | `TranslationService`                  | `undefined`                                                   |
 
 
 ## Events

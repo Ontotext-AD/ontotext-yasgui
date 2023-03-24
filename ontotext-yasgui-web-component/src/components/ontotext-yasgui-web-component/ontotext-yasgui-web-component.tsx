@@ -731,7 +731,7 @@ export class OntotextYasguiWebComponent {
           <saved-queries-popup config={this.getSaveQueriesData()}></saved-queries-popup>}
 
         {this.showConfirmationDialog &&
-          <confirmation-dialog serviceFactory={this.serviceFactory}
+          <confirmation-dialog translationService={this.translationService}
                                config={this.getDeleteQueryConfirmationConfig()}></confirmation-dialog>}
 
         {this.showShareQueryDialog &&
