@@ -1,7 +1,6 @@
 let ontoElement = getOntotextYasgui();
 
 ontoElement.addEventListener('output', (evt) => {
-  console.log(evt);
   if ('notificationMessage' === evt.detail.TYPE) {
     document.getElementById('actionOutputField').value = JSON.stringify(evt.detail.payload);
   }
