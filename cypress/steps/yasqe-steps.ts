@@ -181,18 +181,6 @@ export class YasqeSteps {
     this.getSavedQueries().eq(index).realHover().find('.share-saved-query').click();
   }
 
-  static getDeleteQueryConfirmation() {
-    return cy.get('.confirmation-dialog');
-  }
-
-  static confirmQueryDelete() {
-    this.getDeleteQueryConfirmation().find('.confirm-button').click();
-  }
-
-  static rejectQueryDelete() {
-    this.getDeleteQueryConfirmation().find('.cancel-button').click();
-  }
-
   static getShareSavedQueryDialog() {
     return cy.get('.share-saved-query-dialog');
   }

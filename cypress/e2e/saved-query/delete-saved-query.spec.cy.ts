@@ -1,6 +1,7 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/actions-page-steps";
+import {ConfirmationDialogSteps} from "../../steps/confirmation-dialog.steps";
 
 describe('Delete saved query action', () => {
     beforeEach(() => {
@@ -18,12 +19,12 @@ describe('Delete saved query action', () => {
         // When I click the delete button for some query
         YasqeSteps.deleteQuery(4);
         // Then I expect to see a confirmation popup
-        YasqeSteps.getDeleteQueryConfirmation().should('be.visible')
+        ConfirmationDialogSteps.getConfirmation().should('be.visible')
             .and('contain.text', 'Are you sure you want to delete the saved query \'q2\'?');
         // When I confirm operation
-        YasqeSteps.confirmQueryDelete();
+        ConfirmationDialogSteps.confirm();
         // Then I expect query to be deleted
-        YasqeSteps.getDeleteQueryConfirmation().should('not.exist');
+        ConfirmationDialogSteps.getConfirmation().should('not.exist');
         YasqeSteps.showSavedQueries();
         YasqeSteps.getSavedQueries().should('have.length', 11)
             .and('not.contain.text', 'q2');
@@ -37,12 +38,12 @@ describe('Delete saved query action', () => {
         // When I click the delete button for some query
         YasqeSteps.deleteQuery(4);
         // Then I expect to see a confirmation popup
-        YasqeSteps.getDeleteQueryConfirmation().should('be.visible')
+        ConfirmationDialogSteps.getConfirmation().should('be.visible')
             .and('contain.text', 'Are you sure you want to delete the saved query \'q2\'?');
         // When I reject operation
-        YasqeSteps.rejectQueryDelete();
+        ConfirmationDialogSteps.reject();
         // Then I expect query to not be deleted
-        YasqeSteps.getDeleteQueryConfirmation().should('not.exist');
+        ConfirmationDialogSteps.getConfirmation().should('not.exist');
         YasqeSteps.showSavedQueries();
         YasqeSteps.getSavedQueries().should('have.length', 12)
             .and('contain.text', 'q2');
