@@ -34,6 +34,16 @@ export interface Yasqe {
   ): void;
   on(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
   off(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
+  on(
+    event: "countAffectedRepositoryStatementsChanged",
+    handler: (instance: Yasqe, totalElements: number) => void
+  ): void;
+  off(
+    event: "countAffectedRepositoryStatementsChanged",
+    handler: (instance: Yasqe, totalElements: number) => void
+  ): void;
+  on(event: "countAffectedRepositoryStatementsPersisted", handler: (instance: Yasqe) => void): void;
+  off(event: "countAffectedRepositoryStatementsPersisted", handler: (instance: Yasqe) => void): void;
   showHint: (conf: HintConfig) => void;
   on(eventName: "error", handler: (instance: Yasqe) => void): void;
   off(eventName: "error", handler: (instance: Yasqe) => void): void;
@@ -1007,13 +1017,13 @@ export class Yasqe extends CodeMirror {
     return Sparql.executeQuery(this, config);
   }
 
-  private isSelectQuery(): boolean {
+  public isSelectQuery(): boolean {
     return "select" === this.getQueryType()?.toLowerCase();
   }
-  private isConstructQuery(): boolean {
+  public isConstructQuery(): boolean {
     return "construct" === this.getQueryType()?.toLowerCase();
   }
-  private isUpdateQuery(): boolean {
+  public isUpdateQuery(): boolean {
     return "update" === this.getQueryMode()?.toLowerCase();
   }
 
@@ -1228,7 +1238,15 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   paginationOn?: boolean;
   keyboardShortcutDescriptions?: [];
   isVirtualRepository: boolean;
+  beforeUpdateQuery: () => Promise<BeforeUpdateQuery>;
+  getRepositoryStatementsCount: () => Promise<number>;
 }
+
+export interface BeforeUpdateQuery {
+  message?: string;
+  messageLabelKey?: string;
+}
+
 export interface PersistentConfig {
   query: string;
   editorHeight: string;

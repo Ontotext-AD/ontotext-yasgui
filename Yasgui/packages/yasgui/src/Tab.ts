@@ -398,6 +398,7 @@ export class Tab extends EventEmitter {
 
     this.yasqe.on("queryResponse", this.handleQueryResponse);
     this.yasqe.on("totalElementChanged", this.handleTotalElementChanged);
+    this.yasqe.on("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
     this.yasqe.on("openNewTab", this.handleOpenNewTab);
     this.yasqe.on("openNextTab", this.handleOpenNextTab);
     this.yasqe.on("openPreviousTab", this.handleOpenPreviousTab);
@@ -413,6 +414,7 @@ export class Tab extends EventEmitter {
     this.yasqe?.off("autocompletionClose", this.handleAutocompletionClose);
     this.yasqe?.off("queryResponse", this.handleQueryResponse);
     this.yasqe?.off("totalElementChanged", this.handleTotalElementChanged);
+    this.yasqe?.off("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
     this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
@@ -523,6 +525,20 @@ export class Tab extends EventEmitter {
           response.totalElements = totalElements;
           this.emit("change", this, this.persistentJson);
         }
+      }
+    }
+  };
+
+  handleCountAffectedRepositoryStatementsChanged = (_yasqe: Yasqe, countAffectedRepositoryStatements: number) => {
+    if (this.yasr?.results) {
+      const response = this.persistentJson.yasr.response;
+      if (!response) {
+        return;
+      }
+      if (response.countAffectedRepositoryStatements !== countAffectedRepositoryStatements) {
+        response.countAffectedRepositoryStatements = countAffectedRepositoryStatements;
+        this.yasr.results.setCountAffectedRepositoryStatements(countAffectedRepositoryStatements);
+        this.emit("change", this, this.persistentJson);
       }
     }
   };
