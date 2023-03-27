@@ -50,7 +50,7 @@ describe('Plugin: Table', () => {
         YasrTablePluginSteps.getQueryResultInfo().contains(/36 results Query took \d{1}\.\d{1}s, moments ago\./);
 
         // When I go to other page,
-        DefaultViewPageSteps.visitDefaultViewPage();
+        DefaultViewPageSteps.visit();
         // and return to the first one.
         PaginationPageSteps.visit();
         PaginationPageSteps.turnOffPagination();
@@ -95,8 +95,8 @@ describe('Plugin: Table', () => {
         QueryStubs.stubQueryResults(queryDescription);
         YasqeSteps.executeQuery();
 
-        // Then I expect result info message to describe that results are from 0 to totalElements.
-        YasrTablePluginSteps.getQueryResultInfo().contains(/Showing results from 0 to 7. Query took \d{1}\.\d{1}s, moments ago\./);
+        // Then I expect result info message to describe that results are from 0 to totalElements
+        YasrTablePluginSteps.getQueryResultInfo().contains(/Showing results from 0 to 7 of 7. Query took \d{1}\.\d{1}s, moments ago\./);
       });
 
       it('should show correct message when results are equals to one page', () => {
@@ -109,7 +109,7 @@ describe('Plugin: Table', () => {
         YasqeSteps.executeQuery();
 
         // Then I expect result info message to describe that results are from 0 to totalElements.
-        YasrTablePluginSteps.getQueryResultInfo().contains(/Showing results from 0 to 10. Query took \d{1}\.\d{1}s, moments ago\./);
+        YasrTablePluginSteps.getQueryResultInfo().contains(/Showing results from 0 to 10 of 10. Query took \d{1}\.\d{1}s, moments ago\./);
       });
 
       it('should show correct message when results are more than one page and less than two pages', () => {

@@ -1,5 +1,5 @@
 export default class DefaultViewPageSteps {
-  static visitDefaultViewPage() {
+  static visit() {
     cy.visit('/pages/default-view');
   }
 

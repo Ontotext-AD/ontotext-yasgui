@@ -6,7 +6,7 @@ import {QueryStubDescription, QueryStubs} from "../stubs/query-stubs";
 describe('Default view', () => {
 
   beforeEach(() => {
-    DefaultViewPageSteps.visitDefaultViewPage();
+    DefaultViewPageSteps.visit();
     QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(6));
   });
 

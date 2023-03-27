@@ -1,6 +1,7 @@
 import {TranslationService} from '../services/translation.service';
 import {NotificationMessageService} from '../services/notification-message-service';
 import {AutocompleteLoader, YasqeActionButtonDefinition} from "./external-yasgui-configuration";
+import {BeforeUpdateQueryResult} from './before-update-query-result';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -138,6 +139,13 @@ export interface YasguiConfiguration {
        * For virtual repositories only select queries are allowed.
        */
       isVirtualRepository: boolean;
+
+      // This function will be called before the update query be executed. The client can abort execution of query for some reason and can
+      // provide a message or label key for the reason of aborting.
+      beforeUpdateQuery: () => Promise<BeforeUpdateQueryResult>;
+
+      // This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
+      getRepositoryStatementsCount: () => Promise<number>;
     }
     yasr: {
       /**
@@ -231,6 +239,8 @@ export const defaultYasguiConfig: Record<string, any> = {
   sameAs: true,
   pageSize: 10,
   paginationOn: true,
+  getRepositoryStatementsCount: () => Promise.resolve(),
+  beforeUpdateQuery: () => Promise.resolve({}),
   headers: () => {
     return {
       'Content-Type': 'application/x-www-form-urlencoded',
