@@ -1,0 +1,432 @@
+Subject: [PATCH] GDB-8085: implement update query flow
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -398,6 +398,7 @@
+ 
+     this.yasqe.on("queryResponse", this.handleQueryResponse);
+     this.yasqe.on("totalElementChanged", this.handleTotalElementChanged);
++    this.yasqe.on("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
+     this.yasqe.on("openNewTab", this.handleOpenNewTab);
+     this.yasqe.on("openNextTab", this.handleOpenNextTab);
+     this.yasqe.on("openPreviousTab", this.handleOpenPreviousTab);
+@@ -413,6 +414,7 @@
+     this.yasqe?.off("autocompletionClose", this.handleAutocompletionClose);
+     this.yasqe?.off("queryResponse", this.handleQueryResponse);
+     this.yasqe?.off("totalElementChanged", this.handleTotalElementChanged);
++    this.yasqe?.off("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
+     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
+     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
+     this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
+@@ -525,6 +527,20 @@
+         }
+       }
+     }
++  };
++
++  handleCountAffectedRepositoryStatementsChanged = (_yasqe: Yasqe, countAffectedRepositoryStatements: number) => {
++    if (this.yasr?.results) {
++      const response = this.persistentJson.yasr.response;
++      if (!response) {
++        return;
++      }
++      if (response.countAffectedRepositoryStatements !== countAffectedRepositoryStatements) {
++        response.countAffectedRepositoryStatements = countAffectedRepositoryStatements;
++        this.yasr.results.setCountAffectedRepositoryStatements(countAffectedRepositoryStatements);
++        this.emit("change", this, this.persistentJson);
++      }
++    }
+   };
+ 
+   private initYasr() {
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -16,6 +16,8 @@
+     translationService: TranslationService.INSTANCE,
+     notificationMessageService: NotificationMessageService.INSTANCE,
+     isVirtualRepository: false,
++    beforeUpdateQuery: () => Promise.resolve({}),
++    getRepositoryStatementsCount: () => Promise.resolve(0),
+     mode: "sparql11",
+     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -34,6 +34,16 @@
+   ): void;
+   on(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
+   off(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
++  on(
++    event: "countAffectedRepositoryStatementsChanged",
++    handler: (instance: Yasqe, totalElements: number) => void
++  ): void;
++  off(
++    event: "countAffectedRepositoryStatementsChanged",
++    handler: (instance: Yasqe, totalElements: number) => void
++  ): void;
++  on(event: "countAffectedRepositoryStatementsPersisted", handler: (instance: Yasqe) => void): void;
++  off(event: "countAffectedRepositoryStatementsPersisted", handler: (instance: Yasqe) => void): void;
+   showHint: (conf: HintConfig) => void;
+   on(eventName: "error", handler: (instance: Yasqe) => void): void;
+   off(eventName: "error", handler: (instance: Yasqe) => void): void;
+@@ -1007,13 +1017,13 @@
+     return Sparql.executeQuery(this, config);
+   }
+ 
+-  private isSelectQuery(): boolean {
++  public isSelectQuery(): boolean {
+     return "select" === this.getQueryType()?.toLowerCase();
+   }
+-  private isConstructQuery(): boolean {
++  public isConstructQuery(): boolean {
+     return "construct" === this.getQueryType()?.toLowerCase();
+   }
+-  private isUpdateQuery(): boolean {
++  public isUpdateQuery(): boolean {
+     return "update" === this.getQueryMode()?.toLowerCase();
+   }
+ 
+@@ -1228,7 +1238,15 @@
+   paginationOn?: boolean;
+   keyboardShortcutDescriptions?: [];
+   isVirtualRepository: boolean;
++  beforeUpdateQuery: () => Promise<BeforeUpdateQuery>;
++  getRepositoryStatementsCount: () => Promise<number>;
+ }
++
++export interface BeforeUpdateQuery {
++  message?: string;
++  messageLabelKey?: string;
++}
++
+ export interface PersistentConfig {
+   query: string;
+   editorHeight: string;
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -1,4 +1,4 @@
+-import { default as Yasqe, Config, RequestConfig } from "./";
++import { default as Yasqe, Config, RequestConfig, BeforeUpdateQuery } from "./";
+ import * as superagent from "superagent";
+ import { merge, isFunction } from "lodash-es";
+ import * as queryString from "query-string";
+@@ -50,6 +50,51 @@
+ }
+ 
+ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
++  if (yasqe.isUpdateQuery()) {
++    return executeUpdateModeQuery(yasqe, config);
++  }
++  return executeQueryModeQuery(yasqe, config);
++}
++
++export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
++  let initialRepositoryStatementsCount: number;
++  const checkQueryPreconditions = (): Promise<BeforeUpdateQuery> => {
++    return yasqe.config.beforeUpdateQuery();
++  };
++
++  const getRepositoryStatementsCountBeforeQuery = (): Promise<number> => {
++    return yasqe.config.getRepositoryStatementsCount().then((initialCount: number) => {
++      initialRepositoryStatementsCount = initialCount;
++      return initialCount;
++    });
++  };
++
++  const executeQuery = (): Promise<any> => {
++    return executeQueryModeQuery(yasqe, config);
++  };
++
++  const calculateAffectedStatementsCount = () => {
++    yasqe.config.getRepositoryStatementsCount().then((repositoryStatementsCount) => {
++      if (initialRepositoryStatementsCount !== undefined && repositoryStatementsCount !== undefined) {
++        const affectedStatementsCount = repositoryStatementsCount - initialRepositoryStatementsCount;
++        yasqe.emit("countAffectedRepositoryStatementsChanged", affectedStatementsCount);
++        yasqe.emit("countAffectedRepositoryStatementsPersisted");
++      }
++    });
++  };
++
++  return checkQueryPreconditions()
++    .then(getRepositoryStatementsCountBeforeQuery)
++    .then(executeQuery)
++    .then(calculateAffectedStatementsCount)
++    .catch((error) => {
++      // TODO check if error message have to be persisted.
++      // TODO check if query type have to be set to ERROR(WB approach) or something other because ERROR is not valid type.
++      console.log(error);
++    });
++}
++
++export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
+   var req: superagent.SuperAgentRequest;
+   try {
+     getAjaxConfig(yasqe, config);
+@@ -74,7 +119,7 @@
+     return await req.then(
+       (result) => {
+         let hasMorePage = false;
+-        if (yasqe.config.paginationOn) {
++        if (!yasqe.isUpdateQuery() && yasqe.config.paginationOn) {
+           // If client hadn't set total Element we will execute count query.
+           if (!result.body.totalElements) {
+             executeCountQuery(yasqe, config);
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -27,12 +27,16 @@
+       this.yasqe.on("countQueryReady", this.updateQueryResultPaginationElementHandler.bind(this));
+       this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
+     }
++    this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
+   }
+ 
+   //=================================
+   //       Overridden functions.
+   //=================================
+   drawPluginSelectors() {
++    if (this.yasqe.isUpdateQuery()) {
++      return;
++    }
+     super.drawPluginSelectors();
+ 
+     if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn) {
+@@ -227,46 +231,72 @@
+     };
+   }
+ 
+-  updateResponseInfo() {
+-    let resultInfo = "";
+-    const responseInfoElement = this.getResponseInfoElement();
+-    removeClass(responseInfoElement, "empty");
+-    const responseTime = this.results?.getResponseTime();
+-    const queryStartedTime = this.results?.getQueryStartedTime();
+-    if (this.results && responseTime && queryStartedTime) {
+-      const queryFinishedTime = queryStartedTime + responseTime;
+-      const staleWarningMessage = this.getStaleWarningMessage(queryFinishedTime);
+-      // TODO Message of resultInfo depends by query type which can be query or update
+-      resultInfo = staleWarningMessage ? staleWarningMessage : "";
+-      const bindings = this.results.getBindings();
+-      if (!bindings || bindings.length === 0) {
+-        resultInfo = this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
+-      } else {
+-        if (this.yasqe.config.paginationOn) {
+-          const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
+-          const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
+-          const totalElements = this.persistentJson?.yasr.response?.totalElements;
+-          const from = pageSize * (pageNumber - 1);
+-          let to = from + bindings.length;
++  private getUpdateTypeQueryResponseInfo(): string {
++    // TODO show custom message if exist in persistence
++    const countAffectedRepositoryStatements = this.results?.getCountAffectedRepositoryStatements();
++    if (countAffectedRepositoryStatements === undefined) {
++      return "";
++    }
++
++    if (countAffectedRepositoryStatements === 0) {
++      return this.translationService.translate("yasr.message_info.no_changes.message");
++    }
++
++    const messageLabelKey =
++      countAffectedRepositoryStatements < 0
++        ? "yasr.message_info.removed_statements.message"
++        : "yasr.message_info.added_statements.message";
++    const params = [
++      { key: "countAffectedRepositoryStatements", value: `${Math.abs(countAffectedRepositoryStatements)}` },
++    ];
++    return this.translationService.translate(messageLabelKey, params);
++  }
++
++  private getQueryTypeQueryResponseInfo(): string {
++    const bindings = this.results?.getBindings();
++    if (!bindings || bindings.length === 0) {
++      return this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
++    }
++
++    if (!this.yasqe.config.paginationOn) {
++      return this.getCountResultMessage(bindings);
++    }
++
++    const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
++    const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
++    const totalElements = this.persistentJson?.yasr.response?.totalElements;
++    const from = pageSize * (pageNumber - 1);
++    let to = from + bindings.length;
+ 
+-          resultInfo += this.getFromToMessage(from, to);
+-          if (totalElements) {
+-            resultInfo += this.getTotalResultsMessage(totalElements);
+-          } else {
+-            if (this.persistentJson?.yasr.response?.hasMorePages) {
+-              resultInfo += this.getHasMoreResultsMessage(to + 1);
+-            }
+-          }
+-          resultInfo += ".";
+-        } else {
+-          resultInfo += this.getCountResultMessage(bindings);
+-        }
+-      }
+-      resultInfo += this.getResultTimeMessage(responseTime, queryFinishedTime);
+-    } else {
++    const fromToMessage = this.getFromToMessage(from, to);
++    let totalResult = "";
++    if (totalElements) {
++      totalResult = this.getTotalResultsMessage(totalElements) + ".";
++    } else if (this.persistentJson?.yasr.response?.hasMorePages) {
++      totalResult = this.getHasMoreResultsMessage(to + 1) + ".";
++    }
++    return `${fromToMessage} ${totalResult}`;
++  }
++
++  updateResponseInfo() {
++    const responseInfoElement = this.getResponseInfoElement();
++    const responseTime = this.results?.getResponseTime();
++    const queryStartedTime = this.results?.getQueryStartedTime();
++
++    if (!this.results || !responseTime || !queryStartedTime) {
+       addClass(responseInfoElement, "empty");
++      responseInfoElement.innerHTML = "";
++      return;
+     }
+-    responseInfoElement.innerHTML = resultInfo;
++
++    removeClass(responseInfoElement, "empty");
++    const queryFinishedTime = queryStartedTime + responseTime;
++    const warningIcon = this.getStaleWarningMessage(queryFinishedTime);
++    const resultInfo = this.yasqe.isUpdateQuery()
++      ? this.getUpdateTypeQueryResponseInfo()
++      : this.getQueryTypeQueryResponseInfo();
++    const resultTimeInfo = this.getResultTimeMessage(responseTime, queryFinishedTime);
++    responseInfoElement.innerHTML = `${warningIcon} ${resultInfo} ${resultTimeInfo}`;
+   }
+ 
+   private getCountResultMessage(bindings: any[]): string {
+@@ -364,14 +394,10 @@
+   private getStaleWarningMessage(queryFinishedTime: number): string {
+     const millisecondAgo = this.getNowInMilliseconds() - queryFinishedTime;
+     if (millisecondAgo >= ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) {
++      const params = [{ key: "timeAgo", value: this.getHumanReadableSeconds(millisecondAgo) }];
+       const staleWarningMessage = this.translationService.translate(
+         "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
+-        [
+-          {
+-            key: "timeAgo",
+-            value: this.getHumanReadableSeconds(millisecondAgo),
+-          },
+-        ]
++        params
+       );
+       return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="icon-warning icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
+     }
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -186,8 +186,8 @@
+   public draw() {
+     this.updateHelpButton();
+     this.updateResponseInfo();
++    if (!this.results || this.yasqe.isUpdateQuery()) return;
+     this.updatePluginSelectorNames();
+-    if (!this.results) return;
+     const compatiblePlugins = this.getCompatiblePlugins();
+     if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
+       while (this.pluginControls.firstChild) {
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision 120e36662b071f03f638ad167c46f2c02bd689d5)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision d29e7be1b3cc96faae09ec4f66ca446b9bebd4c9)
+@@ -41,6 +41,7 @@
+     executionTime?: number;
+     queryStartedTime?: number;
+     totalElements?: number;
++    countAffectedRepositoryStatements?: number;
+     hasMorePages?: boolean;
+   }
+   export type PostProcessBinding = (binding: Binding) => Binding;
+@@ -74,6 +75,8 @@
+   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
+   private executionTime: number | undefined;
+   private queryStartedTime: number | undefined;
++  private countAffectedRepositoryStatements?: number | undefined;
++
+   private readonly hasMorePages?: boolean;
+   constructor(
+     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
+@@ -91,6 +94,8 @@
+     }
+     this.hasMorePages = hasMorePages;
+ 
++    this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
++
+     if (responseOrObject instanceof Error) {
+       this.error = responseOrObject;
+     } else if ((<any>responseOrObject).xhr) {
+@@ -188,6 +193,14 @@
+     return this.hasMorePages;
+   }
+ 
++  public setCountAffectedRepositoryStatements(countAffectedRepositoryStatements: number) {
++    this.countAffectedRepositoryStatements = countAffectedRepositoryStatements;
++  }
++
++  public getCountAffectedRepositoryStatements() {
++    return this.countAffectedRepositoryStatements;
++  }
++
+   private getParserFromContentType(): boolean {
+     const contentType = this.getContentType();
+     if (contentType) {
+@@ -313,6 +326,7 @@
+         executionTime: this.getResponseTime(),
+         queryStartedTime: this.getQueryStartedTime(),
+         hasMorePages: this.getHasMorePages(),
++        countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
+       };
+     }
+     if (summary) {
+@@ -328,6 +342,7 @@
+         executionTime: this.getResponseTime(),
+         queryStartedTime: this.getQueryStartedTime(),
+         hasMorePages: this.getHasMorePages(),
++        countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
+       };
+     }
+   }
