@@ -186,8 +186,8 @@ export class Yasr extends EventEmitter {
   public draw() {
     this.updateHelpButton();
     this.updateResponseInfo();
+    if (!this.results || this.yasqe.isUpdateQuery()) return;
     this.updatePluginSelectorNames();
-    if (!this.results) return;
     const compatiblePlugins = this.getCompatiblePlugins();
     if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
       while (this.pluginControls.firstChild) {

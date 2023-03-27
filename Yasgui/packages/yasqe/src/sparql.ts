@@ -1,4 +1,4 @@
-import { default as Yasqe, Config, RequestConfig } from "./";
+import { default as Yasqe, Config, RequestConfig, BeforeUpdateQuery } from "./";
 import * as superagent from "superagent";
 import { merge, isFunction } from "lodash-es";
 import * as queryString from "query-string";
@@ -50,6 +50,51 @@ export function getAjaxConfig(
 }
 
 export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
+  if (yasqe.isUpdateQuery()) {
+    return executeUpdateModeQuery(yasqe, config);
+  }
+  return executeQueryModeQuery(yasqe, config);
+}
+
+export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
+  let initialRepositoryStatementsCount: number;
+  const checkQueryPreconditions = (): Promise<BeforeUpdateQuery> => {
+    return yasqe.config.beforeUpdateQuery();
+  };
+
+  const getRepositoryStatementsCountBeforeQuery = (): Promise<number> => {
+    return yasqe.config.getRepositoryStatementsCount().then((initialCount: number) => {
+      initialRepositoryStatementsCount = initialCount;
+      return initialCount;
+    });
+  };
+
+  const executeQuery = (): Promise<any> => {
+    return executeQueryModeQuery(yasqe, config);
+  };
+
+  const calculateAffectedStatementsCount = () => {
+    yasqe.config.getRepositoryStatementsCount().then((repositoryStatementsCount) => {
+      if (initialRepositoryStatementsCount !== undefined && repositoryStatementsCount !== undefined) {
+        const affectedStatementsCount = repositoryStatementsCount - initialRepositoryStatementsCount;
+        yasqe.emit("countAffectedRepositoryStatementsChanged", affectedStatementsCount);
+        yasqe.emit("countAffectedRepositoryStatementsPersisted");
+      }
+    });
+  };
+
+  return checkQueryPreconditions()
+    .then(getRepositoryStatementsCountBeforeQuery)
+    .then(executeQuery)
+    .then(calculateAffectedStatementsCount)
+    .catch((error) => {
+      // TODO check if error message have to be persisted.
+      // TODO check if query type have to be set to ERROR(WB approach) or something other because ERROR is not valid type.
+      console.log(error);
+    });
+}
+
+export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
   var req: superagent.SuperAgentRequest;
   try {
     getAjaxConfig(yasqe, config);
@@ -74,7 +119,7 @@ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Prom
     return await req.then(
       (result) => {
         let hasMorePage = false;
-        if (yasqe.config.paginationOn) {
+        if (!yasqe.isUpdateQuery() && yasqe.config.paginationOn) {
           // If client hadn't set total Element we will execute count query.
           if (!result.body.totalElements) {
             executeCountQuery(yasqe, config);

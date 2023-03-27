@@ -41,6 +41,7 @@ namespace Parser {
     executionTime?: number;
     queryStartedTime?: number;
     totalElements?: number;
+    countAffectedRepositoryStatements?: number;
     hasMorePages?: boolean;
   }
   export type PostProcessBinding = (binding: Binding) => Binding;
@@ -74,6 +75,8 @@ class Parser {
   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
   private executionTime: number | undefined;
   private queryStartedTime: number | undefined;
+  private countAffectedRepositoryStatements?: number | undefined;
+
   private readonly hasMorePages?: boolean;
   constructor(
     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
@@ -90,6 +93,8 @@ class Parser {
       this.queryStartedTime = responseOrObject.queryStartedTime;
     }
     this.hasMorePages = hasMorePages;
+
+    this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
 
     if (responseOrObject instanceof Error) {
       this.error = responseOrObject;
@@ -186,6 +191,14 @@ class Parser {
 
   public getHasMorePages() {
     return this.hasMorePages;
+  }
+
+  public setCountAffectedRepositoryStatements(countAffectedRepositoryStatements: number) {
+    this.countAffectedRepositoryStatements = countAffectedRepositoryStatements;
+  }
+
+  public getCountAffectedRepositoryStatements() {
+    return this.countAffectedRepositoryStatements;
   }
 
   private getParserFromContentType(): boolean {
@@ -313,6 +326,7 @@ class Parser {
         executionTime: this.getResponseTime(),
         queryStartedTime: this.getQueryStartedTime(),
         hasMorePages: this.getHasMorePages(),
+        countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
       };
     }
     if (summary) {
@@ -328,6 +342,7 @@ class Parser {
         executionTime: this.getResponseTime(),
         queryStartedTime: this.getQueryStartedTime(),
         hasMorePages: this.getHasMorePages(),
+        countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
       };
     }
   }

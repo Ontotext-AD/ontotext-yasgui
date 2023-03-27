@@ -27,12 +27,16 @@ export class ExtendedYasr extends Yasr {
       this.yasqe.on("countQueryReady", this.updateQueryResultPaginationElementHandler.bind(this));
       this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
     }
+    this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
   }
 
   //=================================
   //       Overridden functions.
   //=================================
   drawPluginSelectors() {
+    if (this.yasqe.isUpdateQuery()) {
+      return;
+    }
     super.drawPluginSelectors();
 
     if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn) {
@@ -227,46 +231,72 @@ export class ExtendedYasr extends Yasr {
     };
   }
 
+  private getUpdateTypeQueryResponseInfo(): string {
+    // TODO show custom message if exist in persistence
+    const countAffectedRepositoryStatements = this.results?.getCountAffectedRepositoryStatements();
+    if (countAffectedRepositoryStatements === undefined) {
+      return "";
+    }
+
+    if (countAffectedRepositoryStatements === 0) {
+      return this.translationService.translate("yasr.message_info.no_changes.message");
+    }
+
+    const messageLabelKey =
+      countAffectedRepositoryStatements < 0
+        ? "yasr.message_info.removed_statements.message"
+        : "yasr.message_info.added_statements.message";
+    const params = [
+      { key: "countAffectedRepositoryStatements", value: `${Math.abs(countAffectedRepositoryStatements)}` },
+    ];
+    return this.translationService.translate(messageLabelKey, params);
+  }
+
+  private getQueryTypeQueryResponseInfo(): string {
+    const bindings = this.results?.getBindings();
+    if (!bindings || bindings.length === 0) {
+      return this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
+    }
+
+    if (!this.yasqe.config.paginationOn) {
+      return this.getCountResultMessage(bindings);
+    }
+
+    const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
+    const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
+    const totalElements = this.persistentJson?.yasr.response?.totalElements;
+    const from = pageSize * (pageNumber - 1);
+    let to = from + bindings.length;
+
+    const fromToMessage = this.getFromToMessage(from, to);
+    let totalResult = "";
+    if (totalElements) {
+      totalResult = this.getTotalResultsMessage(totalElements) + ".";
+    } else if (this.persistentJson?.yasr.response?.hasMorePages) {
+      totalResult = this.getHasMoreResultsMessage(to + 1) + ".";
+    }
+    return `${fromToMessage} ${totalResult}`;
+  }
+
   updateResponseInfo() {
-    let resultInfo = "";
     const responseInfoElement = this.getResponseInfoElement();
-    removeClass(responseInfoElement, "empty");
     const responseTime = this.results?.getResponseTime();
     const queryStartedTime = this.results?.getQueryStartedTime();
-    if (this.results && responseTime && queryStartedTime) {
-      const queryFinishedTime = queryStartedTime + responseTime;
-      const staleWarningMessage = this.getStaleWarningMessage(queryFinishedTime);
-      // TODO Message of resultInfo depends by query type which can be query or update
-      resultInfo = staleWarningMessage ? staleWarningMessage : "";
-      const bindings = this.results.getBindings();
-      if (!bindings || bindings.length === 0) {
-        resultInfo = this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
-      } else {
-        if (this.yasqe.config.paginationOn) {
-          const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
-          const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
-          const totalElements = this.persistentJson?.yasr.response?.totalElements;
-          const from = pageSize * (pageNumber - 1);
-          let to = from + bindings.length;
 
-          resultInfo += this.getFromToMessage(from, to);
-          if (totalElements) {
-            resultInfo += this.getTotalResultsMessage(totalElements);
-          } else {
-            if (this.persistentJson?.yasr.response?.hasMorePages) {
-              resultInfo += this.getHasMoreResultsMessage(to + 1);
-            }
-          }
-          resultInfo += ".";
-        } else {
-          resultInfo += this.getCountResultMessage(bindings);
-        }
-      }
-      resultInfo += this.getResultTimeMessage(responseTime, queryFinishedTime);
-    } else {
+    if (!this.results || !responseTime || !queryStartedTime) {
       addClass(responseInfoElement, "empty");
+      responseInfoElement.innerHTML = "";
+      return;
     }
-    responseInfoElement.innerHTML = resultInfo;
+
+    removeClass(responseInfoElement, "empty");
+    const queryFinishedTime = queryStartedTime + responseTime;
+    const warningIcon = this.getStaleWarningMessage(queryFinishedTime);
+    const resultInfo = this.yasqe.isUpdateQuery()
+      ? this.getUpdateTypeQueryResponseInfo()
+      : this.getQueryTypeQueryResponseInfo();
+    const resultTimeInfo = this.getResultTimeMessage(responseTime, queryFinishedTime);
+    responseInfoElement.innerHTML = `${warningIcon} ${resultInfo} ${resultTimeInfo}`;
   }
 
   private getCountResultMessage(bindings: any[]): string {
@@ -364,14 +394,10 @@ export class ExtendedYasr extends Yasr {
   private getStaleWarningMessage(queryFinishedTime: number): string {
     const millisecondAgo = this.getNowInMilliseconds() - queryFinishedTime;
     if (millisecondAgo >= ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) {
+      const params = [{ key: "timeAgo", value: this.getHumanReadableSeconds(millisecondAgo) }];
       const staleWarningMessage = this.translationService.translate(
         "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
-        [
-          {
-            key: "timeAgo",
-            value: this.getHumanReadableSeconds(millisecondAgo),
-          },
-        ]
+        params
       );
       return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="icon-warning icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
     }
