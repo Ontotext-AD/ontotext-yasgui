@@ -1,0 +1,188 @@
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision e8919237bee636e0d4f6c389c2d2999621e92e11)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 67dbf93f33a237e4fdf5161e98483bc96fab7710)
+@@ -11,6 +11,7 @@
+ require("./tab.scss");
+ import { getRandomId, default as Yasgui, YasguiRequestConfig } from "./";
+ import { ExtendedYasr } from "@triply/yasr/src/extended-yasr";
++import { CloseTabConfirmation } from "./closeTabConfirmation";
+ export interface PersistedJsonYasr extends YasrPersistentConfig {
+   responseSummary: Parser.ResponseSummary;
+ }
+@@ -139,44 +140,35 @@
+   public select() {
+     this.yasgui.selectTabId(this.persistentJson.id);
+   }
+-  public close() {
+-    let confirmationDialog: any = document.createElement("confirmation-dialog");
+-    confirmationDialog.translationService = this.yasgui.config.translationService;
+-    confirmationDialog.config = {
+-        title: this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
+-        message: this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.message')
+-    };
+-    const rejectedhandler = () => {
+-        closeConfirmation();
+-    };
+-    const confirmationHandler = () => {
+-        closeConfirmation();
+-        if (this.yasqe) this.yasqe.abortQuery();
+-        if (this.yasgui.getTab() === this) {
+-            //it's the active tab
+-            //first select other tab
+-            const tabs = this.yasgui.persistentConfig.getTabs();
+-            const i = tabs.indexOf(this.persistentJson.id);
+-            if (i > -1) {
+-                this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
+-            }
+-        }
+-        this.yasgui._removePanel(this.rootEl);
+-        this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
+-        this.yasgui.emit("tabClose", this.yasgui, this);
+-        this.emit("close", this);
+-        this.yasgui.tabElements.get(this.persistentJson.id).delete();
+-        delete this.yasgui._tabs[this.persistentJson.id];
+-    };
+-    const closeConfirmation = () => {
+-        document.body.removeChild(confirmationDialog);
+-        confirmationDialog.removeEventListener('internalConfirmationRejectedEvent', rejectedhandler);
+-        confirmationDialog.removeEventListener('internalConfirmationApprovedEvent', confirmationHandler);
+-        confirmationDialog = null;
+-    }
+-    confirmationDialog.addEventListener("internalConfirmationRejectedEvent", rejectedhandler);
+-    confirmationDialog.addEventListener("internalConfirmationApprovedEvent", confirmationHandler);
+-    document.body.appendChild(confirmationDialog);
++  public close(confirm = true) {
++      const closeTab = () => {
++          if (this.yasqe) this.yasqe.abortQuery();
++          if (this.yasgui.getTab() === this) {
++              //it's the active tab
++              //first select other tab
++              const tabs = this.yasgui.persistentConfig.getTabs();
++              const i = tabs.indexOf(this.persistentJson.id);
++              if (i > -1) {
++                  this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
++              }
++          }
++          this.yasgui._removePanel(this.rootEl);
++          this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
++          this.yasgui.emit("tabClose", this.yasgui, this);
++          this.emit("close", this);
++          this.yasgui.tabElements.get(this.persistentJson.id).delete();
++          delete this.yasgui._tabs[this.persistentJson.id];
++      };
++      if (confirm) {
++          new CloseTabConfirmation(
++              this.yasgui.config.translationService,
++              this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
++              this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.message'),
++              closeTab
++          ).open();
++      } else {
++          closeTab();
++      }
+   }
+   public getQuery() {
+     if (!this.yasqe) {
+Index: Yasgui/packages/yasgui/src/closeTabConfirmation.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/closeTabConfirmation.ts b/Yasgui/packages/yasgui/src/closeTabConfirmation.ts
+new file mode 100644
+--- /dev/null	(revision 67dbf93f33a237e4fdf5161e98483bc96fab7710)
++++ b/Yasgui/packages/yasgui/src/closeTabConfirmation.ts	(revision 67dbf93f33a237e4fdf5161e98483bc96fab7710)
+@@ -0,0 +1,47 @@
++import { TranslationService } from "@triply/yasgui-utils";
++
++export class CloseTabConfirmation {
++    private confirmationDialog: any;
++    private boundRejectHandler: Function;
++    private boundConfirmationHandler: Function;
++
++    constructor(public translationService: TranslationService,
++                public confirmationTitle: string,
++                public confirmationMessage: string,
++                public onConfirm: Function) {
++        this.init();
++        this.boundRejectHandler = this.rejectedhandler.bind(this);
++        this.boundConfirmationHandler = this.confirmationHandler.bind(this);
++    }
++
++    open() {
++        this.confirmationDialog.addEventListener("internalConfirmationRejectedEvent", this.boundRejectHandler);
++        this.confirmationDialog.addEventListener("internalConfirmationApprovedEvent", this.boundConfirmationHandler);
++        document.body.appendChild(this.confirmationDialog);
++    }
++
++    private init() {
++        this.confirmationDialog = document.createElement("confirmation-dialog");
++        this.confirmationDialog.translationService = this.translationService;
++        this.confirmationDialog.config = {
++            title: this.confirmationTitle,
++            message: this.confirmationMessage
++        };
++    }
++
++    private rejectedhandler() {
++        this.closeConfirmation();
++    };
++
++    private confirmationHandler() {
++        this.closeConfirmation();
++        this.onConfirm();
++    };
++
++    private closeConfirmation() {
++        document.body.removeChild(this.confirmationDialog);
++        this.confirmationDialog.removeEventListener('internalConfirmationRejectedEvent', this.boundRejectHandler);
++        this.confirmationDialog.removeEventListener('internalConfirmationApprovedEvent', this.boundConfirmationHandler);
++        this.confirmationDialog = null;
++    }
++}
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision e8919237bee636e0d4f6c389c2d2999621e92e11)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 67dbf93f33a237e4fdf5161e98483bc96fab7710)
+@@ -11,6 +11,7 @@
+ import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
+ import { addClass, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
+ import { TranslationService } from "@triply/yasgui-utils";
++import { CloseTabConfirmation } from "./closeTabConfirmation";
+ require("./index.scss");
+ require("@triply/yasr/src/scss/global.scss");
+ if (window) {
+@@ -238,11 +239,19 @@
+     return tab;
+   }
+   public closeOtherTabs(currentTabId: string): void {
+-    for (const tabId of Object.keys(this._tabs)) {
+-      if (tabId !== currentTabId) {
+-        this.getTab(tabId)?.close();
+-      }
+-    }
++      const closeOtherTabs = () => {
++        for (const tabId of Object.keys(this._tabs)) {
++          if (tabId !== currentTabId) {
++            this.getTab(tabId)?.close(false);
++          }
++        }
++      }
++      new CloseTabConfirmation(
++          this.translationService,
++          this.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
++          this.translationService.translate('yasgui.tab_list.close_other_tabs.confirmation.message'),
++          closeOtherTabs
++      ).open();
+   }
+   /**
+    * Checks if two persistent tab configuration are the same based.
