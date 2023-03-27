@@ -15,6 +15,10 @@ export class YasguiSteps {
         return cy.get('.tab.active');
     }
 
+    static getCurrentTabTitle() {
+        return this.getCurrentTab().find('[role=tab] > span');
+    }
+
     static openANewTab() {
         cy.get('button.addTab').click();
     }
@@ -48,5 +52,9 @@ export class TabContextMenu {
 
   static closeTab() {
     this.getContextMenu().contains('Close Tab').click();
+  }
+
+  static closeOtherTabs() {
+    this.getContextMenu().contains('Close other tabs').click();
   }
 }

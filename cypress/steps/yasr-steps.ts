@@ -1,6 +1,6 @@
 export class YasrSteps {
-  static getYasr() {
-    return cy.get('.yasr');
+  static getYasr(index = 0) {
+    return cy.get('.yasr').eq(index);
   }
 
   static getResultHeader() {
@@ -11,57 +11,57 @@ export class YasrSteps {
     return cy.get('.errorHeader');
   }
 
-  static getResultsTable() {
-    return YasrSteps.getYasr().find('.yasr_results tbody');
+  static getResultsTable(yasrIndex = 0) {
+    return YasrSteps.getYasr(yasrIndex).find('.yasr_results tbody');
   }
 
-  static getResults() {
-    return cy.get('.yasr_results tbody').find('tr');
+  static getResults(yasrIndex = 0) {
+    return this.getYasr(yasrIndex).find('.yasr_results tbody').find('tr');
   }
 
-  static getResultRow(rowNumber: number) {
-    return this.getResults().eq(rowNumber);
+  static getResultRow(rowNumber: number, yasrIndex = 0) {
+    return this.getResults(yasrIndex).eq(rowNumber);
   }
 
-  static getResultCell(rowNumber: number, cellNumber: number) {
-    return this.getResultRow(rowNumber).find('td').eq(cellNumber);
+  static getResultCell(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    return this.getResultRow(rowNumber, yasrIndex).find('td').eq(cellNumber);
   }
 
-  static getResultLink(rowNumber: number, cellNumber: number) {
-    return YasrSteps.getResultCell(rowNumber, cellNumber).find('a');
+  static getResultLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    return YasrSteps.getResultCell(rowNumber, cellNumber, yasrIndex).find('a');
   }
 
-  static getTriple(rowNumber: number, tripleNumber: 0 | 1 | 2) {
-    return this.getResultCell(rowNumber, 1).find('.triple-list').find('li').eq(tripleNumber);
+  static getTriple(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
+    return this.getResultCell(rowNumber, 1, yasrIndex).find('.triple-list').find('li').eq(tripleNumber);
   }
 
-  static hoverTripleResource(rowNumber: number, tripleNumber: 0 | 1 | 2) {
-    this.getTriple(rowNumber, tripleNumber).realHover();
+  static hoverTripleResource(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
+    this.getTriple(rowNumber, tripleNumber, yasrIndex).realHover();
   }
 
-  static getTripleCopyResourceLink(rowNumber: number, tripleNumber: 0 | 1 | 2) {
-    return this.getTriple(rowNumber, tripleNumber)
+  static getTripleCopyResourceLink(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
+    return this.getTriple(rowNumber, tripleNumber, yasrIndex)
       .realHover()
       .find('.resource-copy-link a');
   }
 
-  static hoverCell(rowNumber: number, cellNumber: number) {
-    this.getResultCell(rowNumber, cellNumber).realHover();
+  static hoverCell(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    this.getResultCell(rowNumber, cellNumber, yasrIndex).realHover();
   }
 
-  static showSharedResourceLink(rowNumber: number, cellNumber: number) {
-    return this.getResultCell(rowNumber, cellNumber)
+  static showSharedResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    return this.getResultCell(rowNumber, cellNumber, yasrIndex)
       .realHover()
       .find('.resource-copy-link a');
   }
 
-  static getCopyResourceLink(rowNumber: number, cellNumber: number) {
-    return this.getResultCell(rowNumber, cellNumber)
+  static getCopyResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    return this.getResultCell(rowNumber, cellNumber, yasrIndex)
       .find('.resource-copy-link a');
   }
 
-  static clickOnCopyResourceLink(rowNumber: number, cellNumber: number) {
-    this.showSharedResourceLink(rowNumber, cellNumber).realClick();
+  static clickOnCopyResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    this.showSharedResourceLink(rowNumber, cellNumber, yasrIndex).realClick();
   }
 
   static clickCopyLinkDialogCloseButton() {
@@ -100,20 +100,20 @@ export class YasrSteps {
     return cy.get('.tableFilter');
   }
 
-  static switchToPlugin(pluginName: string) {
-    YasrSteps.getYasr().find(`.select_${pluginName}`).realClick();
+  static switchToPlugin(pluginName: string, yasrIndex = 0) {
+    YasrSteps.getYasr(yasrIndex).find(`.select_${pluginName}`).realClick();
 
   }
 
-  static switchToExtendedTablePlugin() {
-    YasrSteps.switchToPlugin('extended_table');
+  static switchToExtendedTablePlugin(yasrIndex = 0) {
+    YasrSteps.switchToPlugin('extended_table', yasrIndex);
   }
 
-  static switchToRawResponsePlugin() {
-    YasrSteps.switchToPlugin('response');
+  static switchToRawResponsePlugin(yasrIndex = 0) {
+    YasrSteps.switchToPlugin('response', yasrIndex);
   }
 
-  static getPagination() {
-    return YasrSteps.getYasr().find('.ontotext-pagination');
+  static getPagination(yasrIndex = 0) {
+    return YasrSteps.getYasr(yasrIndex).find('.ontotext-pagination');
   }
 }
