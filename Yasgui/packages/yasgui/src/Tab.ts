@@ -11,6 +11,7 @@ import * as superagent from "superagent";
 require("./tab.scss");
 import { getRandomId, default as Yasgui, YasguiRequestConfig } from "./";
 import { ExtendedYasr } from "@triply/yasr/src/extended-yasr";
+import { CloseTabConfirmation } from "./closeTabConfirmation";
 export interface PersistedJsonYasr extends YasrPersistentConfig {
   responseSummary: Parser.ResponseSummary;
 }
@@ -139,44 +140,35 @@ export class Tab extends EventEmitter {
   public select() {
     this.yasgui.selectTabId(this.persistentJson.id);
   }
-  public close() {
-    let confirmationDialog: any = document.createElement("confirmation-dialog");
-    confirmationDialog.translationService = this.yasgui.config.translationService;
-    confirmationDialog.config = {
-        title: this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
-        message: this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.message')
-    };
-    const rejectedhandler = () => {
-        closeConfirmation();
-    };
-    const confirmationHandler = () => {
-        closeConfirmation();
-        if (this.yasqe) this.yasqe.abortQuery();
-        if (this.yasgui.getTab() === this) {
-            //it's the active tab
-            //first select other tab
-            const tabs = this.yasgui.persistentConfig.getTabs();
-            const i = tabs.indexOf(this.persistentJson.id);
-            if (i > -1) {
-                this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
-            }
-        }
-        this.yasgui._removePanel(this.rootEl);
-        this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
-        this.yasgui.emit("tabClose", this.yasgui, this);
-        this.emit("close", this);
-        this.yasgui.tabElements.get(this.persistentJson.id).delete();
-        delete this.yasgui._tabs[this.persistentJson.id];
-    };
-    const closeConfirmation = () => {
-        document.body.removeChild(confirmationDialog);
-        confirmationDialog.removeEventListener('internalConfirmationRejectedEvent', rejectedhandler);
-        confirmationDialog.removeEventListener('internalConfirmationApprovedEvent', confirmationHandler);
-        confirmationDialog = null;
-    }
-    confirmationDialog.addEventListener("internalConfirmationRejectedEvent", rejectedhandler);
-    confirmationDialog.addEventListener("internalConfirmationApprovedEvent", confirmationHandler);
-    document.body.appendChild(confirmationDialog);
+  public close(confirm = true) {
+      const closeTab = () => {
+          if (this.yasqe) this.yasqe.abortQuery();
+          if (this.yasgui.getTab() === this) {
+              //it's the active tab
+              //first select other tab
+              const tabs = this.yasgui.persistentConfig.getTabs();
+              const i = tabs.indexOf(this.persistentJson.id);
+              if (i > -1) {
+                  this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
+              }
+          }
+          this.yasgui._removePanel(this.rootEl);
+          this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
+          this.yasgui.emit("tabClose", this.yasgui, this);
+          this.emit("close", this);
+          this.yasgui.tabElements.get(this.persistentJson.id).delete();
+          delete this.yasgui._tabs[this.persistentJson.id];
+      };
+      if (confirm) {
+          new CloseTabConfirmation(
+              this.yasgui.config.translationService,
+              this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
+              this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.message'),
+              closeTab
+          ).open();
+      } else {
+          closeTab();
+      }
   }
   public getQuery() {
     if (!this.yasqe) {

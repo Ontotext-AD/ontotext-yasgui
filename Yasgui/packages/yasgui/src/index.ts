@@ -11,6 +11,7 @@ import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@
 import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
 import { addClass, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
+import { CloseTabConfirmation } from "./closeTabConfirmation";
 require("./index.scss");
 require("@triply/yasr/src/scss/global.scss");
 if (window) {
@@ -238,11 +239,19 @@ export class Yasgui extends EventEmitter {
     return tab;
   }
   public closeOtherTabs(currentTabId: string): void {
-    for (const tabId of Object.keys(this._tabs)) {
-      if (tabId !== currentTabId) {
-        this.getTab(tabId)?.close();
+      const closeOtherTabs = () => {
+        for (const tabId of Object.keys(this._tabs)) {
+          if (tabId !== currentTabId) {
+            this.getTab(tabId)?.close(false);
+          }
+        }
       }
-    }
+      new CloseTabConfirmation(
+          this.translationService,
+          this.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
+          this.translationService.translate('yasgui.tab_list.close_other_tabs.confirmation.message'),
+          closeOtherTabs
+      ).open();
   }
   /**
    * Checks if two persistent tab configuration are the same based.
