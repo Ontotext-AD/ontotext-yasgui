@@ -1,5 +1,6 @@
 import {Translations} from './yasgui-configuration';
 import {Prefixes} from '../../../Yasgui/packages/yasr';
+import {BeforeUpdateQueryResult} from './before-update-query-result';
 
 export interface ExternalYasguiConfiguration {
   // ***********************************************************
@@ -218,6 +219,13 @@ export interface ExternalYasguiConfiguration {
    * For virtual repositories only select queries are allowed.
    */
   isVirtualRepository?: boolean;
+
+  // This function will be called before the update query be executed. The client can abort execution of query for some reason and can
+  // provide a message or label key for the reason of aborting.
+  beforeUpdateQuery?: () => Promise<BeforeUpdateQueryResult>,
+
+  // This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
+  getRepositoryStatementsCount?: () => Promise<number>
 }
 
 export type AutocompleteLoader = () => any;

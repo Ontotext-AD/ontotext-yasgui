@@ -8,7 +8,7 @@ import {ConfirmationDialogSteps} from "../steps/confirmation-dialog.steps";
 describe('Yasgui tabs', () => {
 
   beforeEach(() => {
-    DefaultViewPageSteps.visitDefaultViewPage();
+    DefaultViewPageSteps.visit();
     QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(6));
   });
 

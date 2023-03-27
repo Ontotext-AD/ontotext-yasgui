@@ -14,7 +14,7 @@ describe('Yasgui Toolbar', () => {
         it('Should be hidden', () => {
             // Given I haven configured the toolbar visibility
             // When I open a page with the yasgui
-            DefaultViewPageSteps.visitDefaultViewPage();
+            DefaultViewPageSteps.visit();
             // Then I expect that the toolbar should be hidden
             // TODO: Seems like the toolbar is initially visible and cypress sees that before the app to have the chance to hide it!!!
             // Find a way to remove this wait here.
