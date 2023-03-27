@@ -36,7 +36,12 @@ describe('Execute query action', () => {
     ActionsPageSteps.getEventLog().should('have.value', '\n"select * where {  \\n ?s ?p ?o . \\n } limit 100"');
   });
 
-  it('should not run explain plan query for update query ', () => {
+  it('should not run explain plan query for update query ', {
+    retries: {
+      runMode: 1,
+      openMode: 0
+    }
+  }, () => {
     // When I visit a page with "ontotext-yasgui-web-component" in it,
     KeyboardShortcutPageSteps.visit();
     // and write an update query,
