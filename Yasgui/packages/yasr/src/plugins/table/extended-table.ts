@@ -1,4 +1,4 @@
-import Table, { PersistentConfig } from "../table";
+import Table, { PersistentConfig } from "./index";
 import Parser from "../../parsers";
 import Yasr from "@triply/yasr";
 import Yasqe from "@triply/yasqe";

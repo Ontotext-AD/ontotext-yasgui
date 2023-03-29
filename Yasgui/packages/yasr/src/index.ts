@@ -680,7 +680,7 @@ export function registerPlugin(name: string, plugin: typeof Plugin, enable = tru
 
 import * as YasrPluginResponse from "./plugins/response";
 import * as YasrPluginError from "./plugins/error";
-import { ExtendedTable } from "./plugins/extended-table/extended-table";
+import { ExtendedTable } from "./plugins/table/extended-table";
 import { TranslationService } from "@triply/yasgui-utils";
 import Yasqe from "@triply/yasqe";
 import ExtendedBoolean from "./plugins/boolean/extended-boolean";
