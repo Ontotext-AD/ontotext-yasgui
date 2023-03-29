@@ -1,0 +1,35 @@
+Subject: [PATCH] Moves "extended-table" plugin into "plugins/table" package.
+---
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision d12760d43e95caefd742912d8c8480b6216d86cc)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 518026143ef8eca9add4fc708f1a0ddf8679dc7c)
+@@ -680,7 +680,7 @@
+ 
+ import * as YasrPluginResponse from "./plugins/response";
+ import * as YasrPluginError from "./plugins/error";
+-import { ExtendedTable } from "./plugins/extended-table/extended-table";
++import { ExtendedTable } from "./plugins/table/extended-table";
+ import { TranslationService } from "@triply/yasgui-utils";
+ import Yasqe from "@triply/yasqe";
+ import ExtendedBoolean from "./plugins/boolean/extended-boolean";
+Index: Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+rename from Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts
+rename to Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/extended-table/extended-table.ts	(revision d12760d43e95caefd742912d8c8480b6216d86cc)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision 518026143ef8eca9add4fc708f1a0ddf8679dc7c)
+@@ -1,4 +1,4 @@
+-import Table, { PersistentConfig } from "../table";
++import Table, { PersistentConfig } from "./index";
+ import Parser from "../../parsers";
+ import Yasr from "@triply/yasr";
+ import Yasqe from "@triply/yasqe";
