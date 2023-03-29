@@ -1,0 +1,196 @@
+Subject: [PATCH] GDB-7714: YASR: Plugin boolean response renderer
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 98168f11c54b78df8e81e77918fc74f045a354a2)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -1027,6 +1027,10 @@
+     return "update" === this.getQueryMode()?.toLowerCase();
+   }
+ 
++  public isAskQuery(): boolean {
++    return "ASK" === this.getQueryType();
++  }
++
+   public getUrlParams() {
+     //first try hash
+     let urlParams: queryString.ParsedQuery = {};
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 98168f11c54b78df8e81e77918fc74f045a354a2)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -119,7 +119,7 @@
+     return await req.then(
+       (result) => {
+         let hasMorePage = false;
+-        if (!yasqe.isUpdateQuery() && yasqe.config.paginationOn) {
++        if (!yasqe.isUpdateQuery() && !yasqe.isAskQuery() && yasqe.config.paginationOn) {
+           // If client hadn't set total Element we will execute count query.
+           if (!result.body.totalElements) {
+             executeCountQuery(yasqe, config);
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 98168f11c54b78df8e81e77918fc74f045a354a2)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -34,7 +34,7 @@
+   //       Overridden functions.
+   //=================================
+   drawPluginSelectors() {
+-    if (this.yasqe.isUpdateQuery()) {
++    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery()) {
+       return;
+     }
+     super.drawPluginSelectors();
+@@ -64,6 +64,13 @@
+   }
+ 
+   updatePluginSelectorNames() {
++    if (this.yasqe.isAskQuery()) {
++      // hides plugins buttons if "query" mode query had been executed.
++      this.hidePluginElementVisibility();
++      return;
++    }
++    // shows plugins buttons if "update" mode query had been executed.
++    this.showPluginElementVisibility();
+     super.updatePluginSelectorNames();
+     if (this.downloadAsElement) {
+       this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
+@@ -71,6 +78,20 @@
+     }
+   }
+ 
++  private hidePluginElementVisibility() {
++    const pluginElement = this.getPluginSelectorsEl();
++    if (pluginElement) {
++      addClass(pluginElement, "hidden");
++    }
++  }
++
++  private showPluginElementVisibility() {
++    const pluginElement = this.getPluginSelectorsEl();
++    if (pluginElement) {
++      removeClass(pluginElement, "hidden");
++    }
++  }
++
+   //==================================================
+   //       Functions that extend YASR functionality
+   //==================================================
+@@ -253,6 +274,10 @@
+   }
+ 
+   private getQueryTypeQueryResponseInfo(): string {
++    if (this.yasqe.isAskQuery()) {
++      return "";
++    }
++
+     const bindings = this.results?.getBindings();
+     if (!bindings || bindings.length === 0) {
+       return this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 98168f11c54b78df8e81e77918fc74f045a354a2)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -678,16 +678,14 @@
+   }
+ }
+ 
+-import * as YasrPluginTable from "./plugins/table";
+-import * as YasrPluginBoolean from "./plugins/boolean";
+ import * as YasrPluginResponse from "./plugins/response";
+ import * as YasrPluginError from "./plugins/error";
+ import { ExtendedTable } from "./plugins/extended-table/extended-table";
+ import { TranslationService } from "@triply/yasgui-utils";
+ import Yasqe from "@triply/yasqe";
++import ExtendedBoolean from "./plugins/boolean/extended-boolean";
+ 
+-Yasr.registerPlugin("table", YasrPluginTable.default as any);
+-Yasr.registerPlugin("boolean", YasrPluginBoolean.default as any);
++Yasr.registerPlugin("extended_boolean", ExtendedBoolean as any);
+ Yasr.registerPlugin("response", YasrPluginResponse.default as any);
+ Yasr.registerPlugin("error", YasrPluginError.default as any);
+ Yasr.registerPlugin("extended_table", ExtendedTable as any);
+Index: Yasgui/packages/yasr/src/parsers/json.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/json.ts b/Yasgui/packages/yasr/src/parsers/json.ts
+--- a/Yasgui/packages/yasr/src/parsers/json.ts	(revision 98168f11c54b78df8e81e77918fc74f045a354a2)
++++ b/Yasgui/packages/yasr/src/parsers/json.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -2,7 +2,7 @@
+ export default function (queryResponse: any, postProcessBinding: Parser.PostProcessBinding): Parser.SparqlResults {
+   if (typeof queryResponse == "string") {
+     const json = JSON.parse(queryResponse);
+-    if (postProcessBinding) {
++    if (postProcessBinding && json.results) {
+       for (const binding in json.results.bindings) {
+         json.results.bindings[binding] = postProcessBinding(json.results.bindings[binding]);
+       }
+Index: Yasgui/packages/yasr/src/plugins/boolean/extended-boolean.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/boolean/extended-boolean.ts b/Yasgui/packages/yasr/src/plugins/boolean/extended-boolean.ts
+new file mode 100644
+--- /dev/null	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
++++ b/Yasgui/packages/yasr/src/plugins/boolean/extended-boolean.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -0,0 +1,20 @@
++import Boolean from "./index";
++import { addClass } from "@triply/yasgui-utils";
++
++export default class ExtendedBoolean extends Boolean {
++  draw() {
++    const el = document.createElement("div");
++    el.className = "extended-boolean-plugin";
++
++    const boolVal = this.yasr.results?.getBoolean();
++    const textEl = document.createElement("div");
++    addClass(textEl, boolVal ? "response-success" : "response-error");
++    addClass(textEl, "response");
++    textEl.textContent = boolVal
++      ? this.translationService.translate("yasr.plugin.extended_boolean.true")
++      : this.translationService.translate("yasr.plugin.extended_boolean.false");
++    el.appendChild(textEl);
++
++    this.yasr.resultsEl.appendChild(el);
++  }
++}
+Index: Yasgui/packages/yasr/src/plugins/boolean/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/boolean/index.ts b/Yasgui/packages/yasr/src/plugins/boolean/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision 98168f11c54b78df8e81e77918fc74f045a354a2)
++++ b/Yasgui/packages/yasr/src/plugins/boolean/index.ts	(revision 63d441cff9771904fe062e5daa7fdb5aca06f2fe)
+@@ -13,10 +13,10 @@
+   '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="30" height="30" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve"><path d="M14.301,49.982l22.606,17.047L84.361,4.903c2.614-3.733,7.76-4.64,11.493-2.026l0.627,0.462 c3.732,2.614,4.64,7.758,2.025,11.492l-51.783,79.77c-1.955,2.791-3.896,3.762-7.301,3.988c-3.405,0.225-5.464-1.039-7.508-3.084 L2.447,61.814c-3.263-3.262-3.263-8.553,0-11.814l0.041-0.019C5.75,46.718,11.039,46.718,14.301,49.982z"/></svg>';
+ 
+ export default class Boolean implements Plugin<PluginConfig> {
+-  private yasr: Yasr;
++  protected yasr: Yasr;
+   public priority = 10;
+   hideFromSelection = true;
+-  private readonly translationService: TranslationService;
++  protected readonly translationService: TranslationService;
+   constructor(yasr: Yasr) {
+     this.yasr = yasr;
+     this.translationService = this.yasr.config.translationService;
