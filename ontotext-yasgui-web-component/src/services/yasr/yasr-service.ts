@@ -17,25 +17,6 @@ export class YasrService {
    */
   static readonly ESCAPED_HTML_DOUBLE_GREATER = '&gt;&gt';
 
-  static disablePlugin(name: string) {
-    this.setPluginEnable(name, false);
-  }
-
-  static enablePlugin(name: string) {
-    this.setPluginEnable(name, true);
-  }
-
-  static setPluginEnable(name: string, enable: boolean) {
-    // @ts-ignore
-    if (Yasr.defaults.plugins) {
-      // @ts-ignore
-      const plugin = Yasr.defaults.plugins[name];
-      if (plugin) {
-        plugin.enabled = enable;
-      }
-    }
-  }
-
   static getPluginsConfigurations(externalPluginsConfigurations: Map<string, any>): Map<string, any> {
     const pluginsConfigurations = new Map<string, any>();
     this.addExtendedTableConfiguration(pluginsConfigurations, externalPluginsConfigurations);

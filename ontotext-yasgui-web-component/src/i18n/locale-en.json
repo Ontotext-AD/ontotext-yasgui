@@ -146,6 +146,8 @@
   "yasr.plugin.table.page_size.dropdown.label": "Page size: ",
   "yasr.plugin.table.simple_view.checkbox.label": "Simple view",
   "yasr.plugin.table.table_filter.input.placeholder": "Filter query results",
+  "yasr.plugin.extended_boolean.true": "YES",
+  "yasr.plugin.extended_boolean.false": "NO",
   "yasqe.actions.save_query.button.tooltip": "Create saved query",
   "yasqe.actions.save_query.dialog.title": "Create New Saved Query",
   "yasqe.actions.save_query.dialog.query.label": "Create your sample query",

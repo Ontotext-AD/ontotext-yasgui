@@ -239,6 +239,26 @@
     .pageSizeWrapper, .dataTables_info, .dataTables_paginate {
       display: none;
     }
+
+    .extended-boolean-plugin {
+      width: 70%;
+      margin: 5px auto;
+      vertical-align: middle;
+
+      .response {
+        font-size: 3rem;
+        text-align: center;
+        padding: 1em;
+      }
+
+      .response-success {
+        background-color: #dff0d8;
+      }
+
+      .response-error {
+        background-color: #fbdbd5;
+      }
+    }
   }
 
   .hidden-control-bar {

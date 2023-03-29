@@ -11,6 +11,10 @@ export class YasrSteps {
     return cy.get('.errorHeader');
   }
 
+  static getPluginsButtons() {
+    return cy.get('.yasr_btnGroup');
+  }
+
   static getResultsTable(yasrIndex = 0) {
     return YasrSteps.getYasr(yasrIndex).find('.yasr_results tbody');
   }

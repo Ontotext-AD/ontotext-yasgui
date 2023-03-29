@@ -18,6 +18,14 @@ export class QueryStubs {
     QueryStubs.stubQueryResponse('/queries/default-triple-query-response.json', 'getDefaultTripleQueryResponse', withDelay);
   }
 
+  static stubAskTrueQueryResponse(withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/ask-true-query-response.json', 'askTrueQueryResponse', withDelay);
+  }
+
+  static stubAskFalseQueryResponse(withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/ask-false-query-response.json', 'askFalseQueryResponse', withDelay);
+  }
+
   static stubQueryResponse(fixture: string, alias: string, withDelay: number = 0) {
     cy.intercept('/repositories/test-repo', {fixture, delay: withDelay}).as(alias);
   }
