@@ -112,8 +112,6 @@ export class YasguiConfigurationBuilder {
     };
     config.yasguiConfig.yasqe.showQueryButton = true;
 
-    YasrService.disablePlugin('table');
-
     // Register autocompleters
     this.registerCustomAutocompleters(config);
 
