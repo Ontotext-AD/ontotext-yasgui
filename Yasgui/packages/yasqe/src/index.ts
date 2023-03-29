@@ -1027,6 +1027,10 @@ export class Yasqe extends CodeMirror {
     return "update" === this.getQueryMode()?.toLowerCase();
   }
 
+  public isAskQuery(): boolean {
+    return "ASK" === this.getQueryType();
+  }
+
   public getUrlParams() {
     //first try hash
     let urlParams: queryString.ParsedQuery = {};

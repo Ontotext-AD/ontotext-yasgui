@@ -119,7 +119,7 @@ export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConf
     return await req.then(
       (result) => {
         let hasMorePage = false;
-        if (!yasqe.isUpdateQuery() && yasqe.config.paginationOn) {
+        if (!yasqe.isUpdateQuery() && !yasqe.isAskQuery() && yasqe.config.paginationOn) {
           // If client hadn't set total Element we will execute count query.
           if (!result.body.totalElements) {
             executeCountQuery(yasqe, config);
