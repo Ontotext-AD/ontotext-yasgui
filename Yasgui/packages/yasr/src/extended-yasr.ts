@@ -34,7 +34,7 @@ export class ExtendedYasr extends Yasr {
   //       Overridden functions.
   //=================================
   drawPluginSelectors() {
-    if (this.yasqe.isUpdateQuery()) {
+    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery()) {
       return;
     }
     super.drawPluginSelectors();
@@ -64,10 +64,31 @@ export class ExtendedYasr extends Yasr {
   }
 
   updatePluginSelectorNames() {
+    if (this.yasqe.isAskQuery()) {
+      // hides plugins buttons if "query" mode query had been executed.
+      this.hidePluginElementVisibility();
+      return;
+    }
+    // shows plugins buttons if "update" mode query had been executed.
+    this.showPluginElementVisibility();
     super.updatePluginSelectorNames();
     if (this.downloadAsElement) {
       this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
       this.updateDownloadAsElementVisibility();
+    }
+  }
+
+  private hidePluginElementVisibility() {
+    const pluginElement = this.getPluginSelectorsEl();
+    if (pluginElement) {
+      addClass(pluginElement, "hidden");
+    }
+  }
+
+  private showPluginElementVisibility() {
+    const pluginElement = this.getPluginSelectorsEl();
+    if (pluginElement) {
+      removeClass(pluginElement, "hidden");
     }
   }
 
@@ -253,6 +274,10 @@ export class ExtendedYasr extends Yasr {
   }
 
   private getQueryTypeQueryResponseInfo(): string {
+    if (this.yasqe.isAskQuery()) {
+      return "";
+    }
+
     const bindings = this.results?.getBindings();
     if (!bindings || bindings.length === 0) {
       return this.translationService.translate("yasr.plugin_control.response_chip.message.result_empty");
