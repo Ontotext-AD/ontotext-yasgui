@@ -25,14 +25,14 @@ export interface PluginConfig {
   maxLines: number;
 }
 export default class Response implements Plugin<PluginConfig> {
-  private yasr: Yasr;
+  protected yasr: Yasr;
   label = "Response";
   priority = 2;
   helpReference = "https://triply.cc/docs/yasgui#response";
   private config: DeepReadonly<PluginConfig>;
-  private overLay: HTMLDivElement | undefined;
-  private cm: CodeMirror.Editor | undefined;
-  private readonly translationService: TranslationService;
+  protected overLay: HTMLDivElement | undefined;
+  protected cm: CodeMirror.Editor | undefined;
+  protected readonly translationService: TranslationService;
   constructor(yasr: Yasr) {
     this.yasr = yasr;
     this.config = Response.defaults;
@@ -99,7 +99,7 @@ export default class Response implements Plugin<PluginConfig> {
     // Don't show less originally we've already set the value in the codemirrorOpts
     if (lines.length > config.maxLines) this.showLess(false);
   }
-  private limitData(value: string) {
+  protected limitData(value: string) {
     const lines = value.split("\n");
     if (lines.length > this.config.maxLines) {
       value = lines.slice(0, this.config.maxLines).join("\n");

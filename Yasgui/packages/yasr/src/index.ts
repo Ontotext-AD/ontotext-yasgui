@@ -678,15 +678,15 @@ export function registerPlugin(name: string, plugin: typeof Plugin, enable = tru
   }
 }
 
-import * as YasrPluginResponse from "./plugins/response";
 import * as YasrPluginError from "./plugins/error";
 import { ExtendedTable } from "./plugins/table/extended-table";
 import { TranslationService } from "@triply/yasgui-utils";
 import Yasqe from "@triply/yasqe";
 import ExtendedBoolean from "./plugins/boolean/extended-boolean";
+import ExtendedResponse from "./plugins/response/extended-response";
 
 Yasr.registerPlugin("extended_boolean", ExtendedBoolean as any);
-Yasr.registerPlugin("response", YasrPluginResponse.default as any);
+Yasr.registerPlugin("response", ExtendedResponse as any);
 Yasr.registerPlugin("error", YasrPluginError.default as any);
 Yasr.registerPlugin("extended_table", ExtendedTable as any);
 
