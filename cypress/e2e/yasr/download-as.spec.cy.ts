@@ -126,18 +126,6 @@ describe('Download as', () => {
 
   });
 
-  it('Should "Download as" dropdown has one option when "Raw Response" plugin is selected', () => {
-    // When execute a query witch returns results.
-    YasqeSteps.executeQuery();
-    // And extended_table plugin is selected.
-    YasrSteps.switchToRawResponsePlugin();
-    // And dropdown is opened.
-    DownloadAsPageSteps.openDownloadAsDropdown();
-
-    // Then I expect to have only one option
-    DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 2);
-  });
-
   it('Should "Download as" dropdown has more than options when "Table" plugin is selected', () => {
     // When execute a query witch returns results.
     YasqeSteps.executeQuery();

@@ -12,7 +12,7 @@ describe('Default view', () => {
 
   it('Should load component with default configuration', () => {
     YasqeSteps.executeQuery();
-    YasrSteps.getResults().should('have.length', 6);
+    YasrSteps.getTableResults().should('have.length', 6);
   });
 
   context('Instance methods', () => {

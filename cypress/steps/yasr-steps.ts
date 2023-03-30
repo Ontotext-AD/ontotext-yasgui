@@ -19,12 +19,12 @@ export class YasrSteps {
     return YasrSteps.getYasr(yasrIndex).find('.yasr_results tbody');
   }
 
-  static getResults(yasrIndex = 0) {
+  static getTableResults(yasrIndex = 0) {
     return this.getYasr(yasrIndex).find('.yasr_results tbody').find('tr');
   }
 
   static getResultRow(rowNumber: number, yasrIndex = 0) {
-    return this.getResults(yasrIndex).eq(rowNumber);
+    return this.getTableResults(yasrIndex).eq(rowNumber);
   }
 
   static getResultCell(rowNumber: number, cellNumber: number, yasrIndex = 0) {
@@ -119,5 +119,35 @@ export class YasrSteps {
 
   static getPagination(yasrIndex = 0) {
     return YasrSteps.getYasr(yasrIndex).find('.ontotext-pagination');
+  }
+
+  static getResponseInfo() {
+    return this.getYasr().find('.yasr_response_chip');
+  }
+
+  static openRawResponseTab() {
+    this.getYasr().find('.select_response').click();
+  }
+
+
+  static getRawResults() {
+    return this.getYasr().find('.yasr_results');
+  }
+
+  static getRawResultsValue() {
+    return this.getRawResults().find('.CodeMirror').then(($el) => {
+      // @ts-ignore
+      return $el[0].CodeMirror;
+    }).then((cm) => {
+      return cm.getValue();
+    });
+  }
+
+  static getShowAllRawResponseButton() {
+    return this.getRawResults().find('.overlay_btn');
+  }
+
+  static showMoreRawResponse() {
+    this.getShowAllRawResponseButton().click();
   }
 }

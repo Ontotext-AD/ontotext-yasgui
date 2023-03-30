@@ -16,7 +16,7 @@ describe('Execute query action', () => {
     YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Run query');
     YasqeSteps.getExecuteQueryButton().should('be.visible');
     YasqeSteps.executeQuery();
-    YasrSteps.getResults().should('have.length', 6);
+    YasrSteps.getTableResults().should('have.length', 6);
   });
 
   it('Should display a progress indicator during query execution', () => {

@@ -246,7 +246,6 @@ export class YasqeSteps {
 
   static getQuery() {
     return this.getCodeMirror().then((cm) => {
-      console.log('%cCM', 'background-color:red', cm);
       return cm.getValue();
     });
   }
