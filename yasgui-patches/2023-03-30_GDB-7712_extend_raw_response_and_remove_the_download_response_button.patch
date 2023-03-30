@@ -1,0 +1,110 @@
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 2841245b5b69e97e178c0f25f43bdaf2da804fb5)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 3c22100872163770ded9491499efacd76daa10c6)
+@@ -678,15 +678,15 @@
+   }
+ }
+ 
+-import * as YasrPluginResponse from "./plugins/response";
+ import * as YasrPluginError from "./plugins/error";
+ import { ExtendedTable } from "./plugins/table/extended-table";
+ import { TranslationService } from "@triply/yasgui-utils";
+ import Yasqe from "@triply/yasqe";
+ import ExtendedBoolean from "./plugins/boolean/extended-boolean";
++import ExtendedResponse from "./plugins/response/extended-response";
+ 
+ Yasr.registerPlugin("extended_boolean", ExtendedBoolean as any);
+-Yasr.registerPlugin("response", YasrPluginResponse.default as any);
++Yasr.registerPlugin("response", ExtendedResponse as any);
+ Yasr.registerPlugin("error", YasrPluginError.default as any);
+ Yasr.registerPlugin("extended_table", ExtendedTable as any);
+ 
+Index: Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+new file mode 100644
+--- /dev/null	(revision 3c22100872163770ded9491499efacd76daa10c6)
++++ b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision 3c22100872163770ded9491499efacd76daa10c6)
+@@ -0,0 +1,38 @@
++import Response from "./index";
++import { addClass } from "@triply/yasgui-utils";
++
++export default class ExtendedResponse extends Response {
++    // Function is overriden and download button is removed from the view because we already has one.
++    showLess(setValue = true) {
++        if (!this.cm) return;
++        // Add overflow
++        addClass(this.cm.getWrapperElement(), "overflow");
++
++        // Remove old instance
++        if (this.overLay) {
++            this.overLay.remove();
++            this.overLay = undefined;
++        }
++
++        // Wrapper
++        this.overLay = document.createElement("div");
++        addClass(this.overLay, "overlay");
++
++        // overlay content
++        const overlayContent = document.createElement("div");
++        addClass(overlayContent, "overlay_content");
++
++        const showMoreButton = document.createElement("button");
++        showMoreButton.title = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
++        addClass(showMoreButton, "yasr_btn", "overlay_btn");
++        showMoreButton.textContent = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
++        showMoreButton.addEventListener("click", () => this.showMore());
++        overlayContent.append(showMoreButton);
++
++        this.overLay.appendChild(overlayContent);
++        this.cm.getWrapperElement().appendChild(this.overLay);
++        if (setValue) {
++            this.cm.setValue(this.limitData(this.yasr.results?.getOriginalResponseAsString() || ""));
++        }
++    }
++}
+Index: Yasgui/packages/yasr/src/plugins/response/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/response/index.ts b/Yasgui/packages/yasr/src/plugins/response/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision 2841245b5b69e97e178c0f25f43bdaf2da804fb5)
++++ b/Yasgui/packages/yasr/src/plugins/response/index.ts	(revision 3c22100872163770ded9491499efacd76daa10c6)
+@@ -25,14 +25,14 @@
+   maxLines: number;
+ }
+ export default class Response implements Plugin<PluginConfig> {
+-  private yasr: Yasr;
++  protected yasr: Yasr;
+   label = "Response";
+   priority = 2;
+   helpReference = "https://triply.cc/docs/yasgui#response";
+   private config: DeepReadonly<PluginConfig>;
+-  private overLay: HTMLDivElement | undefined;
+-  private cm: CodeMirror.Editor | undefined;
+-  private readonly translationService: TranslationService;
++  protected overLay: HTMLDivElement | undefined;
++  protected cm: CodeMirror.Editor | undefined;
++  protected readonly translationService: TranslationService;
+   constructor(yasr: Yasr) {
+     this.yasr = yasr;
+     this.config = Response.defaults;
+@@ -99,7 +99,7 @@
+     // Don't show less originally we've already set the value in the codemirrorOpts
+     if (lines.length > config.maxLines) this.showLess(false);
+   }
+-  private limitData(value: string) {
++  protected limitData(value: string) {
+     const lines = value.split("\n");
+     if (lines.length > this.config.maxLines) {
+       value = lines.slice(0, this.config.maxLines).join("\n");
