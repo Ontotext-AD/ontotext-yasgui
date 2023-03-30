@@ -234,6 +234,21 @@
         padding-left: 10px;
         padding-right: 10px;
       }
+
+      .error-response-plugin {
+        padding: 10px;
+        background-color: $background-color-onto-error;
+
+        .error-response-plugin-header {
+          display: flex;
+          justify-content: space-between;
+
+          .error-response-plugin-error-status {
+            font-weight: 400;
+            margin-bottom: 0.5em;
+          }
+        }
+      }
     }
 
     .pageSizeWrapper, .dataTables_info, .dataTables_paginate {

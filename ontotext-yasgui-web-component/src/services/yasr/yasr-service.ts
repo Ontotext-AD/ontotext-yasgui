@@ -37,14 +37,14 @@ export class YasrService {
   }
 
   private static addRawResponseConfiguration(pluginsConfigurations: Map<string, any>, externalPluginsConfigurations: Map<string, any>) {
-    const externalExtendedTableConfig = externalPluginsConfigurations ? externalPluginsConfigurations['response'] : null;
+    const externalExtendedResponseConfig = externalPluginsConfigurations ? externalPluginsConfigurations['extended_response'] : null;
     const configuration = {
       downloadAsConfig: {
-        nameLabelKey: externalExtendedTableConfig?.downloadAsConfig?.nameLabelKey || defaultRawResponsePluginConfiguration.nameLabelKey,
-        items: externalExtendedTableConfig?.downloadAsConfig?.items || defaultRawResponsePluginConfiguration.items
+        nameLabelKey: externalExtendedResponseConfig?.downloadAsConfig?.nameLabelKey || defaultRawResponsePluginConfiguration.nameLabelKey,
+        items: externalExtendedResponseConfig?.downloadAsConfig?.items || defaultRawResponsePluginConfiguration.items
       }
     };
-    pluginsConfigurations.set('response', configuration);
+    pluginsConfigurations.set('extended_response', configuration);
   }
 
   // @ts-ignore

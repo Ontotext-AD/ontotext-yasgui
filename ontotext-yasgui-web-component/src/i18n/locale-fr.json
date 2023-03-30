@@ -148,6 +148,7 @@
   "yasr.plugin.table.table_filter.input.placeholder": "Filtrer les résultats des requêtes",
   "yasr.plugin.extended_boolean.true": "OUI",
   "yasr.plugin.extended_boolean.false": "NON",
+  "yasr.plugin.no_compatible.message": " ",
   "yasqe.actions.save_query.button.tooltip": "Create saved query",
   "yasqe.actions.save_query.dialog.title": "Create New Saved Query",
   "yasqe.actions.save_query.dialog.query.label": "Create your sample query",

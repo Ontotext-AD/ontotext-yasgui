@@ -36,7 +36,7 @@ describe('Download as', () => {
     });
 
     it('should be visible if there are results', () => {
-      // When execute a query witch returns results.
+      // When execute a query which returns results.
       YasqeSteps.executeQuery();
 
       // Then "Download as" dropdown should be visible.
@@ -46,7 +46,7 @@ describe('Download as', () => {
     });
 
     it('should icon be visible when screen is small', () => {
-      // When execute a query witch returns results.
+      // When execute a query which returns results.
       YasqeSteps.executeQuery();
       // And screen is less than 768px
       cy.viewport(767, 750);
@@ -62,7 +62,7 @@ describe('Download as', () => {
     it('should not exist when is turned off in configuration', () => {
       // When visit a page with ontotext-yasgui component in it which is configured to turnoff download as dropdown.
       DownloadAsPageSteps.turnOffDownloadAsDropdown();
-      // and execute a query witch returns results.
+      // and execute a query which returns results.
       YasqeSteps.executeQuery();
 
       // Then "Download as" dropdown should not exist.
@@ -71,7 +71,7 @@ describe('Download as', () => {
   });
 
   it('Should emit "downloadAs" event with value the selected of selected option, current plugin name, and last executed query.', () => {
-    // When execute a query witch returns results.
+    // When execute a query which returns results.
     YasqeSteps.executeQuery();
     // And select an option of "Download as" button.
     DownloadAsPageSteps.openDownloadAsDropdown();
@@ -88,11 +88,11 @@ describe('Download as', () => {
     DownloadAsPageSteps.openDownloadAsDropdown();
     DownloadAsPageSteps.downloadAsJSON();
     // Then I expect a download event to be fired with "Raw Response" plugin name
-    DownloadAsPageSteps.getDownloadAsEventElement().contains('{"TYPE":"downloadAs","payload":{"value":"application/sparql-results+json","pluginName":"response","query":"select * where { \\n ?s ?p ?o . \\n } limit 100","infer":true,"sameAs":true}}');
+    DownloadAsPageSteps.getDownloadAsEventElement().contains('{"TYPE":"downloadAs","payload":{"value":"application/sparql-results+json","pluginName":"extended_response","query":"select * where { \\n ?s ?p ?o . \\n } limit 100","infer":true,"sameAs":true}}');
   });
 
   it('Should emit "downloadAs" event with last executed query', () => {
-    // When execute a query witch returns results.
+    // When execute a query which returns results.
     YasqeSteps.executeQuery();
     // And select an option of "Download as" button.
     DownloadAsPageSteps.openDownloadAsDropdown();
@@ -127,7 +127,7 @@ describe('Download as', () => {
   });
 
   it('Should "Download as" dropdown has more than options when "Table" plugin is selected', () => {
-    // When execute a query witch returns results.
+    // When execute a query which returns results.
     YasqeSteps.executeQuery();
     // And extended table plugin is selected.
     YasrSteps.switchToExtendedTablePlugin();
@@ -141,7 +141,7 @@ describe('Download as', () => {
   it('Should "Download as" dropdown be configured by external configuration', () => {
     // When extended table_plugin is configured to shows only 3 results.
     DownloadAsPageSteps.configWithExternalConfiguration();
-    // And execute a query witch returns results.
+    // And execute a query which returns results.
     YasqeSteps.executeQuery();
     // And extended_table plugin is selected.
     YasrSteps.switchToExtendedTablePlugin();

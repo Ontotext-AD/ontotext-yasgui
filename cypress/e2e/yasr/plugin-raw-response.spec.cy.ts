@@ -34,7 +34,7 @@ describe('Plugin: Raw response', () => {
   it('should be able to download response in two formats', () => {
     // When I open the raw response tab
     YasrSteps.openRawResponseTab();
-    // When execute a query witch returns results.
+    // When execute a query which returns results.
     YasqeSteps.executeQuery();
     // And dropdown is opened.
     DownloadAsPageSteps.openDownloadAsDropdown();
