@@ -169,7 +169,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnRunQueryShortcut();
 
       // Then I expect the query to be executed.
-      YasrSteps.getResults().should('have.length', 75);
+      YasrSteps.getTableResults().should('have.length', 75);
     });
 
     it('should trigger "CREATE_TAB" action', () => {
@@ -244,7 +244,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnExplainPlanQueryShortcut();
 
       // Then I expect "Create New Saved Query" to be visible.
-      YasrSteps.getResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
+      YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
     });
   });
 });

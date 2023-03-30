@@ -84,5 +84,5 @@ function openNewTab(tabIndex: number, expectedTabsCount: number) {
   YasguiSteps.getTabs().should('have.length', expectedTabsCount);
   // Do this check just for a bit of delay before closing the tab
   YasqeSteps.executeQuery(tabIndex);
-  YasrSteps.getResults(tabIndex).should('have.length', 6);
+  YasrSteps.getTableResults(tabIndex).should('have.length', 6);
 }

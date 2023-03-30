@@ -258,7 +258,7 @@ describe('Plugin: Table', () => {
         YasqeSteps.setQueryInEditor(QueryStubs.BASE_TRIPLE_QUERY);
         YasqeSteps.executeQuery();
         // Then I expect to have 49 results
-        YasrSteps.getResults().should('have.length', 10);
+        YasrSteps.getTableResults().should('have.length', 10);
 
         // Then I expect results to be formatted as triple.
         YasrSteps.getTriple(1, 0).contains('ontogen:page_1-row_2-column_1');

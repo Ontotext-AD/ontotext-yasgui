@@ -1,48 +1,48 @@
 export class YasguiSteps {
-    static getYasguiTag() {
-        return cy.get('ontotext-yasgui');
-    }
+  static getYasguiTag() {
+    return cy.get('ontotext-yasgui');
+  }
 
-    static getYasgui() {
-        return cy.get('.yasgui');
-    }
+  static getYasgui() {
+    return cy.get('.yasgui');
+  }
 
-    static getTabs() {
-        return cy.get('.tab');
-    }
+  static getTabs() {
+    return cy.get('.tab');
+  }
 
-    static getCurrentTab() {
-        return cy.get('.tab.active');
-    }
+  static getCurrentTab() {
+    return cy.get('.tab.active');
+  }
 
-    static getCurrentTabTitle() {
-        return this.getCurrentTab().find('[role=tab] > span');
-    }
+  static getCurrentTabTitle() {
+    return this.getCurrentTab().find('[role=tab] > span');
+  }
 
-    static openANewTab() {
-        cy.get('button.addTab').click();
-    }
+  static openANewTab() {
+    cy.get('button.addTab').click();
+  }
 
-    static openTab(index: number) {
-        this.getTabs().eq(index).click();
-    }
+  static openTab(index: number) {
+    this.getTabs().eq(index).click();
+  }
 
-    static closeTab(index: number) {
-        this.getTabs().eq(index).find('.closeTab').click();
-    }
+  static closeTab(index: number) {
+    this.getTabs().eq(index).find('.closeTab').click();
+  }
 
-    static openTabContextMenu(index: number) {
-      this.getTabs().eq(index).rightclick();
-      return TabContextMenu.getContextMenu();
-    }
+  static openTabContextMenu(index: number) {
+    this.getTabs().eq(index).rightclick();
+    return TabContextMenu.getContextMenu();
+  }
 
-    static isVerticalOrientation() {
-        this.getYasguiTag().should('have.class', 'orientation-vertical');
-    }
+  static isVerticalOrientation() {
+    this.getYasguiTag().should('have.class', 'orientation-vertical');
+  }
 
-    static isHorizontalOrientation() {
-        this.getYasguiTag().should('have.class', 'orientation-horizontal');
-    }
+  static isHorizontalOrientation() {
+    this.getYasguiTag().should('have.class', 'orientation-horizontal');
+  }
 }
 
 export class TabContextMenu {

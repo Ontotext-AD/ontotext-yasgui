@@ -94,7 +94,7 @@ describe('Yasr result pagination', () => {
       // I expect two pages to be shown in pagination.
       PaginationSteps.getPageNumberButtons().should('have.length', 2);
       // and first page to have 10 results
-      YasrSteps.getResults().should('have.length', 10);
+      YasrSteps.getTableResults().should('have.length', 10);
       // and results to be from the first page
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_1-row_1-column_2');
 
@@ -103,7 +103,7 @@ describe('Yasr result pagination', () => {
       PaginationSteps.waitPageSelected(2);
 
       // Then I expect second page to have only one result.
-      YasrSteps.getResults().should('have.length', 1);
+      YasrSteps.getTableResults().should('have.length', 1);
       // and the result to be from the second page
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_2-row_1-column_2');
     });
@@ -122,7 +122,7 @@ describe('Yasr result pagination', () => {
       // Then I expect two pages to be shown in pagination.
       PaginationSteps.getPageNumberButtons().should('have.length', 2);
       // and first page to have 10 results
-      YasrSteps.getResults().should('have.length', 10);
+      YasrSteps.getTableResults().should('have.length', 10);
       // and results to be from the first page
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_1-row_1-column_2');
 
@@ -131,7 +131,7 @@ describe('Yasr result pagination', () => {
       PaginationSteps.waitPageSelected(2);
 
       // Then I expect second page to have two results.
-      YasrSteps.getResults().should('have.length', 2);
+      YasrSteps.getTableResults().should('have.length', 2);
       // and the result to be from the second page
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_2-row_1-column_2');
 
@@ -140,7 +140,7 @@ describe('Yasr result pagination', () => {
       PaginationSteps.waitPageSelected(1);
 
       // Then I expect second page to have two results.
-      YasrSteps.getResults().should('have.length', 10);
+      YasrSteps.getTableResults().should('have.length', 10);
       // and the result to be from the second page
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_1-row_1-column_2');
     });

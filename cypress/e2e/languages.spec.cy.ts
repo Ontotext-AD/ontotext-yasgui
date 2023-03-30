@@ -79,7 +79,7 @@ describe('Languages', () => {
       YasqeSteps.executeQuery();
 
       // Then I expect to see messages in table plugin be translated to English language.
-      YasrSteps.getResults().should('be.visible');
+      YasrSteps.getTableResults().should('be.visible');
       YasrSteps.getResultFilter().invoke('attr', 'placeholder').should('contain', 'Filter query results');
 
       // When change the language to be French
