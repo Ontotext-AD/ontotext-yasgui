@@ -114,7 +114,7 @@ export class YasrSteps {
   }
 
   static switchToRawResponsePlugin(yasrIndex = 0) {
-    YasrSteps.switchToPlugin('response', yasrIndex);
+    YasrSteps.switchToPlugin('extended_response', yasrIndex);
   }
 
   static getPagination(yasrIndex = 0) {
@@ -126,7 +126,7 @@ export class YasrSteps {
   }
 
   static openRawResponseTab() {
-    this.getYasr().find('.select_response').click();
+    this.getYasr().find('.select_extended_response').click();
   }
 
 

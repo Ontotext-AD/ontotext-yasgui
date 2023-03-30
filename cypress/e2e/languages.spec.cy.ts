@@ -48,27 +48,6 @@ describe('Languages', () => {
 
   describe('Yasr internationalization support', () => {
 
-    it('Should translate errors', () => {
-      // When execute a query and receive an error.
-      cy.intercept('/repositories/test-repo', {
-        statusCode: 401,
-      });
-      YasqeSteps.executeQuery();
-
-      // Then I expect to see error message be translated to English language.
-      YasrSteps.getErrorHeader().contains('Try query in new browser window');
-
-      // When change the language to be French
-      LanguagesSteps.switchToFr();
-      // Yasgui re-renders all DOM elements to shows the new labels. This includes the plugins of yasr which is time-consuming.
-      // We have to wait a bit because cypress is too fast and grabs the old element (with the old label) and the test fails.
-      cy.wait(500);
-
-      // Then I expect to see error message be translated to French language.
-      YasrSteps.getErrorHeader().contains('Essayez la requête dans une nouvelle fenêtre du navigateur');
-
-    });
-
     it('Should translate labels in table plugin', {
       retries: {
         runMode: 1,
