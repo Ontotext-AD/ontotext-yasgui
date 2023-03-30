@@ -63,14 +63,16 @@ export class ExtendedYasr extends Yasr {
     }
   }
 
-  updatePluginSelectorNames() {
-    if (this.yasqe.isAskQuery()) {
-      // hides plugins buttons if "query" mode query had been executed.
+  draw() {
+    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery() || this.results?.hasError()) {
       this.hidePluginElementVisibility();
-      return;
+    } else {
+      this.showPluginElementVisibility();
     }
-    // shows plugins buttons if "update" mode query had been executed.
-    this.showPluginElementVisibility();
+    super.draw();
+  }
+
+  updatePluginSelectorNames() {
     super.updatePluginSelectorNames();
     if (this.downloadAsElement) {
       this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
@@ -305,6 +307,13 @@ export class ExtendedYasr extends Yasr {
 
   updateResponseInfo() {
     const responseInfoElement = this.getResponseInfoElement();
+
+    removeClass(responseInfoElement, "hidden");
+    if (this.results?.hasError()) {
+      addClass(responseInfoElement, "hidden");
+      return;
+    }
+
     const responseTime = this.results?.getResponseTime();
     const queryStartedTime = this.results?.getQueryStartedTime();
 
@@ -356,7 +365,7 @@ export class ExtendedYasr extends Yasr {
     );
   }
 
-  private getResultTimeMessage(responseTime: number, queryFinishedTime: number): string {
+  public getResultTimeMessage(responseTime: number, queryFinishedTime: number): string {
     const params = [
       {
         key: "seconds",

@@ -48,7 +48,7 @@ export class Yasr extends EventEmitter {
   private selectedPlugin: string | undefined;
 
   protected readonly translationService: TranslationService;
-  protected readonly yasqe: Yasqe;
+  readonly yasqe: Yasqe;
 
   // Utils
   public utils = { addScript: addScript, addCSS: addCss, sanitize: sanitize };
@@ -186,7 +186,7 @@ export class Yasr extends EventEmitter {
   public draw() {
     this.updateHelpButton();
     this.updateResponseInfo();
-    if (!this.results || this.yasqe.isUpdateQuery()) return;
+    if (!this.results) return;
     this.updatePluginSelectorNames();
     const compatiblePlugins = this.getCompatiblePlugins();
     if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
@@ -231,7 +231,7 @@ export class Yasr extends EventEmitter {
         (_e) => console.error
       );
     } else {
-      this.resultsEl.textContent = "cannot render result";
+      this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
       this.updateExportHeaders();
       this.updatePluginSelectors(compatiblePlugins);
     }
@@ -471,6 +471,9 @@ export class Yasr extends EventEmitter {
   }
 
   updatePluginSelectorNames() {
+    if (!this.pluginSelectorsEl) {
+      return;
+    }
     const pluginOrder = this.config.pluginOrder;
     for (const pluginName of pluginOrder) {
       if (!this.config.plugins[pluginName] || !this.config.plugins[pluginName].enabled) {
@@ -684,9 +687,11 @@ import { TranslationService } from "@triply/yasgui-utils";
 import Yasqe from "@triply/yasqe";
 import ExtendedBoolean from "./plugins/boolean/extended-boolean";
 import ExtendedResponse from "./plugins/response/extended-response";
+import ExtendedError from "./plugins/error/extended-error";
 
 Yasr.registerPlugin("extended_boolean", ExtendedBoolean as any);
-Yasr.registerPlugin("response", ExtendedResponse as any);
+Yasr.registerPlugin("extended_response", ExtendedResponse as any);
+Yasr.registerPlugin("extended_error", ExtendedError as any);
 Yasr.registerPlugin("error", YasrPluginError.default as any);
 Yasr.registerPlugin("extended_table", ExtendedTable as any);
 
