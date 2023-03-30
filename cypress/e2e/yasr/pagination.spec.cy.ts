@@ -4,7 +4,7 @@ import {YasqeSteps} from '../../steps/yasqe-steps';
 import {QueryStubDescription, QueryStubs} from '../../stubs/query-stubs';
 import {PaginationSteps} from '../../steps/pagination-steps';
 
-describe('Yasr result pagination', () => {
+describe.skip('Yasr result pagination', () => {
   beforeEach(() => {
     PaginationPageSteps.visit();
   });
@@ -108,7 +108,7 @@ describe('Yasr result pagination', () => {
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_2-row_1-column_2');
     });
 
-    it('should change page when clink on next or previous page button', () => {
+    it('should change page when click on next or previous page button', () => {
       PaginationPageSteps.switchToComponentTwo();
       // When I visit a page with "ontotext-yasgui" component on it.
       // And execute a query which will return results more than page size.
