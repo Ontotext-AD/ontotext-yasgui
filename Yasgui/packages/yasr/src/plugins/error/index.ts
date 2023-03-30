@@ -2,15 +2,15 @@
  * Make sure not to include any deps from our main index file. That way, we can easily publish the publin as standalone build
  */
 import { Plugin } from "../";
-import Yasr from "../../";
 import { addClass } from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
+import { ExtendedYasr } from "../../extended-yasr";
 require("./index.scss");
 
 export default class Error implements Plugin<never> {
-  private yasr: Yasr;
+  protected yasr: ExtendedYasr;
   private readonly translationService: TranslationService;
-  constructor(yasr: Yasr) {
+  constructor(yasr: ExtendedYasr) {
     this.yasr = yasr;
     this.translationService = this.yasr.config.translationService;
   }

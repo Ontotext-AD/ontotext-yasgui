@@ -141,34 +141,34 @@ export class Tab extends EventEmitter {
     this.yasgui.selectTabId(this.persistentJson.id);
   }
   public close(confirm = true) {
-      const closeTab = () => {
-          if (this.yasqe) this.yasqe.abortQuery();
-          if (this.yasgui.getTab() === this) {
-              //it's the active tab
-              //first select other tab
-              const tabs = this.yasgui.persistentConfig.getTabs();
-              const i = tabs.indexOf(this.persistentJson.id);
-              if (i > -1) {
-                  this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
-              }
-          }
-          this.yasgui._removePanel(this.rootEl);
-          this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
-          this.yasgui.emit("tabClose", this.yasgui, this);
-          this.emit("close", this);
-          this.yasgui.tabElements.get(this.persistentJson.id).delete();
-          delete this.yasgui._tabs[this.persistentJson.id];
-      };
-      if (confirm) {
-          new CloseTabConfirmation(
-              this.yasgui.config.translationService,
-              this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
-              this.yasgui.config.translationService.translate('yasgui.tab_list.close_tab.confirmation.message'),
-              closeTab
-          ).open();
-      } else {
-          closeTab();
+    const closeTab = () => {
+      if (this.yasqe) this.yasqe.abortQuery();
+      if (this.yasgui.getTab() === this) {
+        //it's the active tab
+        //first select other tab
+        const tabs = this.yasgui.persistentConfig.getTabs();
+        const i = tabs.indexOf(this.persistentJson.id);
+        if (i > -1) {
+          this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
+        }
       }
+      this.yasgui._removePanel(this.rootEl);
+      this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
+      this.yasgui.emit("tabClose", this.yasgui, this);
+      this.emit("close", this);
+      this.yasgui.tabElements.get(this.persistentJson.id).delete();
+      delete this.yasgui._tabs[this.persistentJson.id];
+    };
+    if (confirm) {
+      new CloseTabConfirmation(
+        this.yasgui.config.translationService,
+        this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.title"),
+        this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.message"),
+        closeTab
+      ).open();
+    } else {
+      closeTab();
+    }
   }
   public getQuery() {
     if (!this.yasqe) {
@@ -506,13 +506,14 @@ export class Tab extends EventEmitter {
     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
     this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages);
     if (!this.yasr.results) return;
+    const responseAsStoreObject = this.yasr.results.getAsStoreObject(this.yasgui.config.yasr.maxPersistentResponseSize);
     if (!this.yasr.results.hasError()) {
-      this.persistentJson.yasr.response = this.yasr.results.getAsStoreObject(
-        this.yasgui.config.yasr.maxPersistentResponseSize
-      );
+      this.persistentJson.yasr.response = responseAsStoreObject;
     } else {
-      // Don't persist if there is an error and remove the previous result
-      this.persistentJson.yasr.response = undefined;
+      if (responseAsStoreObject && responseAsStoreObject.error) {
+        responseAsStoreObject.error.text = responseAsStoreObject.error.text.replace(/^([^: ]+: )+/, "");
+      }
+      this.persistentJson.yasr.response = responseAsStoreObject;
     }
     this.emit("change", this, this.persistentJson);
   };

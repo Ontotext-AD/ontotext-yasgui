@@ -2,6 +2,16 @@ import Response from "./index";
 import { addClass } from "@triply/yasgui-utils";
 
 export default class ExtendedResponse extends Response {
+  priority = 1;
+
+  canHandleResults() {
+    if (!this.yasr.results || !this.yasr.results.getOriginalResponseAsString || this.yasr.yasqe.isUpdateQuery()) {
+      return false;
+    }
+
+    return !this.yasr.results.hasError();
+  }
+
     // Function is overriden and download button is removed from the view because we already has one.
     showLess(setValue = true) {
         if (!this.cm) return;
