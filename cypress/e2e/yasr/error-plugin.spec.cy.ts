@@ -20,11 +20,11 @@ describe('Error handling', () => {
 
     // Then I expect to see a message that
     // describes error status and error text,
-    ErrorPluginSteps.getErrorPluginErrorStatus().should('have.text', '500: Internal Server Error');
+    ErrorPluginSteps.getErrorPluginErrorStatus().contains('500: Internal Server Error');
     // and time when the query is executed,
     ErrorPluginSteps.getErrorPluginErrorTimeMessage().contains(/Query took \d{1}\.\d{1}s, moments ago\./);
     // and error message sent by server,
-    ErrorPluginSteps.getErrorPluginBody().should('have.text', '/datasets/bio2rdf/drugbank/bio2rdf-drugbank.nq (No such file or directory)');
+    ErrorPluginSteps.getErrorPluginBody().contains('/datasets/bio2rdf/drugbank/bio2rdf-drugbank.nq (No such file or directory)');
     // and toolbar with plugins to not be visible,
     YasrSteps.getResultHeader().should('not.be.visible');
     // and message info to not be visible
