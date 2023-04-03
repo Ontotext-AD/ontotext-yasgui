@@ -43,6 +43,7 @@ namespace Parser {
     totalElements?: number;
     countAffectedRepositoryStatements?: number;
     hasMorePages?: boolean;
+    possibleElementsCount?: number;
   }
   export type PostProcessBinding = (binding: Binding) => Binding;
 }
@@ -76,13 +77,14 @@ class Parser {
   private executionTime: number | undefined;
   private queryStartedTime: number | undefined;
   private countAffectedRepositoryStatements?: number | undefined;
-
+  private possibleElementsCount?: number;
   private readonly hasMorePages?: boolean;
   constructor(
     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
     executionTime?: number,
     queryStartedTime?: number,
-    hasMorePages?: boolean
+    hasMorePages?: boolean,
+    possibleElementsCount?: number
   ) {
     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
     if (executionTime) this.executionTime = executionTime; // Parameter has priority
@@ -93,6 +95,7 @@ class Parser {
       this.queryStartedTime = responseOrObject.queryStartedTime;
     }
     this.hasMorePages = hasMorePages;
+    this.possibleElementsCount = possibleElementsCount;
 
     this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
 
@@ -191,6 +194,10 @@ class Parser {
 
   public getHasMorePages() {
     return this.hasMorePages;
+  }
+
+  public getPossibleElementsCount(): number | undefined {
+    return this.possibleElementsCount;
   }
 
   public setCountAffectedRepositoryStatements(countAffectedRepositoryStatements: number) {
@@ -326,6 +333,7 @@ class Parser {
         executionTime: this.getResponseTime(),
         queryStartedTime: this.getQueryStartedTime(),
         hasMorePages: this.getHasMorePages(),
+        possibleElementsCount: this.getPossibleElementsCount(),
         countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
       };
     }
@@ -342,6 +350,7 @@ class Parser {
         executionTime: this.getResponseTime(),
         queryStartedTime: this.getQueryStartedTime(),
         hasMorePages: this.getHasMorePages(),
+        possibleElementsCount: this.getPossibleElementsCount(),
         countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
       };
     }

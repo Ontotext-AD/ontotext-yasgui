@@ -397,7 +397,7 @@ export class Tab extends EventEmitter {
     this.yasqe.on("autocompletionClose", this.handleAutocompletionClose);
 
     this.yasqe.on("queryResponse", this.handleQueryResponse);
-    this.yasqe.on("totalElementChanged", this.handleTotalElementChanged);
+    this.yasqe.on("totalElementsChanged", this.handleTotalElementsChanged);
     this.yasqe.on("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
     this.yasqe.on("openNewTab", this.handleOpenNewTab);
     this.yasqe.on("openNextTab", this.handleOpenNextTab);
@@ -413,7 +413,7 @@ export class Tab extends EventEmitter {
     this.yasqe?.off("autocompletionShown", this.handleAutocompletionShown);
     this.yasqe?.off("autocompletionClose", this.handleAutocompletionClose);
     this.yasqe?.off("queryResponse", this.handleQueryResponse);
-    this.yasqe?.off("totalElementChanged", this.handleTotalElementChanged);
+    this.yasqe?.off("totalElementsChanged", this.handleTotalElementsChanged);
     this.yasqe?.off("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
@@ -500,11 +500,12 @@ export class Tab extends EventEmitter {
     response: any,
     duration: number,
     queryStartedTime: number,
-    hasMorePages?: boolean
+    hasMorePages?: boolean,
+    possibleElementsCount?: number
   ) => {
     this.emit("queryResponse", this);
     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
-    this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages);
+    this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages, possibleElementsCount);
     if (!this.yasr.results) return;
     const responseAsStoreObject = this.yasr.results.getAsStoreObject(this.yasgui.config.yasr.maxPersistentResponseSize);
     if (!this.yasr.results.hasError()) {
@@ -518,7 +519,7 @@ export class Tab extends EventEmitter {
     this.emit("change", this, this.persistentJson);
   };
 
-  handleTotalElementChanged = (_yasqe: Yasqe, totalElements = -1) => {
+  handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {
     if (this.yasr?.results) {
       const response = this.persistentJson.yasr.response;
       if (response) {

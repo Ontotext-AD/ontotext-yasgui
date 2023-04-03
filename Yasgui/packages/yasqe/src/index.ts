@@ -32,8 +32,8 @@ export interface Yasqe {
     eventName: "queryResponse",
     handler: (instance: Yasqe, req: superagent.SuperAgentRequest, duration: number, queryStartedTime: number) => void
   ): void;
-  on(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
-  off(event: "totalElementChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
+  on(event: "totalElementsChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
+  off(event: "totalElementsChanged", handler: (instance: Yasqe, totalElements: number) => void): void;
   on(
     event: "countAffectedRepositoryStatementsChanged",
     handler: (instance: Yasqe, totalElements: number) => void

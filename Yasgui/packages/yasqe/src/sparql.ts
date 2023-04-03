@@ -118,24 +118,36 @@ export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConf
     yasqe.emit("query", req, populatedConfig);
     return await req.then(
       (result) => {
-        let hasMorePage = false;
-        if (!yasqe.isUpdateQuery() && !yasqe.isAskQuery() && yasqe.config.paginationOn) {
-          // If client hadn't set total Element we will execute count query.
-          if (!result.body.totalElements) {
-            executeCountQuery(yasqe, config);
-          } else {
-            yasqe.emit("totalElementChanged", parseInt(result.body.totalElements));
-          }
+        let hasMorePages = false;
+        let totalElements;
+        if (!isNaN(result.body.totalElements)) {
+          totalElements = parseInt(result.body.totalElements);
+        }
+        let possibleElementsCount;
+
+        // if response contains total elements then don't need to execute count Query.
+        // Also count query is skipped for update and ask query.
+        if (!totalElements && !yasqe.isUpdateQuery() && !yasqe.isAskQuery() && yasqe.config.paginationOn) {
           const pageSize = yasqe.getPageSize();
-          if (pageSize) {
-            hasMorePage = result.body.results.bindings.length > pageSize;
-            if (hasMorePage) {
+          const pageNumber = yasqe.getPageNumber();
+          if (pageSize && pageNumber) {
+            hasMorePages = result.body.results.bindings.length > pageSize;
+            possibleElementsCount = pageSize * (pageNumber - 1) + result.body.results.bindings.length;
+            if (hasMorePages) {
               result.body.results.bindings.pop();
+              executeCountQuery(yasqe, config);
+            } else {
+              totalElements = possibleElementsCount;
             }
           }
         }
-        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart, hasMorePage);
+
+        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart, hasMorePages, possibleElementsCount);
         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
+        if (totalElements) {
+          yasqe.emit("totalElementsChanged", totalElements);
+          yasqe.emit("totalElementsPersisted", totalElements);
+        }
         return result.body;
       },
       (e) => {
@@ -175,8 +187,8 @@ export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void 
   req.then(
     (countResponse) => {
       yasqe.emit("countQueryResponse", countResponse);
-      yasqe.emit("totalElementChanged", parseInt(countResponse.body.totalElements));
-      yasqe.emit("countQueryReady", parseInt(countResponse.body.totalElements));
+      yasqe.emit("totalElementsChanged", parseInt(countResponse.body.totalElements));
+      yasqe.emit("totalElementsPersisted", parseInt(countResponse.body.totalElements));
     },
     (error) => {
       // Nothing to do. In tab persistence "totalElements" will stay undefined.
