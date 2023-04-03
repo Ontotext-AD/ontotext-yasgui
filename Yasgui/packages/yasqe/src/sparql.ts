@@ -120,7 +120,7 @@ export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConf
       (result) => {
         let hasMorePages = false;
         let totalElements;
-        if (!isNaN(result.body.totalElements)) {
+        if (result.body && !isNaN(result.body.totalElements)) {
           totalElements = parseInt(result.body.totalElements);
         }
         let possibleElementsCount;
