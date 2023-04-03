@@ -24,7 +24,7 @@ export class ExtendedYasr extends Yasr {
     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
     if (yasqe.config.paginationOn) {
       this.yasqe.on("queryResponse", this.updateQueryResultPaginationElementHandler.bind(this));
-      this.yasqe.on("countQueryReady", this.updateQueryResultPaginationElementHandler.bind(this));
+      this.yasqe.on("totalElementsPersisted", this.updateQueryResultPaginationElementHandler.bind(this));
       this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
     }
     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
@@ -299,8 +299,8 @@ export class ExtendedYasr extends Yasr {
     let totalResult = "";
     if (totalElements) {
       totalResult = this.getTotalResultsMessage(totalElements) + ".";
-    } else if (this.persistentJson?.yasr.response?.hasMorePages) {
-      totalResult = this.getHasMoreResultsMessage(to + 1) + ".";
+    } else if (this.persistentJson?.yasr.response?.possibleElementsCount) {
+      totalResult = this.getHasMoreResultsMessage(this.persistentJson.yasr.response.possibleElementsCount) + ".";
     }
     return `${fromToMessage} ${totalResult}`;
   }

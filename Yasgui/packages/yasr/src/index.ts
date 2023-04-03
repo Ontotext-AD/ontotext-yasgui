@@ -599,9 +599,15 @@ export class Yasr extends EventEmitter {
       }
     }
   }
-  public setResponse(data: any, duration?: number, queryStartedTime?: number, hasMorePages?: boolean) {
+  public setResponse(
+    data: any,
+    duration?: number,
+    queryStartedTime?: number,
+    hasMorePages?: boolean,
+    possibleElementsCount?: number
+  ) {
     if (!data) return;
-    this.results = new Parser(data, duration, queryStartedTime, hasMorePages);
+    this.results = new Parser(data, duration, queryStartedTime, hasMorePages, possibleElementsCount);
 
     this.draw();
 
