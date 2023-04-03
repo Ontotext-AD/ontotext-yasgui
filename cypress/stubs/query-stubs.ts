@@ -37,6 +37,12 @@ export class QueryStubs {
     }).as('loadQueryErrorResponse');
   }
 
+  static stubsUpdateResult() {
+    cy.intercept('/repositories/test-repo', {
+      statusCode: 200,
+    }).as('updaeResponse');
+  }
+
   static stubQueryResults(queryDescription: QueryStubDescription) {
     const resultType = queryDescription.resultType;
     const pageSize = queryDescription.pageSize;
