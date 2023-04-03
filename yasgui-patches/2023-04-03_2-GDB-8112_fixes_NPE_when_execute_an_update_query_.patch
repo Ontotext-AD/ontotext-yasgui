@@ -1,0 +1,19 @@
+Subject: [PATCH] Fixes NPE when execute an update query.
+---
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 53f80b0fd916934bf982ec7882e086b4a9fe1bc4)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision ce2cc7c28ee5dad47ac8a263061653e3f2d78707)
+@@ -120,7 +120,7 @@
+       (result) => {
+         let hasMorePages = false;
+         let totalElements;
+-        if (!isNaN(result.body.totalElements)) {
++        if (result.body && !isNaN(result.body.totalElements)) {
+           totalElements = parseInt(result.body.totalElements);
+         }
+         let possibleElementsCount;
