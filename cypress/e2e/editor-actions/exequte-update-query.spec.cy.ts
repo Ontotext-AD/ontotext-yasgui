@@ -1,6 +1,7 @@
 import {YasqeSteps} from '../../steps/yasqe-steps';
 import {YasrTablePluginSteps} from '../../steps/yasr-table-plugin-steps';
 import {ExecuteUpdateQueryPageSteps} from '../../steps/pages/execute-update-query-page-steps';
+import {QueryStubs} from '../../stubs/query-stubs';
 
 describe('Execute of update query', () => {
 
@@ -11,6 +12,7 @@ describe('Execute of update query', () => {
     it('should display properly result message info when no one statement is added.', () => {
       // When I execute insert query which don't change repository statements
       YasqeSteps.clearEditor();
+      QueryStubs.stubsUpdateResult();
       YasqeSteps.writeInEditor('INSERT DATA {<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name".\n<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name two".\n}')
       YasqeSteps.executeQuery();
 
@@ -22,6 +24,7 @@ describe('Execute of update query', () => {
     // When I execute insert query which adds 2 results
     ExecuteUpdateQueryPageSteps.setupTwoMoreStatementsAffected();
     YasqeSteps.clearEditor();
+    QueryStubs.stubsUpdateResult();
     YasqeSteps.writeInEditor('INSERT DATA {<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name".\n<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name two".\n}')
     YasqeSteps.executeQuery();
 
@@ -33,6 +36,7 @@ describe('Execute of update query', () => {
     // When I execute delete query which removes 2 results
     ExecuteUpdateQueryPageSteps.setupTwoFewerStatementsAffected();
     YasqeSteps.clearEditor();
+    QueryStubs.stubsUpdateResult();
     YasqeSteps.writeInEditor('DELETE DATA {<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name".\n<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name two".\n}')
     YasqeSteps.executeQuery();
 
