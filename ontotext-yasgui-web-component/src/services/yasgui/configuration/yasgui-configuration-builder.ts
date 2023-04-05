@@ -112,6 +112,10 @@ export class YasguiConfigurationBuilder {
     };
     config.yasguiConfig.yasqe.showQueryButton = true;
 
+    if (externalConfiguration.onQueryAborted instanceof Function) {
+      config.yasguiConfig.yasqe.onQueryAborted = externalConfiguration.onQueryAborted;
+    }
+
     // Register autocompleters
     this.registerCustomAutocompleters(config);
 
