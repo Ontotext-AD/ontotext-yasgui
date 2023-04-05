@@ -1,0 +1,133 @@
+Subject: [PATCH] GDB-8115: Implement abort query button
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 2b51bf3ddb8f9b7cfaa72890d998588f4eff6aec)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision b864c50373e01430770378027d42e6cd95462436)
+@@ -85,6 +85,10 @@
+   public superagent = superagent;
+ 
+   private keyboardShortcutsButton: HTMLElement | undefined;
++
++  private abortQueryButton: HTMLElement | undefined;
++  private showAbortQueryButton = false;
++  private isQueryAborted = false;
+   private infer?: boolean;
+   private sameAs?: boolean;
+   private pageSize?: number;
+@@ -150,6 +154,7 @@
+ 
+     if (this.config.resizeable) this.drawResizer();
+     this.drawKeyboardShortcutsButton();
++    this.drawAbortQueryButton();
+     if (this.config.collapsePrefixesOnLoad) this.collapsePrefixes(true);
+     this.registerEventListeners();
+   }
+@@ -204,11 +209,13 @@
+   private handleQuery(_yasqe: Yasqe, req: superagent.SuperAgentRequest) {
+     this.req = req;
+     this.updateQueryButton();
++    this.queryStateChanged(true, false);
+   }
+   private handleQueryResponse(_yasqe: Yasqe, _response: superagent.SuperAgentRequest, duration: number) {
+     this.lastQueryDuration = duration;
+     this.req = undefined;
+     this.updateQueryButton();
++    this.queryStateChanged(false, false);
+   }
+   private handleQueryAbort(_yasqe: Yasqe, _req: superagent.SuperAgentRequest) {
+     this.req = undefined;
+@@ -492,6 +499,73 @@
+       (this.keyboardShortcutsButton as any).items = [...this.config.keyboardShortcutDescriptions];
+     }
+   }
++
++  private drawAbortQueryButton() {
++    if (!(this.config.onQueryAborted instanceof Function)) {
++      return;
++    }
++
++    const yasqeFooterButtons = document.createElement("div");
++    addClass(yasqeFooterButtons, "yasqe-footer-buttons");
++
++    this.abortQueryButton = document.createElement("div");
++    addClass(this.abortQueryButton, "abort-button");
++
++    this.abortQueryButton.onclick = () => {
++      if (this.isQueryAborted) {
++        return;
++      }
++      this.isQueryAborted = true;
++      const req = this.req;
++      this.abortQuery();
++      if (this.config.onQueryAborted instanceof Function) {
++        this.config.onQueryAborted(req).finally(() => this.queryStateChanged(false, false));
++      }
++    };
++
++    const abortButtonTooltip: any = document.createElement("yasgui-tooltip");
++    abortButtonTooltip.placement = "left";
++    abortButtonTooltip.showOnClick = true;
++    abortButtonTooltip.appendChild(this.abortQueryButton);
++
++    yasqeFooterButtons.appendChild(abortButtonTooltip);
++    this.rootEl.appendChild(yasqeFooterButtons);
++    this.updateAbortQueryButton();
++  }
++
++  private queryStateChanged(showAbortQueryButton: boolean, isQueryAborted: boolean) {
++    this.isQueryAborted = isQueryAborted;
++    this.showAbortQueryButton = showAbortQueryButton;
++    this.updateAbortQueryButton();
++  }
++
++  private updateAbortQueryButton() {
++    addClass(this.abortQueryButton, "hidden");
++    if (!this.abortQueryButton || !this.showAbortQueryButton) {
++      return;
++    }
++
++    removeClass(this.abortQueryButton, "hidden");
++
++    let buttonLabel;
++
++    let buttonTooltip;
++    if (this.isQueryAborted) {
++      buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.label");
++      buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.title");
++      addClass(this.abortQueryButton, "disabled");
++    } else {
++      removeClass(this.abortQueryButton, "disabled");
++      buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query.button.label");
++      buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query.button.title");
++    }
++
++    this.abortQueryButton.innerText = buttonLabel;
++
++    const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
++    abortQueryButtonTooltip.dataTooltip = buttonTooltip;
++  }
++
+   private initDrag() {
+     document.documentElement.addEventListener("mousemove", this.doDrag, false);
+     document.documentElement.addEventListener("mouseup", this.stopDrag, false);
+@@ -1066,6 +1140,7 @@
+     if (this.req) {
+       this.req.abort();
+       this.emit("queryAbort", this, this.req);
++      this.updateAbortQueryButton();
+     }
+   }
+   public expandEditor() {
+@@ -1244,6 +1319,7 @@
+   isVirtualRepository: boolean;
+   beforeUpdateQuery: () => Promise<BeforeUpdateQuery>;
+   getRepositoryStatementsCount: () => Promise<number>;
++  onQueryAborted?: (req: superagent.SuperAgentRequest | undefined) => Promise<void>;
+ }
+ 
+ export interface BeforeUpdateQuery {
