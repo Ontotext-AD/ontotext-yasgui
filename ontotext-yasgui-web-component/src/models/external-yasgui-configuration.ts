@@ -220,12 +220,23 @@ export interface ExternalYasguiConfiguration {
    */
   isVirtualRepository?: boolean;
 
-  // This function will be called before the update query be executed. The client can abort execution of query for some reason and can
-  // provide a message or label key for the reason of aborting.
+  /**
+   * This function will be called before the update query be executed. The client can abort execution of query for some reason and can
+   * provide a message or label key for the reason of aborting.
+   */
   beforeUpdateQuery?: () => Promise<BeforeUpdateQueryResult>,
 
-  // This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
-  getRepositoryStatementsCount?: () => Promise<number>
+  /**
+   * This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
+   */
+  getRepositoryStatementsCount?: () => Promise<number>,
+
+  /**
+   * If this function is present, then an "Abort query" button wil be displayed when a query is running. If the  button is clicked then
+   * this function will be invoked after the abort operation was triggered. The button will be visible until "ontotext-yasgui-web-component" client resolve returned promise.
+   * @param req - the running request.
+   */
+  onQueryAborted?: (req) => Promise<void>;
 }
 
 export type AutocompleteLoader = () => any;

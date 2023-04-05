@@ -146,6 +146,13 @@ export interface YasguiConfiguration {
 
       // This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
       getRepositoryStatementsCount: () => Promise<number>;
+
+      /**
+       * If this function is present, then an "Abort query" button wil be displayed when a query is running. If the  button is clicked then
+       * this function will be invoked after the abort operation was triggered. The button will be visible until "ontotext-yasgui-web-component" client resolve returned promise.
+       * @param req - the running request.
+       */
+      onQueryAborted?: (req) => Promise<void>;
     }
     yasr: {
       /**

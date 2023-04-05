@@ -297,4 +297,16 @@ export class YasqeSteps {
       }
     });
   }
+
+  static getAbortQueryButton() {
+    return cy.get('.abort-button');
+  }
+
+  static hoverOverAbortQueryButton() {
+    YasqeSteps.getAbortQueryButton().realHover();
+  }
+
+  static getAbortQueryTooltip() {
+    return YasqeSteps.getAbortQueryButton().parent();
+  }
 }

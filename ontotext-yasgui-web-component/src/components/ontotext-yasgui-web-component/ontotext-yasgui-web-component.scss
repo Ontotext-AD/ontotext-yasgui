@@ -113,6 +113,29 @@
         opacity: .65;
       }
     }
+    .yasqe-footer-buttons {
+      display: flex;
+      justify-content: end;
+      padding-top: 10px;
+      padding-bottom: 10px;
+
+      .abort-button {
+        padding: 8px 16px;
+        color: $color-onto-white;
+        background-color: $color-ontotext-orange;
+        outline: none;
+        border: none;
+      }
+
+      .abort-button.disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+
+      .abort-button:hover:not(.disabled) {
+        cursor: pointer;
+      }
+    }
   }
 
   .yasr {

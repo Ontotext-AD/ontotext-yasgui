@@ -43,6 +43,10 @@ export class YasguiSteps {
   static isHorizontalOrientation() {
     this.getYasguiTag().should('have.class', 'orientation-horizontal');
   }
+
+  static getTooltipRoot() {
+    return cy.get('div[data-tippy-root]');
+  }
 }
 
 export class TabContextMenu {
