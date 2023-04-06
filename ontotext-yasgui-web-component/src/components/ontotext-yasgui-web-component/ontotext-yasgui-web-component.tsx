@@ -491,7 +491,7 @@ export class OntotextYasguiWebComponent {
   }
 
   private onCountQuery(yasqe: Yasqe, request: Request) {
-    this.output.emit(new CountQueryEvent(request, yasqe.getValue(), this.ontotextYasgui.getQueryMode()));
+    this.output.emit(new CountQueryEvent(request, yasqe.getValue(), yasqe.getQueryMode(), yasqe.getQueryType(), yasqe.getPageSize()));
   }
 
   private onCountQueryResponse(_yasqe: Yasqe, countQueryResponse: any) {
@@ -505,7 +505,7 @@ export class OntotextYasguiWebComponent {
 
   // @ts-ignore
   private onQuery(yasqe: Yasqe, request: Request): void {
-    this.output.emit(new QueryEvent(request, yasqe.getValue(), yasqe.getQueryMode()));
+    this.output.emit(new QueryEvent(request, yasqe.getValue(), yasqe.getQueryMode(), yasqe.getQueryType(), yasqe.getPageSize()));
     this.showQueryProgress = true;
   }
 
