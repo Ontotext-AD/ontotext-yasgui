@@ -1,7 +1,8 @@
 import {EventService} from './event-service';
 import {ServiceFactory} from './service-factory';
 import {
-  InternalNotificationMessageEvent, MessageType, NotificationMessageCode, NotificationMessageType,
+  InternalNotificationMessageEvent,
+  MessageType, NotificationMessageCode, NotificationMessageType,
 } from '../models/internal-events/internal-notification-message-event';
 
 export class NotificationMessageService {
@@ -29,7 +30,6 @@ export class NotificationMessageService {
   }
 
   notify(code: NotificationMessageCode, messageType: NotificationMessageType, message: string) {
-    const messageEvent = new InternalNotificationMessageEvent(code, messageType, message);
-    this.eventService.emit(messageEvent.TYPE, messageEvent);
+    this.eventService.emit(new InternalNotificationMessageEvent(code, messageType, message));
   }
 }

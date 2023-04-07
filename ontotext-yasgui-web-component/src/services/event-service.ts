@@ -1,4 +1,10 @@
 import {EventEmitter} from "@stencil/core";
+import {InternalEvent} from '../models/internal-events/internal-event';
+import {InternalDownloadAsEvent} from '../models/internal-events/internal-download-as-event';
+import {InternalDropdownValueSelectedEvent} from '../models/internal-events/internal-dropdown-value-selected-event';
+import {InternalNotificationMessageEvent} from '../models/internal-events/internal-notification-message-event';
+import {InternalShowResourceCopyLinkDialogEvent} from '../models/internal-events/internal-show-resource-copy-link-dialog-event';
+import {InternalEventTypes} from '../models/internal-events/internal-event-types';
 
 /**
  * The purpose of this service is to mitigate the issue where the stencil builtin Event decorator
@@ -17,21 +23,40 @@ export class EventService implements EventEmitter {
   private _hostElement: HTMLElement;
 
   /**
-   * Emits an event of a given type. The event payload is wrapped in a native CustomEvent.
+   * Emits an <code>internalEvent</code> wrapped in a native CustomEvent.
    *
-   * @param type The event type.
-   * @param evt The event payload.
+   * @param internalEvent The event {@link InternalEvent}.
    */
-  emit(type: string, evt?: any): CustomEvent {
-    const event = new CustomEvent(type, {detail: evt});
-    this.hostElement.dispatchEvent(event);
+  emit(internalEvent: InternalEvent): CustomEvent {
+    return EventService.emitInternalEvent(this._hostElement, internalEvent);
+  }
+
+  static emitFromInnerElement(element: HTMLElement, type: InternalEventTypes, payload?: any): CustomEvent {
+    const innerEvent = EventService.toInnerEvent(type, payload);
+    if (innerEvent) {
+      return EventService.emitInternalEvent(element.closest('.yasgui-host-element'), innerEvent);
+    }
+
+    return EventService.emitFromInnerElement(element, type, payload);
+  }
+
+  private static emitInternalEvent(element: HTMLElement, internalEvent: InternalEvent) {
+    const event = new CustomEvent(internalEvent.TYPE, {detail: internalEvent});
+    element.dispatchEvent(event);
     return event;
   }
 
-  static emitFromInnerElement(element: HTMLElement, type: string, evt?: any): CustomEvent {
-    const event = new CustomEvent(type, {detail: evt});
-    element.closest('.yasgui-host-element').dispatchEvent(event);
-    return event;
+  private static toInnerEvent(type: InternalEventTypes, payload: any): InternalEvent | undefined {
+    switch (type) {
+      case 'internalDownloadAsEvent':
+        return new InternalDownloadAsEvent(payload.value, payload.pluginName, payload.query, payload.infer, payload.sameAs);
+      case 'internalDropdownValueSelectedEvent':
+        return new InternalDropdownValueSelectedEvent(payload.value);
+      case 'internalNotificationMessageEvent':
+        return new InternalNotificationMessageEvent(payload.code, payload.messageType, payload.message);
+      case 'internalShowResourceCopyLinkDialogEvent':
+        return new InternalShowResourceCopyLinkDialogEvent(payload.copyLink);
+    }
   }
 
   get hostElement(): HTMLElement {

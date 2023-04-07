@@ -4,8 +4,6 @@ import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {
-  InternalShowResourceCopyLinkDialogEvent,
-  InternalShowSavedQueriesEvent,
   QueryResponseEvent
 } from "../../models/event";
 import Yasqe from "../../../../Yasgui/packages/yasqe/src";
@@ -26,6 +24,8 @@ import {CountQueryResponseEvent} from '../../models/output-events/count-query-re
 import {QueryEvent} from '../../models/output-events/query-event';
 import {NotificationMessageService} from '../../services/notification-message-service';
 import {InternalNotificationMessageEvent, MessageCode} from '../../models/internal-events/internal-notification-message-event';
+import {InternalShowResourceCopyLinkDialogEvent} from '../../models/internal-events/internal-show-resource-copy-link-dialog-event';
+import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -470,7 +470,7 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalShowResourceCopyLinkDialogEvent')
   showResourceCopyLinkDialogHandler(event: CustomEvent<InternalShowResourceCopyLinkDialogEvent>) {
-    this.copiedResourceLink = event.detail.copyLink;
+    this.copiedResourceLink = event.detail.payload.copyLink;
     this.showCopyResourceLinkDialog = true;
   }
 
