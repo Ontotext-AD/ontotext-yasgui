@@ -1,13 +1,11 @@
 import {EventService} from "../event-service";
-import {
-  InternalCreateSavedQueryEvent,
-  InternalShareQueryEvent,
-  InternalShowSavedQueriesEvent
-} from "../../models/event";
 import {TranslationService} from "../translation.service";
 import {ServiceFactory} from '../service-factory';
 import {YasguiConfiguration} from "../../models/yasgui-configuration";
 import {TooltipService} from '../tooltip-service';
+import {InternalShareQueryEvent} from '../../models/internal-events/internal-share-query-event';
+import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
+import {InternalCreateSavedQueryEvent} from '../../models/internal-events/internal-create-saved-query-event';
 
 export class YasqeService {
 
@@ -39,7 +37,7 @@ export class YasqeService {
     buttonElement.className = "yasqe_showSavedQueriesButton custom-button icon-folder";
     buttonElement.addEventListener("click",
       () => {
-        this.eventService.emit(InternalShowSavedQueriesEvent.TYPE, new InternalShowSavedQueriesEvent(buttonElement))
+        this.eventService.emit(new InternalShowSavedQueriesEvent(buttonElement))
       });
 
     const tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
@@ -50,7 +48,7 @@ export class YasqeService {
     const buttonElement = document.createElement("button");
     buttonElement.className = "yasqe_createSavedQueryButton custom-button icon-save";
     buttonElement.addEventListener("click",
-      () => this.eventService.emit(InternalCreateSavedQueryEvent.TYPE, new InternalCreateSavedQueryEvent()));
+      () => this.eventService.emit(new InternalCreateSavedQueryEvent()));
     const tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
     return TooltipService.addTooltip(buttonElement, tooltip);
   }
@@ -59,7 +57,7 @@ export class YasqeService {
     const buttonElement = document.createElement("button");
     buttonElement.className = "yasqe_shareQueryButton custom-button icon-link";
     buttonElement.addEventListener("click",
-      () => this.eventService.emit(InternalShareQueryEvent.TYPE, new InternalShareQueryEvent()));
+      () => this.eventService.emit(new InternalShareQueryEvent()));
 
     const tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
     return TooltipService.addTooltip(buttonElement, tooltip);

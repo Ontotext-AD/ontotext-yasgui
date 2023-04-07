@@ -1,4 +1,6 @@
 import {InternalEvent} from './internal-event';
+import {InternalEventType} from './internal-event-types';
+import {OutputEventType} from '../output-events/output-event-types';
 
 export type NotificationMessageType = (typeof MessageType)[keyof typeof MessageType];
 
@@ -19,8 +21,8 @@ export const MessageCode = {
 }
 
 export class InternalNotificationMessageEvent implements InternalEvent {
-  OUTPUT_TYPE = 'notificationMessage';
-  TYPE = 'internalNotificationMessageEvent';
+  TYPE = InternalEventType.INTERNAL_NOTIFICATION_MESSAGE_EVENT;
+  OUTPUT_TYPE = OutputEventType.OUTPUT_NOTIFICATION_MESSAGE_EVENT;
   payload: {
     code: NotificationMessageCode,
     messageType: NotificationMessageType,

@@ -1,6 +1,6 @@
 import {Component, Element, h, Host, Prop} from '@stencil/core';
 import {EventService} from '../../services/event-service';
-import {InternalShowResourceCopyLinkDialogEvent} from '../../models/event';
+import {InternalEventType} from '../../models/internal-events/internal-event-types';
 
 @Component({
   tag: 'copy-resource-link-button',
@@ -15,7 +15,7 @@ export class CopyResourceLinkButton {
   @Prop() classes: string
 
   onButtonClick() {
-    EventService.emitFromInnerElement(this.hostElement, InternalShowResourceCopyLinkDialogEvent.TYPE, new InternalShowResourceCopyLinkDialogEvent(this.uri));
+    EventService.emitFromInnerElement(this.hostElement, InternalEventType.INTERNAL_SHOW_RESOURCE_COPY_LINK_DIALOG_EVENT, {copyLink: this.uri});
   }
 
   render() {
