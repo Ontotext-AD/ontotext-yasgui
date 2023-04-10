@@ -1,6 +1,7 @@
 import {Translations} from './yasgui-configuration';
 import {Prefixes} from '../../../Yasgui/packages/yasr';
 import {BeforeUpdateQueryResult} from './before-update-query-result';
+import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 
 export interface ExternalYasguiConfiguration {
   // ***********************************************************
@@ -237,6 +238,8 @@ export interface ExternalYasguiConfiguration {
    * @param req - the running request.
    */
   onQueryAborted?: (req) => Promise<void>;
+
+  yasrToolbarPlugins?: YasrToolbarPlugin[];
 }
 
 export type AutocompleteLoader = () => any;

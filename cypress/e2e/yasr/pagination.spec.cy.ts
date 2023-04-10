@@ -4,7 +4,7 @@ import {YasqeSteps} from '../../steps/yasqe-steps';
 import {QueryStubDescription, QueryStubs} from '../../stubs/query-stubs';
 import {PaginationSteps} from '../../steps/pagination-steps';
 
-describe.skip('Yasr result pagination', () => {
+describe('Yasr result pagination', () => {
   beforeEach(() => {
     PaginationPageSteps.visit();
   });

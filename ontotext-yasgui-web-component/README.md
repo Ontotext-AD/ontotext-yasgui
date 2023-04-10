@@ -104,6 +104,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **paginationOn**: If true pagination will be used to display results.
 - **pageSize**: the size of a page. Default value is 10.
 - **downloadAsOn**: if false "Download as" dropdown will not be shown.
+- **yasrToolbarPlugins**: "ontotext-yasgui-web-component" has a toolbar on the right next to the plugin buttons. **yasrToolbarPlugins** have to contain elements that implements [YasrToolbarPlugin](src/models/yasr-toolbar-plugin.ts) interface.
 
 ## Developers guide
 

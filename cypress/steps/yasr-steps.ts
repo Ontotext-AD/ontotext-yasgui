@@ -150,4 +150,8 @@ export class YasrSteps {
   static showMoreRawResponse() {
     this.getShowAllRawResponseButton().click();
   }
+
+  static getYasrToolbar() {
+    return cy.get('.yasr-toolbar');
+  }
 }

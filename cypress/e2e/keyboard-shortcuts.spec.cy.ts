@@ -5,7 +5,7 @@ import {YasrSteps} from '../steps/yasr-steps';
 import {YasguiSteps} from '../steps/yasgui-steps';
 import {QueryStubs} from '../stubs/query-stubs';
 
-describe.skip('Keyboard Shortcuts', () => {
+describe('Keyboard Shortcuts', () => {
   beforeEach(() => {
     // Given: Visit a page with "ontotext-yasgui-web-component" in it.
     KeyboardShortcutPageSteps.visit();

@@ -2,6 +2,7 @@ import {TranslationService} from '../services/translation.service';
 import {NotificationMessageService} from '../services/notification-message-service';
 import {AutocompleteLoader, YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 import {BeforeUpdateQueryResult} from './before-update-query-result';
+import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -197,6 +198,8 @@ export interface YasguiConfiguration {
        * Default value is 100000.
        */
       maxPersistentResponseSize?: number;
+
+      yasrToolbarPlugins?: YasrToolbarPlugin[]
     }
   };
 
