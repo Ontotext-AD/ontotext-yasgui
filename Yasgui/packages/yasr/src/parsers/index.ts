@@ -94,8 +94,18 @@ class Parser {
     } else {
       this.queryStartedTime = responseOrObject.queryStartedTime;
     }
-    this.hasMorePages = hasMorePages;
-    this.possibleElementsCount = possibleElementsCount;
+
+    if (hasMorePages) {
+      this.hasMorePages = hasMorePages;
+    } else {
+      this.hasMorePages = responseOrObject.hasMorePages;
+    }
+
+    if (possibleElementsCount) {
+      this.possibleElementsCount = possibleElementsCount;
+    } else {
+      this.possibleElementsCount = responseOrObject.possibleElementsCount;
+    }
 
     this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
 
