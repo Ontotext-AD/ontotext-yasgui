@@ -1,0 +1,198 @@
+Subject: [PATCH] GDB-8133: add "Visual" button after successful execution of a CONSTRUCT query
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 3276d4b909ee5859ea535c707dfacd67e9efbb03)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision b5019e8f08959c21f4904b1c864486fdef77a30b)
+@@ -588,6 +588,7 @@
+     }
+     yasrConf.translationService = this.yasgui.config.translationService;
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
++    yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
+     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+ 
+     if (this.yasqe) {
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 3276d4b909ee5859ea535c707dfacd67e9efbb03)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision b5019e8f08959c21f4904b1c864486fdef77a30b)
+@@ -15,6 +15,9 @@
+ 
+   externalPluginsConfigurations: Map<string, any> | undefined;
+   resultQueryPaginationElement: Page | undefined;
++
++  private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
++
+   private eventsListeners: Map<string, Function> | undefined;
+   private persistentJson: any;
+ 
+@@ -39,7 +42,16 @@
+     }
+     super.drawPluginSelectors();
+ 
+-    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn) {
++    if (!this.yasrToolbarManagers && this.config.yasrToolbarPlugins) {
++      this.yasrToolbarManagers = this.config.yasrToolbarPlugins.map(
++        (toolbarElementBuilder) => new YasrToolbarPluginManager(toolbarElementBuilder)
++      );
++      this.yasrToolbarManagers = this.yasrToolbarManagers.sort((managerOne, managerTwo) => {
++        return managerOne.getOrder() - managerTwo.getOrder();
++      });
++    }
++
++    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn && !this.yasrToolbarManagers) {
+       return;
+     }
+     const pluginSelectorsEl = this.getPluginSelectorsEl();
+@@ -55,6 +67,17 @@
+       downloadAsLiElement.appendChild(this.downloadAsElement);
+     }
+ 
++    if (this.yasrToolbarManagers) {
++      const yasrToolbar = document.createElement("li");
++      yasrToolbar.className = "yasr-toolbar";
++      this.yasrToolbarManagers.forEach((manager) => {
++        const element = manager.createElement(this);
++        element.classList.add("yasr-toolbar-element");
++        yasrToolbar.appendChild(element);
++      });
++      pluginSelectorsEl.appendChild(yasrToolbar);
++    }
++
+     if (this.yasqe.config.paginationOn) {
+       const resultPaginationLiElement = document.createElement("li");
+       this.resultQueryPaginationElement = this.createResultPaginationElement();
+@@ -78,6 +101,7 @@
+       this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
+       this.updateDownloadAsElementVisibility();
+     }
++    this.yasrToolbarManagers?.forEach((manager) => manager.updateElement(this));
+   }
+ 
+   private hidePluginElementVisibility() {
+@@ -522,3 +546,34 @@
+   pageElements?: number;
+   hasMorePages?: boolean;
+ }
++
++export interface YasrToolbarPlugin {
++  createElement(yasr: Yasr): HTMLElement;
++
++  updateElement(element: HTMLElement, yasr: Yasr): HTMLElement;
++
++  getOrder(): number;
++}
++
++class YasrToolbarPluginManager {
++  element: HTMLElement | undefined;
++
++  constructor(private plugin: YasrToolbarPlugin) {}
++
++  createElement(yasr: Yasr): HTMLElement {
++    this.element = this.plugin.createElement(yasr);
++    this.updateElement(yasr);
++    return this.element;
++  }
++
++  updateElement(yasr: Yasr): void {
++    if (!this.element) {
++      return;
++    }
++    this.plugin.updateElement(this.element, yasr);
++  }
++
++  getOrder(): number {
++    return this.plugin.getOrder();
++  }
++}
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 3276d4b909ee5859ea535c707dfacd67e9efbb03)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision b5019e8f08959c21f4904b1c864486fdef77a30b)
+@@ -572,7 +572,11 @@
+   }
+   //This doesnt store the plugin complete config. Only those configs we want persisted
+   public storePluginConfig(pluginName: string, conf: any) {
+-    this.config.plugins[pluginName].dynamicConfig = conf;
++    const plugin = this.config.plugins[pluginName];
++    if (!plugin) {
++      return;
++    }
++    plugin.dynamicConfig = conf;
+     this.storeConfig();
+     this.emit("change", this);
+   }
+@@ -668,6 +672,7 @@
+   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
+   translationService: TranslationService;
+   externalPluginsConfigurations?: Map<string, any>;
++  yasrToolbarPlugins?: YasrToolbarPlugin[];
+   downloadAsOptions?: { labelKey: string; value: any }[];
+   downloadAsOn?: boolean;
+   /**
+@@ -694,6 +699,7 @@
+ import ExtendedBoolean from "./plugins/boolean/extended-boolean";
+ import ExtendedResponse from "./plugins/response/extended-response";
+ import ExtendedError from "./plugins/error/extended-error";
++import { YasrToolbarPlugin } from "./extended-yasr";
+ 
+ Yasr.registerPlugin("extended_boolean", ExtendedBoolean as any);
+ Yasr.registerPlugin("extended_response", ExtendedResponse as any);
+Index: Yasgui/packages/yasr/src/main.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/main.scss b/Yasgui/packages/yasr/src/main.scss
+--- a/Yasgui/packages/yasr/src/main.scss	(revision 3276d4b909ee5859ea535c707dfacd67e9efbb03)
++++ b/Yasgui/packages/yasr/src/main.scss	(revision b5019e8f08959c21f4904b1c864486fdef77a30b)
+@@ -158,4 +158,8 @@
+     flex-grow: 1;
+     min-width: 10px;
+   }
++
++  .yasr-toolbar {
++    display: flex;
++  }
+ }
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision 3276d4b909ee5859ea535c707dfacd67e9efbb03)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision b5019e8f08959c21f4904b1c864486fdef77a30b)
+@@ -94,8 +94,18 @@
+     } else {
+       this.queryStartedTime = responseOrObject.queryStartedTime;
+     }
+-    this.hasMorePages = hasMorePages;
+-    this.possibleElementsCount = possibleElementsCount;
++
++    if (hasMorePages) {
++      this.hasMorePages = hasMorePages;
++    } else {
++      this.hasMorePages = responseOrObject.hasMorePages;
++    }
++
++    if (possibleElementsCount) {
++      this.possibleElementsCount = possibleElementsCount;
++    } else {
++      this.possibleElementsCount = responseOrObject.possibleElementsCount;
++    }
+ 
+     this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
+ 
