@@ -74,6 +74,7 @@ export class YasguiConfigurationBuilder {
         prefixes: {},
         defaultPlugin: '',
         pluginOrder: [],
+        yasrToolbarPlugins: externalConfiguration.yasrToolbarPlugins,
         downloadAsOn: externalConfiguration.downloadAsOn !== undefined ? externalConfiguration.downloadAsOn : defaultYasrConfig.downloadAsOn,
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration.pluginsConfigurations),
       }
