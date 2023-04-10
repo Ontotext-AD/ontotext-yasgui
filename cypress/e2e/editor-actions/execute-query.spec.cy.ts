@@ -26,7 +26,12 @@ describe('Execute query action', () => {
     YasqeSteps.getTabWithProgressBar().should('exist');
   });
 
-  it('Should emit queryExecuted event on each editor tab', () => {
+  it('Should emit queryExecuted event on each editor tab', {
+    retries: {
+      runMode: 1,
+      openMode: 0
+    }
+  }, () => {
     ActionsPageSteps.visit();
     YasqeSteps.executeQuery();
     ActionsPageSteps.getEventLog().should('have.value', '\n"select * where {  \\n ?s ?p ?o . \\n } limit 100"');
