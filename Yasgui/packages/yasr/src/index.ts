@@ -572,7 +572,11 @@ export class Yasr extends EventEmitter {
   }
   //This doesnt store the plugin complete config. Only those configs we want persisted
   public storePluginConfig(pluginName: string, conf: any) {
-    this.config.plugins[pluginName].dynamicConfig = conf;
+    const plugin = this.config.plugins[pluginName];
+    if (!plugin) {
+      return;
+    }
+    plugin.dynamicConfig = conf;
     this.storeConfig();
     this.emit("change", this);
   }
@@ -668,6 +672,7 @@ export interface Config {
   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
   translationService: TranslationService;
   externalPluginsConfigurations?: Map<string, any>;
+  yasrToolbarPlugins?: YasrToolbarPlugin[];
   downloadAsOptions?: { labelKey: string; value: any }[];
   downloadAsOn?: boolean;
   /**
@@ -694,6 +699,7 @@ import Yasqe from "@triply/yasqe";
 import ExtendedBoolean from "./plugins/boolean/extended-boolean";
 import ExtendedResponse from "./plugins/response/extended-response";
 import ExtendedError from "./plugins/error/extended-error";
+import { YasrToolbarPlugin } from "./extended-yasr";
 
 Yasr.registerPlugin("extended_boolean", ExtendedBoolean as any);
 Yasr.registerPlugin("extended_response", ExtendedResponse as any);

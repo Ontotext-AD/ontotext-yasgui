@@ -15,6 +15,9 @@ export class ExtendedYasr extends Yasr {
 
   externalPluginsConfigurations: Map<string, any> | undefined;
   resultQueryPaginationElement: Page | undefined;
+
+  private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
+
   private eventsListeners: Map<string, Function> | undefined;
   private persistentJson: any;
 
@@ -39,7 +42,16 @@ export class ExtendedYasr extends Yasr {
     }
     super.drawPluginSelectors();
 
-    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn) {
+    if (!this.yasrToolbarManagers && this.config.yasrToolbarPlugins) {
+      this.yasrToolbarManagers = this.config.yasrToolbarPlugins.map(
+        (toolbarElementBuilder) => new YasrToolbarPluginManager(toolbarElementBuilder)
+      );
+      this.yasrToolbarManagers = this.yasrToolbarManagers.sort((managerOne, managerTwo) => {
+        return managerOne.getOrder() - managerTwo.getOrder();
+      });
+    }
+
+    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn && !this.yasrToolbarManagers) {
       return;
     }
     const pluginSelectorsEl = this.getPluginSelectorsEl();
@@ -53,6 +65,17 @@ export class ExtendedYasr extends Yasr {
       this.updateDownloadAsElementVisibility();
       pluginSelectorsEl.appendChild(downloadAsLiElement);
       downloadAsLiElement.appendChild(this.downloadAsElement);
+    }
+
+    if (this.yasrToolbarManagers) {
+      const yasrToolbar = document.createElement("li");
+      yasrToolbar.className = "yasr-toolbar";
+      this.yasrToolbarManagers.forEach((manager) => {
+        const element = manager.createElement(this);
+        element.classList.add("yasr-toolbar-element");
+        yasrToolbar.appendChild(element);
+      });
+      pluginSelectorsEl.appendChild(yasrToolbar);
     }
 
     if (this.yasqe.config.paginationOn) {
@@ -78,6 +101,7 @@ export class ExtendedYasr extends Yasr {
       this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
       this.updateDownloadAsElementVisibility();
     }
+    this.yasrToolbarManagers?.forEach((manager) => manager.updateElement(this));
   }
 
   private hidePluginElementVisibility() {
@@ -521,4 +545,35 @@ interface Page extends HTMLElement {
   totalElements?: number;
   pageElements?: number;
   hasMorePages?: boolean;
+}
+
+export interface YasrToolbarPlugin {
+  createElement(yasr: Yasr): HTMLElement;
+
+  updateElement(element: HTMLElement, yasr: Yasr): HTMLElement;
+
+  getOrder(): number;
+}
+
+class YasrToolbarPluginManager {
+  element: HTMLElement | undefined;
+
+  constructor(private plugin: YasrToolbarPlugin) {}
+
+  createElement(yasr: Yasr): HTMLElement {
+    this.element = this.plugin.createElement(yasr);
+    this.updateElement(yasr);
+    return this.element;
+  }
+
+  updateElement(yasr: Yasr): void {
+    if (!this.element) {
+      return;
+    }
+    this.plugin.updateElement(this.element, yasr);
+  }
+
+  getOrder(): number {
+    return this.plugin.getOrder();
+  }
 }

@@ -588,6 +588,7 @@ export class Tab extends EventEmitter {
     }
     yasrConf.translationService = this.yasgui.config.translationService;
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+    yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
 
     if (this.yasqe) {
