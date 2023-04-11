@@ -189,11 +189,6 @@ export interface YasguiConfiguration {
       externalPluginsConfigurations: Map<string, any>;
 
       /**
-       * A flag that controls creation of "Download as" dropdown. When false, the dropdown will not be created. Default value is true.
-       */
-      downloadAsOn: boolean;
-
-      /**
        * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local store.
        * Default value is 100000.
        */
@@ -278,6 +273,5 @@ export const defaultYasqeConfig: Record<string, any> = {
 
 export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
-  pluginOrder: ["extended_table", "response"],
-  downloadAsOn: true
+  pluginOrder: ["extended_table", "response"]
 }

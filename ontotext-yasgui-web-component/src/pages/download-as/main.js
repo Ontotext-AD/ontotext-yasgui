@@ -15,20 +15,22 @@ function setConfiguration() {
     pluginsConfigurations: {
       extended_table: {
         downloadAsConfig: {
-          items: [
-            {
-              labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
-              value: "application/sparql-results+json",
-            },
-            {
-              labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
-              value: "application/x-sparqlstar-results+json",
-            },
-            {
-              labelKey: "yasr.plugin_control.download_as.csv.label",
-              value: "text/csv",
-            },
-          ]
+          items: {
+            'SELECT': [
+              {
+                labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
+                value: "application/sparql-results+json",
+              },
+              {
+                labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
+                value: "application/x-sparqlstar-results+json",
+              },
+              {
+                labelKey: "yasr.plugin_control.download_as.csv.label",
+                value: "text/csv",
+              },
+            ]
+          }
         }
       }
     }
@@ -36,5 +38,5 @@ function setConfiguration() {
 }
 
 function turnOffDownloadAs() {
-  ontoElement.config =  {...ontoElement.config, downloadAsOn: false};
+  ontoElement.config = {...ontoElement.config, downloadAsOn: false};
 }
