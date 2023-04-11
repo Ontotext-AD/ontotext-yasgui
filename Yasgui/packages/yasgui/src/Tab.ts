@@ -143,7 +143,8 @@ export class Tab extends EventEmitter {
   public close(confirm = true) {
     const closeTab = () => {
       if (this.yasqe) this.yasqe.abortQuery();
-      if (this.yasgui.getTab() === this) {
+      const tab = this.yasgui.getTab();
+      if (tab === this) {
         //it's the active tab
         //first select other tab
         const tabs = this.yasgui.persistentConfig.getTabs();
@@ -152,6 +153,8 @@ export class Tab extends EventEmitter {
           this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
         }
       }
+
+      tab?.destroy();
       this.yasgui._removePanel(this.rootEl);
       this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
       this.yasgui.emit("tabClose", this.yasgui, this);
@@ -589,6 +592,7 @@ export class Tab extends EventEmitter {
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+    yasrConf.tabId = this.getId();
 
     if (this.yasqe) {
       this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson);

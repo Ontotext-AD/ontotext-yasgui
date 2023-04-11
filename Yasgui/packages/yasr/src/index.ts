@@ -658,6 +658,7 @@ export interface PluginConfig {
   enabled?: boolean;
 }
 export interface Config {
+  tabId?: string;
   persistenceId: ((yasr: Yasr) => string) | string | null;
   persistenceLabelResponse: string;
   persistenceLabelConfig: string;
