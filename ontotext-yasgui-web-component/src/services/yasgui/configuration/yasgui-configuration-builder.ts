@@ -16,6 +16,7 @@ import {NamespaceService} from "../../namespace-service";
 import {KeyboardShortcutService} from '../../keyboard-shortcut-service';
 import {NotificationMessageService} from '../../notification-message-service';
 import LocalNamesAutocompleter from "../../yasqe/autocompleter/local-names";
+import {DownloadAsYasrToolbarPlugin} from '../../yasr/toolbar/download-as-yasr-toolbar-plugin';
 
 /**
  * Builder for yasgui configuration.
@@ -74,9 +75,7 @@ export class YasguiConfigurationBuilder {
         prefixes: {},
         defaultPlugin: '',
         pluginOrder: [],
-        yasrToolbarPlugins: externalConfiguration.yasrToolbarPlugins,
-        downloadAsOn: externalConfiguration.downloadAsOn !== undefined ? externalConfiguration.downloadAsOn : defaultYasrConfig.downloadAsOn,
-        externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration.pluginsConfigurations),
+        externalPluginsConfigurations: YasrService.getPluginsConfigurations(),
       }
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
@@ -94,6 +93,13 @@ export class YasguiConfigurationBuilder {
     if (externalConfiguration.maxPersistentResponseSize) {
       config.yasguiConfig.yasr.maxPersistentResponseSize = externalConfiguration.maxPersistentResponseSize;
     }
+
+    const yasrToolbarElements = externalConfiguration.yasrToolbarPlugins || [];
+    if (externalConfiguration.downloadAsOn === undefined || externalConfiguration.downloadAsOn) {
+      const downloadAsYasrToolbarPlugin = new DownloadAsYasrToolbarPlugin(this.serviceFactory, externalConfiguration.pluginsConfigurations);
+      yasrToolbarElements.push(downloadAsYasrToolbarPlugin);
+    }
+    config.yasguiConfig.yasr.yasrToolbarPlugins = yasrToolbarElements;
 
     // prepare the yasqe config
     this.initShortcuts(config);

@@ -32,7 +32,8 @@ describe('Configuration of yasr toolbar custom element.', () => {
     YasqeSteps.executeQuery();
 
 
-    YasrCustomElementSteps.getYasrToolbarElement(0).contains('Second described Element that have to be first');
-    YasrCustomElementSteps.getYasrToolbarElement(1).contains('Custom button');
+    YasrCustomElementSteps.getYasrToolbarElement(0).contains('Download as');
+    YasrCustomElementSteps.getYasrToolbarElement(1).contains('Second described Element that have to be first');
+    YasrCustomElementSteps.getYasrToolbarElement(2).contains('Custom button');
   });
 });

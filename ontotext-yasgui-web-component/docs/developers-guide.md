@@ -359,8 +359,17 @@ This is [the yasgui Raw Response plugin](https://triply.cc/docs/yasgui-api#raw-r
   downloadAsConfig: {
     // Translation label key of dropdown button label.
     nameLabelKey: string,
-    // Array with dropdown options  
-    items: [
+    // the key is the query type 'SELECT', 'CONSTRUCT'... and value is an array with dropdown options  
+    'SELECT': [
+      {
+         // Translation label key of an "Download as" dropdown option.
+        labelKey: string,
+        // value of the options.
+        value: any,
+      },
+        ...
+      ],
+      <query_type>: [
       {
          // Translation label key of an "Download as" dropdown option.
         labelKey: string,
@@ -390,8 +399,8 @@ This plugin extends the original yasgui plugin with ability to format the cell v
   downloadAsConfig: {
     // Translation label key of dropdown button label.
     nameLabelKey: string,
-    // Array with dropdown options  
-    items: [
+    // the key is the query type 'SELECT', 'CONSTRUCT'... and value is an array with dropdown options  
+    'SELECT': [
       {
          // Translation label key of an "Download as" dropdown option.
         labelKey: string,
