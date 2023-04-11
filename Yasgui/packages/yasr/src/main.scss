@@ -161,5 +161,9 @@
 
   .yasr-toolbar {
     display: flex;
+    .yasr-toolbar-element {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
   }
 }
