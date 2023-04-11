@@ -13,21 +13,17 @@ export class ExtendedYasr extends Yasr {
 
   // TODO remove it
   externalPluginsConfigurations: Map<string, any> | undefined;
-  resultQueryPaginationElement: Page | undefined;
 
   private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
-
-  private eventsListeners: Map<string, Function> | undefined;
-  private persistentJson: any;
+  private readonly persistentJson: any;
 
   constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
     super(yasqe, parent, conf, persistentJson?.yasr.response);
     this.persistentJson = persistentJson;
     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
     if (yasqe.config.paginationOn) {
-      this.yasqe.on("queryResponse", this.updateQueryResultPaginationElementHandler.bind(this));
-      this.yasqe.on("totalElementsPersisted", this.updateQueryResultPaginationElementHandler.bind(this));
-      this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
+      this.yasqe.on("queryResponse", this.draw.bind(this));
+      this.yasqe.on("totalElementsPersisted", this.draw.bind(this));
     }
     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
   }
@@ -68,13 +64,6 @@ export class ExtendedYasr extends Yasr {
       });
       pluginSelectorsEl.appendChild(yasrToolbar);
     }
-
-    if (this.yasqe.config.paginationOn) {
-      const resultPaginationLiElement = document.createElement("li");
-      this.resultQueryPaginationElement = this.createResultPaginationElement();
-      resultPaginationLiElement.appendChild(this.resultQueryPaginationElement);
-      pluginSelectorsEl.appendChild(resultPaginationLiElement);
-    }
   }
 
   draw() {
@@ -108,98 +97,21 @@ export class ExtendedYasr extends Yasr {
   //==================================================
   //       Functions that extend YASR functionality
   //==================================================
-
-  createResultPaginationElement(): Page {
-    const element: Page = (document.createElement("ontotext-pagination") as unknown) as Page;
-    const pageSelectedListener = this.pageSelectedHandler(this);
-    this.getEventsListeners().set("pageSelected", pageSelectedListener);
-    element.addEventListener("pageSelected", pageSelectedListener);
-    this.updateQueryResultPaginationElement(element);
-    return element;
+  public hasResults(): boolean {
+    if (this.results) {
+      const bindings = this.results.getBindings() || [];
+      return bindings.length > 0;
+    }
+    return true;
   }
 
-  updateQueryResultPaginationElementHandler() {
-    this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
-    this.updateResponseInfo();
-  }
-
-  updateQueryResultPaginationElement(resultQueryPaginationElement: Page | undefined) {
-    if (!resultQueryPaginationElement) {
-      return;
-    }
-    resultQueryPaginationElement.pageNumber = this.yasqe?.getPageNumber();
-    resultQueryPaginationElement.pageSize = this.yasqe?.getPageSize();
-    resultQueryPaginationElement.pageElements = this.results?.getBindings()?.length || 0;
-    resultQueryPaginationElement.totalElements = this.persistentJson?.yasr.response?.totalElements || -1;
-    resultQueryPaginationElement.hasMorePages = this.results?.getHasMorePages();
-    this.updateQueryResultPaginationVisibility(resultQueryPaginationElement);
-  }
-
-  updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page) {
-    addClass(resultQueryPaginationElement, "hidden");
-
-    // Pagination is not visible
-    // when executed query is for explain plan query,
-    if (this.yasqe.getIsExplainPlanQuery()) {
-      return;
-    }
-    // or pagination is on first page and page hasn't results,
-    const hasNotResults = !this.results?.getBindings()?.length;
-    if (hasNotResults && resultQueryPaginationElement.pageNumber === 1) {
-      return;
-    }
-    // or has fewer results than one page.
-    if (!this.hasMoreThanOnePageElements(resultQueryPaginationElement)) {
-      return;
-    }
-
-    removeClass(resultQueryPaginationElement, "hidden");
-  }
-
-  private getEventsListeners(): Map<string, Function> {
-    if (!this.eventsListeners) {
-      this.eventsListeners = new Map();
-    }
-    return this.eventsListeners;
-  }
-
-  private hasMoreThanOnePageElements(resultQueryPaginationElement: Page): boolean {
-    if (resultQueryPaginationElement.pageNumber && resultQueryPaginationElement.pageNumber > 1) {
-      return true;
-    }
-    if (resultQueryPaginationElement.hasMorePages !== undefined) {
-      return resultQueryPaginationElement.hasMorePages;
-    }
-
-    if (resultQueryPaginationElement.pageSize && resultQueryPaginationElement.totalElements) {
-      return resultQueryPaginationElement.pageSize < resultQueryPaginationElement.totalElements;
-    }
-    return false;
+  getTabId(): string | undefined {
+    return this.config.tabId;
   }
 
   public destroy() {
     super.destroy();
-    const pageSelected: any = this.getEventsListeners().get("pageSelected");
-    if (pageSelected) {
-      this.resultQueryPaginationElement?.removeEventListener("pageSelected", pageSelected);
-    }
-  }
-
-  private pageSelectedHandler(yasr: ExtendedYasr) {
-    return (pageEvent: any) => {
-      const page: Page = pageEvent.detail;
-      const yasqe = yasr.yasqe;
-      if (yasqe) {
-        yasqe.setPageNumber(page.pageNumber || 1);
-        yasqe.setPageSize(page.pageSize || 10);
-        yasqe
-          .query()
-          .then()
-          .catch(() => {
-            // catch this to avoid unhandled rejection
-          });
-      }
-    };
+    this.yasrToolbarManagers?.forEach((manager) => manager.destroy(this));
   }
 
   private getUpdateTypeQueryResponseInfo(): string {
@@ -452,20 +364,14 @@ export class ExtendedYasr extends Yasr {
   }
 }
 
-interface Page extends HTMLElement {
-  pageSize?: number;
-  pageNumber?: number;
-  totalElements?: number;
-  pageElements?: number;
-  hasMorePages?: boolean;
-}
-
 export interface YasrToolbarPlugin {
   createElement(yasr: Yasr): HTMLElement;
 
   updateElement(element: HTMLElement, yasr: Yasr): HTMLElement;
 
   getOrder(): number;
+
+  destroy(element: HTMLElement, yasr: Yasr): HTMLElement;
 }
 
 class YasrToolbarPluginManager {
@@ -488,5 +394,11 @@ class YasrToolbarPluginManager {
 
   getOrder(): number {
     return this.plugin.getOrder();
+  }
+
+  destroy(yasr: Yasr): void {
+    if (this.element && typeof this.plugin.destroy === "function") {
+      this.plugin.destroy(this.element, yasr);
+    }
   }
 }
