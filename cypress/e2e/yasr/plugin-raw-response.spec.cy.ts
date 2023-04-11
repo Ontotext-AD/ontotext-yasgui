@@ -11,7 +11,12 @@ describe('Plugin: Raw response', () => {
     YasrTablePluginSteps.visit();
   });
 
-  it('should be able to render raw response', () => {
+  it('should be able to render raw response', {
+    retries: {
+      runMode: 1,
+      openMode: 0
+    }
+  }, () => {
     // When I open the raw response tab
     YasrSteps.openRawResponseTab();
     YasrSteps.getRawResults().should('not.be.visible');

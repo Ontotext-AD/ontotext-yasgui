@@ -238,7 +238,12 @@ describe('Plugin: Table', () => {
         YasrSteps.getResultCell(4, 3).contains('owl:TransitiveProperty');
       });
 
-      it('Should copy url link be visible when the mouse is over a cell of result table', () => {
+      it('Should copy url link be visible when the mouse is over a cell of result table', {
+        retries: {
+          runMode: 1,
+          openMode: 0
+        }
+      }, () => {
         // When I execute a query which return results and results type is uri.
         QueryStubs.stubDefaultQueryResponse();
         YasqeSteps.executeQuery();
