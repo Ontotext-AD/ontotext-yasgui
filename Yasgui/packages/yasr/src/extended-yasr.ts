@@ -1,5 +1,5 @@
 import Yasr, { Config } from "@triply/yasr";
-import { addClass, removeClass, TranslationService } from "@triply/yasgui-utils";
+import { addClass, removeClass } from "@triply/yasgui-utils";
 import Yasqe from "@triply/yasqe";
 
 export class ExtendedYasr extends Yasr {
@@ -11,8 +11,7 @@ export class ExtendedYasr extends Yasr {
   static readonly ONE_DAY_IN_MILLISECONDS = 86400000;
   static readonly ONE_MINUTE_IN_MILLISECONDS = 60000;
 
-  downloadAsElement: HTMLElement | undefined;
-
+  // TODO remove it
   externalPluginsConfigurations: Map<string, any> | undefined;
   resultQueryPaginationElement: Page | undefined;
 
@@ -51,21 +50,13 @@ export class ExtendedYasr extends Yasr {
       });
     }
 
-    if (!this.yasqe.config.paginationOn && !this.config.downloadAsOn && !this.yasrToolbarManagers) {
+    if (!this.yasqe.config.paginationOn && !this.yasrToolbarManagers) {
       return;
     }
     const pluginSelectorsEl = this.getPluginSelectorsEl();
     const spacerElement = document.createElement("li");
     spacerElement.classList.add("spacer");
     pluginSelectorsEl.appendChild(spacerElement);
-
-    if (this.config.downloadAsOn) {
-      const downloadAsLiElement = document.createElement("li");
-      this.downloadAsElement = this.createDownloadAsElement();
-      this.updateDownloadAsElementVisibility();
-      pluginSelectorsEl.appendChild(downloadAsLiElement);
-      downloadAsLiElement.appendChild(this.downloadAsElement);
-    }
 
     if (this.yasrToolbarManagers) {
       const yasrToolbar = document.createElement("li");
@@ -97,10 +88,6 @@ export class ExtendedYasr extends Yasr {
 
   updatePluginSelectorNames() {
     super.updatePluginSelectorNames();
-    if (this.downloadAsElement) {
-      this.updateDownloadAsElement(this.toDownloadAs(this.downloadAsElement));
-      this.updateDownloadAsElementVisibility();
-    }
     this.yasrToolbarManagers?.forEach((manager) => manager.updateElement(this));
   }
 
@@ -174,69 +161,6 @@ export class ExtendedYasr extends Yasr {
       this.eventsListeners = new Map();
     }
     return this.eventsListeners;
-  }
-
-  // Private functions
-  private toDownloadAs(element: HTMLElement | undefined): DownloadAs | undefined {
-    return element ? ((element as any) as DownloadAs) : undefined;
-  }
-
-  private createDownloadAsElement(): HTMLElement {
-    const element = document.createElement("ontotext-download-as");
-    const downloadAsComponent = this.toDownloadAs(element);
-    if (downloadAsComponent) {
-      downloadAsComponent.translationService = this.translationService;
-    }
-    this.updateDownloadAsElement(downloadAsComponent);
-    return element;
-  }
-
-  private updateDownloadAsElement(element: DownloadAs | undefined) {
-    if (!element) {
-      return;
-    }
-    element.query = this.yasqe?.getValueWithoutComments();
-    element.pluginName = this.getSelectedPluginName();
-
-    const infer = this.yasqe?.getInfer();
-    if (infer !== undefined) {
-      element.infer = infer;
-    }
-    const sameAs = this.yasqe?.getSameAs();
-    if (sameAs !== undefined) {
-      element.sameAs = sameAs;
-    }
-    const downloadAsConfiguration = this.getDownloadAsConfiguration();
-    if (downloadAsConfiguration) {
-      element.items = downloadAsConfiguration.items ? [...downloadAsConfiguration.items] : [];
-      if (downloadAsConfiguration.hasOwnProperty("nameLabelKey")) {
-        element.nameLabelKey = downloadAsConfiguration.nameLabelKey;
-      }
-      element.tooltipLabelKey = downloadAsConfiguration.tooltipLabelKey || downloadAsConfiguration.nameLabelKey;
-    } else {
-      element.items = [];
-    }
-  }
-
-  private getDownloadAsConfiguration() {
-    return this.externalPluginsConfigurations
-      ? this.externalPluginsConfigurations.get(this.getSelectedPluginName())?.["downloadAsConfig"]
-      : undefined;
-  }
-
-  private updateDownloadAsElementVisibility() {
-    addClass(this.downloadAsElement, "hidden");
-
-    // Download as dropdown is not visible
-    // when executed query is for explain plan query,
-    if (this.yasqe.getIsExplainPlanQuery()) {
-      return;
-    }
-    // or there is no results.
-    if (!this.results?.getBindings()?.length) {
-      return;
-    }
-    removeClass(this.downloadAsElement, "hidden");
   }
 
   private hasMoreThanOnePageElements(resultQueryPaginationElement: Page): boolean {
@@ -526,17 +450,6 @@ export class ExtendedYasr extends Yasr {
   private normalize(value: number): string {
     return `${value < 10 ? 0 : ""}${value}`;
   }
-}
-
-interface DownloadAs {
-  translationService: TranslationService;
-  nameLabelKey: string;
-  tooltipLabelKey: string;
-  query: string | undefined;
-  pluginName: string;
-  items: any[];
-  infer?: boolean;
-  sameAs?: boolean;
 }
 
 interface Page extends HTMLElement {

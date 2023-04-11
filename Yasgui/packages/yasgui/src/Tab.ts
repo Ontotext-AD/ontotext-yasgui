@@ -563,7 +563,6 @@ export class Tab extends EventEmitter {
       },
       defaultPlugin: this.persistentJson.yasr.settings.selectedPlugin,
       pluginOrder: this.yasgui.config.yasr.pluginOrder,
-      downloadAsOn: this.yasgui.config.yasr.downloadAsOn,
       getPlainQueryLinkToEndpoint: () => {
         if (this.yasqe) {
           return shareLink.appendArgsToUrl(
