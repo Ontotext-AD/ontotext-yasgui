@@ -27,4 +27,13 @@ export interface YasrToolbarPlugin {
    * @return - the order number.
    */
   getOrder(): number
+
+  /**
+   * This method is called when yasr is destroyed.
+   *
+   * @param element - the element created in {@link YasrToolbarPlugin#createElement}.
+   * @param yasr - the parent yasr of toolbar.
+   */
+  //@ts-ignore
+  destroy(element: HTMLElement, yasr: Yasr): void;
 }

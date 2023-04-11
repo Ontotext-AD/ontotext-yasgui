@@ -17,6 +17,7 @@ import {KeyboardShortcutService} from '../../keyboard-shortcut-service';
 import {NotificationMessageService} from '../../notification-message-service';
 import LocalNamesAutocompleter from "../../yasqe/autocompleter/local-names";
 import {DownloadAsYasrToolbarPlugin} from '../../yasr/toolbar/download-as-yasr-toolbar-plugin';
+import {PaginationYasrToolbarPlugin} from '../../yasr/toolbar/pagination-yasr-toolbar-plugin';
 
 /**
  * Builder for yasgui configuration.
@@ -98,6 +99,11 @@ export class YasguiConfigurationBuilder {
     if (externalConfiguration.downloadAsOn === undefined || externalConfiguration.downloadAsOn) {
       const downloadAsYasrToolbarPlugin = new DownloadAsYasrToolbarPlugin(this.serviceFactory, externalConfiguration.pluginsConfigurations);
       yasrToolbarElements.push(downloadAsYasrToolbarPlugin);
+    }
+
+    if (config.yasguiConfig.paginationOn) {
+      yasrToolbarElements.push(new PaginationYasrToolbarPlugin());
+
     }
     config.yasguiConfig.yasr.yasrToolbarPlugins = yasrToolbarElements;
 

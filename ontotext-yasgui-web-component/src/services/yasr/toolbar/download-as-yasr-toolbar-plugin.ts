@@ -63,6 +63,10 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
     return 0;
   }
 
+  destroy(_element: HTMLElement): void {
+    // Nothing to do at the moment.
+  }
+
   private toDownloadAsPluginConfiguration(pluginName: string, externalConfiguration: any): DownloadAsPluginConfiguration {
     if (externalConfiguration && externalConfiguration.downloadAsConfig && externalConfiguration.downloadAsConfig.items) {
       const pluginConfiguration = new DownloadAsPluginConfiguration(pluginName, externalConfiguration.nameLabelKey, externalConfiguration.tooltipLabelKey);
