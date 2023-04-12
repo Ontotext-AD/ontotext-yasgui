@@ -1,0 +1,242 @@
+Subject: [PATCH] Refactor "Pagination" component
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision edfb56e704ca8bca382c3d689288fa5ca682ba6f)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision ff55e030dc7c9c81c0ad129b1ad510fa9545e006)
+@@ -143,7 +143,8 @@
+   public close(confirm = true) {
+     const closeTab = () => {
+       if (this.yasqe) this.yasqe.abortQuery();
+-      if (this.yasgui.getTab() === this) {
++      const tab = this.yasgui.getTab();
++      if (tab === this) {
+         //it's the active tab
+         //first select other tab
+         const tabs = this.yasgui.persistentConfig.getTabs();
+@@ -152,6 +153,8 @@
+           this.yasgui.selectTabId(tabs[i === tabs.length - 1 ? i - 1 : i + 1]);
+         }
+       }
++
++      tab?.destroy();
+       this.yasgui._removePanel(this.rootEl);
+       this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
+       this.yasgui.emit("tabClose", this.yasgui, this);
+@@ -589,6 +592,7 @@
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
+     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
++    yasrConf.tabId = this.getId();
+ 
+     if (this.yasqe) {
+       this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson);
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision edfb56e704ca8bca382c3d689288fa5ca682ba6f)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision ff55e030dc7c9c81c0ad129b1ad510fa9545e006)
+@@ -13,21 +13,17 @@
+ 
+   // TODO remove it
+   externalPluginsConfigurations: Map<string, any> | undefined;
+-  resultQueryPaginationElement: Page | undefined;
+ 
+   private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
+-
+-  private eventsListeners: Map<string, Function> | undefined;
+-  private persistentJson: any;
++  private readonly persistentJson: any;
+ 
+   constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
+     super(yasqe, parent, conf, persistentJson?.yasr.response);
+     this.persistentJson = persistentJson;
+     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
+     if (yasqe.config.paginationOn) {
+-      this.yasqe.on("queryResponse", this.updateQueryResultPaginationElementHandler.bind(this));
+-      this.yasqe.on("totalElementsPersisted", this.updateQueryResultPaginationElementHandler.bind(this));
+-      this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
++      this.yasqe.on("queryResponse", this.draw.bind(this));
++      this.yasqe.on("totalElementsPersisted", this.draw.bind(this));
+     }
+     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
+   }
+@@ -68,13 +64,6 @@
+       });
+       pluginSelectorsEl.appendChild(yasrToolbar);
+     }
+-
+-    if (this.yasqe.config.paginationOn) {
+-      const resultPaginationLiElement = document.createElement("li");
+-      this.resultQueryPaginationElement = this.createResultPaginationElement();
+-      resultPaginationLiElement.appendChild(this.resultQueryPaginationElement);
+-      pluginSelectorsEl.appendChild(resultPaginationLiElement);
+-    }
+   }
+ 
+   draw() {
+@@ -108,98 +97,21 @@
+   //==================================================
+   //       Functions that extend YASR functionality
+   //==================================================
+-
+-  createResultPaginationElement(): Page {
+-    const element: Page = (document.createElement("ontotext-pagination") as unknown) as Page;
+-    const pageSelectedListener = this.pageSelectedHandler(this);
+-    this.getEventsListeners().set("pageSelected", pageSelectedListener);
+-    element.addEventListener("pageSelected", pageSelectedListener);
+-    this.updateQueryResultPaginationElement(element);
+-    return element;
+-  }
+-
+-  updateQueryResultPaginationElementHandler() {
+-    this.updateQueryResultPaginationElement(this.resultQueryPaginationElement);
+-    this.updateResponseInfo();
+-  }
+-
+-  updateQueryResultPaginationElement(resultQueryPaginationElement: Page | undefined) {
+-    if (!resultQueryPaginationElement) {
+-      return;
++  public hasResults(): boolean {
++    if (this.results) {
++      const bindings = this.results.getBindings() || [];
++      return bindings.length > 0;
+     }
+-    resultQueryPaginationElement.pageNumber = this.yasqe?.getPageNumber();
+-    resultQueryPaginationElement.pageSize = this.yasqe?.getPageSize();
+-    resultQueryPaginationElement.pageElements = this.results?.getBindings()?.length || 0;
+-    resultQueryPaginationElement.totalElements = this.persistentJson?.yasr.response?.totalElements || -1;
+-    resultQueryPaginationElement.hasMorePages = this.results?.getHasMorePages();
+-    this.updateQueryResultPaginationVisibility(resultQueryPaginationElement);
+-  }
+-
+-  updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page) {
+-    addClass(resultQueryPaginationElement, "hidden");
+-
+-    // Pagination is not visible
+-    // when executed query is for explain plan query,
+-    if (this.yasqe.getIsExplainPlanQuery()) {
+-      return;
+-    }
+-    // or pagination is on first page and page hasn't results,
+-    const hasNotResults = !this.results?.getBindings()?.length;
+-    if (hasNotResults && resultQueryPaginationElement.pageNumber === 1) {
+-      return;
+-    }
+-    // or has fewer results than one page.
+-    if (!this.hasMoreThanOnePageElements(resultQueryPaginationElement)) {
+-      return;
+-    }
+-
+-    removeClass(resultQueryPaginationElement, "hidden");
+-  }
+-
+-  private getEventsListeners(): Map<string, Function> {
+-    if (!this.eventsListeners) {
+-      this.eventsListeners = new Map();
+-    }
+-    return this.eventsListeners;
+-  }
+-
+-  private hasMoreThanOnePageElements(resultQueryPaginationElement: Page): boolean {
+-    if (resultQueryPaginationElement.pageNumber && resultQueryPaginationElement.pageNumber > 1) {
+-      return true;
+-    }
+-    if (resultQueryPaginationElement.hasMorePages !== undefined) {
+-      return resultQueryPaginationElement.hasMorePages;
+-    }
++    return true;
++  }
+ 
+-    if (resultQueryPaginationElement.pageSize && resultQueryPaginationElement.totalElements) {
+-      return resultQueryPaginationElement.pageSize < resultQueryPaginationElement.totalElements;
+-    }
+-    return false;
++  getTabId(): string | undefined {
++    return this.config.tabId;
+   }
+ 
+   public destroy() {
+     super.destroy();
+-    const pageSelected: any = this.getEventsListeners().get("pageSelected");
+-    if (pageSelected) {
+-      this.resultQueryPaginationElement?.removeEventListener("pageSelected", pageSelected);
+-    }
+-  }
+-
+-  private pageSelectedHandler(yasr: ExtendedYasr) {
+-    return (pageEvent: any) => {
+-      const page: Page = pageEvent.detail;
+-      const yasqe = yasr.yasqe;
+-      if (yasqe) {
+-        yasqe.setPageNumber(page.pageNumber || 1);
+-        yasqe.setPageSize(page.pageSize || 10);
+-        yasqe
+-          .query()
+-          .then()
+-          .catch(() => {
+-            // catch this to avoid unhandled rejection
+-          });
+-      }
+-    };
++    this.yasrToolbarManagers?.forEach((manager) => manager.destroy(this));
+   }
+ 
+   private getUpdateTypeQueryResponseInfo(): string {
+@@ -452,20 +364,14 @@
+   }
+ }
+ 
+-interface Page extends HTMLElement {
+-  pageSize?: number;
+-  pageNumber?: number;
+-  totalElements?: number;
+-  pageElements?: number;
+-  hasMorePages?: boolean;
+-}
+-
+ export interface YasrToolbarPlugin {
+   createElement(yasr: Yasr): HTMLElement;
+ 
+   updateElement(element: HTMLElement, yasr: Yasr): HTMLElement;
+ 
+   getOrder(): number;
++
++  destroy(element: HTMLElement, yasr: Yasr): HTMLElement;
+ }
+ 
+ class YasrToolbarPluginManager {
+@@ -489,4 +395,10 @@
+   getOrder(): number {
+     return this.plugin.getOrder();
+   }
++
++  destroy(yasr: Yasr): void {
++    if (this.element && typeof this.plugin.destroy === "function") {
++      this.plugin.destroy(this.element, yasr);
++    }
++  }
+ }
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision edfb56e704ca8bca382c3d689288fa5ca682ba6f)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision ff55e030dc7c9c81c0ad129b1ad510fa9545e006)
+@@ -658,6 +658,7 @@
+   enabled?: boolean;
+ }
+ export interface Config {
++  tabId?: string;
+   persistenceId: ((yasr: Yasr) => string) | string | null;
+   persistenceLabelResponse: string;
+   persistenceLabelConfig: string;
