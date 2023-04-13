@@ -1,0 +1,333 @@
+Subject: [PATCH] Refactoring output events
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/utils/src/index.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -91,3 +91,18 @@
+ 
+   error(code: string, message: string): void {}
+ }
++
++export class EventService {
++  private static _INSTANCE: EventService;
++
++  static get INSTANCE(): EventService {
++    if (!EventService._INSTANCE) {
++      EventService._INSTANCE = new EventService();
++    }
++    return EventService._INSTANCE;
++  }
++
++  emitEvent(element: HTMLElement, type: string, payload?: any): CustomEvent | undefined {
++    return;
++  }
++}
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -1,5 +1,5 @@
+ import { EventEmitter } from "events";
+-import { addClass, removeClass, getAsValue } from "@triply/yasgui-utils";
++import { addClass, removeClass, getAsValue, EventService } from "@triply/yasgui-utils";
+ import { TabListEl } from "./TabElements";
+ import TabPanel from "./TabPanel";
+ import { default as Yasqe, RequestConfig, PlainRequestConfig, PartialConfig as YasqeConfig } from "@triply/yasqe";
+@@ -69,8 +69,10 @@
+   private yasrWrapperEl: HTMLDivElement | undefined;
+   private endpointSelect: EndpointSelect | undefined;
+   private tabPanel?: TabPanel;
++  private readonly eventService: EventService;
+   constructor(yasgui: Yasgui, conf: PersistedJson) {
+     super();
++    this.eventService = yasgui.eventService;
+     if (!conf || conf.id === undefined) throw new Error("Expected a valid configuration to initialize tab with");
+     this.yasgui = yasgui;
+     this.persistentJson = conf;
+@@ -389,6 +391,7 @@
+     }
+     yasqeConf.translationService = this.yasgui.config.translationService;
+     yasqeConf.notificationMessageService = this.yasgui.config.notificationMessageService;
++    yasqeConf.eventService = this.yasgui.config.eventService;
+     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
+ 
+     this.yasqe.on("blur", this.handleYasqeBlur);
+@@ -477,13 +480,23 @@
+       yasqe.getIsExplainPlanQuery() !== this.persistentJson.yasqe.isExplainPlanQuery
+     );
+   };
+-  handleYasqeQuery = (yasqe: Yasqe) => {
++  handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
+     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
+     if (this.hasPersistenceJsonBeenChanged(yasqe)) {
+       this.updatePersistJson(yasqe);
+       this.emit("change", this, this.persistentJson);
+     }
+     this.emit("query", this);
++    if (this.rootEl) {
++      const payload = {
++        request: req,
++        query: yasqe.getValue(),
++        queryMode: yasqe.getQueryMode(),
++        queryType: yasqe.getQueryType(),
++        pageSize: yasqe.getPageSize(),
++      };
++      this.eventService.emitEvent(this.rootEl, "internalQueryEvent", payload);
++    }
+   };
+   handleYasqeQueryAbort = () => {
+     this.emit("queryAbort", this);
+Index: Yasgui/packages/yasgui/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/defaults.ts b/Yasgui/packages/yasgui/src/defaults.ts
+--- a/Yasgui/packages/yasgui/src/defaults.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -2,12 +2,13 @@
+ import Yasr from "@triply/yasr";
+ import { default as Yasqe } from "@triply/yasqe";
+ import { CatalogueItem } from "./endpointSelect";
+-import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
++import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ 
+ export default function initialize(): Config<CatalogueItem> {
+   return {
+     translationService: TranslationService.INSTANCE,
+     notificationMessageService: NotificationMessageService.INSTANCE,
++    eventService: EventService.INSTANCE,
+     pageNumber: 1,
+     autofocus: true,
+     endpointInfo: undefined,
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -9,7 +9,7 @@
+ import TabElements from "./TabElements";
+ import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
+ import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
+-import { addClass, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
++import { addClass, EventService, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
+ import { TranslationService } from "@triply/yasgui-utils";
+ import { CloseTabConfirmation } from "./closeTabConfirmation";
+ require("./index.scss");
+@@ -48,6 +48,7 @@
+   nonSslDomain?: string;
+   translationService: TranslationService;
+   notificationMessageService: NotificationMessageService;
++  eventService: EventService;
+   paginationOn?: boolean;
+   pageSize?: number;
+   pageNumber: number;
+@@ -100,6 +101,7 @@
+ 
+   public readonly translationService: TranslationService;
+   public readonly notificationMessageService: NotificationMessageService;
++  public readonly eventService: EventService;
+   constructor(parent: HTMLElement, config: PartialConfig) {
+     super();
+     this.rootEl = document.createElement("div");
+@@ -109,6 +111,7 @@
+     this.config = merge({}, Yasgui.defaults, config);
+     this.translationService = this.config.translationService;
+     this.notificationMessageService = this.config.notificationMessageService;
++    this.eventService = this.config.eventService;
+     this.persistentConfig = new PersistentConfig(this);
+ 
+     this.tabElements = new TabElements(this);
+@@ -239,19 +242,19 @@
+     return tab;
+   }
+   public closeOtherTabs(currentTabId: string): void {
+-      const closeOtherTabs = () => {
+-        for (const tabId of Object.keys(this._tabs)) {
+-          if (tabId !== currentTabId) {
+-            this.getTab(tabId)?.close(false);
+-          }
++    const closeOtherTabs = () => {
++      for (const tabId of Object.keys(this._tabs)) {
++        if (tabId !== currentTabId) {
++          this.getTab(tabId)?.close(false);
+         }
+       }
+-      new CloseTabConfirmation(
+-          this.translationService,
+-          this.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
+-          this.translationService.translate('yasgui.tab_list.close_other_tabs.confirmation.message'),
+-          closeOtherTabs
+-      ).open();
++    };
++    new CloseTabConfirmation(
++      this.translationService,
++      this.translationService.translate("yasgui.tab_list.close_tab.confirmation.title"),
++      this.translationService.translate("yasgui.tab_list.close_other_tabs.confirmation.message"),
++      closeOtherTabs
++    ).open();
+   }
+   /**
+    * Checks if two persistent tab configuration are the same based.
+@@ -356,6 +359,10 @@
+     if (panel) this.tabPanelsEl.removeChild(panel);
+   }
+ 
++  public emitInternalEvent(type: string, payload?: any): CustomEvent | undefined {
++    return this.eventService.emitEvent(this.rootEl, type, payload);
++  }
++
+   isQueryRunning() {
+     let queryRunning = false;
+     if (this._tabs) {
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -6,7 +6,7 @@
+  */
+ import { default as Yasqe, Config, PlainRequestConfig } from "./";
+ import * as queryString from "query-string";
+-import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
++import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
+ export default function get() {
+   const prefixCcApi =
+@@ -15,6 +15,7 @@
+   const config: Omit<Config, "requestConfig"> = {
+     translationService: TranslationService.INSTANCE,
+     notificationMessageService: NotificationMessageService.INSTANCE,
++    eventService: EventService.INSTANCE,
+     isVirtualRepository: false,
+     beforeUpdateQuery: () => Promise.resolve({}),
+     getRepositoryStatementsCount: () => Promise.resolve(0),
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -1,4 +1,4 @@
+-import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
++import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ 
+ require("./scss/yasqe.scss");
+ require("./scss/buttons.scss");
+@@ -96,6 +96,7 @@
+   private isExplainPlanQuery?: boolean;
+   public readonly translationService: TranslationService;
+   public readonly notificationMessageService: NotificationMessageService;
++  public readonly eventService: EventService;
+   private readonly isVirtualRepository: boolean;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+@@ -107,6 +108,7 @@
+     this.translationService = this.config.translationService;
+     this.isVirtualRepository = this.config.isVirtualRepository;
+     this.notificationMessageService = this.config.notificationMessageService;
++    this.eventService = this.config.eventService;
+     this.infer = this.config.infer;
+     this.sameAs = this.config.sameAs;
+     this.isExplainPlanQuery = this.config.isExplainPlanQuery;
+@@ -1091,6 +1093,10 @@
+     return Sparql.executeQuery(this, config);
+   }
+ 
++  public emitEvent(type: string, payload?: any) {
++    this.eventService.emitEvent(this.rootEl, type, payload);
++  }
++
+   public isSelectQuery(): boolean {
+     return "select" === this.getQueryType()?.toLowerCase();
+   }
+@@ -1309,6 +1315,7 @@
+   prefixes: string[];
+   translationService: TranslationService;
+   notificationMessageService: NotificationMessageService;
++  eventService: EventService;
+   infer?: boolean;
+   sameAs?: boolean;
+   pageSize?: number;
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -184,9 +184,17 @@
+   if (populatedConfig.withCredentials) req.withCredentials();
+ 
+   yasqe.emit("countQuery", req, populatedConfig);
++  const payload = {
++    request: req,
++    query: yasqe.getValue(),
++    queryMode: yasqe.getQueryMode(),
++    queryType: yasqe.getQueryType(),
++    pageSize: yasqe.getPageSize(),
++  };
++  yasqe.emitEvent("internalCountQueryEvent", payload);
+   req.then(
+     (countResponse) => {
+-      yasqe.emit("countQueryResponse", countResponse);
++      yasqe.emitEvent("internalCountQueryResponseEvent", { response: countResponse });
+       yasqe.emit("totalElementsChanged", parseInt(countResponse.body.totalElements));
+       yasqe.emit("totalElementsPersisted", parseInt(countResponse.body.totalElements));
+     },
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -47,7 +47,7 @@
+   private drawnPlugin: string | undefined;
+   private selectedPlugin: string | undefined;
+ 
+-  protected readonly translationService: TranslationService;
++  public readonly translationService: TranslationService;
+   readonly yasqe: Yasqe;
+ 
+   // Utils
+Index: Yasgui/packages/yasr/src/plugins/error/extended-error.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/error/extended-error.ts b/Yasgui/packages/yasr/src/plugins/error/extended-error.ts
+--- a/Yasgui/packages/yasr/src/plugins/error/extended-error.ts	(revision 7a127d319a4e276ce7ac69537ecea204fc2dc040)
++++ b/Yasgui/packages/yasr/src/plugins/error/extended-error.ts	(revision 50f397c390a7db9e655c4ddfa25d1f168f8ef8e3)
+@@ -19,7 +19,11 @@
+   private getErrorMessage(error: Parser.ErrorSummary): string {
+     return `<div class="error-response-plugin-header">
+                     <div class="error-response-plugin-error-status">
+-                        ${error.status ? error.status + ":" : ""} ${error.statusText}
++                        ${error.status ? error.status + ":" : ""} ${
++      error.statusText
++        ? error.statusText
++        : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message")
++    }
+                     </div>
+                     <div class="error-response-plugin-error-time-message">
+                         ${this.getResultTimeMessage()}
