@@ -9,7 +9,7 @@ import * as shareLink from "./linkUtils";
 import TabElements from "./TabElements";
 import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
 import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
-import { addClass, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
+import { addClass, EventService, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
 import { CloseTabConfirmation } from "./closeTabConfirmation";
 require("./index.scss");
@@ -48,6 +48,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   nonSslDomain?: string;
   translationService: TranslationService;
   notificationMessageService: NotificationMessageService;
+  eventService: EventService;
   paginationOn?: boolean;
   pageSize?: number;
   pageNumber: number;
@@ -100,6 +101,7 @@ export class Yasgui extends EventEmitter {
 
   public readonly translationService: TranslationService;
   public readonly notificationMessageService: NotificationMessageService;
+  public readonly eventService: EventService;
   constructor(parent: HTMLElement, config: PartialConfig) {
     super();
     this.rootEl = document.createElement("div");
@@ -109,6 +111,7 @@ export class Yasgui extends EventEmitter {
     this.config = merge({}, Yasgui.defaults, config);
     this.translationService = this.config.translationService;
     this.notificationMessageService = this.config.notificationMessageService;
+    this.eventService = this.config.eventService;
     this.persistentConfig = new PersistentConfig(this);
 
     this.tabElements = new TabElements(this);
@@ -239,19 +242,19 @@ export class Yasgui extends EventEmitter {
     return tab;
   }
   public closeOtherTabs(currentTabId: string): void {
-      const closeOtherTabs = () => {
-        for (const tabId of Object.keys(this._tabs)) {
-          if (tabId !== currentTabId) {
-            this.getTab(tabId)?.close(false);
-          }
+    const closeOtherTabs = () => {
+      for (const tabId of Object.keys(this._tabs)) {
+        if (tabId !== currentTabId) {
+          this.getTab(tabId)?.close(false);
         }
       }
-      new CloseTabConfirmation(
-          this.translationService,
-          this.translationService.translate('yasgui.tab_list.close_tab.confirmation.title'),
-          this.translationService.translate('yasgui.tab_list.close_other_tabs.confirmation.message'),
-          closeOtherTabs
-      ).open();
+    };
+    new CloseTabConfirmation(
+      this.translationService,
+      this.translationService.translate("yasgui.tab_list.close_tab.confirmation.title"),
+      this.translationService.translate("yasgui.tab_list.close_other_tabs.confirmation.message"),
+      closeOtherTabs
+    ).open();
   }
   /**
    * Checks if two persistent tab configuration are the same based.
@@ -354,6 +357,10 @@ export class Yasgui extends EventEmitter {
   }
   public _removePanel(panel: HTMLDivElement | undefined) {
     if (panel) this.tabPanelsEl.removeChild(panel);
+  }
+
+  public emitInternalEvent(type: string, payload?: any): CustomEvent | undefined {
+    return this.eventService.emitEvent(this.rootEl, type, payload);
   }
 
   isQueryRunning() {

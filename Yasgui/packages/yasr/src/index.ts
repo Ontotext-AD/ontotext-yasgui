@@ -47,7 +47,7 @@ export class Yasr extends EventEmitter {
   private drawnPlugin: string | undefined;
   private selectedPlugin: string | undefined;
 
-  protected readonly translationService: TranslationService;
+  public readonly translationService: TranslationService;
   readonly yasqe: Yasqe;
 
   // Utils

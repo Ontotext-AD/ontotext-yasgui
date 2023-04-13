@@ -184,9 +184,17 @@ export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void 
   if (populatedConfig.withCredentials) req.withCredentials();
 
   yasqe.emit("countQuery", req, populatedConfig);
+  const payload = {
+    request: req,
+    query: yasqe.getValue(),
+    queryMode: yasqe.getQueryMode(),
+    queryType: yasqe.getQueryType(),
+    pageSize: yasqe.getPageSize(),
+  };
+  yasqe.emitEvent("internalCountQueryEvent", payload);
   req.then(
     (countResponse) => {
-      yasqe.emit("countQueryResponse", countResponse);
+      yasqe.emitEvent("internalCountQueryResponseEvent", { response: countResponse });
       yasqe.emit("totalElementsChanged", parseInt(countResponse.body.totalElements));
       yasqe.emit("totalElementsPersisted", parseInt(countResponse.body.totalElements));
     },

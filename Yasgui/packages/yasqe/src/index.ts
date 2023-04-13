@@ -1,4 +1,4 @@
-import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
 
 require("./scss/yasqe.scss");
 require("./scss/buttons.scss");
@@ -96,6 +96,7 @@ export class Yasqe extends CodeMirror {
   private isExplainPlanQuery?: boolean;
   public readonly translationService: TranslationService;
   public readonly notificationMessageService: NotificationMessageService;
+  public readonly eventService: EventService;
   private readonly isVirtualRepository: boolean;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
@@ -107,6 +108,7 @@ export class Yasqe extends CodeMirror {
     this.translationService = this.config.translationService;
     this.isVirtualRepository = this.config.isVirtualRepository;
     this.notificationMessageService = this.config.notificationMessageService;
+    this.eventService = this.config.eventService;
     this.infer = this.config.infer;
     this.sameAs = this.config.sameAs;
     this.isExplainPlanQuery = this.config.isExplainPlanQuery;
@@ -1091,6 +1093,10 @@ export class Yasqe extends CodeMirror {
     return Sparql.executeQuery(this, config);
   }
 
+  public emitEvent(type: string, payload?: any) {
+    this.eventService.emitEvent(this.rootEl, type, payload);
+  }
+
   public isSelectQuery(): boolean {
     return "select" === this.getQueryType()?.toLowerCase();
   }
@@ -1309,6 +1315,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   prefixes: string[];
   translationService: TranslationService;
   notificationMessageService: NotificationMessageService;
+  eventService: EventService;
   infer?: boolean;
   sameAs?: boolean;
   pageSize?: number;

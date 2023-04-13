@@ -6,7 +6,7 @@
  */
 import { default as Yasqe, Config, PlainRequestConfig } from "./";
 import * as queryString from "query-string";
-import { NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
 //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
 export default function get() {
   const prefixCcApi =
@@ -15,6 +15,7 @@ export default function get() {
   const config: Omit<Config, "requestConfig"> = {
     translationService: TranslationService.INSTANCE,
     notificationMessageService: NotificationMessageService.INSTANCE,
+    eventService: EventService.INSTANCE,
     isVirtualRepository: false,
     beforeUpdateQuery: () => Promise.resolve({}),
     getRepositoryStatementsCount: () => Promise.resolve(0),
