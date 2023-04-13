@@ -16,7 +16,6 @@ import { InternalDropdownValueSelectedEvent } from "./models/internal-events/int
 import { Page } from "./models/page";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
-import { QueryResponseEvent } from "./models/event";
 import { OutputEvent } from "./models/output-events/output-event";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
@@ -405,10 +404,6 @@ declare namespace LocalJSX {
           * Event emitter used to send message to the clients of component.
          */
         "onOutput"?: (event: OntotextYasguiCustomEvent<OutputEvent>) => void;
-        /**
-          * Event emitted when after query response is returned.
-         */
-        "onQueryResponse"?: (event: OntotextYasguiCustomEvent<QueryResponseEvent>) => void;
         /**
           * Event emitted when query share link gets copied in the clipboard.
          */

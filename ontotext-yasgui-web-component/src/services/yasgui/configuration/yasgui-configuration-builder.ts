@@ -59,6 +59,7 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig = {
       translationService: this.serviceFactory.get(TranslationService),
       notificationMessageService: this.serviceFactory.get(NotificationMessageService),
+      eventService: this.serviceFactory.getEventService(),
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},
@@ -70,7 +71,7 @@ export class YasguiConfigurationBuilder {
         keyboardShortcutDescriptions: [],
         isVirtualRepository: externalConfiguration.isVirtualRepository !== undefined ? externalConfiguration.isVirtualRepository : defaultYasqeConfig.isVirtualRepository,
         beforeUpdateQuery: externalConfiguration.beforeUpdateQuery !== undefined ? externalConfiguration.beforeUpdateQuery : defaultYasqeConfig.beforeUpdateQuery,
-        getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.beforeUpdateQuery
+        getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount
       },
       yasr: {
         prefixes: {},

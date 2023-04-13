@@ -4,7 +4,11 @@ import {InternalDownloadAsEvent} from '../models/internal-events/internal-downlo
 import {InternalDropdownValueSelectedEvent} from '../models/internal-events/internal-dropdown-value-selected-event';
 import {InternalNotificationMessageEvent} from '../models/internal-events/internal-notification-message-event';
 import {InternalShowResourceCopyLinkDialogEvent} from '../models/internal-events/internal-show-resource-copy-link-dialog-event';
-import {InternalEventTypes} from '../models/internal-events/internal-event-types';
+import {InternalEventType, InternalEventTypes} from '../models/internal-events/internal-event-types';
+import {InternalQueryExecuted} from '../models/internal-events/internal-query-executed';
+import {InternalQueryEvent} from '../models/internal-events/internal-query-event';
+import {InternalCountQueryEvent} from '../models/internal-events/internal-count-query-event';
+import {InternalCountQueryResponseEvent} from '../models/internal-events/internal-count-query-response-event';
 
 /**
  * The purpose of this service is to mitigate the issue where the stencil builtin Event decorator
@@ -31,6 +35,10 @@ export class EventService implements EventEmitter {
     return EventService.emitInternalEvent(this._hostElement, internalEvent);
   }
 
+  emitEvent(element: HTMLElement, type: InternalEventTypes, payload?: any): CustomEvent {
+    return EventService.emitFromInnerElement(element, type, payload);
+  }
+
   static emitFromInnerElement(element: HTMLElement, type: InternalEventTypes, payload?: any): CustomEvent {
     const innerEvent = EventService.toInnerEvent(type, payload);
     if (innerEvent) {
@@ -48,14 +56,24 @@ export class EventService implements EventEmitter {
 
   private static toInnerEvent(type: InternalEventTypes, payload: any): InternalEvent | undefined {
     switch (type) {
-      case 'internalDownloadAsEvent':
+      case InternalEventType.INTERNAL_DOWNLOAD_AS_EVENT:
         return new InternalDownloadAsEvent(payload.value, payload.pluginName, payload.query, payload.infer, payload.sameAs);
-      case 'internalDropdownValueSelectedEvent':
+      case InternalEventType.INTERNAL_DROPDOWN_VALUE_SELECTED_EVENT:
         return new InternalDropdownValueSelectedEvent(payload.value);
-      case 'internalNotificationMessageEvent':
+      case InternalEventType.INTERNAL_NOTIFICATION_MESSAGE_EVENT:
         return new InternalNotificationMessageEvent(payload.code, payload.messageType, payload.message);
-      case 'internalShowResourceCopyLinkDialogEvent':
+      case InternalEventType.INTERNAL_SHOW_RESOURCE_COPY_LINK_DIALOG_EVENT:
         return new InternalShowResourceCopyLinkDialogEvent(payload.copyLink);
+      case InternalEventType.INTERNAL_QUERY_EXECUTED:
+        return new InternalQueryExecuted(payload.duration);
+      case InternalEventType.INTERNAL_QUERY_EVENT:
+        return new InternalQueryEvent(payload.request, payload.query, payload.queryMode, payload.queryType, payload.pageSize);
+      case InternalEventType.INTERNAL_COUNT_QUERY_EVENT:
+        return new InternalCountQueryEvent(payload.request, payload.query, payload.queryMode, payload.queryType, payload.pageSize);
+      case InternalEventType.INTERNAL_COUNT_QUERY_RESPONSE_EVENT:
+        return new InternalCountQueryResponseEvent(payload.response);
+      default:
+        throw Error('Can\'t find internal event definition for type: ' + type);
     }
   }
 
