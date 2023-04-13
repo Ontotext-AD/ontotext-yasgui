@@ -3,6 +3,7 @@ import {NotificationMessageService} from '../services/notification-message-servi
 import {AutocompleteLoader, YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 import {BeforeUpdateQueryResult} from './before-update-query-result';
 import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
+import {EventService} from '../services/event-service';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -79,6 +80,7 @@ export interface YasguiConfiguration {
     tabName?: string,
     translationService: TranslationService;
     notificationMessageService: NotificationMessageService;
+    eventService: EventService;
     requestConfig: {
       endpoint?: string;
       method?: 'POST' | 'GET';

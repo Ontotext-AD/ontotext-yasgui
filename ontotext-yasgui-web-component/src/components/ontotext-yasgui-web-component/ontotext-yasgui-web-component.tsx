@@ -3,10 +3,6 @@ import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-co
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
-import {
-  QueryResponseEvent
-} from "../../models/event";
-import Yasqe from "../../../../Yasgui/packages/yasqe/src";
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
@@ -19,13 +15,14 @@ import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dial
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
 import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
-import {CountQueryEvent} from '../../models/output-events/count-query-event';
-import {CountQueryResponseEvent} from '../../models/output-events/count-query-response-event';
-import {QueryEvent} from '../../models/output-events/query-event';
+import {InternalCountQueryEvent} from '../../models/internal-events/internal-count-query-event';
+import {InternalQueryEvent} from '../../models/internal-events/internal-query-event';
 import {NotificationMessageService} from '../../services/notification-message-service';
 import {InternalNotificationMessageEvent, MessageCode} from '../../models/internal-events/internal-notification-message-event';
 import {InternalShowResourceCopyLinkDialogEvent} from '../../models/internal-events/internal-show-resource-copy-link-dialog-event';
 import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
+import {InternalQueryExecuted} from '../../models/internal-events/internal-query-executed';
+import {InternalCountQueryResponseEvent} from '../../models/internal-events/internal-count-query-response-event';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -54,7 +51,7 @@ import {InternalShowSavedQueriesEvent} from '../../models/internal-events/intern
   shadow: false,
 })
 export class OntotextYasguiWebComponent {
-  private translationService: TranslationService;
+  private readonly translationService: TranslationService;
   private readonly serviceFactory: ServiceFactory;
   private readonly yasguiConfigurationBuilder: YasguiConfigurationBuilder;
   private readonly yasguiBuilder: YasguiBuilder;
@@ -83,18 +80,7 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
     this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
-
-    // Bound to the instance functions because we want to refer them when unsubscribing events
-    this.onQueryBound = this.onQuery.bind(this);
-    this.onQueryResponseBound = this.onQueryResponse.bind(this);
-    this.onCountQueryBound = this.onCountQuery.bind(this);
-    this.onCountQueryResponseBound = this.onCountQueryResponse.bind(this);
   }
-
-  onQueryBound: (yasqe: Yasqe, tab) => void;
-  onQueryResponseBound: (_instance: Yasqe, _req: Request, duration: number) => void;
-  onCountQueryBound: (yasqe: Yasqe, tab) => void;
-  onCountQueryResponseBound: (yasqe: Yasqe, countQueryResponse: any) => void;
 
   /**
    * The host html element for the yasgui.
@@ -133,11 +119,6 @@ export class OntotextYasguiWebComponent {
     this.shouldShowSavedQueriesPopup();
     this.saveQueryData = this.initSaveQueryData();
   }
-
-  /**
-   * Event emitted when after query response is returned.
-   */
-  @Event() queryResponse: EventEmitter<QueryResponseEvent>;
 
   /**
    * Event emitted when saved query payload is collected and the query should be saved by the
@@ -484,35 +465,41 @@ export class OntotextYasguiWebComponent {
     this.output.emit(toOutputEvent(event));
   }
 
+  @Listen('internalQueryExecuted')
+  onInternalQueryExecuted(event: CustomEvent<InternalQueryExecuted>) {
+    const queryExecuted = toOutputEvent(event);
+    // TODO check if this is needed
+    this.showQueryProgress = false;
+    // TODO check if this is needed
+    this.queryDuration = queryExecuted.payload.duration;
+    this.output.emit(queryExecuted);
+  }
+
+  @Listen('internalQueryEvent')
+  onQuery(event: CustomEvent<InternalQueryEvent>): void {
+    this.showQueryProgress = true;
+    this.output.emit(toOutputEvent(event));
+  }
+
+  @Listen('internalCountQueryEvent')
+  onCountQuery(event: CustomEvent<InternalCountQueryEvent>) {
+    this.output.emit(toOutputEvent(event));
+  }
+
+  @Listen('internalCountQueryResponseEvent')
+  onCountQueryResponse(event: CustomEvent<InternalCountQueryResponseEvent>) {
+    this.output.emit(toOutputEvent(event));
+  }
+
   private resolveOrientationButtonTooltip(): string {
     return this.isVerticalOrientation ?
       this.translationService.translate('yasgui.toolbar.orientation.btn.tooltip.switch_orientation_horizontal') :
       this.translationService.translate('yasgui.toolbar.orientation.btn.tooltip.switch_orientation_vertical');
   }
 
-  private onCountQuery(yasqe: Yasqe, request: Request) {
-    this.output.emit(new CountQueryEvent(request, yasqe.getValue(), yasqe.getQueryMode(), yasqe.getQueryType(), yasqe.getPageSize()));
-  }
-
-  private onCountQueryResponse(_yasqe: Yasqe, countQueryResponse: any) {
-    this.output.emit(new CountQueryResponseEvent(countQueryResponse));
-  }
-
   private changeOrientation() {
     this.isVerticalOrientation = !this.isVerticalOrientation;
     VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation);
-  }
-
-  // @ts-ignore
-  private onQuery(yasqe: Yasqe, request: Request): void {
-    this.output.emit(new QueryEvent(request, yasqe.getValue(), yasqe.getQueryMode(), yasqe.getQueryType(), yasqe.getPageSize()));
-    this.showQueryProgress = true;
-  }
-
-  private onQueryResponse(_instance: Yasqe, _req: Request, duration: number): void {
-    this.showQueryProgress = false;
-    this.queryDuration = duration;
-    this.queryResponse.emit({duration});
   }
 
   private getDefaultSaveQueryData(): SaveQueryData {
@@ -627,27 +614,9 @@ export class OntotextYasguiWebComponent {
     });
   }
 
-  private initYasguiEventHandlers(yasqe: any): void {
-    yasqe.off('query', this.onQueryBound);
-    yasqe.on('query', this.onQueryBound);
-
-    yasqe.off('queryResponse', this.onQueryResponseBound);
-    yasqe.on('queryResponse', this.onQueryResponseBound);
-
-    yasqe.off('countQuery', this.onCountQueryBound);
-    yasqe.on('countQuery', this.onCountQueryBound);
-
-    yasqe.off('countQueryResponse', this.onCountQueryResponseBound);
-    yasqe.on('countQueryResponse', this.onCountQueryResponseBound);
-  }
-
   private afterInit(): void {
     // Configure the web component
     this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
-    // Register any needed event handlers
-    this.ontotextYasgui.getInstance().on('yasqeReady', (_tab: any, yasqe: any) => {
-      this.initYasguiEventHandlers(yasqe);
-    });
   }
 
   private destroy(): void {

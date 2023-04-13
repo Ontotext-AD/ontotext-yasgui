@@ -38,17 +38,16 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Events
 
-| Event                  | Description                                                                                                                                             | Type                                 |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `createSavedQuery`     | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`         |
-| `deleteSavedQuery`     | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`         |
-| `loadSavedQueries`     | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`               |
-| `output`               | Event emitter used to send message to the clients of component.                                                                                         | `CustomEvent<OutputEvent>`           |
-| `queryResponse`        | Event emitted when after query response is returned.                                                                                                    | `CustomEvent<{ duration: number; }>` |
-| `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`                   |
-| `shareQuery`           | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<TabQueryModel>`         |
-| `shareSavedQuery`      | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<SaveQueryData>`         |
-| `updateSavedQuery`     | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`         |
+| Event                  | Description                                                                                                                                             | Type                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `createSavedQuery`     | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>` |
+| `deleteSavedQuery`     | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>` |
+| `loadSavedQueries`     | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`       |
+| `output`               | Event emitter used to send message to the clients of component.                                                                                         | `CustomEvent<OutputEvent>`   |
+| `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`           |
+| `shareQuery`           | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<TabQueryModel>` |
+| `shareSavedQuery`      | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<SaveQueryData>` |
+| `updateSavedQuery`     | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>` |
 
 
 ## Methods
