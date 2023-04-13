@@ -91,3 +91,18 @@ export class NotificationMessageService {
 
   error(code: string, message: string): void {}
 }
+
+export class EventService {
+  private static _INSTANCE: EventService;
+
+  static get INSTANCE(): EventService {
+    if (!EventService._INSTANCE) {
+      EventService._INSTANCE = new EventService();
+    }
+    return EventService._INSTANCE;
+  }
+
+  emitEvent(element: HTMLElement, type: string, payload?: any): CustomEvent | undefined {
+    return;
+  }
+}

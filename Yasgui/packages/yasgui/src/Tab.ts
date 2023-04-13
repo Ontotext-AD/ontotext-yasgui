@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { addClass, removeClass, getAsValue } from "@triply/yasgui-utils";
+import { addClass, removeClass, getAsValue, EventService } from "@triply/yasgui-utils";
 import { TabListEl } from "./TabElements";
 import TabPanel from "./TabPanel";
 import { default as Yasqe, RequestConfig, PlainRequestConfig, PartialConfig as YasqeConfig } from "@triply/yasqe";
@@ -69,8 +69,10 @@ export class Tab extends EventEmitter {
   private yasrWrapperEl: HTMLDivElement | undefined;
   private endpointSelect: EndpointSelect | undefined;
   private tabPanel?: TabPanel;
+  private readonly eventService: EventService;
   constructor(yasgui: Yasgui, conf: PersistedJson) {
     super();
+    this.eventService = yasgui.eventService;
     if (!conf || conf.id === undefined) throw new Error("Expected a valid configuration to initialize tab with");
     this.yasgui = yasgui;
     this.persistentJson = conf;
@@ -389,6 +391,7 @@ export class Tab extends EventEmitter {
     }
     yasqeConf.translationService = this.yasgui.config.translationService;
     yasqeConf.notificationMessageService = this.yasgui.config.notificationMessageService;
+    yasqeConf.eventService = this.yasgui.config.eventService;
     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
 
     this.yasqe.on("blur", this.handleYasqeBlur);
@@ -477,13 +480,23 @@ export class Tab extends EventEmitter {
       yasqe.getIsExplainPlanQuery() !== this.persistentJson.yasqe.isExplainPlanQuery
     );
   };
-  handleYasqeQuery = (yasqe: Yasqe) => {
+  handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
     if (this.hasPersistenceJsonBeenChanged(yasqe)) {
       this.updatePersistJson(yasqe);
       this.emit("change", this, this.persistentJson);
     }
     this.emit("query", this);
+    if (this.rootEl) {
+      const payload = {
+        request: req,
+        query: yasqe.getValue(),
+        queryMode: yasqe.getQueryMode(),
+        queryType: yasqe.getQueryType(),
+        pageSize: yasqe.getPageSize(),
+      };
+      this.eventService.emitEvent(this.rootEl, "internalQueryEvent", payload);
+    }
   };
   handleYasqeQueryAbort = () => {
     this.emit("queryAbort", this);

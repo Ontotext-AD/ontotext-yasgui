@@ -19,7 +19,11 @@ export default class ExtendedError extends Error {
   private getErrorMessage(error: Parser.ErrorSummary): string {
     return `<div class="error-response-plugin-header">
                     <div class="error-response-plugin-error-status">
-                        ${error.status ? error.status + ":" : ""} ${error.statusText}
+                        ${error.status ? error.status + ":" : ""} ${
+      error.statusText
+        ? error.statusText
+        : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message")
+    }
                     </div>
                     <div class="error-response-plugin-error-time-message">
                         ${this.getResultTimeMessage()}
