@@ -65,7 +65,7 @@ export class EventService implements EventEmitter {
       case InternalEventType.INTERNAL_SHOW_RESOURCE_COPY_LINK_DIALOG_EVENT:
         return new InternalShowResourceCopyLinkDialogEvent(payload.copyLink);
       case InternalEventType.INTERNAL_QUERY_EXECUTED:
-        return new InternalQueryExecuted(payload.duration);
+        return new InternalQueryExecuted(payload.duration, payload.tabId);
       case InternalEventType.INTERNAL_QUERY_EVENT:
         return new InternalQueryEvent(payload.request, payload.query, payload.queryMode, payload.queryType, payload.pageSize);
       case InternalEventType.INTERNAL_COUNT_QUERY_EVENT:

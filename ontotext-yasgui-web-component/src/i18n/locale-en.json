@@ -160,6 +160,7 @@
   "yasr.plugin.extended_boolean.true": "YES",
   "yasr.plugin.extended_boolean.false": "NO",
   "yasr.plugin.no_compatible.message": " ",
+  "yasr.plugin.extended_error.default_status.message": "Error",
   "yasqe.actions.save_query.button.tooltip": "Create saved query",
   "yasqe.actions.save_query.dialog.title": "Create New Saved Query",
   "yasqe.actions.save_query.dialog.query.label": "Create your sample query",
