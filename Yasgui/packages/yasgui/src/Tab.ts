@@ -2,7 +2,13 @@ import { EventEmitter } from "events";
 import { addClass, removeClass, getAsValue, EventService } from "@triply/yasgui-utils";
 import { TabListEl } from "./TabElements";
 import TabPanel from "./TabPanel";
-import { default as Yasqe, RequestConfig, PlainRequestConfig, PartialConfig as YasqeConfig } from "@triply/yasqe";
+import {
+  default as Yasqe,
+  RequestConfig,
+  PlainRequestConfig,
+  PartialConfig as YasqeConfig,
+  CustomResultMessage,
+} from "@triply/yasqe";
 import { default as Yasr, Parser, Config as YasrConfig, PersistentConfig as YasrPersistentConfig } from "@triply/yasr";
 import { mapValues, eq, mergeWith, words, deburr, invert } from "lodash-es";
 import * as shareLink from "./linkUtils";
@@ -392,6 +398,7 @@ export class Tab extends EventEmitter {
     yasqeConf.translationService = this.yasgui.config.translationService;
     yasqeConf.notificationMessageService = this.yasgui.config.notificationMessageService;
     yasqeConf.eventService = this.yasgui.config.eventService;
+    yasqeConf.tabId = this.getId();
     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
 
     this.yasqe.on("blur", this.handleYasqeBlur);
@@ -517,11 +524,19 @@ export class Tab extends EventEmitter {
     duration: number,
     queryStartedTime: number,
     hasMorePages?: boolean,
-    possibleElementsCount?: number
+    possibleElementsCount?: number,
+    customResultMessage?: CustomResultMessage
   ) => {
     this.emit("queryResponse", this);
     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
-    this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages, possibleElementsCount);
+    this.yasr.setResponse(
+      response,
+      duration,
+      queryStartedTime,
+      hasMorePages,
+      possibleElementsCount,
+      customResultMessage
+    );
     if (!this.yasr.results) return;
     const responseAsStoreObject = this.yasr.results.getAsStoreObject(this.yasgui.config.yasr.maxPersistentResponseSize);
     if (!this.yasr.results.hasError()) {
@@ -533,6 +548,7 @@ export class Tab extends EventEmitter {
       this.persistentJson.yasr.response = responseAsStoreObject;
     }
     this.emit("change", this, this.persistentJson);
+    this.yasgui.emitInternalEvent("internalQueryExecuted", { duration, tabId: this.getId() });
   };
 
   handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {

@@ -608,10 +608,18 @@ export class Yasr extends EventEmitter {
     duration?: number,
     queryStartedTime?: number,
     hasMorePages?: boolean,
-    possibleElementsCount?: number
+    possibleElementsCount?: number,
+    customResultMessage?: CustomResultMessage
   ) {
     if (!data) return;
-    this.results = new Parser(data, duration, queryStartedTime, hasMorePages, possibleElementsCount);
+    this.results = new Parser(
+      data,
+      duration,
+      queryStartedTime,
+      hasMorePages,
+      possibleElementsCount,
+      customResultMessage
+    );
 
     this.draw();
 
@@ -695,7 +703,7 @@ export function registerPlugin(name: string, plugin: typeof Plugin, enable = tru
 import * as YasrPluginError from "./plugins/error";
 import { ExtendedTable } from "./plugins/table/extended-table";
 import { TranslationService } from "@triply/yasgui-utils";
-import Yasqe from "@triply/yasqe";
+import Yasqe, { CustomResultMessage } from "@triply/yasqe";
 import ExtendedBoolean from "./plugins/boolean/extended-boolean";
 import ExtendedResponse from "./plugins/response/extended-response";
 import ExtendedError from "./plugins/error/extended-error";

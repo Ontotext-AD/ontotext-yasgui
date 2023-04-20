@@ -7,12 +7,16 @@ import SparqlTsvParser from "./tsv";
 import bindingsToCsv from "../bindingsToCsv";
 import { cloneDeep } from "lodash-es";
 import N3 from "n3";
+import { CustomResultMessage } from "@triply/yasqe";
+import { QueryError, TranslationParameter } from "@triply/yasgui-utils";
 
 namespace Parser {
   export interface ErrorSummary {
     status?: number;
     text: string;
     statusText?: string;
+    messageLabelKey?: string;
+    parameters?: TranslationParameter[];
   }
   export interface BindingValue {
     value: string;
@@ -44,6 +48,7 @@ namespace Parser {
     countAffectedRepositoryStatements?: number;
     hasMorePages?: boolean;
     possibleElementsCount?: number;
+    customResultMessage?: CustomResultMessage;
   }
   export type PostProcessBinding = (binding: Binding) => Binding;
 }
@@ -74,17 +79,19 @@ class Parser {
   // Contrary to the typings, statusText is part of responseError
   private error: Error | (SuperAgent.ResponseError & { response: { statusText: string } }) | undefined;
   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
-  private executionTime: number | undefined;
-  private queryStartedTime: number | undefined;
+  private readonly executionTime: number | undefined;
+  private readonly queryStartedTime: number | undefined;
   private countAffectedRepositoryStatements?: number | undefined;
-  private possibleElementsCount?: number;
+  private readonly possibleElementsCount?: number;
   private readonly hasMorePages?: boolean;
+  private readonly customResultMessage?: CustomResultMessage;
   constructor(
     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
     executionTime?: number,
     queryStartedTime?: number,
     hasMorePages?: boolean,
-    possibleElementsCount?: number
+    possibleElementsCount?: number,
+    customResultMessage?: CustomResultMessage
   ) {
     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
     if (executionTime) this.executionTime = executionTime; // Parameter has priority
@@ -105,6 +112,12 @@ class Parser {
       this.possibleElementsCount = possibleElementsCount;
     } else {
       this.possibleElementsCount = responseOrObject.possibleElementsCount;
+    }
+
+    if (customResultMessage) {
+      this.customResultMessage = customResultMessage;
+    } else {
+      this.customResultMessage = responseOrObject.customResultMessage;
     }
 
     this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
@@ -171,6 +184,14 @@ class Parser {
         }
       }
     }
+
+    if (this.error instanceof QueryError) {
+      this.errorSummary = {
+        text: (this.error as QueryError).message,
+        messageLabelKey: (this.error as QueryError).messageLabelKey,
+        parameters: (this.error as QueryError).parameters,
+      };
+    }
     return this.errorSummary;
   }
   public getContentType() {
@@ -208,6 +229,10 @@ class Parser {
 
   public getPossibleElementsCount(): number | undefined {
     return this.possibleElementsCount;
+  }
+
+  public getCustomResultMessage(): CustomResultMessage | undefined {
+    return this.customResultMessage;
   }
 
   public setCountAffectedRepositoryStatements(countAffectedRepositoryStatements: number) {
@@ -345,6 +370,7 @@ class Parser {
         hasMorePages: this.getHasMorePages(),
         possibleElementsCount: this.getPossibleElementsCount(),
         countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
+        customResultMessage: this.getCustomResultMessage(),
       };
     }
     if (summary) {
@@ -362,6 +388,7 @@ class Parser {
         hasMorePages: this.getHasMorePages(),
         possibleElementsCount: this.getPossibleElementsCount(),
         countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
+        customResultMessage: this.getCustomResultMessage(),
       };
     }
   }

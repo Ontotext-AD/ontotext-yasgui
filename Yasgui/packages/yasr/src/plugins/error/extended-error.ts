@@ -17,11 +17,25 @@ export default class ExtendedError extends Error {
   }
 
   private getErrorMessage(error: Parser.ErrorSummary): string {
+    const status = error.status;
+    const statusText = error.statusText
+      ? error.statusText
+      : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message");
+    let errorBodyText;
+    if (error.text) {
+      errorBodyText = error.text;
+    } else if (error.messageLabelKey) {
+      errorBodyText = this.yasr.translationService.translate(error.messageLabelKey, error.parameters);
+    }
+    return this.createErrorMessageElement(status, statusText, errorBodyText);
+  }
+
+  private createErrorMessageElement(status: number | undefined, statusText = "", errorBodyText = "") {
     return `<div class="error-response-plugin-header">
                     <div class="error-response-plugin-error-status">
-                        ${error.status ? error.status + ":" : ""} ${
-      error.statusText
-        ? error.statusText
+                        ${status ? status + ":" : ""} ${
+      statusText
+        ? statusText
         : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message")
     }
                     </div>
@@ -30,7 +44,7 @@ export default class ExtendedError extends Error {
                     </div>
                  </div>
                  <div class="error-response-plugin-body">
-                    ${error.text || ""}
+                    ${errorBodyText}
                  </div>`;
   }
 

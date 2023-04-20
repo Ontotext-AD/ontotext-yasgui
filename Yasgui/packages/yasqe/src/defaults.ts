@@ -4,7 +4,7 @@
  * keys). Either change the default options by setting Yasqe.defaults, or by
  * passing your own options as second argument to the YASQE constructor
  */
-import { default as Yasqe, Config, PlainRequestConfig } from "./";
+import { QueryResponseStatus, Config, default as Yasqe, PlainRequestConfig } from "./";
 import * as queryString from "query-string";
 import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
 //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
@@ -16,8 +16,9 @@ export default function get() {
     translationService: TranslationService.INSTANCE,
     notificationMessageService: NotificationMessageService.INSTANCE,
     eventService: EventService.INSTANCE,
+    tabId: "",
     isVirtualRepository: false,
-    beforeUpdateQuery: () => Promise.resolve({}),
+    beforeUpdateQuery: (_query: string, _tabId: string) => Promise.resolve({ status: QueryResponseStatus.SUCCESS }),
     getRepositoryStatementsCount: () => Promise.resolve(0),
     mode: "sparql11",
     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
