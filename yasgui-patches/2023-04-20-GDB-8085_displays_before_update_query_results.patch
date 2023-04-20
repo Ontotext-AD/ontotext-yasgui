@@ -1,0 +1,546 @@
+Subject: [PATCH] GDB-8085: implement update query flow
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/utils/src/index.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -68,11 +68,16 @@
+     return TranslationService._INSTANCE;
+   }
+ 
+-  translate(key: string, _parameters?: Record<string, string>[]): string {
++  translate(key: string, _parameters?: TranslationParameter[]): string {
+     return key;
+   }
+ }
+ 
++export interface TranslationParameter {
++  key: string;
++  value: string;
++}
++
+ export class NotificationMessageService {
+   private static _INSTANCE: NotificationMessageService;
+ 
+@@ -106,3 +111,9 @@
+     return;
+   }
+ }
++
++export class QueryError extends Error {
++  text?: string;
++  messageLabelKey?: string;
++  parameters?: TranslationParameter[];
++}
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -2,7 +2,13 @@
+ import { addClass, removeClass, getAsValue, EventService } from "@triply/yasgui-utils";
+ import { TabListEl } from "./TabElements";
+ import TabPanel from "./TabPanel";
+-import { default as Yasqe, RequestConfig, PlainRequestConfig, PartialConfig as YasqeConfig } from "@triply/yasqe";
++import {
++  default as Yasqe,
++  RequestConfig,
++  PlainRequestConfig,
++  PartialConfig as YasqeConfig,
++  CustomResultMessage,
++} from "@triply/yasqe";
+ import { default as Yasr, Parser, Config as YasrConfig, PersistentConfig as YasrPersistentConfig } from "@triply/yasr";
+ import { mapValues, eq, mergeWith, words, deburr, invert } from "lodash-es";
+ import * as shareLink from "./linkUtils";
+@@ -392,6 +398,7 @@
+     yasqeConf.translationService = this.yasgui.config.translationService;
+     yasqeConf.notificationMessageService = this.yasgui.config.notificationMessageService;
+     yasqeConf.eventService = this.yasgui.config.eventService;
++    yasqeConf.tabId = this.getId();
+     this.yasqe = new Yasqe(this.yasqeWrapperEl, yasqeConf);
+ 
+     this.yasqe.on("blur", this.handleYasqeBlur);
+@@ -517,11 +524,19 @@
+     duration: number,
+     queryStartedTime: number,
+     hasMorePages?: boolean,
+-    possibleElementsCount?: number
++    possibleElementsCount?: number,
++    customResultMessage?: CustomResultMessage
+   ) => {
+     this.emit("queryResponse", this);
+     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
+-    this.yasr.setResponse(response, duration, queryStartedTime, hasMorePages, possibleElementsCount);
++    this.yasr.setResponse(
++      response,
++      duration,
++      queryStartedTime,
++      hasMorePages,
++      possibleElementsCount,
++      customResultMessage
++    );
+     if (!this.yasr.results) return;
+     const responseAsStoreObject = this.yasr.results.getAsStoreObject(this.yasgui.config.yasr.maxPersistentResponseSize);
+     if (!this.yasr.results.hasError()) {
+@@ -533,6 +548,7 @@
+       this.persistentJson.yasr.response = responseAsStoreObject;
+     }
+     this.emit("change", this, this.persistentJson);
++    this.yasgui.emitInternalEvent("internalQueryExecuted", { duration, tabId: this.getId() });
+   };
+ 
+   handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -4,7 +4,7 @@
+  * keys). Either change the default options by setting Yasqe.defaults, or by
+  * passing your own options as second argument to the YASQE constructor
+  */
+-import { default as Yasqe, Config, PlainRequestConfig } from "./";
++import { QueryResponseStatus, Config, default as Yasqe, PlainRequestConfig } from "./";
+ import * as queryString from "query-string";
+ import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+ //need to pass Yasqe object as argument, as the imported version might not have inherited all (e.g. `fold`) props of Codemirror yet
+@@ -16,8 +16,9 @@
+     translationService: TranslationService.INSTANCE,
+     notificationMessageService: NotificationMessageService.INSTANCE,
+     eventService: EventService.INSTANCE,
++    tabId: "",
+     isVirtualRepository: false,
+-    beforeUpdateQuery: () => Promise.resolve({}),
++    beforeUpdateQuery: (_query: string, _tabId: string) => Promise.resolve({ status: QueryResponseStatus.SUCCESS }),
+     getRepositoryStatementsCount: () => Promise.resolve(0),
+     mode: "sparql11",
+     value: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -1,4 +1,9 @@
+-import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
++import {
++  EventService,
++  NotificationMessageService,
++  TranslationParameter,
++  TranslationService,
++} from "@triply/yasgui-utils";
+ 
+ require("./scss/yasqe.scss");
+ require("./scss/buttons.scss");
+@@ -98,6 +103,7 @@
+   public readonly notificationMessageService: NotificationMessageService;
+   public readonly eventService: EventService;
+   private readonly isVirtualRepository: boolean;
++  private readonly tabId: string;
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
+@@ -114,6 +120,7 @@
+     this.isExplainPlanQuery = this.config.isExplainPlanQuery;
+     this.pageNumber = this.config.pageNumber;
+     this.pageSize = this.config.pageSize;
++    this.tabId = this.config.tabId;
+     //inherit codemirror props
+     const cm = (CodeMirror as any)(this.rootEl, this.config);
+     //Assign our functions to the cm object. This is needed, as some functions (like the ctrl-enter callback)
+@@ -267,6 +274,10 @@
+     return !!this.req;
+   }
+ 
++  getTabId(): string {
++    return this.tabId;
++  }
++
+   private registerEventListeners() {
+     /**
+      * Register listeners
+@@ -1324,14 +1335,22 @@
+   paginationOn?: boolean;
+   keyboardShortcutDescriptions?: [];
+   isVirtualRepository: boolean;
+-  beforeUpdateQuery: () => Promise<BeforeUpdateQuery>;
++  beforeUpdateQuery: (query: string, tabId: string) => Promise<CustomResultMessage>;
++  tabId: string;
+   getRepositoryStatementsCount: () => Promise<number>;
+   onQueryAborted?: (req: superagent.SuperAgentRequest | undefined) => Promise<void>;
+ }
+ 
+-export interface BeforeUpdateQuery {
++export interface CustomResultMessage {
++  status: QueryResponseStatus;
+   message?: string;
+   messageLabelKey?: string;
++  parameters?: TranslationParameter[];
++}
++
++export enum QueryResponseStatus {
++  ERROR = "error",
++  SUCCESS = "success",
+ }
+ 
+ export interface PersistentConfig {
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -1,7 +1,8 @@
+-import { default as Yasqe, Config, RequestConfig, BeforeUpdateQuery } from "./";
++import { default as Yasqe, Config, RequestConfig, CustomResultMessage, QueryResponseStatus } from "./";
+ import * as superagent from "superagent";
+ import { merge, isFunction } from "lodash-es";
+ import * as queryString from "query-string";
++import { QueryError } from "@triply/yasgui-utils";
+ export type YasqeAjaxConfig = Config["requestConfig"];
+ export interface PopulatedAjaxConfig {
+   url: string;
+@@ -57,9 +58,22 @@
+ }
+ 
+ export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
++  const queryStarted = Date.now();
+   let initialRepositoryStatementsCount: number;
+-  const checkQueryPreconditions = (): Promise<BeforeUpdateQuery> => {
+-    return yasqe.config.beforeUpdateQuery();
++  let beforeUpdateQueryResult: CustomResultMessage;
++  const checkQueryPreconditions = (): Promise<CustomResultMessage> => {
++    return yasqe.config.beforeUpdateQuery(yasqe.getValue(), yasqe.getTabId()).then((result) => {
++      beforeUpdateQueryResult = result;
++
++      if (QueryResponseStatus.ERROR === beforeUpdateQueryResult.status) {
++        const error = new QueryError();
++        error.messageLabelKey = beforeUpdateQueryResult.messageLabelKey;
++        error.parameters = beforeUpdateQueryResult.parameters;
++        error.message = beforeUpdateQueryResult.message || "";
++        return Promise.reject(error);
++      }
++      return result;
++    });
+   };
+ 
+   const getRepositoryStatementsCountBeforeQuery = (): Promise<number> => {
+@@ -70,7 +84,7 @@
+   };
+ 
+   const executeQuery = (): Promise<any> => {
+-    return executeQueryModeQuery(yasqe, config);
++    return executeQueryModeQuery(yasqe, config, queryStarted, beforeUpdateQueryResult);
+   };
+ 
+   const calculateAffectedStatementsCount = () => {
+@@ -88,13 +102,25 @@
+     .then(executeQuery)
+     .then(calculateAffectedStatementsCount)
+     .catch((error) => {
+-      // TODO check if error message have to be persisted.
+-      // TODO check if query type have to be set to ERROR(WB approach) or something other because ERROR is not valid type.
+-      console.log(error);
++      yasqe.emit(
++        "queryResponse",
++        error,
++        Date.now() - queryStarted,
++        queryStarted,
++        undefined,
++        undefined,
++        beforeUpdateQueryResult
++      );
++      yasqe.emit("error", error);
+     });
+ }
+ 
+-export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
++export async function executeQueryModeQuery(
++  yasqe: Yasqe,
++  config?: YasqeAjaxConfig,
++  queryStarted?: number,
++  beforeUpdateQueryResult?: CustomResultMessage
++): Promise<any> {
+   var req: superagent.SuperAgentRequest;
+   try {
+     getAjaxConfig(yasqe, config);
+@@ -103,7 +129,7 @@
+       //nothing to query
+       return;
+     }
+-    var queryStart = Date.now();
++    var queryStart = queryStarted || Date.now();
+ 
+     if (populatedConfig.reqMethod === "POST") {
+       req = superagent.post(populatedConfig.url).type("form").send(populatedConfig.args);
+@@ -142,7 +168,15 @@
+           }
+         }
+ 
+-        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart, hasMorePages, possibleElementsCount);
++        yasqe.emit(
++          "queryResponse",
++          result,
++          Date.now() - queryStart,
++          queryStart,
++          hasMorePages,
++          possibleElementsCount,
++          beforeUpdateQueryResult
++        );
+         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
+         if (totalElements) {
+           yasqe.emit("totalElementsChanged", totalElements);
+@@ -154,7 +188,15 @@
+         if (e instanceof Error && e.message === "Aborted") {
+           //The query was aborted. We should not do or draw anything
+         } else {
+-          yasqe.emit("queryResponse", e, Date.now() - queryStart, queryStart);
++          yasqe.emit(
++            "queryResponse",
++            e,
++            Date.now() - queryStart,
++            queryStart,
++            undefined,
++            undefined,
++            beforeUpdateQueryResult
++          );
+         }
+         yasqe.emit("error", e);
+         throw e;
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -115,7 +115,17 @@
+   }
+ 
+   private getUpdateTypeQueryResponseInfo(): string {
+-    // TODO show custom message if exist in persistence
++    const customResultMessage = this.results?.getCustomResultMessage();
++    if (customResultMessage) {
++      if (customResultMessage.message) {
++        return customResultMessage.message;
++      }
++      const messageLabelKey = customResultMessage.messageLabelKey;
++      if (messageLabelKey) {
++        return this.translationService.translate(messageLabelKey, customResultMessage.parameters);
++      }
++    }
++
+     const countAffectedRepositoryStatements = this.results?.getCountAffectedRepositoryStatements();
+     if (countAffectedRepositoryStatements === undefined) {
+       return "";
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -608,10 +608,18 @@
+     duration?: number,
+     queryStartedTime?: number,
+     hasMorePages?: boolean,
+-    possibleElementsCount?: number
++    possibleElementsCount?: number,
++    customResultMessage?: CustomResultMessage
+   ) {
+     if (!data) return;
+-    this.results = new Parser(data, duration, queryStartedTime, hasMorePages, possibleElementsCount);
++    this.results = new Parser(
++      data,
++      duration,
++      queryStartedTime,
++      hasMorePages,
++      possibleElementsCount,
++      customResultMessage
++    );
+ 
+     this.draw();
+ 
+@@ -695,7 +703,7 @@
+ import * as YasrPluginError from "./plugins/error";
+ import { ExtendedTable } from "./plugins/table/extended-table";
+ import { TranslationService } from "@triply/yasgui-utils";
+-import Yasqe from "@triply/yasqe";
++import Yasqe, { CustomResultMessage } from "@triply/yasqe";
+ import ExtendedBoolean from "./plugins/boolean/extended-boolean";
+ import ExtendedResponse from "./plugins/response/extended-response";
+ import ExtendedError from "./plugins/error/extended-error";
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -7,12 +7,16 @@
+ import bindingsToCsv from "../bindingsToCsv";
+ import { cloneDeep } from "lodash-es";
+ import N3 from "n3";
++import { CustomResultMessage } from "@triply/yasqe";
++import { QueryError, TranslationParameter } from "@triply/yasgui-utils";
+ 
+ namespace Parser {
+   export interface ErrorSummary {
+     status?: number;
+     text: string;
+     statusText?: string;
++    messageLabelKey?: string;
++    parameters?: TranslationParameter[];
+   }
+   export interface BindingValue {
+     value: string;
+@@ -44,6 +48,7 @@
+     countAffectedRepositoryStatements?: number;
+     hasMorePages?: boolean;
+     possibleElementsCount?: number;
++    customResultMessage?: CustomResultMessage;
+   }
+   export type PostProcessBinding = (binding: Binding) => Binding;
+ }
+@@ -74,17 +79,19 @@
+   // Contrary to the typings, statusText is part of responseError
+   private error: Error | (SuperAgent.ResponseError & { response: { statusText: string } }) | undefined;
+   private type: "json" | "xml" | "csv" | "tsv" | "ttl" | undefined;
+-  private executionTime: number | undefined;
+-  private queryStartedTime: number | undefined;
++  private readonly executionTime: number | undefined;
++  private readonly queryStartedTime: number | undefined;
+   private countAffectedRepositoryStatements?: number | undefined;
+-  private possibleElementsCount?: number;
++  private readonly possibleElementsCount?: number;
+   private readonly hasMorePages?: boolean;
++  private readonly customResultMessage?: CustomResultMessage;
+   constructor(
+     responseOrObject: Parser.ResponseSummary | SuperAgent.Response | Error | any,
+     executionTime?: number,
+     queryStartedTime?: number,
+     hasMorePages?: boolean,
+-    possibleElementsCount?: number
++    possibleElementsCount?: number,
++    customResultMessage?: CustomResultMessage
+   ) {
+     if (responseOrObject.executionTime) this.executionTime = responseOrObject.executionTime;
+     if (executionTime) this.executionTime = executionTime; // Parameter has priority
+@@ -107,6 +114,12 @@
+       this.possibleElementsCount = responseOrObject.possibleElementsCount;
+     }
+ 
++    if (customResultMessage) {
++      this.customResultMessage = customResultMessage;
++    } else {
++      this.customResultMessage = responseOrObject.customResultMessage;
++    }
++
+     this.countAffectedRepositoryStatements = responseOrObject.countAffectedRepositoryStatements;
+ 
+     if (responseOrObject instanceof Error) {
+@@ -171,6 +184,14 @@
+         }
+       }
+     }
++
++    if (this.error instanceof QueryError) {
++      this.errorSummary = {
++        text: (this.error as QueryError).message,
++        messageLabelKey: (this.error as QueryError).messageLabelKey,
++        parameters: (this.error as QueryError).parameters,
++      };
++    }
+     return this.errorSummary;
+   }
+   public getContentType() {
+@@ -210,6 +231,10 @@
+     return this.possibleElementsCount;
+   }
+ 
++  public getCustomResultMessage(): CustomResultMessage | undefined {
++    return this.customResultMessage;
++  }
++
+   public setCountAffectedRepositoryStatements(countAffectedRepositoryStatements: number) {
+     this.countAffectedRepositoryStatements = countAffectedRepositoryStatements;
+   }
+@@ -345,6 +370,7 @@
+         hasMorePages: this.getHasMorePages(),
+         possibleElementsCount: this.getPossibleElementsCount(),
+         countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
++        customResultMessage: this.getCustomResultMessage(),
+       };
+     }
+     if (summary) {
+@@ -362,6 +388,7 @@
+         hasMorePages: this.getHasMorePages(),
+         possibleElementsCount: this.getPossibleElementsCount(),
+         countAffectedRepositoryStatements: this.getCountAffectedRepositoryStatements(),
++        customResultMessage: this.getCustomResultMessage(),
+       };
+     }
+   }
+Index: Yasgui/packages/yasr/src/plugins/error/extended-error.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/error/extended-error.ts b/Yasgui/packages/yasr/src/plugins/error/extended-error.ts
+--- a/Yasgui/packages/yasr/src/plugins/error/extended-error.ts	(revision 8d385dc11ec23b883b7cfe48337bb93099a3538c)
++++ b/Yasgui/packages/yasr/src/plugins/error/extended-error.ts	(revision c796132f621686037f8b3f145ac29ef106b56aac)
+@@ -17,11 +17,25 @@
+   }
+ 
+   private getErrorMessage(error: Parser.ErrorSummary): string {
++    const status = error.status;
++    const statusText = error.statusText
++      ? error.statusText
++      : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message");
++    let errorBodyText;
++    if (error.text) {
++      errorBodyText = error.text;
++    } else if (error.messageLabelKey) {
++      errorBodyText = this.yasr.translationService.translate(error.messageLabelKey, error.parameters);
++    }
++    return this.createErrorMessageElement(status, statusText, errorBodyText);
++  }
++
++  private createErrorMessageElement(status: number | undefined, statusText = "", errorBodyText = "") {
+     return `<div class="error-response-plugin-header">
+                     <div class="error-response-plugin-error-status">
+-                        ${error.status ? error.status + ":" : ""} ${
+-      error.statusText
+-        ? error.statusText
++                        ${status ? status + ":" : ""} ${
++      statusText
++        ? statusText
+         : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message")
+     }
+                     </div>
+@@ -30,7 +44,7 @@
+                     </div>
+                  </div>
+                  <div class="error-response-plugin-body">
+-                    ${error.text || ""}
++                    ${errorBodyText}
+                  </div>`;
+   }
+ 
