@@ -1,4 +1,4 @@
-const ontoElement = getOntotextYasgui();
+const ontoElement = getOntotextYasgui('yasr-plugins');
 
 setQueryListener(ontoElement);
 

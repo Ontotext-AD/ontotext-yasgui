@@ -1,3 +1,5 @@
+import {YasrSteps} from './yasr-steps';
+
 export class YasqeSteps {
   static getYasqe() {
     return cy.get('.yasqe');
@@ -52,6 +54,8 @@ export class YasqeSteps {
 
   static executeQuery(index = 0) {
     this.getExecuteQueryButton().eq(index).click();
+    // Wait a wile for the response information to be present.
+    YasrSteps.getResponseInfo();
   }
 
   static getExecuteQueryButtonTooltip() {

@@ -6,10 +6,11 @@ export class InternalQueryExecuted  implements InternalEvent {
   TYPE = InternalEventType.INTERNAL_QUERY_EXECUTED;
   OUTPUT_TYPE = OutputEventType.OUTPUT_QUERY_EXECUTED;
   payload: {
-    duration: number
+    duration: number,
+    tabId: string
   };
 
-  constructor(duration: number) {
-    this.payload = {duration};
+  constructor(duration: number, tabId: string) {
+    this.payload = {duration, tabId};
   }
 }
