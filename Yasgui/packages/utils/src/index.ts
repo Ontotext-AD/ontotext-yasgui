@@ -68,9 +68,14 @@ export class TranslationService {
     return TranslationService._INSTANCE;
   }
 
-  translate(key: string, _parameters?: Record<string, string>[]): string {
+  translate(key: string, _parameters?: TranslationParameter[]): string {
     return key;
   }
+}
+
+export interface TranslationParameter {
+  key: string;
+  value: string;
 }
 
 export class NotificationMessageService {
@@ -105,4 +110,10 @@ export class EventService {
   emitEvent(element: HTMLElement, type: string, payload?: any): CustomEvent | undefined {
     return;
   }
+}
+
+export class QueryError extends Error {
+  text?: string;
+  messageLabelKey?: string;
+  parameters?: TranslationParameter[];
 }

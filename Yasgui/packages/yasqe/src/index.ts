@@ -1,4 +1,9 @@
-import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
+import {
+  EventService,
+  NotificationMessageService,
+  TranslationParameter,
+  TranslationService,
+} from "@triply/yasgui-utils";
 
 require("./scss/yasqe.scss");
 require("./scss/buttons.scss");
@@ -98,6 +103,7 @@ export class Yasqe extends CodeMirror {
   public readonly notificationMessageService: NotificationMessageService;
   public readonly eventService: EventService;
   private readonly isVirtualRepository: boolean;
+  private readonly tabId: string;
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -114,6 +120,7 @@ export class Yasqe extends CodeMirror {
     this.isExplainPlanQuery = this.config.isExplainPlanQuery;
     this.pageNumber = this.config.pageNumber;
     this.pageSize = this.config.pageSize;
+    this.tabId = this.config.tabId;
     //inherit codemirror props
     const cm = (CodeMirror as any)(this.rootEl, this.config);
     //Assign our functions to the cm object. This is needed, as some functions (like the ctrl-enter callback)
@@ -265,6 +272,10 @@ export class Yasqe extends CodeMirror {
 
   isQueryRunning() {
     return !!this.req;
+  }
+
+  getTabId(): string {
+    return this.tabId;
   }
 
   private registerEventListeners() {
@@ -1324,14 +1335,22 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   paginationOn?: boolean;
   keyboardShortcutDescriptions?: [];
   isVirtualRepository: boolean;
-  beforeUpdateQuery: () => Promise<BeforeUpdateQuery>;
+  beforeUpdateQuery: (query: string, tabId: string) => Promise<CustomResultMessage>;
+  tabId: string;
   getRepositoryStatementsCount: () => Promise<number>;
   onQueryAborted?: (req: superagent.SuperAgentRequest | undefined) => Promise<void>;
 }
 
-export interface BeforeUpdateQuery {
+export interface CustomResultMessage {
+  status: QueryResponseStatus;
   message?: string;
   messageLabelKey?: string;
+  parameters?: TranslationParameter[];
+}
+
+export enum QueryResponseStatus {
+  ERROR = "error",
+  SUCCESS = "success",
 }
 
 export interface PersistentConfig {

@@ -115,7 +115,17 @@ export class ExtendedYasr extends Yasr {
   }
 
   private getUpdateTypeQueryResponseInfo(): string {
-    // TODO show custom message if exist in persistence
+    const customResultMessage = this.results?.getCustomResultMessage();
+    if (customResultMessage) {
+      if (customResultMessage.message) {
+        return customResultMessage.message;
+      }
+      const messageLabelKey = customResultMessage.messageLabelKey;
+      if (messageLabelKey) {
+        return this.translationService.translate(messageLabelKey, customResultMessage.parameters);
+      }
+    }
+
     const countAffectedRepositoryStatements = this.results?.getCountAffectedRepositoryStatements();
     if (countAffectedRepositoryStatements === undefined) {
       return "";

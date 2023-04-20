@@ -1,7 +1,8 @@
-import { default as Yasqe, Config, RequestConfig, BeforeUpdateQuery } from "./";
+import { default as Yasqe, Config, RequestConfig, CustomResultMessage, QueryResponseStatus } from "./";
 import * as superagent from "superagent";
 import { merge, isFunction } from "lodash-es";
 import * as queryString from "query-string";
+import { QueryError } from "@triply/yasgui-utils";
 export type YasqeAjaxConfig = Config["requestConfig"];
 export interface PopulatedAjaxConfig {
   url: string;
@@ -57,9 +58,22 @@ export async function executeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Prom
 }
 
 export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
+  const queryStarted = Date.now();
   let initialRepositoryStatementsCount: number;
-  const checkQueryPreconditions = (): Promise<BeforeUpdateQuery> => {
-    return yasqe.config.beforeUpdateQuery();
+  let beforeUpdateQueryResult: CustomResultMessage;
+  const checkQueryPreconditions = (): Promise<CustomResultMessage> => {
+    return yasqe.config.beforeUpdateQuery(yasqe.getValue(), yasqe.getTabId()).then((result) => {
+      beforeUpdateQueryResult = result;
+
+      if (QueryResponseStatus.ERROR === beforeUpdateQueryResult.status) {
+        const error = new QueryError();
+        error.messageLabelKey = beforeUpdateQueryResult.messageLabelKey;
+        error.parameters = beforeUpdateQueryResult.parameters;
+        error.message = beforeUpdateQueryResult.message || "";
+        return Promise.reject(error);
+      }
+      return result;
+    });
   };
 
   const getRepositoryStatementsCountBeforeQuery = (): Promise<number> => {
@@ -70,7 +84,7 @@ export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxCon
   };
 
   const executeQuery = (): Promise<any> => {
-    return executeQueryModeQuery(yasqe, config);
+    return executeQueryModeQuery(yasqe, config, queryStarted, beforeUpdateQueryResult);
   };
 
   const calculateAffectedStatementsCount = () => {
@@ -88,13 +102,25 @@ export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxCon
     .then(executeQuery)
     .then(calculateAffectedStatementsCount)
     .catch((error) => {
-      // TODO check if error message have to be persisted.
-      // TODO check if query type have to be set to ERROR(WB approach) or something other because ERROR is not valid type.
-      console.log(error);
+      yasqe.emit(
+        "queryResponse",
+        error,
+        Date.now() - queryStarted,
+        queryStarted,
+        undefined,
+        undefined,
+        beforeUpdateQueryResult
+      );
+      yasqe.emit("error", error);
     });
 }
 
-export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): Promise<any> {
+export async function executeQueryModeQuery(
+  yasqe: Yasqe,
+  config?: YasqeAjaxConfig,
+  queryStarted?: number,
+  beforeUpdateQueryResult?: CustomResultMessage
+): Promise<any> {
   var req: superagent.SuperAgentRequest;
   try {
     getAjaxConfig(yasqe, config);
@@ -103,7 +129,7 @@ export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConf
       //nothing to query
       return;
     }
-    var queryStart = Date.now();
+    var queryStart = queryStarted || Date.now();
 
     if (populatedConfig.reqMethod === "POST") {
       req = superagent.post(populatedConfig.url).type("form").send(populatedConfig.args);
@@ -142,7 +168,15 @@ export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConf
           }
         }
 
-        yasqe.emit("queryResponse", result, Date.now() - queryStart, queryStart, hasMorePages, possibleElementsCount);
+        yasqe.emit(
+          "queryResponse",
+          result,
+          Date.now() - queryStart,
+          queryStart,
+          hasMorePages,
+          possibleElementsCount,
+          beforeUpdateQueryResult
+        );
         yasqe.emit("queryResults", result.body, Date.now() - queryStart);
         if (totalElements) {
           yasqe.emit("totalElementsChanged", totalElements);
@@ -154,7 +188,15 @@ export async function executeQueryModeQuery(yasqe: Yasqe, config?: YasqeAjaxConf
         if (e instanceof Error && e.message === "Aborted") {
           //The query was aborted. We should not do or draw anything
         } else {
-          yasqe.emit("queryResponse", e, Date.now() - queryStart, queryStart);
+          yasqe.emit(
+            "queryResponse",
+            e,
+            Date.now() - queryStart,
+            queryStart,
+            undefined,
+            undefined,
+            beforeUpdateQueryResult
+          );
         }
         yasqe.emit("error", e);
         throw e;
