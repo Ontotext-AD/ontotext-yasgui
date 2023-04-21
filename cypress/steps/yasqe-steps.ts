@@ -1,4 +1,5 @@
 import {YasrSteps} from './yasr-steps';
+import {ErrorPluginSteps} from './error-plugin-steps';
 
 export class YasqeSteps {
   static getYasqe() {
@@ -55,7 +56,16 @@ export class YasqeSteps {
   static executeQuery(index = 0) {
     this.getExecuteQueryButton().eq(index).click();
     // Wait a wile for the response information to be present.
-    YasrSteps.getResponseInfo();
+    YasrSteps.getResponseInfo()
+      .should('not.have.class', 'hidden')
+      .should('not.have.class', 'empty')
+      .should('be.visible');
+  }
+
+  static executeErrorQuery(index = 0) {
+    this.getExecuteQueryButton().eq(index).click();
+    // Wait a wile for the response information to be present.
+    ErrorPluginSteps.getErrorPlugin().should('be.visible');
   }
 
   static getExecuteQueryButtonTooltip() {

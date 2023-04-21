@@ -16,7 +16,7 @@ describe('Error handling', () => {
     QueryStubs.stubLoadQueryErrorResponse()
     YasqeSteps.clearEditor();
     YasqeSteps.writeInEditor('LOAD <file:///datasets/bio2rdf/drugbank/bio2rdf-drugbank.nq>\n INTO GRAPH <file:///datasets/bio2rdf/drugbank/bio2rdf-drugbank.nq>');
-    YasqeSteps.executeQuery();
+    YasqeSteps.executeErrorQuery();
 
     // Then I expect to see a message that
     // describes error status and error text,
