@@ -245,7 +245,8 @@ describe('Plugin: Table', () => {
         }
       }, () => {
         // When I execute a query which return results and results type is uri.
-        QueryStubs.stubDefaultQueryResponse();
+        const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
+        QueryStubs.stubQueryResults(queryDescription);
         YasqeSteps.executeQuery();
 
         // And I hovered the mouse over a cell of result table.
@@ -292,10 +293,11 @@ describe('Plugin: Table', () => {
 
     it('Should open copy link dialog', () => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(2);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And click on a copy link.
-      YasrSteps.clickOnCopyResourceLink(10, 2);
+      YasrSteps.clickOnCopyResourceLink(1, 2);
 
       // Then I expect copy link dialog to be opened.
       YasrSteps.getCopyResourceLinkDialog().should('be.visible');
@@ -308,10 +310,11 @@ describe('Plugin: Table', () => {
       }
     }, () => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(2);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource dialog is open.
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(1);
 
       // When I click on close button
       YasrSteps.clickCopyLinkDialogCloseButton();
@@ -327,10 +330,11 @@ describe('Plugin: Table', () => {
       },
     },() => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource link dialog is open
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(1);
 
       // And click on cancel button
       YasrSteps.clickCopyLinkDialogCancelButton();
@@ -346,10 +350,11 @@ describe('Plugin: Table', () => {
       }
     },() => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource link dialog is open
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(2);
 
       // And click on copy button
       YasrSteps.clickCopyLinkDialogCopyButton();
@@ -360,10 +365,11 @@ describe('Plugin: Table', () => {
 
     it('Should close copy link dialog when click outside dialog', () => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(2);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource link dialog is open
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(1);
 
       // And click on copy button
       YasrSteps.clickOutsideCopyLinkDialog();
@@ -374,27 +380,29 @@ describe('Plugin: Table', () => {
 
     it('Should input of copy link dialog be filled when dialog is open', () => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(2);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource link dialog is open
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(1);
 
       // Then I expect the input of dialog to have value.
-      YasrSteps.getCopyResourceLinkInput().should('have.value', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+      YasrSteps.getCopyResourceLinkInput().should('have.value', 'http://ontotext-yasgui/generated-yri#page_1-row_2-column_2');
     });
 
     it('Should copy value of copy link dialog input into clipboard when click on copy link dialog', () => {
       // When I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource link dialog is open
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(1);
 
       // When click on button copy to clipboard
       YasrSteps.clickCopyLinkDialogCopyButton();
 
       // Then I expect the value from input to be copied into clipboard.
-      cy.assertClipboardValue('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+      cy.assertClipboardValue('http://ontotext-yasgui/generated-yri#page_1-row_2-column_2');
     });
 
     it('Should send notify message when resource link is copied successfully', {
@@ -406,10 +414,11 @@ describe('Plugin: Table', () => {
       // When I attach handler to receive message from component
       YasrSteps.attachMessageHandler();
       // And I execute a query which returns results of type is uri.
-      QueryStubs.stubDefaultQueryResponse();
+      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
+      QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       // And copy resource link dialog is open
-      openCopyResourceLinkDialog();
+      openCopyResourceLinkDialog(2);
       // And click on button copy to clipboard
       YasrSteps.clickCopyLinkDialogCopyButton();
 
