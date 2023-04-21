@@ -49,21 +49,25 @@ export class YasqeSteps {
     return this.getActionButtonsTooltips().eq(index);
   }
 
-  static getExecuteQueryButton() {
-    return cy.get('.yasqe_queryButton');
+  static getExecuteQueryButton(index = 0) {
+    return cy.get('.yasqe_queryButton').eq(index);
   }
 
   static executeQuery(index = 0) {
-    this.getExecuteQueryButton().eq(index).click();
+    this.getExecuteQueryButton(index).click();
     // Wait a wile for the response information to be present.
-    YasrSteps.getResponseInfo()
+    YasrSteps.getResponseInfo(index)
       .should('not.have.class', 'hidden')
       .should('not.have.class', 'empty')
       .should('be.visible');
   }
 
+  static executeQueryWithoutWaiteResult(index = 0) {
+    this.getExecuteQueryButton(index).click();
+  }
+
   static executeErrorQuery(index = 0) {
-    this.getExecuteQueryButton().eq(index).click();
+    this.getExecuteQueryButton(index).click();
     // Wait a wile for the response information to be present.
     ErrorPluginSteps.getErrorPlugin().should('be.visible');
   }

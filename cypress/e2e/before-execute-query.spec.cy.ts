@@ -15,7 +15,7 @@ describe('Before execute query functionality', () => {
     BeforeExecuteQueryPageSteps.setupErrorResult();
     YasqeSteps.clearEditor();
     YasqeSteps.writeInEditor('INSERT DATA {<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name".\n<https://swapi.co/vocabulary/#planet> <http://www.w3.org/2000/01/rdf-schema#label> "Test name two".\n}');
-    YasqeSteps.executeQuery();
+    YasqeSteps.executeQueryWithoutWaiteResult();
 
     // Then I expect to see an error message.
     ErrorPluginSteps.getErrorPluginBody().contains('Before Update Query Error Result.');

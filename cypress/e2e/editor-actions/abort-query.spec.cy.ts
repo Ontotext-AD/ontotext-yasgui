@@ -13,7 +13,7 @@ describe('Abort query', () => {
     // When I visit a page with "ontotext-yasgui-web-component" in it,
     // and execute a query that takes a long time.
     QueryStubs.stubDefaultQueryResponse(1000);
-    YasqeSteps.executeQuery();
+    YasqeSteps.executeQueryWithoutWaiteResult();
 
     // Then I expect to an "Abort query" button to be displayed,
     YasqeSteps.getAbortQueryButton().should('exist');
