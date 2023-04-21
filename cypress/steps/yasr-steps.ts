@@ -121,8 +121,8 @@ export class YasrSteps {
     return YasrSteps.getYasr(yasrIndex).find('.ontotext-pagination');
   }
 
-  static getResponseInfo() {
-    return this.getYasr().find('.yasr_response_chip');
+  static getResponseInfo(yasrIndex = 0) {
+    return YasrSteps.getYasr(yasrIndex).find('.yasr_response_chip');
   }
 
   static openRawResponseTab() {

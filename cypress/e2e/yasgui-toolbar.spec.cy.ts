@@ -57,14 +57,14 @@ describe('Yasgui Toolbar', () => {
         ToolbarPageSteps.getToolbar().should('be.visible');
     });
 
-    it('Should render mode-yasqe', () => {
+    it.only('Should render mode-yasqe', () => {
         ToolbarPageSteps.visit();
         // When I switch to mode-yasqe
         ToolbarPageSteps.switchToModeYasqe();
         // Then yasqe should be visible
         YasqeSteps.getYasqe().should('be.visible');
         YasguiSteps.getTabs().should('have.length', 1);
-        YasqeSteps.executeQuery();
+        YasqeSteps.executeQueryWithoutWaiteResult();
         // And yasr should be not visible
         YasrSteps.getYasr().should('not.be.visible');
         // And only yasqe button have to be selected

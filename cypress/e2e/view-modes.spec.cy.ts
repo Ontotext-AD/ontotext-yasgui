@@ -32,7 +32,7 @@ describe('View modes', () => {
         // Then Only yasqe should be visible
         YasqeSteps.getYasqe().should('be.visible');
         YasguiSteps.getTabs().should('have.length', 1);
-        YasqeSteps.executeQuery();
+        YasqeSteps.executeQueryWithoutWaiteResult();
         // And yasr should be hidden
         YasrSteps.getYasr().should('not.be.visible');
         // And I expect that render yasqe in the toolbar to be selected
