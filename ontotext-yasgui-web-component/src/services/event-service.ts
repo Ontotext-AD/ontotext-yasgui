@@ -45,7 +45,9 @@ export class EventService implements EventEmitter {
       return EventService.emitInternalEvent(element.closest('.yasgui-host-element'), innerEvent);
     }
 
-    return EventService.emitFromInnerElement(element, type, payload);
+    const event = new CustomEvent(type, {detail: payload});
+    element.dispatchEvent(event);
+    return event;
   }
 
   private static emitInternalEvent(element: HTMLElement, internalEvent: InternalEvent) {

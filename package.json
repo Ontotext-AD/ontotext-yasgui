@@ -12,7 +12,9 @@
     "lint": "cd ontotext-yasgui-web-component && npm run lint",
     "lint:fix": "cd ontotext-yasgui-web-component && npm run lint:fix",
     "cy:open": "cypress open",
-    "cy:run": "cypress run"
+    "cy:open-flaky": "cypress open --config-file cypress-flaky.config.js",
+    "cy:run": "cypress run",
+    "cy:run-flaky": "cypress run --config-file cypress-flaky.config.js"
   },
   "repository": {
     "type": "git",

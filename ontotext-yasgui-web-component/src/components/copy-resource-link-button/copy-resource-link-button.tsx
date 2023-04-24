@@ -19,7 +19,7 @@ export class CopyResourceLinkButton {
   }
 
   render() {
-    const classList = `copy-resource-link-button ${this.classes}`;
+    const classList = `copy-resource-link-button ${this.classes || ''}`;
     return (
       <Host class={classList}>
         <a class="icon-link" href="#" onClick={() => this.onButtonClick()}></a>
