@@ -21,6 +21,29 @@ export class Dropdown {
 
   @Event() valueChanged: EventEmitter<InternalDropdownValueSelectedEvent>;
 
+  render() {
+    const showToolbar = this.tooltipLabelKey && window.innerWidth < 768;
+    const dropdownButtonClass = `ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}
+    ${this.iconClass ? `ontotext-dropdown-icon ${this.iconClass}` : ''}`;
+    return (
+      <yasgui-tooltip
+        data-tooltip={showToolbar ? this.translate(this.nameLabelKey) : ''}>
+        <div class='ontotext-dropdown'>
+          <button class={dropdownButtonClass}
+                  onClick={() => this.toggleComponent()}>
+            <span class='button-name'>{this.translate(this.nameLabelKey)}</span>
+          </button>
+          <div class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
+            {this.items && this.items.map(item =>
+              <a href="#" class='ontotext-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
+                {this.translate(item.labelKey)}
+              </a>)}
+          </div>
+        </div>
+      </yasgui-tooltip>
+    );
+  }
+
   private onSelect(value: string) {
     this.open = false;
     this.valueChanged.emit(new InternalDropdownValueSelectedEvent(value));
@@ -30,26 +53,10 @@ export class Dropdown {
     this.open = !this.open;
   }
 
-  render() {
-    const showToolbar = this.tooltipLabelKey && window.innerWidth < 768;
-    const dropdownButtonClass = `ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}
-    ${this.iconClass ? `ontotext-dropdown-icon ${this.iconClass}` : ''}`;
-    return (
-      <yasgui-tooltip
-        data-tooltip={showToolbar ? this.translationService.translate(this.nameLabelKey) : ''}>
-        <div class='ontotext-dropdown'>
-          <button class={dropdownButtonClass}
-                  onClick={() => this.toggleComponent()}>
-            <span class='button-name'>{this.translationService.translate(this.nameLabelKey)}</span>
-          </button>
-          <div class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
-            {this.items && this.items.map(item =>
-              <a href="#" class='ontotext-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
-                {this.translationService.translate(item.labelKey)}
-              </a>)}
-          </div>
-        </div>
-      </yasgui-tooltip>
-    );
+  private translate(labelKey: string): string {
+    if (this.translationService) {
+      return this.translationService.translate(labelKey);
+    }
+    return '';
   }
 }
