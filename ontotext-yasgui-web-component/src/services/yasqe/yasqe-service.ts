@@ -155,7 +155,7 @@ export class YasqeService {
    * @private
    */
   //@ts-ignore
-  private initInferAndSameAsState(yasqe: Yasqe, defaultInfer = true, defaultSameAs = true) {
+  private initInferAndSameAsState(yasqe: Yasqe, defaultInfer, defaultSameAs) {
     // When a query is executed, then yasqe has values for the "infer" and "sameAs" fields, we use these to be in synchronize with the executed query.
     // Otherwise, default values from the configuration are used.
     const infer = yasqe.getInfer() !== undefined ? yasqe.getInfer() : defaultInfer;
