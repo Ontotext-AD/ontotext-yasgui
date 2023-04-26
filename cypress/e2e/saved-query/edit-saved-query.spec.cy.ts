@@ -1,6 +1,6 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubs} from "../../stubs/query-stubs";
-import ActionsPageSteps from "../../steps/actions-page-steps";
+import ActionsPageSteps from "../../steps/pages/actions-page-steps";
 
 describe('Edit saved query action', () => {
     beforeEach(() => {
