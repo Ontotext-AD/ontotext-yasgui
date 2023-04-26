@@ -1,7 +1,7 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {YasrSteps} from "../../steps/yasr-steps";
 import {QueryStubDescription, QueryStubs} from "../../stubs/query-stubs";
-import ActionsPageSteps from "../../steps/actions-page-steps";
+import ActionsPageSteps from "../../steps/pages/actions-page-steps";
 import {YasguiSteps} from "../../steps/yasgui-steps";
 import {KeyboardShortcutSteps} from '../../steps/keyboard-shortcut-steps';
 import {KeyboardShortcutPageSteps} from '../../steps/pages/keyboard-shortcut-page-steps';
