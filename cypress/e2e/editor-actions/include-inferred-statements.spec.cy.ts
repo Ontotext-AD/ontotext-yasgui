@@ -1,6 +1,7 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubDescription, QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/pages/actions-page-steps";
+import {YasguiSteps} from '../../steps/yasgui-steps';
 
 describe('Include inferred action', () => {
   beforeEach(() => {
@@ -22,18 +23,6 @@ describe('Include inferred action', () => {
     YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-off');
   });
 
-  it('Should be able to configure the default value of the infer config', () => {
-    // When I open the editor
-    // Then I expect that include inferred statements should be enabled by default
-    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
-    YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
-    // When I change the default inferred config
-    YasqeSteps.toggleIncludeInferred();
-    // Then I expect that the include inferred value would be changed
-    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: OFF');
-    YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-off');
-  });
-
   it('Should toggle infer request parameter in requests', () => {
     QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(16));
     // Given I have executing the query without changing configs
@@ -45,5 +34,202 @@ describe('Include inferred action', () => {
     YasqeSteps.executeQuery();
     // Then I expect that infer=false will be sent with the request
     cy.wait('@query-1_0_11_11').its('request.body').should('contain', 'infer=false');
+  });
+
+  describe('infer configuration', () => {
+    it('should be enabled if "infer" configuration is not configured.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is not setup.
+      // Then I expect that inferred element to be enabled by default
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+
+      // When I open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect that inferred element to be enabled in the new tab.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+    });
+
+    it('should be enabled if "infer" configuration is set to true.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is set to true.
+      ActionsPageSteps.configureInferEnabled();
+
+      // Then I expect that inferred element to be enabled.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+
+      // When I open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect that inferred element to be enabled in the new tab.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+    });
+
+    it('should not be enabled if "infer" configuration is set to false.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is not setup.
+      // Then I expect that inferred element to be enabled by default
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+
+      // When I change configure infer to false,
+      ActionsPageSteps.configureInferDisabled();
+      // and open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect that infer element to be disabled.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: OFF');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-off');
+
+      // When I come back to the first tab
+      YasguiSteps.openTab(0);
+
+      // Then I expect "infer" to be enabled.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+    });
+  });
+
+  describe('sameAs configuration', () => {
+    it('should be enabled if "sameAs" configuration is not configured.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "sameAs" configuration is not setup.
+      // Then I expect that sameAs element to be enabled
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+
+      // When I open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect that include inferred statements should be enabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+    });
+
+    it('should be enabled if "sameAs" configuration is set to true.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "sameAs" configuration is set to true.
+      ActionsPageSteps.configureSameAsEnabled();
+
+      // Then I expect that sameAs element to be enabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+
+      // When I open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect that sameAs element to be enabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+    });
+
+    it('should not be enabled if "sameAs" configuration is set to false.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "sameAs" element is enabled by default.
+      // Then I expect that sameAs element to be enabled by default
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+
+      // When I change configure infer to false,
+      ActionsPageSteps.configureSameAsDisabled();
+
+      // Then I expect sameAs to not be changed in the first tab.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+
+      // and open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect that sameAs element to not be enabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: OFF');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I come back to the first tab
+      YasguiSteps.openTab(0);
+
+      // Then I expect sameAs to be enabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-on');
+    });
+
+    it('should be disabled if "infer" is set to false and "sameAs" configuration not defined.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is set to false,
+      ActionsPageSteps.configureInferDisabled();
+      // and "sameAs" configuration is not defined.
+      // Then I expect that sameAs element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I same as element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I expect come back to the first tab
+      YasguiSteps.openTab(0);
+
+      // Then I expect sameAs element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+    });
+
+    it('should be disabled if "infer" is set to false and "sameAs" configuration is set to true.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is set to false,
+      ActionsPageSteps.configureInferDisabled();
+      // and "sameAs" configuration is not defined.
+      // Then I expect that sameAs element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I configure sameAs to be true,
+      ActionsPageSteps.configureSameAsEnabled();
+      // and open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect same as element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I come back to the first tab
+      YasguiSteps.openTab(0);
+
+      // Then I expect sameAs element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+    });
+
+    it('should be disabled if "infer" is set to false and "sameAs" configuration is set to false.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is set to false,
+      ActionsPageSteps.configureInferDisabled();
+      // and "sameAs" configuration is not defined.
+      // Then I expect that sameAs element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I configure sameAs to be true,
+      ActionsPageSteps.configureSameAsEnabled();
+      // and open a new Tab.
+      YasguiSteps.openANewTab();
+
+      // Then I expect same as element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+
+      // When I come back to the first tab
+      YasguiSteps.openTab(0);
+
+      // Then I expect sameAs element to be disabled.
+      YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', "Requires 'Include Inferred'!");
+      YasqeSteps.getActionButton(4).should('have.class', 'icon-same-as-off');
+    });
   });
 });

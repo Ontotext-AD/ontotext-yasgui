@@ -50,4 +50,20 @@ export default class ActionsPageSteps {
   static clearEventLog() {
     return cy.get('#eventLog').clear();
   }
+
+  static configureInferDisabled() {
+    return cy.get('#configureInferDisabled').realClick();
+  }
+
+  static configureInferEnabled() {
+    return cy.get('#configureInferEnabled').realClick();
+  }
+
+  static configureSameAsDisabled() {
+    return cy.get('#configureSameAsDisabled').realClick();
+  }
+
+  static configureSameAsEnabled() {
+    return cy.get('#configureSameAsEnabled').realClick();
+  }
 }

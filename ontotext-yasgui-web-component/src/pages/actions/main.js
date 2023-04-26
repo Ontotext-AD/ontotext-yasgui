@@ -319,3 +319,11 @@ let savedQueries = [
     "owner": "admin"
   },
 ];
+
+function configureInfer(infer) {
+  ontoElement.config = {...ontoElement.config, infer};
+}
+
+function configureSameAs(sameAs) {
+  ontoElement.config = {...ontoElement.config, sameAs};
+}
