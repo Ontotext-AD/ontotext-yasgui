@@ -1,0 +1,30 @@
+Subject: [PATCH] GDB-8207: Add explain plan command for DESCRIBE queries
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 95d1314a6d09d85f313a0d7cbafa324740c7cacf)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision ae467960e750350fd6ef316ce3788af8118a2b52)
+@@ -1078,7 +1078,7 @@
+   public query(config?: Sparql.YasqeAjaxConfig, isExplainPlanQuery = false) {
+     if (this.config.queryingDisabled) return Promise.reject("Querying is disabled.");
+ 
+-    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery())) {
++    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery() || this.isDescribeQuery())) {
+       const message = this.translationService.translate(
+         "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message"
+       );
+@@ -1118,6 +1118,10 @@
+     return "update" === this.getQueryMode()?.toLowerCase();
+   }
+ 
++  public isDescribeQuery(): boolean {
++    return "describe" === this.getQueryType()?.toLowerCase();
++  }
++
+   public isAskQuery(): boolean {
+     return "ASK" === this.getQueryType();
+   }
