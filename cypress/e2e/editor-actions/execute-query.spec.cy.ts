@@ -58,7 +58,7 @@ describe('Execute query action', () => {
     // Then I expect the query don't run,
     YasrSteps.getResultsTable().should('not.exist');
     // and a notification message to be emitted.
-    KeyboardShortcutPageSteps.getActionOutputField().should('have.value', '{"code":"explain_not_allowed","messageType":"warning","message":"Explain only works with SELECT or CONSTRUCT queries."}');
+    KeyboardShortcutPageSteps.getActionOutputField().should('have.value', '{"code":"explain_not_allowed","messageType":"warning","message":"Explain only works with SELECT, CONSTRUCT or DESCRIBE queries."}');
   });
 
   it('should not run explain plan query when repository is virtual.', () => {
