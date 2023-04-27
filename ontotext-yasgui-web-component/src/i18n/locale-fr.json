@@ -82,7 +82,7 @@
   "yasqe.keyboard_shortcuts.dialog.item.explain_exit_fullscreen.message": "Press F11 or Esc to exit full screen",
   "yasqe.keyboard_shortcuts.dialog.item.esc.label": "Esc",
   "yasqe.keyboard_shortcuts.dialog.item.esc.description": "Press Esc to exit full screen",
-  "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message": "Explain ne fonctionne qu'avec les requêtes SELECT ou CONSTRUCT.",
+  "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message": "Explain ne fonctionne qu'avec les requêtes SELECT, CONSTRUCT ou DESCRIBE.",
   "yasqe.keyboard_shortcuts.action.explain_plan_query.error.message": "Impossible d'exécuter les mises à jour depuis cet éditeur.",
   "yasr.message_info.removed_statements.message": "Suppression de {{countAffectedRepositoryStatements}} déclarations.",
   "yasr.message_info.added_statements.message": "Ajout de {{countAffectedRepositoryStatements}} déclarations.",

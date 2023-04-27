@@ -240,10 +240,23 @@ describe('Keyboard Shortcuts', () => {
     it('should trigger "EXECUTE_EXPLAIN_PLAN_FOR_QUERY" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       QueryStubs.stubExplainPlanQueryResponse();
-      // When press the "Create saved query" keyboard shortcut.
+      // When press the "Explain plan" keyboard shortcut.
       KeyboardShortcutSteps.clickOnExplainPlanQueryShortcut();
 
-      // Then I expect "Create New Saved Query" to be visible.
+      // Then I expect to see explain plan message.
+      YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
+    });
+
+    it('should trigger "EXECUTE_EXPLAIN_PLAN_FOR_QUERY" action on DESCRIBE query', () => {
+
+      YasqeSteps.clearEditor();
+      YasqeSteps.writeInEditor('DESCRIBE * WHERE {\n ?s ?p ?o \n}');
+      // Given: I visit a page with "ontotext-yasgui-web-component" in it,
+      QueryStubs.stubExplainPlanQueryResponse();
+      // When press the "Explain plan" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnExplainPlanQueryShortcut();
+
+      // Then I expect to see explain plan message.
       YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
     });
   });
