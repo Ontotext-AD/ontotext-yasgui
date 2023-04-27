@@ -1078,7 +1078,7 @@ export class Yasqe extends CodeMirror {
   public query(config?: Sparql.YasqeAjaxConfig, isExplainPlanQuery = false) {
     if (this.config.queryingDisabled) return Promise.reject("Querying is disabled.");
 
-    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery())) {
+    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery() || this.isDescribeQuery())) {
       const message = this.translationService.translate(
         "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message"
       );
@@ -1116,6 +1116,10 @@ export class Yasqe extends CodeMirror {
   }
   public isUpdateQuery(): boolean {
     return "update" === this.getQueryMode()?.toLowerCase();
+  }
+
+  public isDescribeQuery(): boolean {
+    return "describe" === this.getQueryType()?.toLowerCase();
   }
 
   public isAskQuery(): boolean {
