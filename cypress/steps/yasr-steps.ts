@@ -154,4 +154,20 @@ export class YasrSteps {
   static getYasrToolbar() {
     return cy.get('.yasr-toolbar');
   }
+
+  static getResultCellLink(rowIndex: number, columnIndex: number) {
+    return YasrSteps.getResultCell(rowIndex, columnIndex).find('a').eq(0);
+  }
+
+  static getResultUriCell(rowIndex: number, columnIndex: number) {
+    return YasrSteps.getResultCell(rowIndex, columnIndex).find('.uri-cell');
+  }
+
+  static getResultNoUriCell(rowIndex: number, columnIndex: number) {
+    return YasrSteps.getResultCell(rowIndex, columnIndex).find('.nonUri');
+  }
+
+  static getResultLiteralCell(rowIndex, columnIndex) {
+    return YasrSteps.getResultCell(rowIndex, columnIndex).find('.literal-cell');
+  }
 }

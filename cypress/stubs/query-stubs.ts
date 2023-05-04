@@ -26,6 +26,22 @@ export class QueryStubs {
     QueryStubs.stubQueryResponse('/queries/ask-false-query-response.json', 'askFalseQueryResponse', withDelay);
   }
 
+  static stubSingleIRIResult(withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-iri-result.json', 'single-iri-result', withDelay);
+  }
+
+  static stubSingleLiteralWithLangTagResult(withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-lang-tag-response.json', 'single-iri-result', withDelay);
+  }
+
+  static stubSingleLiteralWithoutLangTagResult(withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-without-lang-tag-response.json', 'single-iri-result', withDelay);
+  }
+
+  static stubSingleLiteralWithDataTypeResult(withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-data-type-response.json', 'single-iri-result', withDelay);
+  }
+
   static stubQueryResponse(fixture: string, alias: string, withDelay: number = 0) {
     cy.intercept('/repositories/test-repo', {fixture, delay: withDelay}).as(alias);
   }

@@ -217,6 +217,17 @@
         display: none;
       }
 
+      .uri-cell {
+        word-wrap: break-word;
+      }
+
+      .literal-cell {
+        word-wrap: break-word;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        hyphens: auto;
+      }
+
       /** Shows copy resource link when mouse is over a table row with resources of type uri */
       .dataTable tbody td:hover:not(:has(.triple-cell)) div.uri-cell .resource-copy-link {
         display: inline;

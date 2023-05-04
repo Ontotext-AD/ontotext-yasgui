@@ -1,0 +1,18 @@
+{
+  "head": {
+    "vars": [
+      "x"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x": {
+          "xml:lang": "en-GB",
+          "type": "literal",
+          "value": "some text "
+        }
+      }
+    ]
+  }
+}
