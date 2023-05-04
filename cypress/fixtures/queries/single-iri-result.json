@@ -1,0 +1,17 @@
+{
+  "head": {
+    "vars": [
+      "x"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x": {
+          "type": "uri",
+          "value": "http://example.com/foobarbaz/meow/123"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "head": {
+    "vars": [
+      "x"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x": {
+          "type": "literal",
+          "value": "some text with data type 2.0^^xsd:floatsup"
+        }
+      }
+    ]
+  }
+}

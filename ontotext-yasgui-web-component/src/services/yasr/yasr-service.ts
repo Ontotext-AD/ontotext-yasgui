@@ -56,8 +56,8 @@ export class YasrService {
   private static getUriCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
     const uri = binding.value;
     if (!context.hasElement(uri)) {
-      const content = '<div class="uri-cell">' +
-        `<a title="${uri}" class="uri-link" href="${this.getHref(uri, context)}">${context.getShortUri(uri)}</a>` +
+      const content = `<div class="uri-cell" lang="${this.getLang(binding, 'xx')}">` +
+        `<a title="${uri}" class="uri-link" href="${this.getHref(uri, context)}">${YasrService.addWordBreakToIRIs(context.getShortUri(uri))}</a>` +
         `<copy-resource-link-button class="resource-copy-link" uri="${uri}"></copy-resource-link-button></div>`;
       context.setElement(uri, content);
     }
@@ -118,7 +118,7 @@ export class YasrService {
 
   // @ts-ignore
   private static getLiteralCellContent(binding: Parser.BindingValue): string {
-    return `<div><p class="nonUri">${this.getLiteralAsString(binding, true)}</p></div>`;
+    return `<div lang="${YasrService.getLang(binding, 'xx')}" class="literal-cell"><p class="nonUri">${this.getLiteralAsString(binding, true)}</p></div>`;
   }
 
   //@ts-ignore
@@ -128,17 +128,17 @@ export class YasrService {
       return this.getExplainPlanQueryResponse(binding, forHtml);
     }
     if (binding.type == "bnode") {
-      return `_:${HtmlUtil.encodeHTMLEntities(binding.value)}`;
+      return YasrService.addWordBreakToLiterals(`_:${HtmlUtil.encodeHTMLEntities(binding.value)}`);
     }
 
     const stringRepresentation = HtmlUtil.encodeHTMLEntities(binding.value);
 
     if (binding["xml:lang"]) {
-      return `"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["xml:lang"]}${forHtml ? '</sup>' : ''}`;
+      return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["xml:lang"]}${forHtml ? '</sup>' : ''}`);
     }
 
     if (binding["lang"]) {
-      return `"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["lang"]}${forHtml ? '</sup>' : ''}`;
+      return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["lang"]}${forHtml ? '</sup>' : ''}`);
     }
 
     if (binding.datatype && YasrService.XML_SCHEMA_NS_STRING !== binding.datatype) {
@@ -151,10 +151,10 @@ export class YasrService {
         dataType = `<${dataType}>`;
       }
 
-      return `"${stringRepresentation}"${forHtml ? '<sup>' : ''}^^${dataType}${forHtml ? '</sup>' : ''}`;
+      return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}^^${dataType}${forHtml ? '</sup>' : ''}`);
     }
 
-    return stringRepresentation.startsWith('"') ? stringRepresentation : `"${stringRepresentation}"`;
+    return YasrService.addWordBreakToLiterals(stringRepresentation.startsWith('"') ? stringRepresentation : `"${stringRepresentation}"`);
   }
 
   //@ts-ignore
@@ -169,6 +169,33 @@ export class YasrService {
     }
 
     return stringRepresentation.startsWith('"') ? stringRepresentation : `"${stringRepresentation}"`;
+  }
+
+  private static addWorldBreakTagAfterSpecialCharacters(text) {
+    return text.replace(/([_:/-](?![_:/-]))/g, "$1<wbr>");
+  }
+
+  private static addWorldBreakTagBeforeSpecialCharacters(text) {
+    return text.replace(/(\^\^)/g, "<wbr>$1");
+  }
+
+  private static addWordBreakToIRIs(text) {
+    return YasrService.addWorldBreakTagAfterSpecialCharacters(text);
+  }
+
+  private static addWordBreakToLiterals(text) {
+    const result = this.addWorldBreakTagBeforeSpecialCharacters(text);
+    return YasrService.addWorldBreakTagAfterSpecialCharacters(result);
+  }
+
+  private static getLang(literalBinding, defaultLang) {
+    if (literalBinding["xml:lang"]) {
+      return literalBinding["xml:lang"];
+    }
+    if (literalBinding["lang"]) {
+      return literalBinding["lang"];
+    }
+    return defaultLang;
   }
 }
 
