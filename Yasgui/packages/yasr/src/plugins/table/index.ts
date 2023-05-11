@@ -40,11 +40,11 @@ function expand(this: HTMLDivElement, event: MouseEvent) {
 
 export default class Table implements Plugin<PluginConfig> {
   private config: DeepReadonly<PluginConfig>;
-  private persistentConfig: PersistentConfig = {};
-  private yasr: Yasr;
+  protected persistentConfig: PersistentConfig = {};
+  protected yasr: Yasr;
   private tableControls: Element | undefined;
   private tableEl: HTMLTableElement | undefined;
-  private dataTable: DataTables.Api | undefined;
+  protected dataTable: DataTables.Api | undefined;
   private tableFilterField: HTMLInputElement | undefined;
   private tableSizeField: HTMLSelectElement | undefined;
   private tableCompactSwitch: HTMLInputElement | undefined;
@@ -149,7 +149,7 @@ export default class Table implements Plugin<PluginConfig> {
     return stringRepresentation;
   }
 
-  private getColumns(): DataTables.ColumnSettings[] {
+  protected getColumns(): DataTables.ColumnSettings[] {
     if (!this.yasr.results) return [];
     const prefixes = this.yasr.getPrefixes();
 
@@ -178,7 +178,7 @@ export default class Table implements Plugin<PluginConfig> {
       }),
     ];
   }
-  private getSizeFirstColumn() {
+  protected getSizeFirstColumn() {
     const numResults = this.yasr.results?.getBindings()?.length || 0;
     return numResults.toString().length * 8;
   }
