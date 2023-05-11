@@ -1,0 +1,116 @@
+Subject: [PATCH] GDB-8183: different results when clicking sort button in yasr result table
+---
+Index: Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision 8b89607a51c3e9c8151521684b634d4e287029f3)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision b977827001a7f2fc1f6dd52504452597621efc4f)
+@@ -29,10 +29,64 @@
+ 
+   public draw(persistentConfig: PersistentConfig) {
+     super.draw(persistentConfig);
++    this.setupIndexColumn();
+     const explainPlanQueryElement = document.getElementById("explainPlanQuery");
+     if (!explainPlanQueryElement) {
+       return;
+     }
+     Yasqe.runMode(explainPlanQueryElement.innerText, "sparql11", explainPlanQueryElement);
+   }
++
++  protected getColumns(): DataTables.ColumnSettings[] {
++    if (!this.yasr.results) return [];
++    const prefixes = this.yasr.getPrefixes();
++
++    return [
++      {
++        searchable: false,
++        width: `${this.getSizeFirstColumn()}px`,
++        orderable: false,
++        visible: this.persistentConfig.compact !== true,
++        render: (data: number, type: any) =>
++          type === "filter" || type === "sort" || !type ? data : `<div class="rowNumber">${data}</div>`,
++      }, //prepend with row numbers column
++      ...this.yasr.results?.getVariables().map((name) => {
++        return <DataTables.ColumnSettings>{
++          name: name,
++          title: name,
++          render: (data: Parser.BindingValue | "", type: any, _row: any, _meta: DataTables.CellMetaSettings) => {
++            // Handle empty rows
++            if (data === "") {
++              return data;
++            }
++            if (!type) {
++              return data.value;
++            }
++            return this.getCellContent(data, prefixes);
++          },
++        };
++      }),
++    ];
++  }
++
++  /**
++   * Set-ups first column to be index column according official solution from DataTable.
++   * @see <a href="https://datatables.net/examples/api/counter_columns.html">Official solution from DataTable</a>
++   * @private
++   */
++  private setupIndexColumn() {
++    if (!this.dataTable) {
++      return;
++    }
++    const dataTable = this.dataTable;
++    // Set up first column to be index column according official solution from DataTable.
++    this.dataTable
++      .on("order.dt search.dt", function () {
++        let i = 1;
++        dataTable.cells(null, 0, { search: "applied", order: "applied" }).every(function (cell) {
++          this.data(i++);
++        });
++      })
++      .draw();
++  }
+ }
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 8b89607a51c3e9c8151521684b634d4e287029f3)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision b977827001a7f2fc1f6dd52504452597621efc4f)
+@@ -40,11 +40,11 @@
+ 
+ export default class Table implements Plugin<PluginConfig> {
+   private config: DeepReadonly<PluginConfig>;
+-  private persistentConfig: PersistentConfig = {};
+-  private yasr: Yasr;
++  protected persistentConfig: PersistentConfig = {};
++  protected yasr: Yasr;
+   private tableControls: Element | undefined;
+   private tableEl: HTMLTableElement | undefined;
+-  private dataTable: DataTables.Api | undefined;
++  protected dataTable: DataTables.Api | undefined;
+   private tableFilterField: HTMLInputElement | undefined;
+   private tableSizeField: HTMLSelectElement | undefined;
+   private tableCompactSwitch: HTMLInputElement | undefined;
+@@ -149,7 +149,7 @@
+     return stringRepresentation;
+   }
+ 
+-  private getColumns(): DataTables.ColumnSettings[] {
++  protected getColumns(): DataTables.ColumnSettings[] {
+     if (!this.yasr.results) return [];
+     const prefixes = this.yasr.getPrefixes();
+ 
+@@ -178,7 +178,7 @@
+       }),
+     ];
+   }
+-  private getSizeFirstColumn() {
++  protected getSizeFirstColumn() {
+     const numResults = this.yasr.results?.getBindings()?.length || 0;
+     return numResults.toString().length * 8;
+   }
