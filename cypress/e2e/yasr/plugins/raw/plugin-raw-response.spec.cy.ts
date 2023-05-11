@@ -1,8 +1,8 @@
-import {QueryStubs} from '../../stubs/query-stubs';
-import {YasrTablePluginSteps} from '../../steps/yasr-table-plugin-steps';
-import {YasqeSteps} from '../../steps/yasqe-steps';
-import {YasrSteps} from '../../steps/yasr-steps';
-import {DownloadAsPageSteps} from "../../steps/download-as-page-steps";
+import {QueryStubs} from '../../../../stubs/query-stubs';
+import {YasrTablePluginSteps} from '../../../../steps/yasr-table-plugin-steps';
+import {YasqeSteps} from '../../../../steps/yasqe-steps';
+import {YasrSteps} from '../../../../steps/yasr-steps';
+import {DownloadAsPageSteps} from "../../../../steps/download-as-page-steps";
 
 describe('Plugin: Raw response', () => {
   beforeEach(() => {

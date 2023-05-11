@@ -1,8 +1,8 @@
-import DefaultViewPageSteps from '../../steps/default-view-page-steps';
-import {QueryStubs} from '../../stubs/query-stubs';
-import {YasqeSteps} from '../../steps/yasqe-steps';
-import {ErrorPluginSteps} from '../../steps/error-plugin-steps';
-import {YasrSteps} from '../../steps/yasr-steps';
+import DefaultViewPageSteps from '../../../../steps/default-view-page-steps';
+import {QueryStubs} from '../../../../stubs/query-stubs';
+import {YasqeSteps} from '../../../../steps/yasqe-steps';
+import {ErrorPluginSteps} from '../../../../steps/error-plugin-steps';
+import {YasrSteps} from '../../../../steps/yasr-steps';
 
 describe('Error handling', () => {
 

@@ -18,6 +18,17 @@ export class YasrSteps {
   static getResultsTable(yasrIndex = 0) {
     return YasrSteps.getYasr(yasrIndex).find('.yasr_results tbody');
   }
+  static getResultsTableHeaders(yasrIndex = 0) {
+    return YasrSteps.getYasr(yasrIndex).find('.yasr_results thead');
+  }
+
+  static getHeaderCell(columnNumber = 0, yasrIndex = 0) {
+    return YasrSteps.getResultsTableHeaders(yasrIndex).find('th').eq(columnNumber);
+  }
+
+  static clickOnColumnHeader(columnNumber = 0) {
+    YasrSteps.getHeaderCell(columnNumber).click();
+  }
 
   static getTableResults(yasrIndex = 0) {
     return this.getYasr(yasrIndex).find('.yasr_results tbody').find('tr');
