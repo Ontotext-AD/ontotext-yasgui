@@ -1,6 +1,6 @@
 import {TranslationService} from '../services/translation.service';
 import {NotificationMessageService} from '../services/notification-message-service';
-import {AutocompleteLoader, YasqeActionButtonDefinition} from "./external-yasgui-configuration";
+import {AutocompleteLoader, ReadonlyType, YasqeActionButtonDefinition} from "./external-yasgui-configuration";
 import {BeforeUpdateQueryResult} from './before-update-query-result';
 import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 import {EventService} from '../services/event-service';
@@ -94,6 +94,13 @@ export interface YasguiConfiguration {
     paginationOn: true,
     pageSize: 10,
     yasqe?: {
+      /**
+       * Setup yasqe editor. There are three options:
+       * 1. true - the query can be edited;
+       * 2. false - the editor is read-only, but the query can be copied;
+       * 3.'nocursor' - the editor is read-only and hte query can't be copied.
+       */
+      readOnly?: ReadonlyType;
       /**
        * Default query when a tab is opened.
        */
@@ -270,7 +277,8 @@ export const defaultYasqeConfig: Record<string, any> = {
   prefixes: {
 
   },
-  isVirtualRepository: false
+  isVirtualRepository: false,
+  showQueryButton: true
 }
 
 export const defaultYasrConfig: Record<string, any> = {

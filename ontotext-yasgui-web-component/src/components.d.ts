@@ -92,6 +92,10 @@ export namespace Components {
         "getEmbeddedResultAsCSV": () => Promise<unknown>;
         "getEmbeddedResultAsJson": () => Promise<unknown>;
         /**
+          * Fetches the query from YASQE editor.
+         */
+        "getQuery": () => Promise<string>;
+        /**
           * Utility method allowing the client to get the mode of the query which is written in the current editor tab. The query mode can be either `query` or `update` regarding the query mode. This method just exposes the similar utility method from the yasqe component.
           * @return A promise which resolves with a string representing the query mode.
          */
@@ -101,6 +105,10 @@ export namespace Components {
           * @return A promise which resolves with a string representing the query type.
          */
         "getQueryType": () => Promise<string>;
+        /**
+          * Checks if query is valid.
+         */
+        "isQueryValid": () => Promise<boolean>;
         /**
           * An input property containing the chosen translation language.
          */

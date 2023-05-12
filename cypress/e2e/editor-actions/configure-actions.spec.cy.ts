@@ -50,4 +50,22 @@ describe('Configure editor actions', () => {
         YasguiSteps.openTab(0);
         YasqeSteps.getActionButtons().should('have.length', 5);
     });
+
+    it('should toggle query button', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it.
+      // Then I expect "Run" query button to be visible.
+      YasqeSteps.getRunQueryButton().should('be.visible');
+
+      // When "ontotext-yasgui-we-component" is configured to hide "Run" query button.
+      ActionsPageSteps.hideQueryButton();
+
+      // Then I expect "Run" query button to not be visible.
+      YasqeSteps.getRunQueryButton().should('not.exist');
+
+      // When "ontotext-yasgui-we-component" is configured to show "Run" query button.
+      ActionsPageSteps.showQueryButton();
+
+      // Then I expect "Run" query button to not be visible.
+      YasqeSteps.getRunQueryButton().should('be.visible');
+    });
 });

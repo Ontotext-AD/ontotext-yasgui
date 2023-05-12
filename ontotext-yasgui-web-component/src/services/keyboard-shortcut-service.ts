@@ -1,7 +1,8 @@
 import {KeyboardShortcutDescription, KeyboardShortcutName} from '../models/keyboard-shortcut-description';
+import {YasguiConfiguration} from '../models/yasgui-configuration';
 
 export class KeyboardShortcutService {
-  static initKeyboardShortcutMapping = (): KeyboardShortcutDescription[] => {
+  static initKeyboardShortcutMapping = (config: YasguiConfiguration): KeyboardShortcutDescription[] => {
     const keyboardShortcutDescriptions = [];
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createTriggerAutocomplete());
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createDeleteCurrentLine());
@@ -11,13 +12,15 @@ export class KeyboardShortcutService {
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createAutoFormat());
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createIndentMore());
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createIndentLess());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteQuery());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteExplainPlanForQuery());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createCreateTab());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createSavedQuery());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToNextTab());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToPreviousTab());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createCloseAllTabs());
+    if (config.yasguiConfig.yasqe.showQueryButton) {
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteQuery());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteExplainPlanForQuery());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createCreateTab());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createSavedQuery());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToNextTab());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToPreviousTab());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createCloseAllTabs());
+    }
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createF11());
     keyboardShortcutDescriptions.push(KeyboardShortcutService.createEscape());
     return keyboardShortcutDescriptions;

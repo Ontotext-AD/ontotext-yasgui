@@ -2,6 +2,11 @@ import {NamespaceMapping, Namespaces} from "../models/yasgui-configuration";
 
 export class NamespaceService {
   static namespacesMapToArray(namespaceMapping: NamespaceMapping): Namespaces {
+
+    if (!namespaceMapping) {
+      return [];
+    }
+
     let hasOntoPrefix = false;
     const namespaces: Namespaces = Object.keys(namespaceMapping).map((prefix) => {
       if (prefix === 'onto') {

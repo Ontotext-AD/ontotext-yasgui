@@ -50,6 +50,10 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getValue();
   }
 
+  isQueryValid(): boolean {
+    return this.yasgui.getTab().getYasqe().queryValid;
+  }
+
   getQueryMode(): string {
     return this.yasgui.getTab().getYasqe().getQueryMode();
   }

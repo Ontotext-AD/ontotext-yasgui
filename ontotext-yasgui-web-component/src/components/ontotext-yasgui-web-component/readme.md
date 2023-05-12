@@ -72,6 +72,16 @@ Type: `Promise<unknown>`
 
 
 
+### `getQuery() => Promise<string>`
+
+Fetches the query from YASQE editor.
+
+#### Returns
+
+Type: `Promise<string>`
+
+
+
 ### `getQueryMode() => Promise<string>`
 
 Utility method allowing the client to get the mode of the query which is written in the current
@@ -97,6 +107,16 @@ similar utility method from the yasqe component.
 Type: `Promise<string>`
 
 A promise which resolves with a string representing the query type.
+
+### `isQueryValid() => Promise<boolean>`
+
+Checks if query is valid.
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
 
 ### `openTab(queryModel: TabQueryModel) => Promise<void>`
 

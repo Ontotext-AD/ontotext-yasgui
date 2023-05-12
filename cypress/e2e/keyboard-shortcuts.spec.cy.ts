@@ -13,7 +13,7 @@ describe('Keyboard Shortcuts', () => {
   });
 
   describe('Dialog info', () => {
-    it('should open dialog', () => {
+    it('should open dialog with information for all keyboard shortcuts actions', () => {
       // When I visit a page with "ontotext-yasgui-web-component" in it.
       // Then I expect to see the "keyboard shortcuts" button in it.
       KeyboardShortcutSteps.getInfoDialogButton().should('be.visible');
@@ -25,8 +25,23 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.getInfoDialog().should('exist');
       // and have title
       KeyboardShortcutSteps.getInfoDialogTitle().should('have.text', 'Keyboard shortcuts');
-      // and expect 16 keyboard shortcuts to be displayed.
+      // and expect see information for all available actions.
       KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 17);
+    });
+
+    it('should open dialog with information only for readonly keyboard shortcuts actions', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and component is configured to be read only
+      KeyboardShortcutPageSteps.hideRunButton();
+
+      // Then I expect to see the "keyboard shortcuts" button in it.
+      KeyboardShortcutSteps.getInfoDialogButton().should('be.visible');
+
+      // When I click on the button.
+      KeyboardShortcutSteps.openInfoDialog();
+
+      // Then I expect to see information for read only operations.
+      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 10);
     });
   });
 

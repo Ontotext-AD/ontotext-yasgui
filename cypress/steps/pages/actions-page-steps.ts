@@ -43,6 +43,14 @@ export default class ActionsPageSteps {
     cy.get('#showIncludeInferredAction').click();
   }
 
+  static hideQueryButton() {
+    cy.get('#hideQueryButton').click();
+  }
+
+  static showQueryButton() {
+    cy.get('#showQueryButton').click();
+  }
+
   static getEventLog() {
     return cy.get('#eventLog');
   }

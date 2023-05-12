@@ -217,6 +217,28 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Fetches the query from YASQE editor.
+   */
+  @Method()
+  getQuery(): Promise<string> {
+    return this.getOntotextYasgui()
+      .then(() => {
+        return this.ontotextYasgui.getQuery();
+      });
+  }
+
+  /**
+   * Checks if query is valid.
+   */
+  @Method()
+  isQueryValid(): Promise<boolean> {
+    return this.getOntotextYasgui()
+      .then(() => {
+        return this.ontotextYasgui.isQueryValid();
+      });
+  }
+
+  /**
    * Allows the client to init the editor using a query model. When the query and query name are
    * found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and
    * initialized using the provided query model.
