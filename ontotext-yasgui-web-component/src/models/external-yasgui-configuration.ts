@@ -3,6 +3,8 @@ import {Prefixes} from '../../../Yasgui/packages/yasr';
 import {BeforeUpdateQueryResult} from './before-update-query-result';
 import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 
+export type ReadonlyType = boolean | 'nocursor';
+
 export interface ExternalYasguiConfiguration {
   // ***********************************************************
   //
@@ -39,6 +41,11 @@ export interface ExternalYasguiConfiguration {
    * If the control bar should be rendered or not.
    */
   showControlBar?: boolean;
+
+  /**
+   * If "Run" button should be rendered or not. Default is true.
+   */
+  showQueryButton?: boolean;
 
   // ***********************************************************
   //
@@ -110,6 +117,14 @@ export interface ExternalYasguiConfiguration {
    * Default value is "ontotext-yasgui-config".
    */
   componentId: string;
+
+  /**
+   * Setup yasqe editor. There are three options:
+   * 1. true - the query can be edited;
+   * 2. false - the editor is read-only, but the query can be copied;
+   * 3.'nocursor' - the editor is read-only and hte query can't be copied.
+   */
+  readonly?: ReadonlyType;
 
   // ***********************************************************
   //

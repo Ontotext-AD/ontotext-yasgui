@@ -49,8 +49,11 @@ export class YasqeSteps {
     return this.getActionButtonsTooltips().eq(index);
   }
 
+  static getRunQueryButton() {
+    return cy.get('.yasqe_queryButton');
+  }
   static getExecuteQueryButton(index = 0) {
-    return cy.get('.yasqe_queryButton').eq(index);
+    return YasqeSteps.getRunQueryButton().eq(index);
   }
 
   static executeQuery(index = 0) {

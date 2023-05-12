@@ -10,4 +10,8 @@ export class KeyboardShortcutPageSteps {
   static setVirtualRepository() {
     cy.get('#setVirtualRepo').realClick();
   }
+
+  static hideRunButton() {
+    cy.get('#hideRunButton').click();
+  }
 }

@@ -109,12 +109,16 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.yasr.yasrToolbarPlugins = yasrToolbarElements;
 
     // prepare the yasqe config
-    this.initShortcuts(config);
     config.yasguiConfig.yasqe.value = externalConfiguration.query || defaultYasqeConfig.query;
     config.yasguiConfig.yasqe.prefixes = NamespaceService.namespacesMapToArray(config.yasguiConfig.yasr.prefixes);
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
     config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
+    if (externalConfiguration.readonly !== undefined) {
+      config.yasguiConfig.yasqe.readOnly = externalConfiguration.readonly;
+    }
+
+    config.yasguiConfig.yasqe.showQueryButton = externalConfiguration.showQueryButton !== undefined ? externalConfiguration.showQueryButton : defaultYasqeConfig.showQueryButton;
 
     config.yasguiConfig.yasqe.yasqeActionButtons =
       externalConfiguration.yasqeActionButtons !== undefined && externalConfiguration.yasqeActionButtons.length ?
@@ -124,11 +128,11 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.yasqe.pluginButtons = (yasqe?: Yasqe) => {
       return this.getYasqeActionButtons(config, defaultYasqeConfig, yasqe);
     };
-    config.yasguiConfig.yasqe.showQueryButton = true;
 
     if (externalConfiguration.onQueryAborted instanceof Function) {
       config.yasguiConfig.yasqe.onQueryAborted = externalConfiguration.onQueryAborted;
     }
+    this.initShortcuts(config);
 
     // Register autocompleters
     this.registerCustomAutocompleters(config);
@@ -147,7 +151,7 @@ export class YasguiConfigurationBuilder {
   }
 
   private initShortcuts(config: YasguiConfiguration): void {
-    const keyboardShortcutDescriptions = KeyboardShortcutService.initKeyboardShortcutMapping();
+    const keyboardShortcutDescriptions = KeyboardShortcutService.initKeyboardShortcutMapping(config);
 
     config.yasguiConfig.yasqe.extraKeys = keyboardShortcutDescriptions
       .flatMap(description => description.keyboardShortcuts.map(keyboardShortcut => ({keyboardShortcut, executeFunction: description.executeFunction})))

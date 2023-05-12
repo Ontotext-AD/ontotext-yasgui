@@ -45,6 +45,19 @@ if (query) {
   });
 }
 
+function hideQueryButton() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    showQueryButton: false
+  };
+}
+
+function showQueryButton() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    showQueryButton: true
+  };
+}
 
 function hideSaveQueryAction() {
   ontoElement.config = {

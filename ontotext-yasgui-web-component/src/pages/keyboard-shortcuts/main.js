@@ -6,6 +6,13 @@ ontoElement.addEventListener('output', (evt) => {
   }
 });
 
+function hideRunButton() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    showQueryButton: false
+  };
+}
+
 function setVirtualRepository() {
   ontoElement.config = {... ontoElement.config, isVirtualRepository: true}
 }
