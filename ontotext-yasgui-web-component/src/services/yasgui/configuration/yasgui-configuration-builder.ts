@@ -1,13 +1,11 @@
 import {
   defaultOntotextYasguiConfig,
   defaultYasguiConfig,
-  defaultYasqeConfig, defaultYasrConfig,
+  defaultYasqeConfig,
+  defaultYasrConfig,
   YasguiConfiguration
 } from '../../../models/yasgui-configuration';
-import {
-  ExternalYasguiConfiguration,
-  YasqeActionButtonDefinition
-} from "../../../models/external-yasgui-configuration";
+import {ExternalYasguiConfiguration, YasqeActionButtonDefinition} from "../../../models/external-yasgui-configuration";
 import {YasqeService} from "../../yasqe/yasqe-service";
 import {ServiceFactory} from '../../service-factory';
 import {TranslationService} from '../../translation.service';
@@ -18,6 +16,7 @@ import {NotificationMessageService} from '../../notification-message-service';
 import LocalNamesAutocompleter from "../../yasqe/autocompleter/local-names";
 import {DownloadAsYasrToolbarPlugin} from '../../yasr/toolbar/download-as-yasr-toolbar-plugin';
 import {PaginationYasrToolbarPlugin} from '../../yasr/toolbar/pagination-yasr-toolbar-plugin';
+import {YasqeMode} from '../../../models/yasqe-mode';
 
 /**
  * Builder for yasgui configuration.
@@ -114,8 +113,16 @@ export class YasguiConfigurationBuilder {
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
     config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
-    if (externalConfiguration.readonly !== undefined) {
-      config.yasguiConfig.yasqe.readOnly = externalConfiguration.readonly;
+    if (externalConfiguration.readOnly !== undefined) {
+      if (externalConfiguration.readOnly === YasqeMode.WRITE) {
+        config.yasguiConfig.yasqe.readOnly = false;
+      } else if (externalConfiguration.readOnly === YasqeMode.READ) {
+        config.yasguiConfig.yasqe.readOnly = true;
+      } else if (externalConfiguration.readOnly === YasqeMode.PROTECTED) {
+        config.yasguiConfig.yasqe.readOnly = 'nocursor';
+      } else {
+        config.yasguiConfig.yasqe.readOnly = defaultYasqeConfig.readOnly;
+      }
     }
 
     config.yasguiConfig.yasqe.showQueryButton = externalConfiguration.showQueryButton !== undefined ? externalConfiguration.showQueryButton : defaultYasqeConfig.showQueryButton;
