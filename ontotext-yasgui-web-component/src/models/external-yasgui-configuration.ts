@@ -117,7 +117,7 @@ export interface ExternalYasguiConfiguration {
    */
   componentId: string;
 
-  readOnly?: YasqeMode;
+  yasqeMode?: YasqeMode;
 
   // ***********************************************************
   //

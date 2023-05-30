@@ -113,12 +113,12 @@ export class YasguiConfigurationBuilder {
     config.yasqeConfig = {};
     config.yasqeConfig.initialQuery = externalConfiguration.initialQuery || defaultYasqeConfig.initialQuery;
     config.yasguiConfig.yasqe.createShareableLink = externalConfiguration.createShareableLink || defaultYasqeConfig.createShareableLink;
-    if (externalConfiguration.readOnly !== undefined) {
-      if (externalConfiguration.readOnly === YasqeMode.WRITE) {
+    if (externalConfiguration.yasqeMode !== undefined) {
+      if (externalConfiguration.yasqeMode === YasqeMode.WRITE) {
         config.yasguiConfig.yasqe.readOnly = false;
-      } else if (externalConfiguration.readOnly === YasqeMode.READ) {
+      } else if (externalConfiguration.yasqeMode === YasqeMode.READ) {
         config.yasguiConfig.yasqe.readOnly = true;
-      } else if (externalConfiguration.readOnly === YasqeMode.PROTECTED) {
+      } else if (externalConfiguration.yasqeMode === YasqeMode.PROTECTED) {
         config.yasguiConfig.yasqe.readOnly = 'nocursor';
       } else {
         config.yasguiConfig.yasqe.readOnly = defaultYasqeConfig.readOnly;
