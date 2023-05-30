@@ -105,10 +105,10 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **pageSize**: the size of a page. Default value is 10.
 - **downloadAsOn**: if false "Download as" dropdown will not be shown.
 - **yasrToolbarPlugins**: "ontotext-yasgui-web-component" has a toolbar on the right next to the plugin buttons. **yasrToolbarPlugins** have to contain elements that implements [YasrToolbarPlugin](src/models/yasr-toolbar-plugin.ts) interface.
-- **readonly**: There are three options:
-   - true - the query can be edited;
-   - false - the editor is read-only, but the query can be copied;
-   - 'nocursor' - the editor is read-only and hte query can't be copied.
+- **yasqeMode**: There are three options:
+   - WRITE - the query can be edited;
+   - READ - the editor is read-only, but the query can be copied;
+   - PROTECTED - the editor is read-only and the query can't be copied.
 - **showQueryButton**: if false the "Run" query button will be hidden. Default value is true.
 
 ## Developers guide
