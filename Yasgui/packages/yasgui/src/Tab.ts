@@ -624,6 +624,11 @@ export class Tab extends EventEmitter {
     yasrConf.tabId = this.getId();
 
     if (this.yasqe) {
+      if (this.yasgui.config.yasr.sparqlResponse) {
+        this.persistentJson.yasr.response = {
+          data: this.yasgui.config.yasr.sparqlResponse,
+        };
+      }
       this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson);
 
       //populate our own persistent config
