@@ -1,4 +1,5 @@
 import {HtmlUtil} from '../utils/html-util';
+import {ExternalYasguiConfiguration} from '../../models/external-yasgui-configuration';
 
 export class YasrService {
 
@@ -17,15 +18,15 @@ export class YasrService {
    */
   static readonly ESCAPED_HTML_DOUBLE_GREATER = '&gt;&gt';
 
-  static getPluginsConfigurations(): Map<string, any> {
+  static getPluginsConfigurations(externalConfiguration: ExternalYasguiConfiguration): Map<string, any> {
     const pluginsConfigurations = new Map<string, any>();
-    this.addExtendedTableConfiguration(pluginsConfigurations);
+    this.addExtendedTableConfiguration(externalConfiguration, pluginsConfigurations);
     return pluginsConfigurations;
   }
 
-  private static addExtendedTableConfiguration(pluginsConfigurations: Map<string, any>) {
+  private static addExtendedTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, any>) {
     const configuration = {
-      getCellContent: YasrService.getCellContent().bind(this),
+      getCellContent: externalConfiguration.getCellContent ? externalConfiguration.getCellContent : YasrService.getCellContent().bind(this),
     };
     pluginsConfigurations.set('extended_table', configuration);
   }

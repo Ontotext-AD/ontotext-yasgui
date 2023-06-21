@@ -203,7 +203,8 @@ export interface YasguiConfiguration {
        */
       maxPersistentResponseSize?: number;
 
-      yasrToolbarPlugins?: YasrToolbarPlugin[]
+      yasrToolbarPlugins?: YasrToolbarPlugin[],
+      sparqlResponse: string | undefined,
     }
   };
 
