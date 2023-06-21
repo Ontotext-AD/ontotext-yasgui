@@ -1,0 +1,38 @@
+Subject: [PATCH] Extends yasgui results to be set via configuration.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 1f6af41ed57431904d96d3fb5dcdf0592b56198f)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 111cff7a2a241ffad51cd119b39d2aad7e5eec80)
+@@ -624,6 +624,11 @@
+     yasrConf.tabId = this.getId();
+ 
+     if (this.yasqe) {
++      if (this.yasgui.config.yasr.sparqlResponse) {
++        this.persistentJson.yasr.response = {
++          data: this.yasgui.config.yasr.sparqlResponse,
++        };
++      }
+       this.yasr = new ExtendedYasr(this.yasqe, this.yasrWrapperEl, yasrConf, this.persistentJson);
+ 
+       //populate our own persistent config
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 1f6af41ed57431904d96d3fb5dcdf0592b56198f)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 111cff7a2a241ffad51cd119b39d2aad7e5eec80)
+@@ -683,6 +683,7 @@
+   externalPluginsConfigurations?: Map<string, any>;
+   yasrToolbarPlugins?: YasrToolbarPlugin[];
+   downloadAsOptions?: { labelKey: string; value: any }[];
++  sparqlResponse?: string;
+   /**
+    * Custom renderers for errors.
+    * Allow multiple to be able to add new custom renderers without having to
