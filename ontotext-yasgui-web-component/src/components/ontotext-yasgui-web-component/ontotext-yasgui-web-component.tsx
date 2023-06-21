@@ -621,10 +621,14 @@ export class OntotextYasguiWebComponent {
 
   private getOntotextYasgui(): Promise<OntotextYasgui> {
     return new Promise((resolve, reject) => {
+      if (this.isOntotextYasguiInitialiazed()) {
+        return resolve(this.ontotextYasgui);
+      }
+
       let maxIterationsToComplete = 15;
       const timer = setInterval(() => {
         maxIterationsToComplete--;
-        if (this.ontotextYasgui && this.ontotextYasgui.getInstance()) {
+        if (this.isOntotextYasguiInitialiazed()) {
           clearInterval(timer);
           return resolve(this.ontotextYasgui);
         }
@@ -634,6 +638,10 @@ export class OntotextYasguiWebComponent {
         }
       }, 100);
     });
+  }
+
+  private isOntotextYasguiInitialiazed(): boolean {
+    return !!this.ontotextYasgui && !!this.ontotextYasgui.getInstance();
   }
 
   private afterInit(): void {
@@ -691,7 +699,7 @@ export class OntotextYasguiWebComponent {
     const classList = `yasgui-host-element ${this.getOrientationMode()} ${this.getRenderMode()}`;
     return (
       <Host class={classList}>
-        <div class="yasgui-toolbar">
+        <div class="yasgui-toolbar hidden">
           <button class="yasgui-btn btn-mode-yasqe"
                   onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
             {this.translationService.translate('yasgui.toolbar.mode_yasqe.btn.label')}

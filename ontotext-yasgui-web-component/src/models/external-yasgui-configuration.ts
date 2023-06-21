@@ -248,6 +248,16 @@ export interface ExternalYasguiConfiguration {
   onQueryAborted?: (req) => Promise<void>;
 
   yasrToolbarPlugins?: YasrToolbarPlugin[];
+
+  /**
+   * If this function is present, then it will be called on every one result cell.
+   * @param binding - binding value that will be shown into a cell.
+   * @param prefixes - Object with uris and their corresponding prefixes.
+   */
+  // @ts-ignore
+  getCellContent: (binding: Parser.BindingValue, prefixes?: Prefixes) => string;
+
+  sparqlResponse: string | undefined;
 }
 
 export type AutocompleteLoader = () => any;

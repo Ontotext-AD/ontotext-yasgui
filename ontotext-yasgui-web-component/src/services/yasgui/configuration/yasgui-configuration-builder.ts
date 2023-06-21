@@ -73,10 +73,11 @@ export class YasguiConfigurationBuilder {
         getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount
       },
       yasr: {
+        sparqlResponse: externalConfiguration.sparqlResponse,
         prefixes: {},
         defaultPlugin: '',
         pluginOrder: [],
-        externalPluginsConfigurations: YasrService.getPluginsConfigurations(),
+        externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration),
       }
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
@@ -91,7 +92,7 @@ export class YasguiConfigurationBuilder {
     config.yasguiConfig.yasr.prefixes = externalConfiguration.prefixes || defaultYasrConfig.prefixes;
     config.yasguiConfig.yasr.defaultPlugin = externalConfiguration.defaultPlugin || defaultYasrConfig.defaultPlugin;
     config.yasguiConfig.yasr.pluginOrder = externalConfiguration.pluginOrder || defaultYasrConfig.pluginOrder;
-    if (externalConfiguration.maxPersistentResponseSize) {
+    if (externalConfiguration.maxPersistentResponseSize !== undefined) {
       config.yasguiConfig.yasr.maxPersistentResponseSize = externalConfiguration.maxPersistentResponseSize;
     }
 

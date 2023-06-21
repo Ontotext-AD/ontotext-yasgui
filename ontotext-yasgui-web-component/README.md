@@ -110,6 +110,8 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
    - READ - the editor is read-only, but the query can be copied;
    - PROTECTED - the editor is read-only and the query can't be copied.
 - **showQueryButton**: if false the "Run" query button will be hidden. Default value is true.
+- **getCellContent**: function that will be called for every one cell. It must return valid html as string.
+- **sparqlResponse**: response of a sparql query as string.
 
 ## Developers guide
 
