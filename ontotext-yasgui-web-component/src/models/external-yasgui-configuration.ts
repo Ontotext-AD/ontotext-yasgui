@@ -257,6 +257,9 @@ export interface ExternalYasguiConfiguration {
   // @ts-ignore
   getCellContent: (binding: Parser.BindingValue, prefixes?: Prefixes) => string;
 
+  /**
+   * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
+   */
   sparqlResponse: string | undefined;
 }
 
