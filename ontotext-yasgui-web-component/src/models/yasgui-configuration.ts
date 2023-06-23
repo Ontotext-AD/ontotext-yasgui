@@ -204,6 +204,10 @@ export interface YasguiConfiguration {
       maxPersistentResponseSize?: number;
 
       yasrToolbarPlugins?: YasrToolbarPlugin[],
+
+      /**
+       * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
+       */
       sparqlResponse: string | undefined,
     }
   };
