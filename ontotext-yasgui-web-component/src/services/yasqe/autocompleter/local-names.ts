@@ -37,12 +37,15 @@ const getLocalNamesAutocompleter = (localNamesLoader: (term: string) => any) => 
       }
       // TODO: show toast warning on 204 or some error
       return localNamesLoader(query).then((data) => {
-        return data.suggestions.map((suggestion) => {
-          // TODO: should we sanitize and
-          // let description = suggestion.description.replaceAll('<b>', '<span class=\'CodeMirror-highlight\'>');
-          // description = description.replaceAll('</b>', '</span>');
-          return suggestion.description;
-        });
+        if (data && data.suggestions) {
+          return data.suggestions.map((suggestion) => {
+            // TODO: should we sanitize and
+            // let description = suggestion.description.replaceAll('<b>', '<span class=\'CodeMirror-highlight\'>');
+            // description = description.replaceAll('</b>', '</span>');
+            return suggestion.description;
+          });
+        }
+        return [];
       });
     },
     // Implementation taken from: Yasgui/packages/yasqe/src/autocompleters/index.ts
