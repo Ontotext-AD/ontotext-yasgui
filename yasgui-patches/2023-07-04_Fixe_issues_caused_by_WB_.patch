@@ -1,0 +1,19 @@
+Subject: [PATCH] Fixe issues caused by WB.
+---
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 46954f5d8a99bdfdc4dbc7512c6d6e977ba61d11)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision cb132eab696658afb4e60b1eddadc800b4fe99f4)
+@@ -65,7 +65,7 @@
+     return yasqe.config.beforeUpdateQuery(yasqe.getValue(), yasqe.getTabId()).then((result) => {
+       beforeUpdateQueryResult = result;
+ 
+-      if (QueryResponseStatus.ERROR === beforeUpdateQueryResult.status) {
++      if (beforeUpdateQueryResult && QueryResponseStatus.ERROR === beforeUpdateQueryResult.status) {
+         const error = new QueryError();
+         error.messageLabelKey = beforeUpdateQueryResult.messageLabelKey;
+         error.parameters = beforeUpdateQueryResult.parameters;
