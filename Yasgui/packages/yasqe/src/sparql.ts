@@ -65,7 +65,7 @@ export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxCon
     return yasqe.config.beforeUpdateQuery(yasqe.getValue(), yasqe.getTabId()).then((result) => {
       beforeUpdateQueryResult = result;
 
-      if (QueryResponseStatus.ERROR === beforeUpdateQueryResult.status) {
+      if (beforeUpdateQueryResult && QueryResponseStatus.ERROR === beforeUpdateQueryResult.status) {
         const error = new QueryError();
         error.messageLabelKey = beforeUpdateQueryResult.messageLabelKey;
         error.parameters = beforeUpdateQueryResult.parameters;
