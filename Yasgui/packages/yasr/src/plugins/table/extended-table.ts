@@ -70,23 +70,22 @@ export class ExtendedTable extends Table {
   }
 
   /**
-   * Set-ups first column to be index column according official solution from DataTable.
-   * @see <a href="https://datatables.net/examples/api/counter_columns.html">Official solution from DataTable</a>
+   * Set-ups first column to be index column.
+   * 1. Listen for the event 'draw.dt'
+   * 2. Limit the nodes to just those on the page instead of all nodes.
+   * 3. Use an offset of the page info starting point for the index.
    * @private
    */
   private setupIndexColumn() {
     if (!this.dataTable) {
       return;
     }
-    const dataTable = this.dataTable;
-    // Set up first column to be index column according official solution from DataTable.
-    this.dataTable
-      .on("order.dt search.dt", function () {
-        let i = 1;
-        dataTable.cells(null, 0, { search: "applied", order: "applied" }).every(function (cell) {
-          this.data(i++);
-        });
-      })
-      .draw();
+    const table = this.dataTable;
+    table.on( 'draw.dt', function () {
+      const PageInfo = table.page.info();
+      table.column(0, { page: 'current' }).nodes().each( function (cell, i) {
+        cell.innerHTML = `<span>${i + 1 + PageInfo.start}</span>`;
+      });
+    });
   }
 }
