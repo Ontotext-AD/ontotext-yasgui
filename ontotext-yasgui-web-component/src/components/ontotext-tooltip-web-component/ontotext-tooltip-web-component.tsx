@@ -43,10 +43,14 @@ export class OntotextTooltipWebComponent {
   }
 
   private update() {
+    this.init();
     this.tooltip.setContent(this.dataTooltip);
   }
 
   private init() {
+    if (this.tooltip) {
+      return;
+    }
     const options = {
       content: this.dataTooltip,
       trigger: 'manual',

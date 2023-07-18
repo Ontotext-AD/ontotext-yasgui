@@ -119,6 +119,10 @@ export namespace Components {
          */
         "openTab": (queryModel: TabQueryModel) => Promise<void>;
         /**
+          * Executes the yasqe query.
+         */
+        "query": () => Promise<any>;
+        /**
           * A configuration model related with all the saved queries actions.
          */
         "savedQueryConfig"?: SavedQueryConfig;
