@@ -130,6 +130,16 @@ Type: `Promise<void>`
 
 
 
+### `query() => Promise<any>`
+
+Executes the yasqe query.
+
+#### Returns
+
+Type: `Promise<any>`
+
+
+
 ### `setQuery(query: string) => Promise<void>`
 
 Allows the client to set a query in the current opened tab.

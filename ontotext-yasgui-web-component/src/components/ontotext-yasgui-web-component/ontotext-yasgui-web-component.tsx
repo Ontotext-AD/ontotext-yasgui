@@ -217,6 +217,17 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Executes the yasqe query.
+   */
+  @Method()
+  query(): Promise<any> {
+    return this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        return ontotextYasgui.query();
+      });
+  }
+
+  /**
    * Fetches the query from YASQE editor.
    */
   @Method()
