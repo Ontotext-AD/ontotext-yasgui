@@ -52,9 +52,19 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
+### `changeRenderMode(newRenderMode: any) => Promise<void>`
+
+Changes rendering mode of component.
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `getEmbeddedResultAsCSV() => Promise<unknown>`
 
-
+Fetches the query result and return it as CSV.
 
 #### Returns
 
@@ -64,7 +74,7 @@ Type: `Promise<unknown>`
 
 ### `getEmbeddedResultAsJson() => Promise<unknown>`
 
-
+Fetches the query result and return it as JSON.
 
 #### Returns
 

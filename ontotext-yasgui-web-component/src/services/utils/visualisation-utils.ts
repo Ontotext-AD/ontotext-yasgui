@@ -6,7 +6,11 @@ export class VisualisationUtils {
   static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode): void {
     VisualisationUtils.unselectAllToolbarButtons(hostElement);
     const button = HtmlElementsUtil.getRenderModeButton(hostElement, newMode);
-    button.classList.add('btn-selected');
+
+    /** The button can be undefined if the render buttons are hidden and the {@see OntotextYasguiWebComponent#changeRenderMode} method is called.*/
+    if (button) {
+      button.classList.add('btn-selected');
+    }
 
     const modes: string[] = Object.values(RenderingMode);
     hostElement.classList.remove(...modes);
