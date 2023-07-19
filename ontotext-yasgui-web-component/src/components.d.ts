@@ -86,10 +86,21 @@ export namespace Components {
      */
     interface OntotextYasgui {
         /**
+          * Changes rendering mode of component.
+          * @param newRenderMode - then new render mode of component.
+         */
+        "changeRenderMode": (newRenderMode: any) => Promise<void>;
+        /**
           * An input object property containing the yasgui configuration.
          */
         "config": ExternalYasguiConfiguration;
+        /**
+          * Fetches the query result and return it as CSV.
+         */
         "getEmbeddedResultAsCSV": () => Promise<unknown>;
+        /**
+          * Fetches the query result and return it as JSON.
+         */
         "getEmbeddedResultAsJson": () => Promise<unknown>;
         /**
           * Fetches the query from YASQE editor.

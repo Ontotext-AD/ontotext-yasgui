@@ -205,6 +205,19 @@ export class OntotextYasguiWebComponent {
   @State() copiedResourceLink: string;
 
   /**
+   * Changes rendering mode of component.
+   *
+   * @param newRenderMode - then new render mode of component.
+   */
+  @Method()
+  changeRenderMode(newRenderMode): Promise<void> {
+    return this.getOntotextYasgui()
+      .then(() => {
+        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode);
+      });
+  }
+
+  /**
    * Allows the client to set a query in the current opened tab.
    * @param query The query that should be set in the current focused tab.
    */
@@ -297,6 +310,9 @@ export class OntotextYasguiWebComponent {
     })
   }
 
+  /**
+   * Fetches the query result and return it as JSON.
+   */
   @Method()
   getEmbeddedResultAsJson(): Promise<unknown> {
     return this.getOntotextYasgui().then((ontotextYasgui) => {
@@ -304,6 +320,9 @@ export class OntotextYasguiWebComponent {
     });
   }
 
+  /**
+   * Fetches the query result and return it as CSV.
+   */
   @Method()
   getEmbeddedResultAsCSV(): Promise<unknown> {
     return this.getOntotextYasgui().then((ontotextYasgui) => {
@@ -311,7 +330,11 @@ export class OntotextYasguiWebComponent {
     });
   }
 
-  @Listen('resize', { target: 'window' })
+  /**
+   * There are rendering problems when the window size is changed. To address this, we added a listener to the window resize event.
+   * When the event occurs, we refresh the component to recalculate and resolve the rendering issues.
+   */
+  @Listen('resize', {target: 'window'})
   onResize() {
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
@@ -392,6 +415,7 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Handler for confirmation event fired when deletion of saved query is approved.
    */
   @Listen('internalConfirmationApprovedEvent')
   deleteSavedQueryHandler() {

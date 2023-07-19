@@ -46,8 +46,8 @@ export class OntotextYasgui {
     this.yasgui.getTab().getYasqe().setValue(query);
   }
 
-  query(): void {
-    this.yasgui.getTab().getYasqe().query();
+  query(): Promise<any> {
+    return this.yasgui.getTab().getYasqe().query();
   }
 
   getQuery(): string {
