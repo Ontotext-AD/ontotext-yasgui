@@ -1,10 +1,7 @@
-import {QueryStubDescription, QueryStubs, ResultType} from '../../stubs/query-stubs';
+import {QueryStubDescription, QueryStubs} from '../../stubs/query-stubs';
 import {YasrTablePluginSteps} from '../../steps/yasr-table-plugin-steps';
 import {YasqeSteps} from '../../steps/yasqe-steps';
-import DefaultViewPageSteps from '../../steps/default-view-page-steps';
 import {YasrSteps} from '../../steps/yasr-steps';
-import {PaginationPageSteps} from '../../steps/pages/pagination-page-steps';
-import {PaginationSteps} from '../../steps/pagination-steps';
 
 describe('Plugin: Table', () => {
 

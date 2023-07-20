@@ -1,5 +1,7 @@
 import {KeyboardShortcutDescription, KeyboardShortcutName} from '../models/keyboard-shortcut-description';
 import {YasguiConfiguration} from '../models/yasgui-configuration';
+import {YasqeButtonName} from '../models/yasqe-button-name';
+import {YasqeService} from './yasqe/yasqe-service';
 
 export class KeyboardShortcutService {
   static initKeyboardShortcutMapping = (config: YasguiConfiguration): KeyboardShortcutDescription[] => {
@@ -203,7 +205,7 @@ export class KeyboardShortcutService {
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       const wrapperElement = yasqe.getWrapperElement();
-      const querySelector = wrapperElement.querySelector('.yasqe_createSavedQueryButton');
+      const querySelector = wrapperElement.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)}`);
       if (querySelector) {
         querySelector.click();
       }

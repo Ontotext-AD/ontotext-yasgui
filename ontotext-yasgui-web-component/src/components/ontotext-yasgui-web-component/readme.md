@@ -52,6 +52,16 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
+### `abortQuery() => Promise<any>`
+
+Aborts the running query if any.
+
+#### Returns
+
+Type: `Promise<any>`
+
+
+
 ### `changeRenderMode(newRenderMode: any) => Promise<void>`
 
 Changes rendering mode of component.
@@ -118,6 +128,16 @@ Type: `Promise<string>`
 
 A promise which resolves with a string representing the query type.
 
+### `hideYasqeActionButton(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>`
+
+Hides the YASQE action button with the name <code>yasqeActionButtonNames</code>.
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `isQueryValid() => Promise<boolean>`
 
 Checks if query is valid.
@@ -153,6 +173,16 @@ Type: `Promise<any>`
 ### `setQuery(query: string) => Promise<void>`
 
 Allows the client to set a query in the current opened tab.
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `showYasqeActionButton(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>`
+
+Shows the YASQE action button with the name <code>yasqeActionButtonNames</code>.
 
 #### Returns
 

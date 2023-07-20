@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Test component public API</title>
+
+    <script type="module" src="/build/ontotext-yasgui-web-component.esm.js"></script>
+    <script nomodule src="/build/ontotext-yasgui-web-component.js"></script>
+    <script src="../js/ontotext-yasgui-tests-util.js"></script>
+    <script src="./public-api/main.js" defer></script>
+  </head>
+  <body>
+  <button id="showActionCreateSavedQuery" onclick="changeActionButtonVisibility('createSavedQuery', false)">Show "Create Saved Query" button</button>
+  <button id="hideActionCreateSavedQuery" onclick="changeActionButtonVisibility('createSavedQuery', true)">Hide "Create Saved Query" button</button>
+  <button id="showShowSavedQueries" onclick="changeActionButtonVisibility('showSavedQueries', false)">Show "Show saved queries" button</button>
+  <button id="hideShowSavedQueries" onclick="changeActionButtonVisibility('showSavedQueries', true)">Hide "Show saved queries" button</button>
+  <button id="showShareQuery" onclick="changeActionButtonVisibility('shareQuery', false)">Show "Share Query" button</button>
+  <button id="hideShareQuery" onclick="changeActionButtonVisibility('shareQuery', true)">Hide "Share Query" button</button>
+  <button id="showExpandResults" onclick="changeActionButtonVisibility('expandResults', false)">Show "Expand Results" button</button>
+  <button id="hideExpandResults" onclick="changeActionButtonVisibility('expandResults', true)">Hide "Expand Results" button</button>
+  <button id="showInferStatements" onclick="changeActionButtonVisibility('inferStatements', false)">Show "Infer Statements" button</button>
+  <button id="hideInferStatements" onclick="changeActionButtonVisibility('inferStatements', true)">Hide "Infer Statements" button</button>
+
+  <button id="switchToYasguiMode" onclick="changeRenderMode('mode-yasgui')">Switch to YASGUI Mode</button>
+  <button id="switchToYasqeMode" onclick="changeRenderMode('mode-yasqe')">Switch to YASQE Mode</button>
+  <button id="switchToYasrMode" onclick="changeRenderMode('mode-yasr')">Switch to YASR Mode</button>
+  <hr/>
+  <ontotext-yasgui data-cy="ontotext-yasgui-tag"></ontotext-yasgui>
+  </body>
+</html>

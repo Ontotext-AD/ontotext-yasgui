@@ -5,6 +5,7 @@ import {YasguiConfiguration} from "../../models/yasgui-configuration";
 import {TooltipService} from '../tooltip-service';
 import {InternalShareQueryEvent} from '../../models/internal-events/internal-share-query-event';
 import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
+import {YasqeButtonName, YasqeButtonType} from '../../models/yasqe-button-name';
 import {InternalCreateSavedQueryEvent} from '../../models/internal-events/internal-create-saved-query-event';
 
 export class YasqeService {
@@ -15,13 +16,55 @@ export class YasqeService {
   //@ts-ignore
   buttonBuilders: Map<string, ((yasguiConfiguration: YasguiConfiguration, yasqe: Yasqe) => HTMLElement | HTMLElement[])> = new Map<string, (() => HTMLElement | HTMLElement[])>();
 
+  private static pluginButtonNameToClassNameMapping: Map<YasqeButtonType, string>;
+
+
   constructor(serviceFactory: ServiceFactory) {
     this.eventService = serviceFactory.getEventService();
+    this.initPluginButtonNameToClassNameMapping();
     this.translationService = serviceFactory.get(TranslationService);
-    this.buttonBuilders.set('createSavedQuery', () => this.buildCreateSaveQueryButton());
-    this.buttonBuilders.set('showSavedQueries', () => this.buildShowSavedQueriesButton());
-    this.buttonBuilders.set('shareQuery', () => this.buildShareQueryButton());
+    this.buttonBuilders.set(YasqeButtonName.CREATE_SAVED_QUERY, () => this.buildCreateSaveQueryButton());
+    this.buttonBuilders.set(YasqeButtonName.SHOW_SAVED_QUERIES, () => this.buildShowSavedQueriesButton());
+    this.buttonBuilders.set(YasqeButtonName.SHARE_QUERY, () => this.buildShareQueryButton());
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration, yasqe) => this.buildInferAndSameAsButtons(externalConfiguration, yasqe));
+  }
+
+  private initPluginButtonNameToClassNameMapping() {
+    YasqeService.pluginButtonNameToClassNameMapping = new Map();
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.CREATE_SAVED_QUERY, `yasqe_${YasqeButtonName.CREATE_SAVED_QUERY}Button`);
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHOW_SAVED_QUERIES, `yasqe_${YasqeButtonName.SHOW_SAVED_QUERIES}Button`);
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHARE_QUERY, `yasqe_${YasqeButtonName.SHARE_QUERY}Button`);
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.EXPANDS_RESULTS, `yasqe_${YasqeButtonName.EXPANDS_RESULTS}Button`);
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.INFER_STATEMENTS, `yasqe_${YasqeButtonName.INFER_STATEMENTS}Button`);
+
+  }
+
+  static getActionButtonClassName(actionButtonName: YasqeButtonType) {
+    return this.pluginButtonNameToClassNameMapping.get(actionButtonName);
+  }
+
+  static hideActionButton(actionButtonName: YasqeButtonType): void {
+    const actionButton = document.querySelector(`.${YasqeService.getActionButtonClassName(actionButtonName)}`);
+    if (actionButton) {
+      actionButton.classList.add('hidden');
+    }
+  }
+
+  static hideYasqeActionButtons(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]): void {
+    const actionsButtonNames = Array.isArray(yasqeActionButtonNames) ? yasqeActionButtonNames : [yasqeActionButtonNames];
+    actionsButtonNames.forEach((actionsButtonName) => YasqeService.hideActionButton(actionsButtonName));
+  }
+
+  static showActionButton(actionButtonName: YasqeButtonType): void {
+    const actionButton = document.querySelector(`.${YasqeService.getActionButtonClassName(actionButtonName)}`);
+    if (actionButton) {
+      actionButton.classList.remove('hidden');
+    }
+  }
+
+  static showYasqeActionButtons(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]): void {
+    const actionsButtonNames = Array.isArray(yasqeActionButtonNames) ? yasqeActionButtonNames : [yasqeActionButtonNames];
+    actionsButtonNames.forEach((actionsButtonName) => YasqeService.showActionButton(actionsButtonName));
   }
 
   //@ts-ignore
@@ -34,7 +77,7 @@ export class YasqeService {
 
   private buildShowSavedQueriesButton(): HTMLElement {
     const buttonElement = document.createElement("button");
-    buttonElement.className = "yasqe_showSavedQueriesButton custom-button icon-folder";
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)} custom-button icon-folder`;
     buttonElement.addEventListener("click",
       () => {
         this.eventService.emit(new InternalShowSavedQueriesEvent(buttonElement))
@@ -46,7 +89,7 @@ export class YasqeService {
 
   private buildCreateSaveQueryButton(): HTMLElement {
     const buttonElement = document.createElement("button");
-    buttonElement.className = "yasqe_createSavedQueryButton custom-button icon-save";
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)} custom-button icon-save`;
     buttonElement.addEventListener("click",
       () => this.eventService.emit(new InternalCreateSavedQueryEvent()));
     const tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
@@ -55,7 +98,7 @@ export class YasqeService {
 
   private buildShareQueryButton(): HTMLElement {
     const buttonElement = document.createElement("button");
-    buttonElement.className = "yasqe_shareQueryButton custom-button icon-link";
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)} custom-button icon-link`;
     buttonElement.addEventListener("click",
       () => this.eventService.emit(new InternalShareQueryEvent()));
 
@@ -80,7 +123,7 @@ export class YasqeService {
   private createInferredElement(yasqe: Yasqe, sameAsElement: HTMLElement): HTMLElement {
     const inferredButtonElement = document.createElement("button");
     const inferredTooltipElement = TooltipService.addTooltip(inferredButtonElement, undefined, 'top');
-    inferredButtonElement.className = 'yasqe_inferStatementsButton custom-button';
+    inferredButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.INFER_STATEMENTS)} custom-button`;
     inferredButtonElement.addEventListener("click",
       () => {
         const newInferredValue = !yasqe.getInfer();
@@ -98,7 +141,7 @@ export class YasqeService {
   private createSameAsElement(yasqe: Yasqe): HTMLElement {
     const sameAsButtonElement = document.createElement("button");
     const sameAsTooltipElement = TooltipService.addTooltip(sameAsButtonElement, undefined, 'top');
-    sameAsButtonElement.className = `yasqe_expandResultsButton custom-button`;
+    sameAsButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.EXPANDS_RESULTS)} custom-button`;
     sameAsButtonElement.addEventListener("click",
       (event) => {
         if (sameAsButtonElement.classList.contains('disabled')) {
