@@ -23,6 +23,8 @@ import {InternalShowResourceCopyLinkDialogEvent} from '../../models/internal-eve
 import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
 import {InternalQueryExecuted} from '../../models/internal-events/internal-query-executed';
 import {InternalCountQueryResponseEvent} from '../../models/internal-events/internal-count-query-response-event';
+import {YasqeButtonType} from '../../models/yasqe-button-name';
+import {YasqeService} from '../../services/yasqe/yasqe-service';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -328,6 +330,37 @@ export class OntotextYasguiWebComponent {
     return this.getOntotextYasgui().then((ontotextYasgui) => {
       return ontotextYasgui.getEmbeddedResultAsCSV();
     });
+  }
+
+  /**
+   * Hides the YASQE action button with the name <code>yasqeActionButtonNames</code>.
+   *
+   * @param yasqeActionButtonNames - the name of the action that needs to be hidden.
+   */
+  @Method()
+  hideYasqeActionButton(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]): Promise<void> {
+    return this.getOntotextYasgui().then(() => YasqeService.hideYasqeActionButtons(yasqeActionButtonNames));
+  }
+
+  /**
+   * Shows the YASQE action button with the name <code>yasqeActionButtonNames</code>.
+   *
+   * @param yasqeActionButtonNames - the name of the action that needs to be displayed.
+   */
+  @Method()
+  showYasqeActionButton(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]): Promise<void> {
+    return this.getOntotextYasgui().then(() => YasqeService.showYasqeActionButtons(yasqeActionButtonNames));
+  }
+
+  /**
+   * Aborts the running query if any.
+   */
+  @Method()
+  abortQuery(): Promise<any> {
+    return this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.abortQuery();
+      });
   }
 
   /**

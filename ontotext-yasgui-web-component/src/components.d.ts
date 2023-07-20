@@ -17,6 +17,7 @@ import { Page } from "./models/page";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
 import { OutputEvent } from "./models/output-events/output-event";
+import { YasqeButtonType } from "./models/yasqe-button-name";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     interface ConfirmationDialog {
@@ -86,6 +87,10 @@ export namespace Components {
      */
     interface OntotextYasgui {
         /**
+          * Aborts the running query if any.
+         */
+        "abortQuery": () => Promise<any>;
+        /**
           * Changes rendering mode of component.
           * @param newRenderMode - then new render mode of component.
          */
@@ -117,6 +122,11 @@ export namespace Components {
          */
         "getQueryType": () => Promise<string>;
         /**
+          * Hides the YASQE action button with the name <code>yasqeActionButtonNames</code>.
+          * @param yasqeActionButtonNames - the name of the action that needs to be hidden.
+         */
+        "hideYasqeActionButton": (yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>;
+        /**
           * Checks if query is valid.
          */
         "isQueryValid": () => Promise<boolean>;
@@ -142,6 +152,11 @@ export namespace Components {
           * @param query The query that should be set in the current focused tab.
          */
         "setQuery": (query: string) => Promise<void>;
+        /**
+          * Shows the YASQE action button with the name <code>yasqeActionButtonNames</code>.
+          * @param yasqeActionButtonNames - the name of the action that needs to be displayed.
+         */
+        "showYasqeActionButton": (yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>;
     }
     interface SaveQueryDialog {
         /**

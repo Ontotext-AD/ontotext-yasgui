@@ -50,6 +50,10 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().query();
   }
 
+  abortQuery(): void {
+    this.yasgui.getTab().getYasqe().abortQuery();
+  }
+
   getQuery(): string {
     return this.yasgui.getTab().getYasqe().getValue();
   }
