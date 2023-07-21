@@ -32,6 +32,11 @@ export interface ExternalYasguiConfiguration {
   showResultTabs: boolean;
 
   /**
+   * If the result info should be rendered or not
+   */
+  showResultInfo: boolean;
+
+  /**
    * If the toolbar with render mode buttons should be rendered or not.
    */
   showToolbar: boolean;

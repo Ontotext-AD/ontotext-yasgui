@@ -209,6 +209,11 @@ export interface YasguiConfiguration {
        * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
        */
       sparqlResponse: string | undefined,
+
+      /**
+       * If the result info should be rendered or not
+       */
+      showResultInfo?: boolean;
     }
   };
 
@@ -244,6 +249,7 @@ export const defaultOntotextYasguiConfig: Record<string, any> = {
   orientation: Orientation.VERTICAL,
   showEditorTabs: true,
   showResultTabs: true,
+  showResultInfo: true,
   showToolbar: false,
   showControlBar: false
 }

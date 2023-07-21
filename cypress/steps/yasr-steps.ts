@@ -181,4 +181,12 @@ export class YasrSteps {
   static getResultLiteralCell(rowIndex, columnIndex) {
     return YasrSteps.getResultCell(rowIndex, columnIndex).find('.literal-cell');
   }
+
+  static getExtendedTableTab() {
+    return YasrSteps.getResultHeader().find('.select_extended_table');
+  }
+
+  static getResponseTableTab() {
+    return YasrSteps.getResultHeader().find('.select_extended_response');
+  }
 }

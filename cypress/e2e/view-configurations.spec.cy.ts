@@ -47,9 +47,10 @@ describe('View configurations', () => {
          // WHEN: set configuration property "showResultTabs" to false.
          ViewConfigurationsPageSteps.hideResultTabs();
 
-         // THEN: only result tabs have to be invisible.
+         // THEN: results tab have to not be visible.
          YasqeSteps.getQueryTabs().should('be.visible');
-         YasrSteps.getResultHeader().should('not.be.visible');
+         YasrSteps.getExtendedTableTab().should('not.be.visible');
+         YasrSteps.getResponseTableTab().should('not.be.visible');
 
          // WHEN: set configuration property "showResultTabs" to true.
          ViewConfigurationsPageSteps.showResultTabs();

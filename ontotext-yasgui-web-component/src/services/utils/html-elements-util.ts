@@ -37,4 +37,22 @@ export class HtmlElementsUtil {
   static getControlBar(hostElement: HTMLElement): HTMLElement {
     return hostElement.querySelector('.yasgui .controlbar');
   }
+
+  static addHiddenClass(hostElement: HTMLElement, ...elementSelectors: string[]) {
+    elementSelectors.forEach((elementSelector) => {
+      const element = hostElement.querySelector(elementSelector);
+      if (element) {
+        element.classList.add('hidden');
+      }
+    });
+  }
+
+  static removeHiddenClass(hostElement: HTMLElement, ...elementSelectors: string[]) {
+    elementSelectors.forEach((elementSelector) => {
+      const element = hostElement.querySelector(elementSelector);
+      if (element) {
+        element.classList.remove('hidden');
+      }
+    });
+  }
 }
