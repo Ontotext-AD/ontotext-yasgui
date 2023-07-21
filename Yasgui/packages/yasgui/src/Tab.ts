@@ -553,6 +553,7 @@ export class Tab extends EventEmitter {
 
   handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {
     if (this.yasr?.results) {
+      this.yasr.results.setTotalElements(totalElements);
       const response = this.persistentJson.yasr.response;
       if (response) {
         if (response.totalElements !== totalElements) {
@@ -621,6 +622,7 @@ export class Tab extends EventEmitter {
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+    yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
     yasrConf.tabId = this.getId();
 
     if (this.yasqe) {

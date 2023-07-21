@@ -683,6 +683,8 @@ export interface Config {
   externalPluginsConfigurations?: Map<string, any>;
   yasrToolbarPlugins?: YasrToolbarPlugin[];
   downloadAsOptions?: { labelKey: string; value: any }[];
+
+  showResultInfo: boolean;
   sparqlResponse?: string;
   /**
    * Custom renderers for errors.

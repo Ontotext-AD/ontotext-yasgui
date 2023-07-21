@@ -82,6 +82,7 @@ class Parser {
   private readonly executionTime: number | undefined;
   private readonly queryStartedTime: number | undefined;
   private countAffectedRepositoryStatements?: number | undefined;
+  private totalElements?: number | undefined;
   private readonly possibleElementsCount?: number;
   private readonly hasMorePages?: boolean;
   private readonly customResultMessage?: CustomResultMessage;
@@ -241,6 +242,14 @@ class Parser {
 
   public getCountAffectedRepositoryStatements() {
     return this.countAffectedRepositoryStatements;
+  }
+
+  public setTotalElements(totalElements: number) {
+    this.totalElements = totalElements;
+  }
+
+  public getTotalElements() {
+    return this.totalElements;
   }
 
   private getParserFromContentType(): boolean {
