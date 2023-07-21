@@ -16,6 +16,7 @@ export class OntotextYasguiService {
     OntotextYasguiService.initEditorTabs(hostElement, config);
     OntotextYasguiService.initControlBar(hostElement, config);
     OntotextYasguiService.initResultTabs(hostElement, config);
+    OntotextYasguiService.initResultInfo(hostElement, config);
     OntotextYasguiService.initButtonsStyling(hostElement, config);
     this.updateTranslation(config);
   }
@@ -45,9 +46,17 @@ export class OntotextYasguiService {
 
   private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     if (config.showResultTabs) {
-      hostElement.classList.remove('hidden-result-tabs');
+      HtmlElementsUtil.removeHiddenClass(hostElement, '.select_extended_table', '.select_extended_response');
     } else {
-      hostElement.classList.add('hidden-result-tabs');
+      HtmlElementsUtil.addHiddenClass(hostElement, '.select_extended_table', '.select_extended_response');
+    }
+  }
+
+  private static initResultInfo(hostElement: HTMLElement, config: YasguiConfiguration): void {
+    if (config.yasguiConfig.yasr.showResultInfo) {
+      HtmlElementsUtil.removeHiddenClass(hostElement, '.yasr_response_chip', '#yasr_plugin_control');
+    } else {
+      HtmlElementsUtil.addHiddenClass(hostElement, '.yasr_response_chip', '#yasr_plugin_control');
     }
   }
 

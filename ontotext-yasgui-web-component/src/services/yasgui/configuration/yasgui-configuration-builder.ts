@@ -95,6 +95,7 @@ export class YasguiConfigurationBuilder {
     if (externalConfiguration.maxPersistentResponseSize !== undefined) {
       config.yasguiConfig.yasr.maxPersistentResponseSize = externalConfiguration.maxPersistentResponseSize;
     }
+    config.yasguiConfig.yasr.showResultInfo = externalConfiguration.showResultInfo !== undefined ? externalConfiguration.showResultInfo : defaultOntotextYasguiConfig.showResultInfo;
 
     const yasrToolbarElements = externalConfiguration.yasrToolbarPlugins || [];
     if (externalConfiguration.downloadAsOn === undefined || externalConfiguration.downloadAsOn) {
