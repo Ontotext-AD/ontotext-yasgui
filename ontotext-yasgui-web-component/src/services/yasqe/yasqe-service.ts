@@ -40,7 +40,11 @@ export class YasqeService {
   }
 
   static getActionButtonClassName(actionButtonName: YasqeButtonType) {
-    return this.pluginButtonNameToClassNameMapping.get(actionButtonName);
+    if (this.pluginButtonNameToClassNameMapping.has(actionButtonName)) {
+      return this.pluginButtonNameToClassNameMapping.get(actionButtonName);
+    } else {
+      console.log(`The YASQE action with name: ${actionButtonName} doesn't exist!`);
+    }
   }
 
   static hideActionButton(actionButtonName: YasqeButtonType): void {
