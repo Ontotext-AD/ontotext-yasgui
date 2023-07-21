@@ -161,7 +161,7 @@ export class ExtendedYasr extends Yasr {
 
     const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
     const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
-    const totalElements = this.persistentJson?.yasr.response?.totalElements;
+    const totalElements = this.persistentJson?.yasr.response?.totalElements || this.results?.getTotalElements();
     const from = pageSize * (pageNumber - 1);
     let to = from + bindings.length;
 
@@ -178,11 +178,12 @@ export class ExtendedYasr extends Yasr {
   updateResponseInfo() {
     const responseInfoElement = this.getResponseInfoElement();
 
-    removeClass(responseInfoElement, "hidden");
-    if (this.results?.hasError()) {
+    if (!this.config.showResultInfo || this.results?.hasError()) {
       addClass(responseInfoElement, "hidden");
       return;
     }
+
+    removeClass(responseInfoElement, "hidden");
 
     const responseTime = this.results?.getResponseTime();
     const queryStartedTime = this.results?.getQueryStartedTime();
