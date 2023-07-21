@@ -1,0 +1,123 @@
+Subject: [PATCH] Fixes pagination
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 8beb999aa15eee9b04ee04279a5e4892f1c80201)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 9c4f6abe00dd7dedfd8cf9b2a2b87de5ab54da38)
+@@ -553,6 +553,7 @@
+ 
+   handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {
+     if (this.yasr?.results) {
++      this.yasr.results.setTotalElements(totalElements);
+       const response = this.persistentJson.yasr.response;
+       if (response) {
+         if (response.totalElements !== totalElements) {
+@@ -621,6 +622,7 @@
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
+     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
++    yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
+     yasrConf.tabId = this.getId();
+ 
+     if (this.yasqe) {
+Index: Yasgui/packages/yasr/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision 8beb999aa15eee9b04ee04279a5e4892f1c80201)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 9c4f6abe00dd7dedfd8cf9b2a2b87de5ab54da38)
+@@ -3,6 +3,7 @@
+ export default function get(): Config {
+   return {
+     translationService: TranslationService.INSTANCE,
++    showResultInfo: true,
+     persistenceId: function (yasr) {
+       //Traverse parents untl we've got an id
+       // Get matching parent elements
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 8beb999aa15eee9b04ee04279a5e4892f1c80201)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 9c4f6abe00dd7dedfd8cf9b2a2b87de5ab54da38)
+@@ -161,7 +161,7 @@
+ 
+     const pageSize = this.yasqe.getPageSize() || this.persistentJson?.yasqe.pageSize;
+     const pageNumber = this.yasqe.getPageNumber() || this.persistentJson?.yasqe.pageNumber;
+-    const totalElements = this.persistentJson?.yasr.response?.totalElements;
++    const totalElements = this.persistentJson?.yasr.response?.totalElements || this.results?.getTotalElements();
+     const from = pageSize * (pageNumber - 1);
+     let to = from + bindings.length;
+ 
+@@ -178,12 +178,13 @@
+   updateResponseInfo() {
+     const responseInfoElement = this.getResponseInfoElement();
+ 
+-    removeClass(responseInfoElement, "hidden");
+-    if (this.results?.hasError()) {
++    if (!this.config.showResultInfo || this.results?.hasError()) {
+       addClass(responseInfoElement, "hidden");
+       return;
+     }
+ 
++    removeClass(responseInfoElement, "hidden");
++
+     const responseTime = this.results?.getResponseTime();
+     const queryStartedTime = this.results?.getQueryStartedTime();
+ 
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 8beb999aa15eee9b04ee04279a5e4892f1c80201)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 9c4f6abe00dd7dedfd8cf9b2a2b87de5ab54da38)
+@@ -683,6 +683,8 @@
+   externalPluginsConfigurations?: Map<string, any>;
+   yasrToolbarPlugins?: YasrToolbarPlugin[];
+   downloadAsOptions?: { labelKey: string; value: any }[];
++
++  showResultInfo: boolean;
+   sparqlResponse?: string;
+   /**
+    * Custom renderers for errors.
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision 8beb999aa15eee9b04ee04279a5e4892f1c80201)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision 9c4f6abe00dd7dedfd8cf9b2a2b87de5ab54da38)
+@@ -82,6 +82,7 @@
+   private readonly executionTime: number | undefined;
+   private readonly queryStartedTime: number | undefined;
+   private countAffectedRepositoryStatements?: number | undefined;
++  private totalElements?: number | undefined;
+   private readonly possibleElementsCount?: number;
+   private readonly hasMorePages?: boolean;
+   private readonly customResultMessage?: CustomResultMessage;
+@@ -243,6 +244,14 @@
+     return this.countAffectedRepositoryStatements;
+   }
+ 
++  public setTotalElements(totalElements: number) {
++    this.totalElements = totalElements;
++  }
++
++  public getTotalElements() {
++    return this.totalElements;
++  }
++
+   private getParserFromContentType(): boolean {
+     const contentType = this.getContentType();
+     if (contentType) {
