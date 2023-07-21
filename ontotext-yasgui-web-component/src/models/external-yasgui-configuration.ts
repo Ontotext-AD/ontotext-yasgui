@@ -32,7 +32,7 @@ export interface ExternalYasguiConfiguration {
   showResultTabs: boolean;
 
   /**
-   * If the result info should be rendered or not
+   * If the result information header of YASR should be rendered or not.
    */
   showResultInfo: boolean;
 

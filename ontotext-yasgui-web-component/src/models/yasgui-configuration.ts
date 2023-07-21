@@ -211,7 +211,7 @@ export interface YasguiConfiguration {
       sparqlResponse: string | undefined,
 
       /**
-       * If the result info should be rendered or not
+       * If the result information header of YASR should be rendered or not.
        */
       showResultInfo?: boolean;
     }

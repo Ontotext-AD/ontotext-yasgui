@@ -45,19 +45,13 @@ export class OntotextYasguiService {
   }
 
   private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    if (config.showResultTabs) {
-      HtmlElementsUtil.removeHiddenClass(hostElement, '.select_extended_table', '.select_extended_response');
-    } else {
-      HtmlElementsUtil.addHiddenClass(hostElement, '.select_extended_table', '.select_extended_response');
-    }
+    const pluginTabsElementsSelectors = ['.select_extended_table', '.select_extended_response'];
+    HtmlElementsUtil.toggleHiddenByCondition(hostElement, pluginTabsElementsSelectors, () => !config.showResultTabs);
   }
 
   private static initResultInfo(hostElement: HTMLElement, config: YasguiConfiguration): void {
-    if (config.yasguiConfig.yasr.showResultInfo) {
-      HtmlElementsUtil.removeHiddenClass(hostElement, '.yasr_response_chip', '#yasr_plugin_control');
-    } else {
-      HtmlElementsUtil.addHiddenClass(hostElement, '.yasr_response_chip', '#yasr_plugin_control');
-    }
+    const responseInfoMessageElementsSelectors = ['.yasr_response_chip', '#yasr_plugin_control'];
+    HtmlElementsUtil.toggleHiddenByCondition(hostElement, responseInfoMessageElementsSelectors, () => !config.yasguiConfig.yasr.showResultInfo);
   }
 
   private static initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {

@@ -38,20 +38,15 @@ export class HtmlElementsUtil {
     return hostElement.querySelector('.yasgui .controlbar');
   }
 
-  static addHiddenClass(hostElement: HTMLElement, ...elementSelectors: string[]) {
-    elementSelectors.forEach((elementSelector) => {
-      const element = hostElement.querySelector(elementSelector);
-      if (element) {
-        element.classList.add('hidden');
-      }
-    });
+  static toggleHiddenByCondition(hostElement: HTMLElement, elementSelectors: string[], haveToExist: () => boolean) {
+    HtmlElementsUtil.toggleClassByCondition(hostElement, elementSelectors, 'hidden', haveToExist);
   }
 
-  static removeHiddenClass(hostElement: HTMLElement, ...elementSelectors: string[]) {
+  static toggleClassByCondition(hostElement: HTMLElement, elementSelectors: string[], className: string, haveToExist: () => boolean): void {
     elementSelectors.forEach((elementSelector) => {
       const element = hostElement.querySelector(elementSelector);
       if (element) {
-        element.classList.remove('hidden');
+        element.classList.toggle(className, haveToExist());
       }
     });
   }
