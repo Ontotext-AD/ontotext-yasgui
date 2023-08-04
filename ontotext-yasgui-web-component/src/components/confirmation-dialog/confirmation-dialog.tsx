@@ -1,4 +1,4 @@
-import {Component, Event, EventEmitter, h, Host, Prop} from '@stencil/core';
+import {Component, Event, EventEmitter, h, Host, Listen, Prop} from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
 
 export type ConfirmationDialogConfig = {
@@ -30,6 +30,17 @@ export class ConfirmationDialog {
    */
   @Event() internalConfirmationApprovedEvent: EventEmitter;
 
+  /**
+   * Handles the Escape key keydown event and closes the dialog.
+   * @param ev The keyboard event.
+   */
+  @Listen('keydown', {target: "window"})
+  keydownListener(ev: KeyboardEvent) {
+    if (ev.key === 'Escape') {
+      this.internalConfirmationRejectedEvent.emit();
+    }
+  }
+
   onClose(evt: MouseEvent): void {
     const target = evt.target as HTMLElement;
     evt.stopPropagation();
@@ -57,10 +68,10 @@ export class ConfirmationDialog {
             </div>
             <div class="dialog-body">{this.config.message}</div>
             <div class="dialog-footer">
-              <button class="confirm-button"
-                      onClick={(evt) => this.onConfirm(evt)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
               <button class="cancel-button"
                       onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
+              <button class="confirm-button"
+                      onClick={(evt) => this.onConfirm(evt)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
             </div>
           </div>
         </div>

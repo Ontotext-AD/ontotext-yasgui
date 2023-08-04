@@ -1,4 +1,4 @@
-import {Component, Element, h, Prop} from '@stencil/core';
+import {Component, Element, h, Listen, Prop} from '@stencil/core';
 import {DialogConfig} from "../ontotext-dialog-web-component/ontotext-dialog-web-component";
 import {ServiceFactory} from "../../services/service-factory";
 import {TranslationService} from "../../services/translation.service";
@@ -32,6 +32,17 @@ export class CopyLinkDialog {
   @Prop() copyLinkEventsObserver: CopyLinkObserver;
 
   @Prop() classes: string
+
+  /**
+   * Handles the Escape key keydown event and closes the dialog.
+   * @param ev The keyboard event.
+   */
+  @Listen('keydown', {target: "window"})
+  keydownListener(ev: KeyboardEvent) {
+    if (ev.key === 'Escape') {
+      this.copyLinkEventsObserver.onDialogClosed();
+    }
+  }
 
   buildDialogConfig(): DialogConfig {
     return {
@@ -121,10 +132,10 @@ export class CopyLinkDialog {
           </div>
         </div>
         <div slot="footer">
-          <button class="primary-button copy-button"
-                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.copy_link.dialog.copy.btn.label')}</button>
           <button class="secondary-button cancel-button"
                   onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
+          <button class="primary-button copy-button"
+                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.copy_link.dialog.copy.btn.label')}</button>
         </div>
       </ontotext-dialog-web-component>
     );

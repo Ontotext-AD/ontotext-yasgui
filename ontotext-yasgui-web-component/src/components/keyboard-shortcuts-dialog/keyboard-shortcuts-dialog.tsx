@@ -1,4 +1,4 @@
-import {Component, h, Host, Prop, State} from '@stencil/core';
+import {Component, h, Host, Listen, Prop, State} from '@stencil/core';
 import {TranslationService} from '../../services/translation.service';
 import {DialogConfig} from '../ontotext-dialog-web-component/ontotext-dialog-web-component';
 
@@ -14,6 +14,17 @@ export class KeyboardShortcutsDialog {
   @Prop() items: string[] = [];
 
   @Prop() translationService: TranslationService;
+
+  /**
+   * Handles the Escape key keydown event and closes the dialog.
+   * @param ev The keyboard event.
+   */
+  @Listen('keydown', {target: "window"})
+  keydownListener(ev: KeyboardEvent) {
+    if (ev.key === 'Escape') {
+      this.open = false;
+    }
+  }
 
   private openDialog() {
     this.open = true;
