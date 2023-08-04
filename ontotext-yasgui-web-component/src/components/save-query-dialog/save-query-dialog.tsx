@@ -4,7 +4,7 @@ import {
   EventEmitter,
   FunctionalComponent,
   h,
-  Host,
+  Host, Listen,
   Prop,
   State
 } from '@stencil/core';
@@ -55,6 +55,17 @@ export class SaveQueryDialog {
    * updated query data.
    */
   @Event() internalUpdateQueryEvent: EventEmitter<UpdateQueryData>;
+
+  /**
+   * Handles the Escape key keydown event and closes the dialog.
+   * @param ev The keyboard event.
+   */
+  @Listen('keydown', {target: "window"})
+  keydownListener(ev: KeyboardEvent) {
+    if (ev.key === 'Escape') {
+      this.internalSaveQueryDialogClosedEvent.emit();
+    }
+  }
 
   componentWillLoad(): void {
     // TranslationService is injected here because the service factory is not available
@@ -185,10 +196,10 @@ export class SaveQueryDialog {
 
             </div>
             <div class="dialog-footer">
-              <button class="ok-button" disabled={!this.isSaveAllowed}
-                      onClick={(evt) => this.onCreate(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.create.button')}</button>
               <button class="cancel-button"
                       onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.cancel.button')}</button>
+              <button class="ok-button" disabled={!this.isSaveAllowed}
+                      onClick={(evt) => this.onCreate(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.create.button')}</button>
             </div>
           </div>
         </div>

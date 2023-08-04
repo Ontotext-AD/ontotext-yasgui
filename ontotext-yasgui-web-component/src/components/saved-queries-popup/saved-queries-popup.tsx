@@ -50,6 +50,17 @@ export class SavedQueriesPopup {
     }
   }
 
+  /**
+   * Handles the Escape key keydown event and closes the dialog.
+   * @param ev The keyboard event.
+   */
+  @Listen('keydown', {target: "window"})
+  keydownListener(ev: KeyboardEvent) {
+    if (ev.key === 'Escape') {
+      this.internalCloseSavedQueriesPopupEvent.emit();
+    }
+  }
+
   onSelect(evt, selectedQuery: SaveQueryData): void {
     evt.stopPropagation();
     this.internalSaveQuerySelectedEvent.emit(selectedQuery);

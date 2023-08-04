@@ -15,4 +15,12 @@
   .copy-link-form {
     @include formField;
   }
+
+  .copy-button {
+    margin-right: 0 !important;
+  }
+
+  .cancel-button {
+    margin-right: 10px;
+  }
 }

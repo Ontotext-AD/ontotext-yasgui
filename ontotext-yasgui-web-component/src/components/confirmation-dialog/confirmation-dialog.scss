@@ -91,7 +91,6 @@
       background-color: $color-ontotext-orange;
       border-color: $color-ontotext-orange;
       color: #fff;
-      margin-right: 10px;
 
       &:hover, &:focus {
         background-color: $color-ontotext-orange-dark;
@@ -101,6 +100,7 @@
 
     .cancel-button {
       color: $color-onto-blue;
+      margin-right: 10px;
 
       &:hover, &:focus {
         background-color: #d4d4d4;
