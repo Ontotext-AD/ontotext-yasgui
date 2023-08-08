@@ -590,6 +590,10 @@ export class OntotextYasguiWebComponent {
   private changeOrientation() {
     this.isVerticalOrientation = !this.isVerticalOrientation;
     VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation);
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.refresh();
+      });
   }
 
   private getDefaultSaveQueryData(): SaveQueryData {

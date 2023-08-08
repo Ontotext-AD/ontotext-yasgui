@@ -4,18 +4,37 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 3px;
+  font-size: 14px;
+  font-weight: 400;
+
+  button {
+    cursor: pointer;
+    color: $color-onto-blue;
+    transition: all .15s ease-out;
+  }
 
   .yasgui-btn {
+    height: 27px;
+    margin-right: 3px;
     border: none;
     outline: none;
     background-color: #ebebeb;
-    color: #000;
+
+    &:hover {
+      background-color: #d4d4d4;
+      border-color: #d4d4d4;
+    }
   }
 
   .btn-selected {
     background-color: #e84e0f;
     color: #fff;
+
+    &:hover {
+      background-color: $color-ontotext-orange;
+      border-color: $color-ontotext-orange;
+    }
   }
 
   .btn-orientation {
@@ -23,5 +42,10 @@
     outline: none;
     color: $color-ontotext-orange;
     background-color: #fff;
+    font-size: 2em;
+
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 }
