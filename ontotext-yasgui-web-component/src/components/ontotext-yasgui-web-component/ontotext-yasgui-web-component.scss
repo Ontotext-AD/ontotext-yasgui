@@ -139,6 +139,14 @@
   }
 
   .yasr {
+    .yasr_btnGroup {
+
+      li {
+        display: flex;
+        align-items: end;
+      }
+    }
+
     table.dataTable thead th {
       background-color: $color-onto-green;
       text-align: center;
@@ -398,6 +406,12 @@
       .tabPanel > div {
         display: grid;
         grid-template-columns: 0 1fr 1fr;
+        position: relative;
+      }
+
+      // this targets the yasqe container
+      .tabPanel > div > div:nth-of-type(2) {
+        padding-right: 15px;
       }
     }
   }
