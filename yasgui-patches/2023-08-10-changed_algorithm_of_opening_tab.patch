@@ -1,0 +1,29 @@
+Subject: [PATCH] Changed algorithm of opening tab
+---
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 87131b70c98643d4ced510dce1d2691918ecbe06)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision b646fc5ad45c684fa6b11e514a06f1fa4c1e073c)
+@@ -201,6 +201,18 @@
+   public tabNameTaken(name: string) {
+     return find(this._tabs, (tab) => tab.getName() === name);
+   }
++
++  public getTabByNameAndQuery(name: string, query: string) {
++    return find(this._tabs, (tab) => {
++      if (tab.getName() === name) {
++        // We can't get the query directly from the tab because if the tab hasn't been opened before
++        // then the yasqe won't be initialized. That's why we get the query from the tab's persistence.
++        return tab.getPersistedJson()?.yasqe?.value === query;
++      }
++      return false;
++    });
++  }
++
+   public getTab(tabId?: string): Tab | undefined {
+     if (tabId) {
+       return this._tabs[tabId];
