@@ -201,6 +201,18 @@ export class Yasgui extends EventEmitter {
   public tabNameTaken(name: string) {
     return find(this._tabs, (tab) => tab.getName() === name);
   }
+
+  public getTabByNameAndQuery(name: string, query: string) {
+    return find(this._tabs, (tab) => {
+      if (tab.getName() === name) {
+        // We can't get the query directly from the tab because if the tab hasn't been opened before
+        // then the yasqe won't be initialized. That's why we get the query from the tab's persistence.
+        return tab.getPersistedJson()?.yasqe?.value === query;
+      }
+      return false;
+    });
+  }
+
   public getTab(tabId?: string): Tab | undefined {
     if (tabId) {
       return this._tabs[tabId];
