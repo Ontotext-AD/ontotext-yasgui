@@ -59,8 +59,12 @@ export interface ExternalYasguiConfiguration {
 
   /**
    * The sparql endpoint which will be used when a query request is made.
+   * It is important to note that if the endpoint configuration is passed as string, it will be persisted when first time initializes
+   * the instance with specific {@link ExternalYasguiConfiguration#componentId}. Subsequent query executions will
+   * use the endpoint stored in the persistence regardless if the configuration is changed. If the endpoint is defined as a function, it will be called before each query execution.
    */
-  endpoint: string;
+  // @ts-ignore
+  endpoint: string | ((yasgui: Yasgui) => string);
 
   /**
    * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.

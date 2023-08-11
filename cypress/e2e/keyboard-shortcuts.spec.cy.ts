@@ -187,6 +187,18 @@ describe('Keyboard Shortcuts', () => {
       YasrSteps.getTableResults().should('have.length', 75);
     });
 
+    it('should not trigger "EXECUTE_QUERY_OR_UPDATE" action when run button is hidden', () => {
+      // Given: I visit a page with "ontotext-yasgui-web-component" in it,
+      // and a query is typed.
+      KeyboardShortcutPageSteps.hideRunButton();
+
+      // When press the "Run query button" keyboard shortcut.
+      KeyboardShortcutSteps.clickOnRunQueryShortcut();
+
+      // Then I expect the query to be executed.
+      YasrSteps.getEmptyResultElement().should('exist');
+    });
+
     it('should trigger "CREATE_TAB" action', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it.
       YasqeSteps.clearEditor();

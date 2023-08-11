@@ -84,7 +84,10 @@ Add "CUSTOM_ELEMENTS_SCHEMA" to "@NgModule.schemas" in the module where componen
 ## Configuration
 
 The "config" value of "ngce-prop-config" or "[config]" is an object with following options:
-- <b>yasguiConfig</b>: this is yasgui original configuration as it is. [See how can be used it](https://triply.cc/docs/yasgui-api#yasgui-config)
+- **endpoint**: The sparql endpoint which will be used when a query request is made. It is important to note that if the endpoint
+  configuration is passed as string, it will be persisted when first time initializes the instance with specific componentId. Subsequent
+  query executions will use the endpoint stored in the persistence regardless if the configuration is changed. If the endpoint is defined as
+  a function, it will be called before each query execution.
 - <b>render</b>: Configure what part of the yasgui should be rendered. Supported values are:
    - mode-yasgui: default configuration. Shows the query editor and the results;
    - mode-yasqe: shows the query editor only;

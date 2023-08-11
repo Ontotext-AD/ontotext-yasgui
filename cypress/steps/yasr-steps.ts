@@ -189,4 +189,8 @@ export class YasrSteps {
   static getResponseTableTab() {
     return YasrSteps.getResultHeader().find('.select_extended_response');
   }
+
+  static getEmptyResultElement() {
+    return cy.get('.yasr_response_chip.empty');
+  }
 }
