@@ -1,0 +1,44 @@
+Subject: [PATCH] The behavior of the 'extraKeys' configuration is changed. The old implementation, which merged the external and default configurations, has been replaced with a new one where the external configuration overrides the internal one.
+---
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 1b6adaba28846ba1f21b5cec28ecdf45eb98634f)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 8b5d5a18700c44648b719ae47e2d9e07b2774a87)
+@@ -109,6 +109,12 @@
+     parent.appendChild(this.rootEl);
+ 
+     this.config = merge({}, Yasgui.defaults, config);
++
++    if (config.yasqe?.extraKeys) {
++      // We don't want to merge both shortcut configurations. If shortcuts are passed, we will use them.
++      this.config.yasqe.extraKeys = config.yasqe.extraKeys;
++    }
++
+     this.translationService = this.config.translationService;
+     this.notificationMessageService = this.config.notificationMessageService;
+     this.eventService = this.config.eventService;
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 1b6adaba28846ba1f21b5cec28ecdf45eb98634f)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 8b5d5a18700c44648b719ae47e2d9e07b2774a87)
+@@ -111,6 +111,12 @@
+     this.rootEl.className = "yasqe";
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasqe.defaults, conf);
++
++    if (conf.extraKeys) {
++      // We don't want to merge both shortcut configurations. If shortcuts are passed, we will use them.
++      this.config.extraKeys = conf.extraKeys;
++    }
++
+     this.translationService = this.config.translationService;
+     this.isVirtualRepository = this.config.isVirtualRepository;
+     this.notificationMessageService = this.config.notificationMessageService;
