@@ -109,6 +109,12 @@ export class Yasgui extends EventEmitter {
     parent.appendChild(this.rootEl);
 
     this.config = merge({}, Yasgui.defaults, config);
+
+    if (config.yasqe?.extraKeys) {
+      // We don't want to merge both shortcut configurations. If shortcuts are passed, we will use them.
+      this.config.yasqe.extraKeys = config.yasqe.extraKeys;
+    }
+
     this.translationService = this.config.translationService;
     this.notificationMessageService = this.config.notificationMessageService;
     this.eventService = this.config.eventService;

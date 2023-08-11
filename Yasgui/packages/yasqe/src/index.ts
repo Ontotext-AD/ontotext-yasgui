@@ -111,6 +111,12 @@ export class Yasqe extends CodeMirror {
     this.rootEl.className = "yasqe";
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasqe.defaults, conf);
+
+    if (conf.extraKeys) {
+      // We don't want to merge both shortcut configurations. If shortcuts are passed, we will use them.
+      this.config.extraKeys = conf.extraKeys;
+    }
+
     this.translationService = this.config.translationService;
     this.isVirtualRepository = this.config.isVirtualRepository;
     this.notificationMessageService = this.config.notificationMessageService;
