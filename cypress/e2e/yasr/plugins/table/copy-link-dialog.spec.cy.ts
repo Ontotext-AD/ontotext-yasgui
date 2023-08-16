@@ -1,7 +1,7 @@
-import {QueryStubDescription, QueryStubs} from '../../stubs/query-stubs';
-import {YasrTablePluginSteps} from '../../steps/yasr-table-plugin-steps';
-import {YasqeSteps} from '../../steps/yasqe-steps';
-import {YasrSteps} from '../../steps/yasr-steps';
+import {YasrTablePluginSteps} from '../../../../steps/yasr-table-plugin-steps';
+import {QueryStubDescription, QueryStubs} from '../../../../stubs/query-stubs';
+import {YasqeSteps} from '../../../../steps/yasqe-steps';
+import {YasrSteps} from '../../../../steps/yasr-steps';
 
 describe('Plugin: Table', () => {
 
@@ -10,7 +10,7 @@ describe('Plugin: Table', () => {
     YasrTablePluginSteps.visit();
   });
 
-  describe('Copy resource link dialog', () => {
+  context('Copy resource link dialog', () => {
 
     it('Should open copy link dialog', () => {
       // When I execute a query which returns results of type is uri.
