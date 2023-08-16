@@ -1,0 +1,17 @@
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 591ca74fb98ad5a4edd329b242e81c427b5aefd9)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 6b1fbb48a5fe6c30b1e971afd046da8819a50d87)
+@@ -227,7 +227,7 @@
+       widths: this.persistentConfig.compact === true ? widths : [this.getSizeFirstColumn(), ...widths.slice(1)],
+       partialRefresh: true,
+       onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
+-      headerOnly: true,
++      headerOnly: false,
+     });
+     // DataTables uses the rendered style to decide the widths of columns.
+     // Before a draw remove the ellipseTable styling
