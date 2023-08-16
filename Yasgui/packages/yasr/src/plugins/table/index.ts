@@ -227,7 +227,7 @@ export default class Table implements Plugin<PluginConfig> {
       widths: this.persistentConfig.compact === true ? widths : [this.getSizeFirstColumn(), ...widths.slice(1)],
       partialRefresh: true,
       onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
-      headerOnly: true,
+      headerOnly: false,
     });
     // DataTables uses the rendered style to decide the widths of columns.
     // Before a draw remove the ellipseTable styling
