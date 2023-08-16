@@ -22,8 +22,8 @@ export class ExtendedYasr extends Yasr {
     this.persistentJson = persistentJson;
     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
     if (yasqe.config.paginationOn) {
-      this.yasqe.on("queryResponse", this.draw.bind(this));
-      this.yasqe.on("totalElementsPersisted", this.draw.bind(this));
+      this.yasqe.on("queryResponse", this.updatePaginationRelatedElements.bind(this));
+      this.yasqe.on("totalElementsPersisted", this.updatePaginationRelatedElements.bind(this));
     }
     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
   }
@@ -67,17 +67,31 @@ export class ExtendedYasr extends Yasr {
   }
 
   draw() {
-    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery() || this.results?.hasError()) {
-      this.hidePluginElementVisibility();
-    } else {
-      this.showPluginElementVisibility();
-    }
-    super.draw();
+    // The rendering of YASR is synchronous and can take time, especially when populating numerous results.
+    // Setting a timeout resolves the visualization of other components without waiting for YASR to finish drawing.
+    setTimeout(() => {
+      this.updatePluginElementVisibility();
+      super.draw();
+    }, 0);
   }
 
   updatePluginSelectorNames() {
     super.updatePluginSelectorNames();
     this.yasrToolbarManagers?.forEach((manager) => manager.updateElement(this));
+  }
+
+  private updatePaginationRelatedElements(): void {
+    this.updatePluginElementVisibility();
+    this.updateResponseInfo();
+    this.updatePluginSelectorNames();
+  }
+
+  private updatePluginElementVisibility(): void {
+    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery() || this.results?.hasError()) {
+      this.hidePluginElementVisibility();
+    } else {
+      this.showPluginElementVisibility();
+    }
   }
 
   private hidePluginElementVisibility() {
