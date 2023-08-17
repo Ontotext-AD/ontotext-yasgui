@@ -54,6 +54,19 @@ export class TabListEl {
       this.nameEl.textContent = name;
     }
   }
+  public setAsValid(isValid: boolean) {
+    if (isValid) {
+      removeClass(this.tabEl, "query-invalid");
+      if (this.tabEl) {
+          this.tabEl.removeAttribute("title");
+      }
+    } else {
+      addClass(this.tabEl, "query-invalid");
+      if (this.tabEl) {
+          this.tabEl.setAttribute("title", this.translationService.translate("yasqe.tab_list.new_tab.query_invalid.warning.message"));
+      }
+    }
+  }
   public setAsQuerying(querying: boolean) {
     if (querying) {
       addClass(this.tabEl, "querying");
@@ -197,7 +210,18 @@ export class TabList {
         this._tabs[id].setAsQuerying(false);
       }
     });
+    this.yasgui.on("queryStatus", (tab, data) => this.queryStatusChangeHandler(tab, data));
+    this.yasgui.on("yasqeReady", (tab, yasqe) => this.yasqeReadyHandler(tab, yasqe));
   }
+
+  private yasqeReadyHandler(tab: any, yasqe: any) {
+    this._tabs[tab.getId()].setAsValid(yasqe.queryValid);
+  }
+
+  private queryStatusChangeHandler(tab: any, data: any) {
+    this._tabs[tab.getId()].setAsValid(data.valid);
+  }
+
   private getActiveIndex() {
     if (!this._selectedTab) return;
     const allTabs = Object.keys(this._tabs);

@@ -89,6 +89,7 @@ export interface Yasgui {
   on(event: "autocompletionClose", listener: (instance: Yasgui, tab: Tab) => void): this;
   emit(event: "autocompletionClose", instance: Yasgui, tab: Tab): boolean;
   emit(event: "yasqeReady", tab: Tab, yasqe: Yasqe | undefined): boolean;
+  emit(event: "queryStatus", tab: Tab, data: any): void;
 }
 export class Yasgui extends EventEmitter {
   public rootEl: HTMLDivElement;
@@ -339,6 +340,7 @@ export class Yasgui extends EventEmitter {
     tab.on("queryResponse", (tab) => this.emit("queryResponse", this, tab));
     tab.on("autocompletionShown", (tab, widget) => this.emit("autocompletionShown", this, tab, widget));
     tab.on("autocompletionClose", (tab) => this.emit("autocompletionClose", this, tab));
+    tab.on("queryStatus", (tab, data) => this.emit("queryStatus", tab, data));
   }
 
   public openNextTab(tab: Tab) {

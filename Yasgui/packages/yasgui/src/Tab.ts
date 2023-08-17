@@ -63,6 +63,7 @@ export interface Tab {
   emit(event: "openNextTab", tab: Tab): void;
   emit(event: "openPreviousTab", tab: Tab): void;
   emit(event: "closeOtherTabs", tab: Tab): void;
+  emit(event: "queryStatus", tab: Tab, data: any): void;
 }
 export class Tab extends EventEmitter {
   private persistentJson: PersistedJson;
@@ -416,7 +417,9 @@ export class Tab extends EventEmitter {
     this.yasqe.on("openNextTab", this.handleOpenNextTab);
     this.yasqe.on("openPreviousTab", this.handleOpenPreviousTab);
     this.yasqe.on("closeOtherTabs", this.handlerCloseOtherTabs);
+    this.yasqe.on("queryStatus", this.handleQueryStatusChange);
   }
+
   private destroyYasqe() {
     // As Yasqe extends of CM instead of eventEmitter, it doesn't expose the removeAllListeners function, so we should unregister all events manually
     this.yasqe?.off("blur", this.handleYasqeBlur);
@@ -430,6 +433,7 @@ export class Tab extends EventEmitter {
     this.yasqe?.off("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
+    this.yasqe?.off("queryStatus", this.handleQueryStatusChange);
     this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
     this.yasqe?.on("closeOtherTabs", this.handlerCloseOtherTabs);
     this.yasqe?.destroy();
@@ -450,6 +454,10 @@ export class Tab extends EventEmitter {
 
   handlerCloseOtherTabs = () => {
     this.emit("closeOtherTabs", this);
+  };
+
+  handleQueryStatusChange = (...args: any[]) => {
+    this.emit('queryStatus', this, args[2]);
   };
 
   handleYasqeBlur = (yasqe: Yasqe) => {

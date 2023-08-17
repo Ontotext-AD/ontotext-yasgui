@@ -41,6 +41,10 @@ $minTabHeight: 35px;
       $activeColor: #337ab7;
       $hoverColor: lighten($activeColor, 30);
 
+      &.query-invalid a {
+        text-decoration: underline dotted red;
+      }
+
       .loader {
         display: none;
         background-color: lighten(#555, 50);

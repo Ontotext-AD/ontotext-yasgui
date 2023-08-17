@@ -71,6 +71,8 @@ export interface Yasqe {
   off(eventName: "openPreviousTab", handler: () => void): void;
   on(eventName: "closeOtherTabs", handler: () => void): void;
   off(eventName: "closeOtherTabs", handler: () => void): void;
+  on(eventName: "queryStatus", handler: (instance: Yasqe, data: any) => void): void;
+  off(eventName: "queryStatus", handler: () => void): void;
 }
 
 export class Yasqe extends CodeMirror {
@@ -179,6 +181,7 @@ export class Yasqe extends CodeMirror {
   private handleChange() {
     this.checkSyntax();
     this.updateQueryButton();
+    this.emit("queryStatus", this, {valid: this.queryValid});
   }
   private handleBlur() {
     this.saveQuery();
