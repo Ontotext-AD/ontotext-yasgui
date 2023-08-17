@@ -27,6 +27,7 @@
   "yasgui.tab_list.menu.rename_tab.btn.label": "Rename Tab",
   "yasgui.tab_list.menu.undo_close_tab.btn.label": "Undo close Tab",
   "yasqe.tab_list.new_tab.query_running.warning.message": "New tabs may not be opened while query or update is running.",
+  "yasqe.tab_list.new_tab.query_invalid.warning.message": "Query contains a syntax error. See the relevant line for more information.",
   "yasgui.toolbar.mode_yasgui.btn.label": "Editor and results",
   "yasgui.toolbar.mode_yasqe.btn.label": "Editor only",
   "yasgui.toolbar.mode_yasr.btn.label": "Results only",
