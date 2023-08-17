@@ -1,0 +1,160 @@
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision e0b14bada22f6c82a76e32b2a265a44c6522b99e)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision b3455e0e0a504e44a32c4d8ed988d7aa7349d995)
+@@ -63,6 +63,7 @@
+   emit(event: "openNextTab", tab: Tab): void;
+   emit(event: "openPreviousTab", tab: Tab): void;
+   emit(event: "closeOtherTabs", tab: Tab): void;
++  emit(event: "queryStatus", tab: Tab, data: any): void;
+ }
+ export class Tab extends EventEmitter {
+   private persistentJson: PersistedJson;
+@@ -416,7 +417,9 @@
+     this.yasqe.on("openNextTab", this.handleOpenNextTab);
+     this.yasqe.on("openPreviousTab", this.handleOpenPreviousTab);
+     this.yasqe.on("closeOtherTabs", this.handlerCloseOtherTabs);
++    this.yasqe.on("queryStatus", this.handleQueryStatusChange);
+   }
++
+   private destroyYasqe() {
+     // As Yasqe extends of CM instead of eventEmitter, it doesn't expose the removeAllListeners function, so we should unregister all events manually
+     this.yasqe?.off("blur", this.handleYasqeBlur);
+@@ -430,6 +433,7 @@
+     this.yasqe?.off("countAffectedRepositoryStatementsChanged", this.handleCountAffectedRepositoryStatementsChanged);
+     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
+     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
++    this.yasqe?.off("queryStatus", this.handleQueryStatusChange);
+     this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
+     this.yasqe?.on("closeOtherTabs", this.handlerCloseOtherTabs);
+     this.yasqe?.destroy();
+@@ -452,6 +456,10 @@
+     this.emit("closeOtherTabs", this);
+   };
+ 
++  handleQueryStatusChange = (...args: any[]) => {
++    this.emit('queryStatus', this, args[2]);
++  };
++
+   handleYasqeBlur = (yasqe: Yasqe) => {
+     this.updatePersistJson(yasqe);
+     this.emit("change", this, this.persistentJson);
+Index: Yasgui/packages/yasgui/src/TabElements.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabElements.scss b/Yasgui/packages/yasgui/src/TabElements.scss
+--- a/Yasgui/packages/yasgui/src/TabElements.scss	(revision e0b14bada22f6c82a76e32b2a265a44c6522b99e)
++++ b/Yasgui/packages/yasgui/src/TabElements.scss	(revision b3455e0e0a504e44a32c4d8ed988d7aa7349d995)
+@@ -41,6 +41,10 @@
+       $activeColor: #337ab7;
+       $hoverColor: lighten($activeColor, 30);
+ 
++      &.query-invalid a {
++        text-decoration: underline dotted red;
++      }
++
+       .loader {
+         display: none;
+         background-color: lighten(#555, 50);
+Index: Yasgui/packages/yasgui/src/TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
+--- a/Yasgui/packages/yasgui/src/TabElements.ts	(revision e0b14bada22f6c82a76e32b2a265a44c6522b99e)
++++ b/Yasgui/packages/yasgui/src/TabElements.ts	(revision b3455e0e0a504e44a32c4d8ed988d7aa7349d995)
+@@ -54,6 +54,19 @@
+       this.nameEl.textContent = name;
+     }
+   }
++  public setAsValid(isValid: boolean) {
++    if (isValid) {
++      removeClass(this.tabEl, "query-invalid");
++      if (this.tabEl) {
++          this.tabEl.removeAttribute("title");
++      }
++    } else {
++      addClass(this.tabEl, "query-invalid");
++      if (this.tabEl) {
++          this.tabEl.setAttribute("title", this.translationService.translate("yasqe.tab_list.new_tab.query_invalid.warning.message"));
++      }
++    }
++  }
+   public setAsQuerying(querying: boolean) {
+     if (querying) {
+       addClass(this.tabEl, "querying");
+@@ -197,7 +210,18 @@
+         this._tabs[id].setAsQuerying(false);
+       }
+     });
++    this.yasgui.on("queryStatus", (tab, data) => this.queryStatusChangeHandler(tab, data));
++    this.yasgui.on("yasqeReady", (tab, yasqe) => this.yasqeReadyHandler(tab, yasqe));
++  }
++
++  private yasqeReadyHandler(tab: any, yasqe: any) {
++    this._tabs[tab.getId()].setAsValid(yasqe.queryValid);
+   }
++
++  private queryStatusChangeHandler(tab: any, data: any) {
++    this._tabs[tab.getId()].setAsValid(data.valid);
++  }
++
+   private getActiveIndex() {
+     if (!this._selectedTab) return;
+     const allTabs = Object.keys(this._tabs);
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision e0b14bada22f6c82a76e32b2a265a44c6522b99e)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision b3455e0e0a504e44a32c4d8ed988d7aa7349d995)
+@@ -89,6 +89,7 @@
+   on(event: "autocompletionClose", listener: (instance: Yasgui, tab: Tab) => void): this;
+   emit(event: "autocompletionClose", instance: Yasgui, tab: Tab): boolean;
+   emit(event: "yasqeReady", tab: Tab, yasqe: Yasqe | undefined): boolean;
++  emit(event: "queryStatus", tab: Tab, data: any): void;
+ }
+ export class Yasgui extends EventEmitter {
+   public rootEl: HTMLDivElement;
+@@ -339,6 +340,7 @@
+     tab.on("queryResponse", (tab) => this.emit("queryResponse", this, tab));
+     tab.on("autocompletionShown", (tab, widget) => this.emit("autocompletionShown", this, tab, widget));
+     tab.on("autocompletionClose", (tab) => this.emit("autocompletionClose", this, tab));
++    tab.on("queryStatus", (tab, data) => this.emit("queryStatus", tab, data));
+   }
+ 
+   public openNextTab(tab: Tab) {
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision e0b14bada22f6c82a76e32b2a265a44c6522b99e)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision b3455e0e0a504e44a32c4d8ed988d7aa7349d995)
+@@ -71,6 +71,8 @@
+   off(eventName: "openPreviousTab", handler: () => void): void;
+   on(eventName: "closeOtherTabs", handler: () => void): void;
+   off(eventName: "closeOtherTabs", handler: () => void): void;
++  on(eventName: "queryStatus", handler: (instance: Yasqe, data: any) => void): void;
++  off(eventName: "queryStatus", handler: () => void): void;
+ }
+ 
+ export class Yasqe extends CodeMirror {
+@@ -179,6 +181,7 @@
+   private handleChange() {
+     this.checkSyntax();
+     this.updateQueryButton();
++    this.emit("queryStatus", this, {valid: this.queryValid});
+   }
+   private handleBlur() {
+     this.saveQuery();
