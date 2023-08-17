@@ -23,8 +23,12 @@ export class YasguiSteps {
     cy.get('button.addTab').click();
   }
 
+  static getTab(index: number) {
+    return this.getTabs().eq(index);
+  }
+
   static openTab(index: number) {
-    this.getTabs().eq(index).click();
+    this.getTab(index).click();
   }
 
   static closeTab(index: number) {

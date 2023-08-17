@@ -12,6 +12,24 @@ describe('Yasgui tabs', () => {
     QueryStubs.stubQueryResults(new QueryStubDescription().setPageSize(10).setTotalElements(6));
   });
 
+  it('Should mark tab as errorneous if query is invalid', () => {
+    // Given I have opened yasgui with a single opened tab
+    // And I have created a second tab
+    openNewTab(1, 2);
+    // Then I expect to have no error mark on the tab
+    YasguiSteps.getCurrentTab().should('not.have.class', 'query-invalid');
+    // When I write invalid query
+    YasqeSteps.writeInEditor("test");
+    // Then I expect that the tab will have an error mark and a title with an error message
+    YasguiSteps.getCurrentTab().should('have.class', 'query-invalid')
+      .and('have.attr', 'title', 'Query contains a syntax error. See the relevant line for more information.');
+    // When I switch the tab
+    YasguiSteps.openTab(0);
+    // Then I expect that the error mark should stay
+    YasguiSteps.getTab(1).should('have.class', 'query-invalid')
+      .and('have.attr', 'title', 'Query contains a syntax error. See the relevant line for more information.');
+  });
+
   it('Should ask for confirmation on tab close', () => {
     // Given I have opened yasgui with a single opened tab
     // And I have created a second tab
