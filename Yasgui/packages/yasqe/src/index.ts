@@ -181,7 +181,7 @@ export class Yasqe extends CodeMirror {
   private handleChange() {
     this.checkSyntax();
     this.updateQueryButton();
-    this.emit("queryStatus", this, {valid: this.queryValid});
+    this.emit("queryStatus", this, { valid: this.queryValid });
   }
   private handleBlur() {
     this.saveQuery();
@@ -1115,6 +1115,12 @@ export class Yasqe extends CodeMirror {
 
   public emitEvent(type: string, payload?: any) {
     this.eventService.emitEvent(this.rootEl, type, payload);
+  }
+
+  public emitEventAsync(type: string, payload?: any) {
+    setTimeout(() => {
+      this.emitEvent(type, payload);
+    }, 0);
   }
 
   public isSelectQuery(): boolean {
