@@ -17,6 +17,7 @@ import LocalNamesAutocompleter from "../../yasqe/autocompleter/local-names";
 import {DownloadAsYasrToolbarPlugin} from '../../yasr/toolbar/download-as-yasr-toolbar-plugin';
 import {PaginationYasrToolbarPlugin} from '../../yasr/toolbar/pagination-yasr-toolbar-plugin';
 import {YasqeMode} from '../../../models/yasqe-mode';
+import {TimeFormattingService} from '../../utils/time-formatting-service';
 
 /**
  * Builder for yasgui configuration.
@@ -59,6 +60,7 @@ export class YasguiConfigurationBuilder {
       translationService: this.serviceFactory.get(TranslationService),
       notificationMessageService: this.serviceFactory.get(NotificationMessageService),
       eventService: this.serviceFactory.getEventService(),
+      timeFormattingService: this.serviceFactory.get(TimeFormattingService),
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       requestConfig: {},

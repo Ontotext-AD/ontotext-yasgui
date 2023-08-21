@@ -13,6 +13,9 @@ export const toOutputEvent = (internalEvent: CustomEvent<InternalEvent>): Output
 }
 
 export const removeUndefinedProperties = (object: any) => {
+  if (!object) {
+    return {};
+  }
   return Object.keys(object).reduce((resultObject, key) => {
     const _resultObject = resultObject;
     if (object[key] !== undefined) {

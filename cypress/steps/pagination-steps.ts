@@ -25,15 +25,15 @@ export class PaginationSteps {
   }
 
   static clickOnPageNumberButton(pageNumber: number) {
-    PaginationSteps.getPageNumberButton(pageNumber).realClick();
+    PaginationSteps.getPageNumberButton(pageNumber).click();
   }
 
   static clickOnNextPageButton() {
-    PaginationSteps.getNextPageButton().realClick();
+    PaginationSteps.getNextPageButton().click();
   }
 
   static clickOnPreviousPageButton() {
-    PaginationSteps.getPreviousPageButton().realClick();
+    PaginationSteps.getPreviousPageButton().click();
   }
 
   /**

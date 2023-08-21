@@ -4,6 +4,7 @@ import {AutocompleteLoader, YasqeActionButtonDefinition} from "./external-yasgui
 import {BeforeUpdateQueryResult} from './before-update-query-result';
 import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 import {EventService} from '../services/event-service';
+import {TimeFormattingService} from '../services/utils/time-formatting-service';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -79,10 +80,12 @@ export interface YasguiConfiguration {
   yasguiConfig?: {
     tabName?: string,
     translationService: TranslationService;
+    timeFormattingService: TimeFormattingService;
     notificationMessageService: NotificationMessageService;
     eventService: EventService;
     requestConfig: {
-      endpoint?: string;
+      // @ts-ignore
+      endpoint?: string | ((yasgui: Yasgui) => string);
       method?: 'POST' | 'GET';
       headers?: () => Record<string, string>;
     },
