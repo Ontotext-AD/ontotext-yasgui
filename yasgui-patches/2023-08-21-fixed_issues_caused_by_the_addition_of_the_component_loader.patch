@@ -1,0 +1,602 @@
+Subject: [PATCH] Fixed issues caused by the addition of the component loader.
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/utils/src/index.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -73,6 +73,24 @@
+   }
+ }
+ 
++export class TimeFormattingService {
++  private static _INSTANCE: TimeFormattingService;
++
++  static get INSTANCE(): TimeFormattingService {
++    if (!TimeFormattingService._INSTANCE) {
++      TimeFormattingService._INSTANCE = new TimeFormattingService();
++    }
++    return TimeFormattingService._INSTANCE;
++  }
++
++  getHumanReadableSeconds(_millisecondsAgo: number, _preciseSeconds = false): string {
++    throw new Error('Method "getHumanReadableSeconds" is not implemented!');
++  }
++  getHumanReadableTimestamp(_time: number) {
++    throw new Error('Method "getHumanReadableSeconds" is not implemented!');
++  }
++}
++
+ export interface TranslationParameter {
+   key: string;
+   value: string;
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -457,7 +457,7 @@
+   };
+ 
+   handleQueryStatusChange = (...args: any[]) => {
+-    this.emit('queryStatus', this, args[2]);
++    this.emit("queryStatus", this, args[2]);
+   };
+ 
+   handleYasqeBlur = (yasqe: Yasqe) => {
+@@ -627,6 +627,7 @@
+       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
+     }
+     yasrConf.translationService = this.yasgui.config.translationService;
++    yasrConf.timeFormattingService = this.yasgui.config.timeFormattingService;
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
+     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+Index: Yasgui/packages/yasgui/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/defaults.ts b/Yasgui/packages/yasgui/src/defaults.ts
+--- a/Yasgui/packages/yasgui/src/defaults.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasgui/src/defaults.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -2,12 +2,18 @@
+ import Yasr from "@triply/yasr";
+ import { default as Yasqe } from "@triply/yasqe";
+ import { CatalogueItem } from "./endpointSelect";
+-import { EventService, NotificationMessageService, TranslationService } from "@triply/yasgui-utils";
++import {
++  EventService,
++  NotificationMessageService,
++  TranslationService,
++  TimeFormattingService,
++} from "@triply/yasgui-utils";
+ 
+ export default function initialize(): Config<CatalogueItem> {
+   return {
+     translationService: TranslationService.INSTANCE,
+     notificationMessageService: NotificationMessageService.INSTANCE,
++    timeFormattingService: TimeFormattingService.INSTANCE,
+     eventService: EventService.INSTANCE,
+     pageNumber: 1,
+     autofocus: true,
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -9,7 +9,13 @@
+ import TabElements from "./TabElements";
+ import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
+ import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
+-import { addClass, EventService, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
++import {
++  addClass,
++  EventService,
++  NotificationMessageService,
++  removeClass,
++  TimeFormattingService,
++} from "@triply/yasgui-utils";
+ import { TranslationService } from "@triply/yasgui-utils";
+ import { CloseTabConfirmation } from "./closeTabConfirmation";
+ require("./index.scss");
+@@ -47,6 +53,7 @@
+   contextMenuContainer: HTMLElement | undefined;
+   nonSslDomain?: string;
+   translationService: TranslationService;
++  timeFormattingService: TimeFormattingService;
+   notificationMessageService: NotificationMessageService;
+   eventService: EventService;
+   paginationOn?: boolean;
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -181,7 +181,7 @@
+   private handleChange() {
+     this.checkSyntax();
+     this.updateQueryButton();
+-    this.emit("queryStatus", this, {valid: this.queryValid});
++    this.emit("queryStatus", this, { valid: this.queryValid });
+   }
+   private handleBlur() {
+     this.saveQuery();
+@@ -1117,6 +1117,12 @@
+     this.eventService.emitEvent(this.rootEl, type, payload);
+   }
+ 
++  public emitEventAsync(type: string, payload?: any) {
++    setTimeout(() => {
++      this.emitEvent(type, payload);
++    }, 0);
++  }
++
+   public isSelectQuery(): boolean {
+     return "select" === this.getQueryType()?.toLowerCase();
+   }
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -123,7 +123,6 @@
+ ): Promise<any> {
+   var req: superagent.SuperAgentRequest;
+   try {
+-    getAjaxConfig(yasqe, config);
+     const populatedConfig = getAjaxConfig(yasqe, config);
+     if (!populatedConfig) {
+       //nothing to query
+Index: Yasgui/packages/yasr/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -1,8 +1,9 @@
+ import { Config } from "./";
+-import { TranslationService } from "@triply/yasgui-utils";
++import { TimeFormattingService, TranslationService } from "@triply/yasgui-utils";
+ export default function get(): Config {
+   return {
+     translationService: TranslationService.INSTANCE,
++    timeFormattingService: TimeFormattingService.INSTANCE,
+     showResultInfo: true,
+     persistenceId: function (yasr) {
+       //Traverse parents untl we've got an id
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -1,24 +1,20 @@
+ import Yasr, { Config } from "@triply/yasr";
+-import { addClass, removeClass } from "@triply/yasgui-utils";
++import { addClass, removeClass, TimeFormattingService, TranslationParameter } from "@triply/yasgui-utils";
+ import Yasqe from "@triply/yasqe";
+ 
+ export class ExtendedYasr extends Yasr {
+-  static readonly ONE_MINUTE_iN_SECONDS = 60;
+-  static readonly TEN_MINUTES_IN_SECONDS = 600;
+   static readonly ONE_HOUR_IN_MILLISECONDS = 3600000;
+-  static readonly ONE_DAY_IN_SECONDS = 86400;
+-  static readonly ONE_SECOND_IN_MILLISECONDS = 1000;
+-  static readonly ONE_DAY_IN_MILLISECONDS = 86400000;
+-  static readonly ONE_MINUTE_IN_MILLISECONDS = 60000;
+ 
+   // TODO remove it
+   externalPluginsConfigurations: Map<string, any> | undefined;
+ 
+   private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
++  private timeFormattingService: TimeFormattingService | undefined;
+   private readonly persistentJson: any;
+ 
+   constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
+     super(yasqe, parent, conf, persistentJson?.yasr.response);
++    this.timeFormattingService = conf.timeFormattingService;
+     this.persistentJson = persistentJson;
+     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
+     if (yasqe.config.paginationOn) {
+@@ -66,12 +62,12 @@
+     }
+   }
+ 
+-  draw() {
++  draw(isSetResponseDrawing = false) {
+     // The rendering of YASR is synchronous and can take time, especially when populating numerous results.
+     // Setting a timeout resolves the visualization of other components without waiting for YASR to finish drawing.
+     setTimeout(() => {
+       this.updatePluginElementVisibility();
+-      super.draw();
++      super.draw(isSetResponseDrawing);
+     }, 0);
+   }
+ 
+@@ -254,66 +250,25 @@
+     const params = [
+       {
+         key: "seconds",
+-        value: this.getHumanReadableSeconds(responseTime, true),
++        value: this.timeFormattingService?.getHumanReadableSeconds(responseTime, true),
+       },
+       {
+         key: "timestamp",
+-        value: this.getHumanReadableTimestamp(queryFinishedTime),
++        value: this.timeFormattingService?.getHumanReadableTimestamp(queryFinishedTime),
+       },
+-    ];
++    ] as TranslationParameter[];
+     return ` ${this.translationService.translate("yasr.plugin_control.response_chip.message.result_time", params)}`;
+   }
+ 
+-  private getHumanReadableTimestamp(time: number) {
+-    const now = this.getNowInMilliseconds();
+-    const delta = (now - time) / ExtendedYasr.ONE_SECOND_IN_MILLISECONDS;
+-    if (delta < ExtendedYasr.ONE_MINUTE_iN_SECONDS) {
+-      return this.translationService.translate("yasr.plugin_control.response_chip.timestamp.moments_ago");
+-    } else if (delta < ExtendedYasr.TEN_MINUTES_IN_SECONDS) {
+-      return this.translationService.translate("yasr.plugin_control.response_chip.timestamp.minutes_ago");
+-    } else {
+-      const dNow = new Date(now);
+-      const dTime = new Date(time);
+-      if (
+-        dNow.getFullYear() === dTime.getFullYear() &&
+-        dNow.getMonth() === dTime.getMonth() &&
+-        dNow.getDate() === dTime.getDate()
+-      ) {
+-        // today
+-        return this.translationService.translate(
+-          "yasr.plugin_control.response_chip.timestamp.today_at",
+-          this.toTimeParameters(time)
+-        );
+-      } else if (delta < ExtendedYasr.ONE_DAY_IN_SECONDS) {
+-        // yesterday
+-        return this.translationService.translate(
+-          "yasr.plugin_control.response_chip.timestamp.yesterday_at",
+-          this.toTimeParameters(time)
+-        );
+-      }
+-    }
+-    return this.translationService.translate(
+-      "yasr.plugin_control.response_chip.timestamp.on_at",
+-      this.toTimeParameters(time)
+-    );
+-  }
+-
+-  private toTimeParameters(timeInMilliseconds: number): { key: string; value: string }[] {
+-    const date = new Date(timeInMilliseconds);
+-    return [
+-      { key: "hours", value: `${date.getHours()}` },
+-      { key: "minutes", value: `${this.normalize(date.getMinutes())}` },
+-      { key: "seconds", value: `${this.normalize(date.getSeconds())}` },
+-      { key: "date", value: `${this.normalize(date.getDate())}` },
+-      { key: "month", value: `${this.normalize(date.getMonth() + 1)}` },
+-      { key: "year", value: `${date.getFullYear()}` },
+-    ];
+-  }
+-
+   private getStaleWarningMessage(queryFinishedTime: number): string {
+-    const millisecondAgo = this.getNowInMilliseconds() - queryFinishedTime;
++    const millisecondAgo = Date.now() - queryFinishedTime;
+     if (millisecondAgo >= ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) {
+-      const params = [{ key: "timeAgo", value: this.getHumanReadableSeconds(millisecondAgo) }];
++      const params = [
++        {
++          key: "timeAgo",
++          value: this.timeFormattingService?.getHumanReadableSeconds(millisecondAgo),
++        } as TranslationParameter,
++      ];
+       const staleWarningMessage = this.translationService.translate(
+         "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
+         params
+@@ -322,71 +277,6 @@
+     }
+     return "";
+   }
+-
+-  private getHumanReadableSeconds(millisecondsAgo: number, preciseSeconds = false): string {
+-    const days = Math.floor(millisecondsAgo / ExtendedYasr.ONE_DAY_IN_MILLISECONDS);
+-    const hours = Math.floor(
+-      (millisecondsAgo % ExtendedYasr.ONE_DAY_IN_MILLISECONDS) / ExtendedYasr.ONE_HOUR_IN_MILLISECONDS
+-    );
+-    const minutes = Math.floor(
+-      ((millisecondsAgo % ExtendedYasr.ONE_DAY_IN_MILLISECONDS) % ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) /
+-        ExtendedYasr.ONE_MINUTE_IN_MILLISECONDS
+-    );
+-    const seconds =
+-      (((millisecondsAgo % ExtendedYasr.ONE_DAY_IN_MILLISECONDS) % ExtendedYasr.ONE_HOUR_IN_MILLISECONDS) %
+-        ExtendedYasr.ONE_MINUTE_IN_MILLISECONDS) /
+-      ExtendedYasr.ONE_SECOND_IN_MILLISECONDS;
+-    return this.toHumanReadableSeconds(days, hours, minutes, this.normalizeSeconds(seconds, preciseSeconds));
+-  }
+-
+-  private toHumanReadableSeconds(days: number, hours: number, minutes: number, seconds: number): string {
+-    let message = "";
+-    if (days) {
+-      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.day", [
+-        { key: "day", value: `${days}` },
+-      ])} `;
+-    }
+-    if (days || hours) {
+-      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.hours", [
+-        { key: "hours", value: `${hours}` },
+-      ])} `;
+-    }
+-    if (days || hours || minutes) {
+-      message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.minutes", [
+-        { key: "minutes", value: `${minutes}` },
+-      ])} `;
+-    }
+-    message += `${this.translationService.translate("yasr.plugin_control.response_chip.message.seconds", [
+-      { key: "seconds", value: `${seconds}` },
+-    ])}`;
+-    return message.replace(/( 0[a-z])+$/, "");
+-  }
+-
+-  /**
+-   * Normalizes passed <code>secondsAgo</code>. Seconds can be passed with fraction.
+-   * If <code>preciseSeconds</code> is true and <code>secondsAgo</code> < 10 will use fractional seconds rounded to one decimal place,
+-   * elsewhere it will be rounded up to an integer.
+-   * @param secondsAgo - the seconds to be normalized.
+-   * @param preciseSeconds - if true and sec
+-   */
+-  private normalizeSeconds(secondsAgo: number, preciseSeconds = false): number {
+-    if (preciseSeconds && secondsAgo < 10) {
+-      if (secondsAgo < 0.1) {
+-        return 0.1;
+-      }
+-      return Number((Math.round(secondsAgo * 10) / 10).toFixed(1));
+-    }
+-
+-    return Math.round(secondsAgo);
+-  }
+-
+-  private getNowInMilliseconds(): number {
+-    return Date.now();
+-  }
+-
+-  private normalize(value: number): string {
+-    return `${value < 10 ? 0 : ""}${value}`;
+-  }
+ }
+ 
+ export interface YasrToolbarPlugin {
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -9,6 +9,7 @@
+   removeClass,
+   addClass,
+   hasClass,
++  TimeFormattingService,
+ } from "@triply/yasgui-utils";
+ import Parser from "./parsers";
+ export { default as Parser } from "./parsers";
+@@ -183,7 +184,7 @@
+     }
+     return supportedPlugins.sort((p1, p2) => p2.priority - p1.priority).map((p) => p.name);
+   }
+-  public draw() {
++  public draw(isSetResponseDrawing = false) {
+     this.updateHelpButton();
+     this.updateResponseInfo();
+     if (!this.results) return;
+@@ -212,28 +213,40 @@
+       this.drawnPlugin = pluginToDraw;
+ 
+       this.emit("draw", this, this.plugins[pluginToDraw]);
++      if (isSetResponseDrawing) {
++        this.yasqe.emitEvent("internalSetResponseStartedEvent");
++      }
+       const plugin = this.plugins[pluginToDraw];
+       const initPromise = plugin.initialize ? plugin.initialize() : Promise.resolve();
+-      initPromise.then(
+-        async () => {
+-          if (pluginToDraw) {
+-            // make sure to clear the object _here_
+-            // otherwise we run into race conditions when draw is executed
+-            // shortly after each other, and the plugin uses an initialize function
+-            // as a result, things can be rendered _twice_
+-            while (this.resultsEl.firstChild) this.resultsEl.firstChild.remove();
+-            await this.plugins[pluginToDraw].draw(this.config.plugins[pluginToDraw].dynamicConfig);
+-            this.emit("drawn", this, this.plugins[pluginToDraw]);
+-            this.updateExportHeaders();
+-            this.updatePluginSelectors(compatiblePlugins);
+-          }
+-        },
+-        (_e) => console.error
+-      );
++      initPromise
++        .then(
++          async () => {
++            if (pluginToDraw) {
++              // make sure to clear the object _here_
++              // otherwise we run into race conditions when draw is executed
++              // shortly after each other, and the plugin uses an initialize function
++              // as a result, things can be rendered _twice_
++              while (this.resultsEl.firstChild) this.resultsEl.firstChild.remove();
++              await this.plugins[pluginToDraw].draw(this.config.plugins[pluginToDraw].dynamicConfig);
++              this.emit("drawn", this, this.plugins[pluginToDraw]);
++              this.updateExportHeaders();
++              this.updatePluginSelectors(compatiblePlugins);
++            }
++          },
++          (_e) => console.error
++        )
++        .finally(() => {
++          if (isSetResponseDrawing) {
++            this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
++          }
++        });
+     } else {
+       this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
+       this.updateExportHeaders();
+       this.updatePluginSelectors(compatiblePlugins);
++      if (isSetResponseDrawing) {
++        this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
++      }
+     }
+   }
+   //just an alias for `draw`. That way, we've got a consistent api with yasqe
+@@ -611,7 +624,10 @@
+     possibleElementsCount?: number,
+     customResultMessage?: CustomResultMessage
+   ) {
+-    if (!data) return;
++    if (!data) {
++      this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
++      return;
++    }
+     this.results = new Parser(
+       data,
+       duration,
+@@ -621,7 +637,7 @@
+       customResultMessage
+     );
+ 
+-    this.draw();
++    this.draw(true);
+ 
+     this.storeResponse();
+   }
+@@ -680,6 +696,7 @@
+ 
+   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
+   translationService: TranslationService;
++  timeFormattingService: TimeFormattingService;
+   externalPluginsConfigurations?: Map<string, any>;
+   yasrToolbarPlugins?: YasrToolbarPlugin[];
+   downloadAsOptions?: { labelKey: string; value: any }[];
+Index: Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+--- a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision 9bb03375ef53a6fd7149b621c63ee37b26674650)
++++ b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision 7ad82c5888dc629d5837c18edfaf825e9c1ffc02)
+@@ -1,8 +1,9 @@
+-import Response from "./index";
++import Response, { PluginConfig } from "./index";
+ import { addClass } from "@triply/yasgui-utils";
+ 
+ export default class ExtendedResponse extends Response {
+   priority = 1;
++  private isVisibleInterval: any;
+ 
+   canHandleResults() {
+     if (!this.yasr.results || !this.yasr.results.getOriginalResponseAsString || this.yasr.yasqe.isUpdateQuery()) {
+@@ -12,37 +13,60 @@
+     return !this.yasr.results.hasError();
+   }
+ 
+-    // Function is overriden and download button is removed from the view because we already has one.
+-    showLess(setValue = true) {
+-        if (!this.cm) return;
+-        // Add overflow
+-        addClass(this.cm.getWrapperElement(), "overflow");
++  draw(persistentConfig: PluginConfig) {
++    // When a query is executed, a loader is displayed, and the yasr resultsEl is not visible until the process is finished.
++    // The draw function in the superclass initializes a CodeMirror instance, but when the element is not visible, the resulting HTML appears broken.
++    // Therefore, we check if the element is not visible and wait until it becomes visible.
++    if (this.yasr.resultsEl.offsetParent === null) {
++      this.isVisibleInterval = setInterval(() => {
++        if (this.yasr.resultsEl.offsetParent !== null) {
++          clearInterval(this.isVisibleInterval);
++          this.isVisibleInterval = null;
++          super.draw(persistentConfig);
++        }
++      }, 10);
++    } else {
++      super.draw(persistentConfig);
++    }
++  }
++
++  // Function is overriden and download button is removed from the view because we already has one.
++  showLess(setValue = true) {
++    if (!this.cm) return;
++    // Add overflow
++    addClass(this.cm.getWrapperElement(), "overflow");
+ 
+-        // Remove old instance
+-        if (this.overLay) {
+-            this.overLay.remove();
+-            this.overLay = undefined;
+-        }
++    // Remove old instance
++    if (this.overLay) {
++      this.overLay.remove();
++      this.overLay = undefined;
++    }
+ 
+-        // Wrapper
+-        this.overLay = document.createElement("div");
+-        addClass(this.overLay, "overlay");
++    // Wrapper
++    this.overLay = document.createElement("div");
++    addClass(this.overLay, "overlay");
+ 
+-        // overlay content
+-        const overlayContent = document.createElement("div");
+-        addClass(overlayContent, "overlay_content");
++    // overlay content
++    const overlayContent = document.createElement("div");
++    addClass(overlayContent, "overlay_content");
+ 
+-        const showMoreButton = document.createElement("button");
+-        showMoreButton.title = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
+-        addClass(showMoreButton, "yasr_btn", "overlay_btn");
+-        showMoreButton.textContent = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
+-        showMoreButton.addEventListener("click", () => this.showMore());
+-        overlayContent.append(showMoreButton);
++    const showMoreButton = document.createElement("button");
++    showMoreButton.title = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
++    addClass(showMoreButton, "yasr_btn", "overlay_btn");
++    showMoreButton.textContent = this.translationService.translate("yasr.plugin.response.show_all.btn.label");
++    showMoreButton.addEventListener("click", () => this.showMore());
++    overlayContent.append(showMoreButton);
+ 
+-        this.overLay.appendChild(overlayContent);
+-        this.cm.getWrapperElement().appendChild(this.overLay);
+-        if (setValue) {
+-            this.cm.setValue(this.limitData(this.yasr.results?.getOriginalResponseAsString() || ""));
+-        }
++    this.overLay.appendChild(overlayContent);
++    this.cm.getWrapperElement().appendChild(this.overLay);
++    if (setValue) {
++      this.cm.setValue(this.limitData(this.yasr.results?.getOriginalResponseAsString() || ""));
++    }
++  }
++
++  destroy() {
++    if (this.isVisibleInterval) {
++      clearInterval(this.isVisibleInterval);
+     }
++  }
+ }
