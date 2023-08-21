@@ -73,6 +73,24 @@ export class TranslationService {
   }
 }
 
+export class TimeFormattingService {
+  private static _INSTANCE: TimeFormattingService;
+
+  static get INSTANCE(): TimeFormattingService {
+    if (!TimeFormattingService._INSTANCE) {
+      TimeFormattingService._INSTANCE = new TimeFormattingService();
+    }
+    return TimeFormattingService._INSTANCE;
+  }
+
+  getHumanReadableSeconds(_millisecondsAgo: number, _preciseSeconds = false): string {
+    throw new Error('Method "getHumanReadableSeconds" is not implemented!');
+  }
+  getHumanReadableTimestamp(_time: number) {
+    throw new Error('Method "getHumanReadableSeconds" is not implemented!');
+  }
+}
+
 export interface TranslationParameter {
   key: string;
   value: string;

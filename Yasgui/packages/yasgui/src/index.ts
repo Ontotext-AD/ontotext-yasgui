@@ -9,7 +9,13 @@ import * as shareLink from "./linkUtils";
 import TabElements from "./TabElements";
 import { default as Yasqe, PartialConfig as YasqeConfig, RequestConfig } from "@triply/yasqe";
 import { default as Yasr, Config as YasrConfig } from "@triply/yasr";
-import { addClass, EventService, NotificationMessageService, removeClass } from "@triply/yasgui-utils";
+import {
+  addClass,
+  EventService,
+  NotificationMessageService,
+  removeClass,
+  TimeFormattingService,
+} from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
 import { CloseTabConfirmation } from "./closeTabConfirmation";
 require("./index.scss");
@@ -47,6 +53,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   contextMenuContainer: HTMLElement | undefined;
   nonSslDomain?: string;
   translationService: TranslationService;
+  timeFormattingService: TimeFormattingService;
   notificationMessageService: NotificationMessageService;
   eventService: EventService;
   paginationOn?: boolean;

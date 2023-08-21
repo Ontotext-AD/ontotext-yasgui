@@ -457,7 +457,7 @@ export class Tab extends EventEmitter {
   };
 
   handleQueryStatusChange = (...args: any[]) => {
-    this.emit('queryStatus', this, args[2]);
+    this.emit("queryStatus", this, args[2]);
   };
 
   handleYasqeBlur = (yasqe: Yasqe) => {
@@ -627,6 +627,7 @@ export class Tab extends EventEmitter {
       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
     }
     yasrConf.translationService = this.yasgui.config.translationService;
+    yasrConf.timeFormattingService = this.yasgui.config.timeFormattingService;
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;

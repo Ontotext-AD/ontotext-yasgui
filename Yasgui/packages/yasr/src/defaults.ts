@@ -1,8 +1,9 @@
 import { Config } from "./";
-import { TranslationService } from "@triply/yasgui-utils";
+import { TimeFormattingService, TranslationService } from "@triply/yasgui-utils";
 export default function get(): Config {
   return {
     translationService: TranslationService.INSTANCE,
+    timeFormattingService: TimeFormattingService.INSTANCE,
     showResultInfo: true,
     persistenceId: function (yasr) {
       //Traverse parents untl we've got an id

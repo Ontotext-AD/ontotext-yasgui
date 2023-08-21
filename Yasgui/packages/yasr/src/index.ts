@@ -9,6 +9,7 @@ import {
   removeClass,
   addClass,
   hasClass,
+  TimeFormattingService,
 } from "@triply/yasgui-utils";
 import Parser from "./parsers";
 export { default as Parser } from "./parsers";
@@ -183,7 +184,7 @@ export class Yasr extends EventEmitter {
     }
     return supportedPlugins.sort((p1, p2) => p2.priority - p1.priority).map((p) => p.name);
   }
-  public draw() {
+  public draw(isSetResponseDrawing = false) {
     this.updateHelpButton();
     this.updateResponseInfo();
     if (!this.results) return;
@@ -212,28 +213,40 @@ export class Yasr extends EventEmitter {
       this.drawnPlugin = pluginToDraw;
 
       this.emit("draw", this, this.plugins[pluginToDraw]);
+      if (isSetResponseDrawing) {
+        this.yasqe.emitEvent("internalSetResponseStartedEvent");
+      }
       const plugin = this.plugins[pluginToDraw];
       const initPromise = plugin.initialize ? plugin.initialize() : Promise.resolve();
-      initPromise.then(
-        async () => {
-          if (pluginToDraw) {
-            // make sure to clear the object _here_
-            // otherwise we run into race conditions when draw is executed
-            // shortly after each other, and the plugin uses an initialize function
-            // as a result, things can be rendered _twice_
-            while (this.resultsEl.firstChild) this.resultsEl.firstChild.remove();
-            await this.plugins[pluginToDraw].draw(this.config.plugins[pluginToDraw].dynamicConfig);
-            this.emit("drawn", this, this.plugins[pluginToDraw]);
-            this.updateExportHeaders();
-            this.updatePluginSelectors(compatiblePlugins);
+      initPromise
+        .then(
+          async () => {
+            if (pluginToDraw) {
+              // make sure to clear the object _here_
+              // otherwise we run into race conditions when draw is executed
+              // shortly after each other, and the plugin uses an initialize function
+              // as a result, things can be rendered _twice_
+              while (this.resultsEl.firstChild) this.resultsEl.firstChild.remove();
+              await this.plugins[pluginToDraw].draw(this.config.plugins[pluginToDraw].dynamicConfig);
+              this.emit("drawn", this, this.plugins[pluginToDraw]);
+              this.updateExportHeaders();
+              this.updatePluginSelectors(compatiblePlugins);
+            }
+          },
+          (_e) => console.error
+        )
+        .finally(() => {
+          if (isSetResponseDrawing) {
+            this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
           }
-        },
-        (_e) => console.error
-      );
+        });
     } else {
       this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
       this.updateExportHeaders();
       this.updatePluginSelectors(compatiblePlugins);
+      if (isSetResponseDrawing) {
+        this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
+      }
     }
   }
   //just an alias for `draw`. That way, we've got a consistent api with yasqe
@@ -611,7 +624,10 @@ export class Yasr extends EventEmitter {
     possibleElementsCount?: number,
     customResultMessage?: CustomResultMessage
   ) {
-    if (!data) return;
+    if (!data) {
+      this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
+      return;
+    }
     this.results = new Parser(
       data,
       duration,
@@ -621,7 +637,7 @@ export class Yasr extends EventEmitter {
       customResultMessage
     );
 
-    this.draw();
+    this.draw(true);
 
     this.storeResponse();
   }
@@ -680,6 +696,7 @@ export interface Config {
 
   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
   translationService: TranslationService;
+  timeFormattingService: TimeFormattingService;
   externalPluginsConfigurations?: Map<string, any>;
   yasrToolbarPlugins?: YasrToolbarPlugin[];
   downloadAsOptions?: { labelKey: string; value: any }[];

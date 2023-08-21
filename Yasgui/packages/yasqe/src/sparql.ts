@@ -123,7 +123,6 @@ export async function executeQueryModeQuery(
 ): Promise<any> {
   var req: superagent.SuperAgentRequest;
   try {
-    getAjaxConfig(yasqe, config);
     const populatedConfig = getAjaxConfig(yasqe, config);
     if (!populatedConfig) {
       //nothing to query
