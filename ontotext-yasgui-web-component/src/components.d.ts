@@ -42,6 +42,11 @@ export namespace Components {
         "items": string[];
         "translationService": TranslationService;
     }
+    interface LoaderComponent {
+        "additionalMessage": string;
+        "message": string;
+        "size": string;
+    }
     interface OntotextDialogWebComponent {
         "config": DialogConfig;
     }
@@ -245,6 +250,12 @@ declare global {
         prototype: HTMLKeyboardShortcutsDialogElement;
         new (): HTMLKeyboardShortcutsDialogElement;
     };
+    interface HTMLLoaderComponentElement extends Components.LoaderComponent, HTMLStencilElement {
+    }
+    var HTMLLoaderComponentElement: {
+        prototype: HTMLLoaderComponentElement;
+        new (): HTMLLoaderComponentElement;
+    };
     interface HTMLOntotextDialogWebComponentElement extends Components.OntotextDialogWebComponent, HTMLStencilElement {
     }
     var HTMLOntotextDialogWebComponentElement: {
@@ -321,6 +332,7 @@ declare global {
         "copy-resource-link-button": HTMLCopyResourceLinkButtonElement;
         "copy-resource-link-dialog": HTMLCopyResourceLinkDialogElement;
         "keyboard-shortcuts-dialog": HTMLKeyboardShortcutsDialogElement;
+        "loader-component": HTMLLoaderComponentElement;
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-download-as": HTMLOntotextDownloadAsElement;
         "ontotext-dropdown": HTMLOntotextDropdownElement;
@@ -370,6 +382,11 @@ declare namespace LocalJSX {
     interface KeyboardShortcutsDialog {
         "items"?: string[];
         "translationService"?: TranslationService;
+    }
+    interface LoaderComponent {
+        "additionalMessage"?: string;
+        "message"?: string;
+        "size"?: string;
     }
     interface OntotextDialogWebComponent {
         "config"?: DialogConfig;
@@ -528,6 +545,7 @@ declare namespace LocalJSX {
         "copy-resource-link-button": CopyResourceLinkButton;
         "copy-resource-link-dialog": CopyResourceLinkDialog;
         "keyboard-shortcuts-dialog": KeyboardShortcutsDialog;
+        "loader-component": LoaderComponent;
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-download-as": OntotextDownloadAs;
         "ontotext-dropdown": OntotextDropdown;
@@ -548,6 +566,7 @@ declare module "@stencil/core" {
             "copy-resource-link-button": LocalJSX.CopyResourceLinkButton & JSXBase.HTMLAttributes<HTMLCopyResourceLinkButtonElement>;
             "copy-resource-link-dialog": LocalJSX.CopyResourceLinkDialog & JSXBase.HTMLAttributes<HTMLCopyResourceLinkDialogElement>;
             "keyboard-shortcuts-dialog": LocalJSX.KeyboardShortcutsDialog & JSXBase.HTMLAttributes<HTMLKeyboardShortcutsDialogElement>;
+            "loader-component": LocalJSX.LoaderComponent & JSXBase.HTMLAttributes<HTMLLoaderComponentElement>;
             "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
             "ontotext-download-as": LocalJSX.OntotextDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextDownloadAsElement>;
             "ontotext-dropdown": LocalJSX.OntotextDropdown & JSXBase.HTMLAttributes<HTMLOntotextDropdownElement>;

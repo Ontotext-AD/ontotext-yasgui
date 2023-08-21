@@ -1,6 +1,12 @@
 {
   "confirmation.btn.confirm.label": "Yes",
   "confirmation.btn.cancel.label": "Cancel",
+  "loader.message.query.editor.executing.update": "Exécution de la mise à jour",
+  "loader.message.query.editor.executing.additional_message": " ",
+  "loader.message.query.editor.evaluating.query": "Évaluation de la requête",
+  "loader.message.query.editor.progress.msg": "{{progressMessage}}... {{timeHuman}}",
+  "loader.message.query.editor.render.results": "Rendu des résultats",
+  "loader.message.query.editor.running.operation": "Exécution de l'opération... {{timeHuman}}",
   "yasgui.control_bar.accept_headers.label": "Accept Headers",
   "yasgui.control_bar.arguments.label": "Arguments",
   "yasgui.control_bar.ask_select.label": "Ask / Select",

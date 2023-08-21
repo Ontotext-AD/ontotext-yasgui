@@ -51,6 +51,11 @@ export interface ExternalYasguiConfiguration {
    */
   showQueryButton?: boolean;
 
+  /**
+   * Flag that controls displaying the loader during the run query process.
+   */
+  showQueryLoader?: boolean;
+
   // ***********************************************************
   //
   // All configurations related with the yasgui instance

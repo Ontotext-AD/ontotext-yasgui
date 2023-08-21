@@ -196,6 +196,7 @@ Type: `Promise<void>`
 ### Depends on
 
 - [yasgui-tooltip](../ontotext-tooltip-web-component)
+- [loader-component](../loader-component)
 - [save-query-dialog](../save-query-dialog)
 - [saved-queries-popup](../saved-queries-popup)
 - [confirmation-dialog](../confirmation-dialog)
@@ -206,6 +207,7 @@ Type: `Promise<void>`
 ```mermaid
 graph TD;
   ontotext-yasgui --> yasgui-tooltip
+  ontotext-yasgui --> loader-component
   ontotext-yasgui --> save-query-dialog
   ontotext-yasgui --> saved-queries-popup
   ontotext-yasgui --> confirmation-dialog

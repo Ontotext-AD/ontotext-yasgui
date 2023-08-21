@@ -25,6 +25,9 @@ import {InternalQueryExecuted} from '../../models/internal-events/internal-query
 import {InternalCountQueryResponseEvent} from '../../models/internal-events/internal-count-query-response-event';
 import {YasqeButtonType} from '../../models/yasqe-button-name';
 import {YasqeService} from '../../services/yasqe/yasqe-service';
+import {TimeFormattingService} from '../../services/utils/time-formatting-service';
+import {InternalSetResponseStartedEvent} from '../../models/internal-events/internal-set-response-started-event';
+import {InternalSetResponseFinishedEvent} from '../../models/internal-events/internal-set-response-finished-event';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -58,7 +61,8 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiConfigurationBuilder: YasguiConfigurationBuilder;
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
-  private readonly notificationMessageService: NotificationMessageService
+  private readonly notificationMessageService: NotificationMessageService;
+  private readonly timeFormattingService: TimeFormattingService;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -66,14 +70,26 @@ export class OntotextYasguiWebComponent {
   ontotextYasgui: OntotextYasgui;
 
   /**
-   * A flag showing that a query is running.
+   * Interval identifier for the interval function that updates the loader message of the query process.
    */
-  showQueryProgress = false;
+  private updateLoaderInterval: any;
 
   /**
-   * The duration of the last executed query.
+   * Holds ths start time of the current executing query.
    */
-  queryDuration = 0;
+  private startTime: number;
+
+  private showLoader = false;
+
+  /**
+   * A flag showing that a query is running.
+   */
+  private showQueryProgress = false;
+
+  /**
+   * A flag showing that a query response is rendering.
+   */
+  private showRenderResults = false;
 
   constructor() {
     this.serviceFactory = new ServiceFactory(this.hostElement);
@@ -82,6 +98,7 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
     this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
+    this.timeFormattingService = this.serviceFactory.get(TimeFormattingService);
   }
 
   /**
@@ -205,6 +222,10 @@ export class OntotextYasguiWebComponent {
   @State() showCopyResourceLinkDialog = false;
 
   @State() copiedResourceLink: string;
+
+  @State() loaderMessage: string;
+
+  @State() additionalLoaderMessage: string;
 
   /**
    * Changes rendering mode of component.
@@ -555,20 +576,37 @@ export class OntotextYasguiWebComponent {
     this.output.emit(toOutputEvent(event));
   }
 
+  @Listen('internalQueryEvent')
+  onQuery(event: CustomEvent<InternalQueryEvent>): void {
+    this.output.emit(toOutputEvent(event));
+    this.showLoader = true;
+    this.showQueryProgress = true;
+    this.startTime = Date.now();
+    this.updateLoader();
+  }
+
   @Listen('internalQueryExecuted')
   onInternalQueryExecuted(event: CustomEvent<InternalQueryExecuted>) {
     const queryExecuted = toOutputEvent(event);
-    // TODO check if this is needed
-    this.showQueryProgress = false;
-    // TODO check if this is needed
-    this.queryDuration = queryExecuted.payload.duration;
     this.output.emit(queryExecuted);
+    this.showQueryProgress = false;
+    this.updateLoader();
   }
 
-  @Listen('internalQueryEvent')
-  onQuery(event: CustomEvent<InternalQueryEvent>): void {
-    this.showQueryProgress = true;
+  @Listen('internalSetResponseStartedEvent')
+  onInternalSetResponseStarted(event: CustomEvent<InternalSetResponseStartedEvent>) {
     this.output.emit(toOutputEvent(event));
+    this.showLoader = true;
+    this.showRenderResults = true;
+    this.updateLoader();
+  }
+
+  @Listen('internalSetResponseFinishedEvent')
+  onInternalSetResponseFinished(event: CustomEvent<InternalSetResponseFinishedEvent>) {
+    this.output.emit(toOutputEvent(event));
+    this.showLoader = false;
+    this.showRenderResults = false;
+    this.updateLoader();
   }
 
   @Listen('internalCountQueryEvent')
@@ -722,6 +760,7 @@ export class OntotextYasguiWebComponent {
   }
 
   private destroy(): void {
+    this.clearLoaderInterval();
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
       const yasgui = HtmlElementsUtil.getOntotextYasgui(this.hostElement);
@@ -744,6 +783,73 @@ export class OntotextYasguiWebComponent {
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.afterInit();
     }
+  }
+
+  private clearLoaderInterval() {
+    if (this.updateLoaderInterval) {
+      clearInterval(this.updateLoaderInterval);
+      this.updateLoaderInterval = null;
+    }
+  }
+
+  private updateLoader() {
+    if (!this.showLoader) {
+      this.clearLoaderInterval();
+      this.loaderMessage = null;
+      this.additionalLoaderMessage = null;
+      this.startTime = null;
+      this.updateLoadingElement();
+      return;
+    }
+
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        this.updateLoaderMessage(ontotextYasgui);
+        if (!this.updateLoaderInterval) {
+          this.updateLoaderInterval = setInterval(() => {
+            this.updateLoaderMessage(ontotextYasgui);
+          }, 1000);
+        }
+      });
+  }
+
+  private updateLoaderMessage(ontotextYasgui: OntotextYasgui) {
+    if (this.showQueryProgress) {
+      const message = 'update' === ontotextYasgui.getQueryMode() ? this.translationService.translate('loader.message.query.editor.executing.update') : this.translationService.translate('loader.message.query.editor.evaluating.query');
+      const additionalMessage = this.translationService.translate('loader.message.query.editor.executing.additional_message');
+      this.updateQueryRunMessage(message, additionalMessage);
+    } else if (this.showRenderResults) {
+      this.updateRenderResultMessage();
+    }
+    this.updateLoadingElement();
+  }
+
+  private updateQueryRunMessage(message, additionalMessage = undefined): void {
+    const durationTime = (Date.now() - this.startTime);
+
+    const messageParameters = [{key: 'timeHuman', value: this.timeFormattingService.getHumanReadableSeconds(durationTime)}];
+
+    if (message) {
+      messageParameters.push({key: 'progressMessage', value: message});
+      this.loaderMessage = this.translationService.translate('loader.message.query.editor.progress.msg', messageParameters);
+    } else {
+      this.loaderMessage = this.translationService.translate('loader.message.query.editor.running.operation', messageParameters);
+    }
+
+    const durationTimeInSeconds = durationTime / 1000;
+    if (additionalMessage && durationTimeInSeconds > 10) {
+      this.additionalLoaderMessage = additionalMessage;
+    }
+  }
+
+  private updateRenderResultMessage() {
+    this.loaderMessage = this.translationService.translate('loader.message.query.editor.render.results');
+    this.additionalLoaderMessage = null;
+  }
+
+  private updateLoadingElement() {
+    HtmlElementsUtil.toggleClassByCondition(this.hostElement, ['.ontotext-yasgui'], 'loading', () => this.showLoader);
+    HtmlElementsUtil.toggleClassByCondition(this.hostElement, ['loader-component'], 'hidden', () => !this.showLoader);
   }
 
   componentWillLoad(): void {
@@ -793,6 +899,7 @@ export class OntotextYasguiWebComponent {
           </yasgui-tooltip>
         </div>
         <div class="ontotext-yasgui"></div>
+        <loader-component class='hidden' message={this.loaderMessage} additionalMessage={this.additionalLoaderMessage}></loader-component>
 
         {this.showSaveQueryDialog &&
           <save-query-dialog data={this.getSaveQueryData()}
