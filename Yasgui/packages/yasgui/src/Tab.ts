@@ -152,8 +152,7 @@ export class Tab extends EventEmitter {
   public close(confirm = true) {
     const closeTab = () => {
       if (this.yasqe) this.yasqe.abortQuery();
-      const tab = this.yasgui.getTab();
-      if (tab === this) {
+      if (this.yasgui.getTab() === this) {
         //it's the active tab
         //first select other tab
         const tabs = this.yasgui.persistentConfig.getTabs();
@@ -163,7 +162,6 @@ export class Tab extends EventEmitter {
         }
       }
 
-      tab?.destroy();
       this.yasgui._removePanel(this.rootEl);
       this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
       this.yasgui.emit("tabClose", this.yasgui, this);
