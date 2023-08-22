@@ -1,0 +1,28 @@
+Subject: [PATCH] GDB-8194: Tab is not visible when execute "Close other tabs" command.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision fb2d443c126120bc80d12cbcee6995b20e979d39)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 005b6e2d7ce099a4d2c7ea0e0238a4bec7156092)
+@@ -152,8 +152,7 @@
+   public close(confirm = true) {
+     const closeTab = () => {
+       if (this.yasqe) this.yasqe.abortQuery();
+-      const tab = this.yasgui.getTab();
+-      if (tab === this) {
++      if (this.yasgui.getTab() === this) {
+         //it's the active tab
+         //first select other tab
+         const tabs = this.yasgui.persistentConfig.getTabs();
+@@ -163,7 +162,6 @@
+         }
+       }
+ 
+-      tab?.destroy();
+       this.yasgui._removePanel(this.rootEl);
+       this.yasgui.persistentConfig.deleteTab(this.persistentJson.id);
+       this.yasgui.emit("tabClose", this.yasgui, this);
