@@ -82,7 +82,7 @@
   "yasqe.keyboard_shortcuts.dialog.item.switch_next_tab.description": "Créer une requête sauvegardée à partir de l'état actuel",
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.label": "[Ctrl|Cmd]-Alt-Left",
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.description": "Passer à l'onglet suivant",
-  "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.label": "Shift-Left-Mouse",
+  "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.label": "Shift-Ctrl-F4",
   "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Ferme tous les onglets sauf celui en cours",
   "yasqe.keyboard_shortcuts.dialog.item.f11.label": "F11",
   "yasqe.keyboard_shortcuts.dialog.item.f11.description": "Press F11 full screen/exit full screen",
