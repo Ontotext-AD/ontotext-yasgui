@@ -31,21 +31,30 @@ export default class ExtendedError extends Error {
   }
 
   private createErrorMessageElement(status: number | undefined, statusText = "", errorBodyText = "") {
-    return `<div class="error-response-plugin-header">
-                    <div class="error-response-plugin-error-status">
-                        ${status ? status + ":" : ""} ${
-      statusText
-        ? statusText
-        : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message")
+    let errorStatus = "";
+    if (status) {
+      errorStatus += status + ": ";
     }
-                    </div>
-                    <div class="error-response-plugin-error-time-message">
-                        ${this.getResultTimeMessage()}
-                    </div>
-                 </div>
-                 <div class="error-response-plugin-body">
-                    ${errorBodyText}
-                 </div>`;
+
+    if (statusText) {
+      errorStatus += statusText;
+    } else {
+      errorStatus += this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message");
+    }
+
+    return (
+      '<div class="error-response-plugin-header">' +
+      '<div class="error-response-plugin-error-status">' +
+      errorStatus +
+      "</div>" +
+      '<div class="error-response-plugin-error-time-message">' +
+      this.getResultTimeMessage() +
+      "</div>" +
+      "</div>" +
+      '<div class="error-response-plugin-body">' +
+      errorBodyText +
+      "</div>"
+    );
   }
 
   private getResultTimeMessage(): string {
