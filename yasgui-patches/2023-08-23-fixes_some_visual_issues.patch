@@ -1,0 +1,72 @@
+Subject: [PATCH] GDB-8191: Changed formatting of error message
+Changed Minimum Height of the Container Holding the YASR Plugin Buttons
+---
+Index: Yasgui/packages/yasr/src/main.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/main.scss b/Yasgui/packages/yasr/src/main.scss
+--- a/Yasgui/packages/yasr/src/main.scss	(revision b1883991c9b889fd260f8ba95df4efe078e08689)
++++ b/Yasgui/packages/yasr/src/main.scss	(revision bca0d5115c8b0970879cfcb7e03b082f043ecdb7)
+@@ -115,6 +115,7 @@
+     }
+   }
+   .yasr_plugin_control {
++    min-height: 50px;
+     display: flex;
+     margin-left: auto;
+     align-items: center;
+Index: Yasgui/packages/yasr/src/plugins/error/extended-error.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/error/extended-error.ts b/Yasgui/packages/yasr/src/plugins/error/extended-error.ts
+--- a/Yasgui/packages/yasr/src/plugins/error/extended-error.ts	(revision bca0d5115c8b0970879cfcb7e03b082f043ecdb7)
++++ b/Yasgui/packages/yasr/src/plugins/error/extended-error.ts	(revision 36203d3bf2f342ab17c0b9dc6be22ad04305cf3b)
+@@ -31,21 +31,30 @@
+   }
+ 
+   private createErrorMessageElement(status: number | undefined, statusText = "", errorBodyText = "") {
+-    return `<div class="error-response-plugin-header">
+-                    <div class="error-response-plugin-error-status">
+-                        ${status ? status + ":" : ""} ${
+-      statusText
+-        ? statusText
+-        : this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message")
++    let errorStatus = "";
++    if (status) {
++      errorStatus += status + ": ";
+     }
+-                    </div>
+-                    <div class="error-response-plugin-error-time-message">
+-                        ${this.getResultTimeMessage()}
+-                    </div>
+-                 </div>
+-                 <div class="error-response-plugin-body">
+-                    ${errorBodyText}
+-                 </div>`;
++
++    if (statusText) {
++      errorStatus += statusText;
++    } else {
++      errorStatus += this.yasr.translationService.translate("yasr.plugin.extended_error.default_status.message");
++    }
++
++    return (
++      '<div class="error-response-plugin-header">' +
++      '<div class="error-response-plugin-error-status">' +
++      errorStatus +
++      "</div>" +
++      '<div class="error-response-plugin-error-time-message">' +
++      this.getResultTimeMessage() +
++      "</div>" +
++      "</div>" +
++      '<div class="error-response-plugin-body">' +
++      errorBodyText +
++      "</div>"
++    );
+   }
+ 
+   private getResultTimeMessage(): string {
