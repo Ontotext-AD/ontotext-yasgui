@@ -114,11 +114,11 @@ export class OntotextYasgui {
   }
 
   openTab(queryModel: TabQueryModel): void {
-    const existingTab = this.getInstance().getTabByNameAndQuery(queryModel.queryName, queryModel.query);
+    const existingTab = this.getInstance().getTabByNameAndQuery(queryModel?.queryName, queryModel?.query);
     if (existingTab) {
       this.getInstance().selectTabId(existingTab.getId());
     } else {
-      this.createNewTab(queryModel.queryName, queryModel.query);
+      this.createNewTab(queryModel?.queryName, queryModel?.query);
     }
   }
 
@@ -126,7 +126,9 @@ export class OntotextYasgui {
     const tabInstance = this.getInstance().addTab(true, {
       name: queryName
     });
-    tabInstance.setQuery(query);
+    if (query) {
+      tabInstance.setQuery(query);
+    }
   }
 
   destroy() {
