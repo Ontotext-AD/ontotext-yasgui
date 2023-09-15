@@ -195,6 +195,9 @@ class ExtendedTableDownloadAsConfiguration extends DownloadAsPluginConfiguration
           labelKey: "yasr.plugin_control.download_as.sparql_results_json_ld.label",
           value: "application/ld+json",
         }, {
+          labelKey: "yasr.plugin_control.download_as.sparql_results_ndjson_ld.label",
+          value: "application/x-ld+ndjson",
+        }, {
           labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_rdf_xml.label",
           value: "application/rdf+xml",
         }, {
