@@ -128,6 +128,7 @@
   "yasr.plugin_control.download_as.raw_response.dropdown.label": "Get HTML snippet to embed results on a web page",
   "yasr.plugin_control.download_as.sparql_results_json.label": "JSON",
   "yasr.plugin_control.download_as.sparql_results_json_ld.label": "JSON-LD",
+  "yasr.plugin_control.download_as.sparql_results_ndjson_ld.label": "NDJSON-LD",
   "yasr.plugin_control.download_as.x_sparqlstar_results_json.label": "JSON*",
   "yasr.plugin_control.download_as.x_sparqlstar_results_rdf_xml.label": "RDF-XML",
   "yasr.plugin_control.download_as.sparql_results_xml.label": "XML",
