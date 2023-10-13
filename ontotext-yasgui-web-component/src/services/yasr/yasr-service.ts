@@ -95,7 +95,7 @@ export class YasrService {
       `<li>${this.toCellContent(binding.value['s'], context)}</li>` +
       `<li>${this.toCellContent(binding.value['p'], context)}</li>` +
       `<li>${this.toCellContent(binding.value['o'], context)}</li>` +
-      '</ul><div class"triple-close">' +
+      '</ul><div class="triple-close">' +
       `<a title="${tripleLinkTitle}" class="triple-link triple-link-end" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</a>` +
       `<copy-resource-link-button class="resource-copy-link" uri="${HtmlUtil.encodeHTMLEntities(tripleAsString)}"></copy-resource-link-button>` +
       '</div></div>'

@@ -244,15 +244,10 @@
         hyphens: auto;
       }
 
-      /** Shows copy resource link when mouse is over a table row with resources of type uri */
-      .dataTable tbody td:hover:not(:has(.triple-cell)) div.uri-cell .resource-copy-link {
-        display: inline;
-        float: right;
-        padding-right: 10px;
-      }
-
-      /** Shows copy resource link when mouse is over a link with resource of type triple */
-      .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link {
+      /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
+      .dataTable tbody td div.uri-cell:hover .resource-copy-link, .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
+      .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link
+      {
         display: inline;
         padding-left: 10px;
         padding-right: 10px;
