@@ -84,7 +84,7 @@ export class YasguiConfigurationBuilder {
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
-    config.yasguiConfig.tabName = externalConfiguration.defaultTabName || this.serviceFactory.get(TranslationService).translate('yasgui.tab_list.tab.default.name');
+    config.yasguiConfig.defaultTabNameLabelKey = externalConfiguration.defaultTabNameLabelKey;
     config.yasguiConfig.requestConfig.headers = externalConfiguration.headers || defaultYasguiConfig.headers;
     config.yasguiConfig.copyEndpointOnNewTab = externalConfiguration.copyEndpointOnNewTab !== undefined ? externalConfiguration.copyEndpointOnNewTab : defaultYasguiConfig.copyEndpointOnNewTab;
     config.yasguiConfig.persistenceLabelConfig = externalConfiguration.componentId || defaultYasguiConfig.persistenceLabelConfig;

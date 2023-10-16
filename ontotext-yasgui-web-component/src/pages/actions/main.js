@@ -2,7 +2,7 @@ let ontoElement = document.querySelector('ontotext-yasgui');
 ontoElement.config = {
   endpoint: '/repositories/test-repo',
   yasqeActionButtons: [],
-  defaultTabName: 'Query',
+  defaultTabNameLabelKey: 'Query',
   prefixes: {
     "gn": "http://www.geonames.org/ontology#",
     "path": "http://www.ontotext.com/path#",

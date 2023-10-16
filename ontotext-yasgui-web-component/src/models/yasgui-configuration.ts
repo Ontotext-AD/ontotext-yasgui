@@ -78,7 +78,7 @@ export interface YasguiConfiguration {
    * The default yasgui config.
    */
   yasguiConfig?: {
-    tabName?: string,
+    defaultTabNameLabelKey?: string,
     translationService: TranslationService;
     timeFormattingService: TimeFormattingService;
     notificationMessageService: NotificationMessageService;
