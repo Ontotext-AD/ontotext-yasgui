@@ -37,7 +37,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   autofocus: boolean;
   endpointInfo: ((tab?: Tab) => Element) | undefined;
   copyEndpointOnNewTab: boolean;
-  tabName: string;
+  defaultTabNameLabelKey: string;
   corsProxy: string | undefined;
   endpointCatalogueOptions: EndpointSelectConfig<EndpointObject>;
   //The function allows us to modify the config before we pass it on to a tab
@@ -207,7 +207,7 @@ export class Yasgui extends EventEmitter {
     return persistenceId(this) + "_" + label;
   }
   public createTabName(name?: string, i: number = 0) {
-    if (!name) name = this.config.tabName;
+    if (!name) name = this.translationService.translate(this.config.defaultTabNameLabelKey);
     var fullName = name + (i > 0 ? " " + i : "");
     if (this.tabNameTaken(fullName)) fullName = this.createTabName(name, i + 1);
     return fullName;

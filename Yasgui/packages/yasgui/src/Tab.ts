@@ -674,7 +674,7 @@ export class Tab extends EventEmitter {
       },
       requestConfig: yasgui ? yasgui.config.requestConfig : { ...Yasgui.defaults.requestConfig },
       id: getRandomId(),
-      name: yasgui ? yasgui.createTabName() : Yasgui.defaults.tabName,
+      name: yasgui ? yasgui.createTabName() : "",
     };
   }
 }

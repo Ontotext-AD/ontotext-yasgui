@@ -32,7 +32,7 @@ export default function initialize(): Config<CatalogueItem> {
       }
       return "yagui_" + id;
     },
-    tabName: "Query",
+    defaultTabNameLabelKey: "yasgui.tab_list.tab.default.name",
     corsProxy: undefined,
     persistencyExpire: 60 * 60 * 24 * 30,
     persistenceLabelResponse: "response",
