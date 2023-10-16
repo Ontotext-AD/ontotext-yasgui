@@ -150,9 +150,9 @@ export interface ExternalYasguiConfiguration {
   initialQuery?: string;
 
   /**
-   * The default tab name when a new tab is created.
+   * The translation label key that should be used to fetch the default tab name when a new tab is created.
    */
-  defaultTabName?: string;
+  defaultTabNameLabelKey?: string;
 
   /**
    * Action button definitions which can be plugged in the yasqe extension point.
