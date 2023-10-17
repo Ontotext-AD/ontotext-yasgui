@@ -9,7 +9,7 @@ require("./index.scss");
 
 export default class Error implements Plugin<never> {
   protected yasr: ExtendedYasr;
-  private readonly translationService: TranslationService;
+  protected readonly translationService: TranslationService;
   constructor(yasr: ExtendedYasr) {
     this.yasr = yasr;
     this.translationService = this.yasr.config.translationService;
