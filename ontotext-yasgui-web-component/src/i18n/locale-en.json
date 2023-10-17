@@ -152,6 +152,8 @@
   "yasr.plugin.error.incorrect_endpoint.error.label": "Incorrect endpoint URL",
   "yasr.plugin.error.new_window.btn.label": "Try query in new browser window",
   "yasr.plugin.error.no_response_possible_reason.error.label": "Unable to get response from endpoint. Possible reasons:",
+  "yasr.plugin.error.show.full.message": "Show full exception message",
+  "yasr.plugin.error.show.less.message": "Show less exception message",
   "yasr.plugin.response.download_result.btn.label": "Download result",
   "yasr.plugin.response.download_result.btn.tooltip": "Download result",
   "yasr.plugin.response.show_all.btn.label": "Show all",

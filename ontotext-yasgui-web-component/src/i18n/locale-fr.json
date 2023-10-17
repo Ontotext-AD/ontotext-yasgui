@@ -152,6 +152,8 @@
   "yasr.plugin.error.incorrect_endpoint.error.label": "URL de point d'accès incorrecte",
   "yasr.plugin.error.new_window.btn.label": "Essayez la requête dans une nouvelle fenêtre du navigateur",
   "yasr.plugin.error.no_response_possible_reason.error.label": "Unable to get response from endpoint. Possible reasons:",
+  "yasr.plugin.error.show.full.message": "Afficher le message d'exception complet",
+  "yasr.plugin.error.show.less.message": "Afficher moins de détails sur l'exception",
   "yasr.plugin.response.download_result.btn.label": "Télécharger le résultat",
   "yasr.plugin.response.download_result.btn.tooltip": "Télécharger le résultat",
   "yasr.plugin.response.show_all.btn.label": "Afficher tout",

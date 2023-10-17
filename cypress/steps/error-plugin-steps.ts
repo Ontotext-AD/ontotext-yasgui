@@ -19,4 +19,12 @@ export class ErrorPluginSteps {
   static getErrorPluginBody() {
     return ErrorPluginSteps.getErrorPlugin().find('.error-response-plugin-body');
   }
+
+  static getShowFullErrorMessage() {
+    return cy.get('.show-full-message-link');
+  }
+
+  static getShowLessErrorMessage() {
+    return cy.get('.show-less-message-link');
+  }
 }
