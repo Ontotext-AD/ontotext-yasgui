@@ -46,10 +46,10 @@ export class QueryStubs {
     cy.intercept('/repositories/test-repo', {fixture, delay: withDelay}).as(alias);
   }
 
-  static stubLoadQueryErrorResponse() {
+  static stubQueryErrorResponse(errorBody = '', statusCode = 500) {
     cy.intercept('/repositories/test-repo', {
-      statusCode: 500,
-      body: '/datasets/bio2rdf/drugbank/bio2rdf-drugbank.nq (No such file or directory)'
+      statusCode,
+      body: errorBody
     }).as('loadQueryErrorResponse');
   }
 
