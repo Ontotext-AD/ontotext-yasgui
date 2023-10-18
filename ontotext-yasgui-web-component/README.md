@@ -117,6 +117,10 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **showQueryButton**: if false the "Run" query button will be hidden. Default value is true.
 - **getCellContent**: function that will be called for every one cell. It must return valid html as string.
 - **sparqlResponse**: a response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
+- **infer**: the value of "infer" parameter when a query is executed. Default value is true.
+- **immutableInfer**: if set to true, the 'infer' value cannot be changed. Default value is false.
+- **sameAs**: the value of "sameAs" parameter when a query is executed. Default value is true.
+- **immutableSameAs**: if set to true, the 'sameAs' value cannot be changed. Default value is false.
 
 ## Developers guide
 

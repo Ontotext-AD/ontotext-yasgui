@@ -93,7 +93,9 @@ export interface YasguiConfiguration {
     persistenceLabelConfig?: string;
     populateFromUrl?: boolean;
     infer: boolean;
+    immutableInfer: boolean;
     sameAs: boolean;
+    immutableSameAs: boolean;
     paginationOn: true,
     pageSize: 10,
     yasqe?: {
@@ -264,7 +266,9 @@ export const defaultYasguiConfig: Record<string, any> = {
   endpoint: '',
   method: 'POST',
   infer: true,
+  immutableInfer: false,
   sameAs: true,
+  immutableSameAs: false,
   pageSize: 10,
   paginationOn: true,
   getRepositoryStatementsCount: () => Promise.resolve(),

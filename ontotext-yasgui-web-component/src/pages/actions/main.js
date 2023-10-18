@@ -71,6 +71,20 @@ function hideSaveQueryAction() {
   };
 }
 
+function setSameAsImmutable() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    immutableSameAs: true
+  };
+}
+
+function setInferImmutable() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    immutableInfer: true
+  };
+}
+
 function showSaveQueryAction() {
   ontoElement.config = {
     ...ontoElement.config,

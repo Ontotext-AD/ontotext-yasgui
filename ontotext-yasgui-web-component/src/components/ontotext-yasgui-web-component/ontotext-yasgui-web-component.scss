@@ -113,6 +113,13 @@
             transform: scale(1.2);
           }
         }
+
+        .custom-button:disabled:hover, .custom-button:disabled:focus {
+          color: #818a91;
+          text-decoration: none;
+          cursor: not-allowed;
+          opacity: .65;
+        }
       }
 
       .yasqe_expandResultsButton.disabled {

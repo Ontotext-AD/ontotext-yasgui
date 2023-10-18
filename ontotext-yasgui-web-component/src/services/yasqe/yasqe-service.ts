@@ -116,48 +116,58 @@ export class YasqeService {
     this.initInferAndSameAsState(yasqe, yasguiConfiguration.yasguiConfig.infer, yasguiConfiguration.yasguiConfig.sameAs);
     const includeInferred = yasqe.getInfer();
     const sameAs = yasqe.getSameAs();
-    const sameAsElement = this.createSameAsElement(yasqe);
-    const inferredElement = this.createInferredElement(yasqe, sameAsElement);
+    const sameAsElement = this.createSameAsElement(yasqe, yasguiConfiguration.yasguiConfig.immutableSameAs);
+    const inferredElement = this.createInferredElement(yasqe, sameAsElement, yasguiConfiguration.yasguiConfig.immutableInfer);
     this.updateInferredElement(inferredElement, sameAsElement, includeInferred, sameAs);
     this.updateSameAsElement(sameAsElement, sameAs, includeInferred);
     return [inferredElement, sameAsElement];
   }
 
   //@ts-ignore
-  private createInferredElement(yasqe: Yasqe, sameAsElement: HTMLElement): HTMLElement {
+  private createInferredElement(yasqe: Yasqe, sameAsElement: HTMLElement, immutable = false): HTMLElement {
     const inferredButtonElement = document.createElement("button");
     const inferredTooltipElement = TooltipService.addTooltip(inferredButtonElement, undefined, 'top');
     inferredButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.INFER_STATEMENTS)} custom-button`;
-    inferredButtonElement.addEventListener("click",
-      () => {
-        const newInferredValue = !yasqe.getInfer();
-        yasqe?.setInfer(newInferredValue);
-        // Same as value depends on infer value. When a user switch of the infer then same as have to be switched off too
-        // and when it is switched on then same as have to be switched on.
-        const newSameAsValue = newInferredValue;
-        yasqe?.setSameAs(newSameAsValue);
-        this.updateInferredElement(inferredTooltipElement, sameAsElement, newInferredValue, newSameAsValue);
-      });
+    if (immutable) {
+      inferredButtonElement.setAttribute('disabled', '');
+    } else {
+      inferredButtonElement.addEventListener("click",
+        () => {
+          const newInferredValue = !yasqe.getInfer();
+          yasqe?.setInfer(newInferredValue);
+          // Same as value depends on infer value. When a user switch of the infer then same as have to be switched off too
+          // and when it is switched on then same as have to be switched on.
+          const newSameAsValue = newInferredValue;
+          yasqe?.setSameAs(newSameAsValue);
+          this.updateInferredElement(inferredTooltipElement, sameAsElement, newInferredValue, newSameAsValue);
+        });
+    }
     return inferredTooltipElement;
   }
 
   //@ts-ignore
-  private createSameAsElement(yasqe: Yasqe): HTMLElement {
+  private createSameAsElement(yasqe: Yasqe, immutable = false): HTMLElement {
     const sameAsButtonElement = document.createElement("button");
     const sameAsTooltipElement = TooltipService.addTooltip(sameAsButtonElement, undefined, 'top');
     sameAsButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.EXPANDS_RESULTS)} custom-button`;
-    sameAsButtonElement.addEventListener("click",
-      (event) => {
-        if (sameAsButtonElement.classList.contains('disabled')) {
-          // Stops event propagation if the button is disabled. The Disabled attribute is not used because it stops firing events and breaks the button tooltip.
-          event.preventDefault();
-          return;
-        }
-        const newSameAsValue = !yasqe.getSameAs();
-        const inferValue = yasqe.getInfer();
-        yasqe?.setSameAs(newSameAsValue);
-        this.updateSameAsElement(sameAsTooltipElement, newSameAsValue, inferValue);
-      });
+
+    if (immutable) {
+      sameAsButtonElement.setAttribute('disabled', '');
+    } else {
+      sameAsButtonElement.addEventListener("click",
+        (event) => {
+          if (sameAsButtonElement.classList.contains('disabled')) {
+            // Stops event propagation if the button is disabled. The Disabled attribute is not used because it stops firing events and breaks the button tooltip.
+            event.preventDefault();
+            return;
+          }
+          const newSameAsValue = !yasqe.getSameAs();
+          const inferValue = yasqe.getInfer();
+          yasqe?.setSameAs(newSameAsValue);
+          this.updateSameAsElement(sameAsTooltipElement, newSameAsValue, inferValue);
+        });
+    }
+
     return sameAsTooltipElement;
   }
 
