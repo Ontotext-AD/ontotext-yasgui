@@ -11,6 +11,22 @@ describe('Include inferred action', () => {
     ActionsPageSteps.visit();
   });
 
+  it('should not be able to toggle the inferred button state if it is configured to be immutable', () => {
+    // When I open the editor configured the infer button to be immutable.
+    ActionsPageSteps.configureInferImmutable();
+
+    // Then I expect inferred button to be on.
+    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+    YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+
+    // When I click on inferred button
+    YasqeSteps.getActionButton(3).click({force: true});
+
+    // Then I expect inferred button to not be toggled.
+    YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+    YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+  });
+
   it('Should be able to toggle the include inferred button state', () => {
     // When I open the editor
     // Then I expect that include inferred statements should be enabled by default

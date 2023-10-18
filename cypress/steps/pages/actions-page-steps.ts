@@ -74,4 +74,12 @@ export default class ActionsPageSteps {
   static configureSameAsEnabled() {
     return cy.get('#configureSameAsEnabled').realClick();
   }
+
+  static configureInferImmutable() {
+    cy.get('#setInferImmutable').click();
+  }
+
+  static configureSameAsImmutable() {
+    cy.get('#setSameAsImmutable').click();
+  }
 }

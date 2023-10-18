@@ -102,15 +102,24 @@ export interface ExternalYasguiConfiguration {
   headers: () => Record<string, string>;
 
   /**
-   * Allows to a default value of the include inferred configuration which is enabled by default.
+   * The value of "infer" parameter when a query is executed. Default value is true.
    */
   infer: boolean;
 
   /**
-   * Allows to a default value of the expand results on sameAs configuration which is enabled by
-   * default.
+   * If set to true, the 'infer' value cannot be changed. Default value is false.
+   */
+  immutableInfer: boolean;
+
+  /**
+   * The value of "sameAs" parameter when a query is executed. Default value is true.
    */
   sameAs: boolean;
+
+  /**
+   * If set to true, the 'sameAs' value cannot be changed. Default value is false.
+   */
+  immutableSameAs: boolean;
 
   /**
    * If the configured endpoint should be preconfigured to any new opened editor tab.

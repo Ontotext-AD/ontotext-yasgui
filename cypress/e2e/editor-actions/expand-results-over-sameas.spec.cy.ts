@@ -10,6 +10,22 @@ describe('Expand results over sameAs', () => {
     ActionsPageSteps.visit();
   });
 
+  it('should not be able to toggle the sameAs button state if it is configured to be immutable', () => {
+    // When I open the editor configured the sameAs button to be immutable.
+    ActionsPageSteps.configureSameAsImmutable();
+
+    // Then I expect sameAs button to be on.
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
+
+    // When I click on inferred button
+    YasqeSteps.getExpandResultsOverSameAsButton().click({force: true});
+
+    // Then I expect sameAs button to not be toggled.
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
+  });
+
   it('Should be able to toggle the include inferred button state', () => {
     // When I open the editor
     // Then I expect that expand results should be enabled by default
