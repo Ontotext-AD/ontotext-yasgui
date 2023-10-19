@@ -124,7 +124,7 @@ export class YasqeService {
   }
 
   //@ts-ignore
-  private createInferredElement(yasqe: Yasqe, sameAsElement: HTMLElement, immutable = false): HTMLElement {
+  private createInferredElement(yasqe: Yasqe, sameAsElement: HTMLElement, immutable): HTMLElement {
     const inferredButtonElement = document.createElement("button");
     const inferredTooltipElement = TooltipService.addTooltip(inferredButtonElement, undefined, 'top');
     inferredButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.INFER_STATEMENTS)} custom-button`;
@@ -134,11 +134,11 @@ export class YasqeService {
       inferredButtonElement.addEventListener("click",
         () => {
           const newInferredValue = !yasqe.getInfer();
-          yasqe?.setInfer(newInferredValue);
+          yasqe.setInfer(newInferredValue);
           // Same as value depends on infer value. When a user switch of the infer then same as have to be switched off too
           // and when it is switched on then same as have to be switched on.
           const newSameAsValue = newInferredValue;
-          yasqe?.setSameAs(newSameAsValue);
+          yasqe.setSameAs(newSameAsValue);
           this.updateInferredElement(inferredTooltipElement, sameAsElement, newInferredValue, newSameAsValue);
         });
     }
@@ -146,7 +146,7 @@ export class YasqeService {
   }
 
   //@ts-ignore
-  private createSameAsElement(yasqe: Yasqe, immutable = false): HTMLElement {
+  private createSameAsElement(yasqe: Yasqe, immutable): HTMLElement {
     const sameAsButtonElement = document.createElement("button");
     const sameAsTooltipElement = TooltipService.addTooltip(sameAsButtonElement, undefined, 'top');
     sameAsButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.EXPANDS_RESULTS)} custom-button`;
@@ -163,7 +163,7 @@ export class YasqeService {
           }
           const newSameAsValue = !yasqe.getSameAs();
           const inferValue = yasqe.getInfer();
-          yasqe?.setSameAs(newSameAsValue);
+          yasqe.setSameAs(newSameAsValue);
           this.updateSameAsElement(sameAsTooltipElement, newSameAsValue, inferValue);
         });
     }
