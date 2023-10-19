@@ -72,6 +72,11 @@ export interface ExternalYasguiConfiguration {
   endpoint: string | ((yasgui: Yasgui) => string);
 
   /**
+   * The language being used when the component is initialized. Default value is "en".
+   */
+  language: string;
+
+  /**
    * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.
    * If pass a new language then all label's values have to be present, otherwise they will be translated to the default English language.
    * Example:
