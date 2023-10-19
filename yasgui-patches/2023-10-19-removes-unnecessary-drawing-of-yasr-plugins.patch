@@ -1,0 +1,132 @@
+Subject: [PATCH] Double rendering of a yasr plugin
+Introduce a new configuration property "language"
+---
+Index: ontotext-yasgui-web-component/README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ontotext-yasgui-web-component/README.md b/ontotext-yasgui-web-component/README.md
+--- a/ontotext-yasgui-web-component/README.md	(revision 30fbc4c38c92ddd404d2a9c677a112e58b1c364f)
++++ b/ontotext-yasgui-web-component/README.md	(revision dc9935c0255c5491ee54932f32a4e4335f307e54)
+@@ -88,23 +88,23 @@
+   configuration is passed as string, it will be persisted when first time initializes the instance with specific componentId. Subsequent
+   query executions will use the endpoint stored in the persistence regardless if the configuration is changed. If the endpoint is defined as
+   a function, it will be called before each query execution.
+-- <b>render</b>: Configure what part of the yasgui should be rendered. Supported values are:
++- **render**: Configure what part of the yasgui should be rendered. Supported values are:
+    - mode-yasgui: default configuration. Shows the query editor and the results;
+    - mode-yasqe: shows the query editor only;
+    - mode-yasr: shows the results only.
+-- <b>orientation</b>: Configure the yasgui layout orientation. Supported values are:
++- **orientation**: Configure the yasgui layout orientation. Supported values are:
+    - orientation-vertical - the results will be appeared under the query editor;
+    - orientation-horizontal - the results will be appeared next to the query editor.
+-- <b>query</b>: Default query when a tab is opened;
+-- <b>initialQuery?</b>: Initial query when yasgui is rendered if not set the default query will be set;
+-- <b>defaultTabNameLabelKey?</b>: The translation label key that should be used to fetch the default tab name when a new tab is created.
+-- <b>showEditorTabs</b>: If the query editor tabs should be rendered or not;
+-- <b>showResultTabs</b>: If the results tabs should be rendered or not;
++- **query**: Default query when a tab is opened;
++- **initialQuery**>: Initial query when yasgui is rendered if not set the default query will be set;
++- **defaultTabNameLabelKey**: The translation label key that should be used to fetch the default tab name when a new tab is created.
++- **showEditorTabs**: If the query editor tabs should be rendered or not;
++- **showResultTabs**: If the results tabs should be rendered or not;
+ - **showResultInfo**: If the result information header of YASR should be rendered or not;
+ - **showQueryLoader**: Flag that controls displaying the loader during the run query process. Default value is true;
+-- <b>showToolbar</b>: If the toolbar with render mode buttons should be rendered or not;
+-- <b>yasqePluginButtons</b>: Plugin definitions configurations for yasqe action buttons; 
+-- <b>componentId</b>: An unique identifier of an instance of the component. This config is optional.
++- **showToolbar**: If the toolbar with render mode buttons should be rendered or not;
++- **yasqePluginButtons**: Plugin definitions configurations for yasqe action buttons; 
++- **componentId**: An unique identifier of an instance of the component. This config is optional.
+   A unique identifier of the component instance. This configuration is optional. A unique value should be passed only if the component's internal state (open tabs, completed requests, etc.) should not be shared with its other instances.
+ - **paginationOn**: If true pagination will be used to display results.
+ - **pageSize**: the size of a page. Default value is 10.
+@@ -117,6 +117,7 @@
+ - **showQueryButton**: if false the "Run" query button will be hidden. Default value is true.
+ - **getCellContent**: function that will be called for every one cell. It must return valid html as string.
+ - **sparqlResponse**: a response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
++- **language**: the language being used when the component is initialized. Default value is "en".
+ 
+ ## Developers guide
+ 
+Index: ontotext-yasgui-web-component/src/components/ontotext-yasgui-web-component/ontotext-yasgui-web-component.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ontotext-yasgui-web-component/src/components/ontotext-yasgui-web-component/ontotext-yasgui-web-component.tsx b/ontotext-yasgui-web-component/src/components/ontotext-yasgui-web-component/ontotext-yasgui-web-component.tsx
+--- a/ontotext-yasgui-web-component/src/components/ontotext-yasgui-web-component/ontotext-yasgui-web-component.tsx	(revision 30fbc4c38c92ddd404d2a9c677a112e58b1c364f)
++++ b/ontotext-yasgui-web-component/src/components/ontotext-yasgui-web-component/ontotext-yasgui-web-component.tsx	(revision dc9935c0255c5491ee54932f32a4e4335f307e54)
+@@ -777,6 +777,7 @@
+     this.destroy();
+     // @ts-ignore
+     if (window.Yasgui) {
++      this.translationService.setLanguage(externalConfiguration.language);
+       // * Build the internal yasgui configuration using the provided external configuration
+       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
+       // * Build a yasgui instance using the configuration
+Index: ontotext-yasgui-web-component/src/models/external-yasgui-configuration.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ontotext-yasgui-web-component/src/models/external-yasgui-configuration.ts b/ontotext-yasgui-web-component/src/models/external-yasgui-configuration.ts
+--- a/ontotext-yasgui-web-component/src/models/external-yasgui-configuration.ts	(revision 30fbc4c38c92ddd404d2a9c677a112e58b1c364f)
++++ b/ontotext-yasgui-web-component/src/models/external-yasgui-configuration.ts	(revision dc9935c0255c5491ee54932f32a4e4335f307e54)
+@@ -71,6 +71,11 @@
+   // @ts-ignore
+   endpoint: string | ((yasgui: Yasgui) => string);
+ 
++  /**
++   * The language being used when the component is initialized. Default value is "en".
++   */
++  language: string;
++
+   /**
+    * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.
+    * If pass a new language then all label's values have to be present, otherwise they will be translated to the default English language.
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision dc9935c0255c5491ee54932f32a4e4335f307e54)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 0da06e40344e34edab473bf58db27587c899ee10)
+@@ -81,7 +81,12 @@
+     this.drawHeader();
+ 
+     const resp = data || this.getResponseFromStorage();
+-    if (resp) this.setResponse(resp);
++    if (resp) {
++      // Set response without draw yasr to prevent double rendering yasr active plugin. The drawing function of the plugin that displays the response
++      // will be called when it is marked as active.
++      const draw = false;
++      this.setResponse(resp, undefined, undefined, undefined, undefined, undefined, draw);
++    }
+   }
+   private getConfigFromStorage() {
+     const storageId = this.getStorageId(this.config.persistenceLabelConfig);
+@@ -622,7 +627,8 @@
+     queryStartedTime?: number,
+     hasMorePages?: boolean,
+     possibleElementsCount?: number,
+-    customResultMessage?: CustomResultMessage
++    customResultMessage?: CustomResultMessage,
++    draw = true
+   ) {
+     if (!data) {
+       this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
+@@ -637,7 +643,9 @@
+       customResultMessage
+     );
+ 
+-    this.draw(true);
++    if (draw) {
++      this.draw(true);
++    }
+ 
+     this.storeResponse();
+   }
