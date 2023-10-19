@@ -81,7 +81,12 @@ export class Yasr extends EventEmitter {
     this.drawHeader();
 
     const resp = data || this.getResponseFromStorage();
-    if (resp) this.setResponse(resp);
+    if (resp) {
+      // Set response without draw yasr to prevent double rendering yasr active plugin. The drawing function of the plugin that displays the response
+      // will be called when it is marked as active.
+      const draw = false;
+      this.setResponse(resp, undefined, undefined, undefined, undefined, undefined, draw);
+    }
   }
   private getConfigFromStorage() {
     const storageId = this.getStorageId(this.config.persistenceLabelConfig);
@@ -622,7 +627,8 @@ export class Yasr extends EventEmitter {
     queryStartedTime?: number,
     hasMorePages?: boolean,
     possibleElementsCount?: number,
-    customResultMessage?: CustomResultMessage
+    customResultMessage?: CustomResultMessage,
+    draw = true
   ) {
     if (!data) {
       this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
@@ -637,7 +643,9 @@ export class Yasr extends EventEmitter {
       customResultMessage
     );
 
-    this.draw(true);
+    if (draw) {
+      this.draw(true);
+    }
 
     this.storeResponse();
   }
