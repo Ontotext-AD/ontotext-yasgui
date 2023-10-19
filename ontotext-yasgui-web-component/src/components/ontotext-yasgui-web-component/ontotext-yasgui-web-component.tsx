@@ -777,6 +777,7 @@ export class OntotextYasguiWebComponent {
     this.destroy();
     // @ts-ignore
     if (window.Yasgui) {
+      this.translationService.setLanguage(externalConfiguration.language);
       // * Build the internal yasgui configuration using the provided external configuration
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
       // * Build a yasgui instance using the configuration

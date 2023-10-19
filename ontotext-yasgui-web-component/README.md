@@ -88,23 +88,23 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
   configuration is passed as string, it will be persisted when first time initializes the instance with specific componentId. Subsequent
   query executions will use the endpoint stored in the persistence regardless if the configuration is changed. If the endpoint is defined as
   a function, it will be called before each query execution.
-- <b>render</b>: Configure what part of the yasgui should be rendered. Supported values are:
+- **render**: Configure what part of the yasgui should be rendered. Supported values are:
    - mode-yasgui: default configuration. Shows the query editor and the results;
    - mode-yasqe: shows the query editor only;
    - mode-yasr: shows the results only.
-- <b>orientation</b>: Configure the yasgui layout orientation. Supported values are:
+- **orientation**: Configure the yasgui layout orientation. Supported values are:
    - orientation-vertical - the results will be appeared under the query editor;
    - orientation-horizontal - the results will be appeared next to the query editor.
-- <b>query</b>: Default query when a tab is opened;
-- <b>initialQuery?</b>: Initial query when yasgui is rendered if not set the default query will be set;
-- <b>defaultTabNameLabelKey?</b>: The translation label key that should be used to fetch the default tab name when a new tab is created.
-- <b>showEditorTabs</b>: If the query editor tabs should be rendered or not;
-- <b>showResultTabs</b>: If the results tabs should be rendered or not;
+- **query**: Default query when a tab is opened;
+- **initialQuery**>: Initial query when yasgui is rendered if not set the default query will be set;
+- **defaultTabNameLabelKey**: The translation label key that should be used to fetch the default tab name when a new tab is created.
+- **showEditorTabs**: If the query editor tabs should be rendered or not;
+- **showResultTabs**: If the results tabs should be rendered or not;
 - **showResultInfo**: If the result information header of YASR should be rendered or not;
 - **showQueryLoader**: Flag that controls displaying the loader during the run query process. Default value is true;
-- <b>showToolbar</b>: If the toolbar with render mode buttons should be rendered or not;
-- <b>yasqePluginButtons</b>: Plugin definitions configurations for yasqe action buttons; 
-- <b>componentId</b>: An unique identifier of an instance of the component. This config is optional.
+- **showToolbar**: If the toolbar with render mode buttons should be rendered or not;
+- **yasqePluginButtons**: Plugin definitions configurations for yasqe action buttons; 
+- **componentId**: An unique identifier of an instance of the component. This config is optional.
   A unique identifier of the component instance. This configuration is optional. A unique value should be passed only if the component's internal state (open tabs, completed requests, etc.) should not be shared with its other instances.
 - **paginationOn**: If true pagination will be used to display results.
 - **pageSize**: the size of a page. Default value is 10.
@@ -121,6 +121,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **immutableInfer**: if set to true, the 'infer' value cannot be changed. Default value is false.
 - **sameAs**: the value of "sameAs" parameter when a query is executed. Default value is true.
 - **immutableSameAs**: if set to true, the 'sameAs' value cannot be changed. Default value is false.
+- **language**: the language being used when the component is initialized. Default value is "en".
 
 ## Developers guide
 
