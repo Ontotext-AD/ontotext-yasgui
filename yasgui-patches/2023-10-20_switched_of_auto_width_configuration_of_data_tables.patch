@@ -1,0 +1,18 @@
+Subject: [PATCH] GDB-8286: The ontotext-yasgui-web-component opens slowly when there are many results.
+---
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 60eeeb4f8da681fa7903df4a160172a0ca4bae29)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 2dcf3b71934926c8a76ed9d5a2ee53e364b6e205)
+@@ -209,6 +209,7 @@
+       pageLength: -1,
+       data: rows,
+       columns: columns,
++      autoWidth: false,
+       language: {
+         info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
+         paginate: {
