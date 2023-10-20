@@ -209,6 +209,7 @@ export default class Table implements Plugin<PluginConfig> {
       pageLength: -1,
       data: rows,
       columns: columns,
+      autoWidth: false,
       language: {
         info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
         paginate: {
