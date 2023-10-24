@@ -216,6 +216,11 @@ export interface YasguiConfiguration {
       sparqlResponse: string | undefined,
 
       /**
+       * Flag that controls displaying the loader during the run query process.
+       */
+      showQueryLoader?: boolean;
+
+      /**
        * If the result information header of YASR should be rendered or not.
        */
       showResultInfo?: boolean;
@@ -302,5 +307,6 @@ export const defaultYasqeConfig: Record<string, any> = {
 
 export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
-  pluginOrder: ["extended_table", "response"]
+  pluginOrder: ["extended_table", "response"],
+  showQueryLoader: true,
 }

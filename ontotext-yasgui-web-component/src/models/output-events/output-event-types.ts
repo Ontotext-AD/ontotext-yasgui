@@ -5,8 +5,6 @@ export enum OutputEventType {
   OUTPUT_DOWNLOAD_AS_EVENT = 'downloadAs',
   OUTPUT_NOTIFICATION_MESSAGE_EVENT = 'notificationMessage',
   OUTPUT_QUERY_EXECUTED = 'queryExecuted',
-  OUTPUT_SET_RESPONSE_STARTED = 'setResponseStarted',
-  OUTPUT_SET_RESPONSE_FINISHED = 'setResponseFinished'
 }
 
 export type OutputEventTypes = `${OutputEventType}`;
