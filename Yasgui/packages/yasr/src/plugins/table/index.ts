@@ -223,9 +223,7 @@ export default class Table implements Plugin<PluginConfig> {
     this.dataTable = $(this.tableEl).DataTable(dtConfig);
     this.tableEl.style.removeProperty("width");
     this.tableEl.style.width = this.tableEl.clientWidth + "px";
-    const widths = Array.from(this.tableEl.querySelectorAll("th")).map((h) => h.offsetWidth - 26);
     this.tableResizer = new ColumnResizer.default(this.tableEl, {
-      widths: this.persistentConfig.compact === true ? widths : [this.getSizeFirstColumn(), ...widths.slice(1)],
       partialRefresh: true,
       onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
       headerOnly: false,
