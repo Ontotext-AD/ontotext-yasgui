@@ -432,8 +432,8 @@ export class Tab extends EventEmitter {
     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
     this.yasqe?.off("queryStatus", this.handleQueryStatusChange);
-    this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
-    this.yasqe?.on("closeOtherTabs", this.handlerCloseOtherTabs);
+    this.yasqe?.off("openPreviousTab", this.handleOpenPreviousTab);
+    this.yasqe?.off("closeOtherTabs", this.handlerCloseOtherTabs);
     this.yasqe?.destroy();
     this.yasqe = undefined;
   }
@@ -494,6 +494,10 @@ export class Tab extends EventEmitter {
     );
   };
   handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
+    const message = yasqe.isUpdateQuery()
+      ? this.yasgui.translationService.translate("loader.message.query.editor.executing.update")
+      : this.yasgui.translationService.translate("loader.message.query.editor.evaluating.query");
+    this.yasr?.showLoader(message, true);
     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
     if (this.hasPersistenceJsonBeenChanged(yasqe)) {
       this.updatePersistJson(yasqe);
@@ -512,6 +516,7 @@ export class Tab extends EventEmitter {
     }
   };
   handleYasqeQueryAbort = () => {
+    this.yasr?.hideLoader();
     this.emit("queryAbort", this);
   };
   handleYasqeResize = (_yasqe: Yasqe, newSize: string) => {
@@ -533,6 +538,7 @@ export class Tab extends EventEmitter {
     possibleElementsCount?: number,
     customResultMessage?: CustomResultMessage
   ) => {
+    this.yasr?.hideLoader();
     this.emit("queryResponse", this);
     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
     this.yasr.setResponse(
@@ -630,6 +636,7 @@ export class Tab extends EventEmitter {
     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
     yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
+    yasrConf.showQueryLoader = this.yasgui.config.yasr.showQueryLoader;
     yasrConf.tabId = this.getId();
 
     if (this.yasqe) {
