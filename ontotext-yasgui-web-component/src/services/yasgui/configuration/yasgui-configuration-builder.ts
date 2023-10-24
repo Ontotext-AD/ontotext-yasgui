@@ -77,6 +77,7 @@ export class YasguiConfigurationBuilder {
         getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount
       },
       yasr: {
+        showQueryLoader: externalConfiguration.showQueryLoader !== undefined ? externalConfiguration.showQueryLoader : defaultYasrConfig.showQueryLoader,
         sparqlResponse: externalConfiguration.sparqlResponse,
         prefixes: {},
         defaultPlugin: '',

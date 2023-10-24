@@ -10,8 +10,6 @@ export enum InternalEventType {
   INTERNAL_QUERY_EVENT = 'internalQueryEvent',
   INTERNAL_COUNT_QUERY_EVENT= 'internalCountQueryEvent',
   INTERNAL_COUNT_QUERY_RESPONSE_EVENT = 'internalCountQueryResponseEvent',
-  INTERNAL_SET_RESPONSE_STARTED_EVENT = 'internalSetResponseStartedEvent',
-  INTERNAL_SET_RESPONSE_FINISHED_EVENT = 'internalSetResponseFinishedEvent'
 }
 
 export type InternalEventTypes = `${InternalEventType}`;
