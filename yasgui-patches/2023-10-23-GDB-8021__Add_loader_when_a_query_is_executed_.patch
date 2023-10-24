@@ -1,0 +1,299 @@
+Subject: [PATCH] GDB-8021: Add loader when a query is executed.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision f14627eb14ec95d0093b281b69a112e8c0eacdc7)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 159da8d173e9b71169d661056879c70f5c3bbf3e)
+@@ -432,8 +432,8 @@
+     this.yasqe?.off("openNewTab", this.handleOpenNewTab);
+     this.yasqe?.off("openNextTab", this.handleOpenNextTab);
+     this.yasqe?.off("queryStatus", this.handleQueryStatusChange);
+-    this.yasqe?.on("openPreviousTab", this.handleOpenPreviousTab);
+-    this.yasqe?.on("closeOtherTabs", this.handlerCloseOtherTabs);
++    this.yasqe?.off("openPreviousTab", this.handleOpenPreviousTab);
++    this.yasqe?.off("closeOtherTabs", this.handlerCloseOtherTabs);
+     this.yasqe?.destroy();
+     this.yasqe = undefined;
+   }
+@@ -494,6 +494,10 @@
+     );
+   };
+   handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
++    const message = yasqe.isUpdateQuery()
++      ? this.yasgui.translationService.translate("loader.message.query.editor.executing.update")
++      : this.yasgui.translationService.translate("loader.message.query.editor.evaluating.query");
++    this.yasr?.showLoader(message, true);
+     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
+     if (this.hasPersistenceJsonBeenChanged(yasqe)) {
+       this.updatePersistJson(yasqe);
+@@ -512,6 +516,7 @@
+     }
+   };
+   handleYasqeQueryAbort = () => {
++    this.yasr?.hideLoader();
+     this.emit("queryAbort", this);
+   };
+   handleYasqeResize = (_yasqe: Yasqe, newSize: string) => {
+@@ -533,6 +538,7 @@
+     possibleElementsCount?: number,
+     customResultMessage?: CustomResultMessage
+   ) => {
++    this.yasr?.hideLoader();
+     this.emit("queryResponse", this);
+     if (!this.yasr) throw new Error("Resultset visualizer not initialized. Cannot draw results");
+     this.yasr.setResponse(
+@@ -630,6 +636,7 @@
+     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
+     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
+     yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
++    yasrConf.showQueryLoader = this.yasgui.config.yasr.showQueryLoader;
+     yasrConf.tabId = this.getId();
+ 
+     if (this.yasqe) {
+Index: Yasgui/packages/yasr/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision f14627eb14ec95d0093b281b69a112e8c0eacdc7)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 159da8d173e9b71169d661056879c70f5c3bbf3e)
+@@ -5,6 +5,7 @@
+     translationService: TranslationService.INSTANCE,
+     timeFormattingService: TimeFormattingService.INSTANCE,
+     showResultInfo: true,
++    showQueryLoader: true,
+     persistenceId: function (yasr) {
+       //Traverse parents untl we've got an id
+       // Get matching parent elements
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision f14627eb14ec95d0093b281b69a112e8c0eacdc7)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 159da8d173e9b71169d661056879c70f5c3bbf3e)
+@@ -1,5 +1,5 @@
+ import Yasr, { Config } from "@triply/yasr";
+-import { addClass, removeClass, TimeFormattingService, TranslationParameter } from "@triply/yasgui-utils";
++import { addClass, removeClass, TranslationParameter } from "@triply/yasgui-utils";
+ import Yasqe from "@triply/yasqe";
+ 
+ export class ExtendedYasr extends Yasr {
+@@ -9,12 +9,10 @@
+   externalPluginsConfigurations: Map<string, any> | undefined;
+ 
+   private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
+-  private timeFormattingService: TimeFormattingService | undefined;
+   private readonly persistentJson: any;
+ 
+   constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
+     super(yasqe, parent, conf, persistentJson?.yasr.response);
+-    this.timeFormattingService = conf.timeFormattingService;
+     this.persistentJson = persistentJson;
+     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
+     if (yasqe.config.paginationOn) {
+@@ -62,13 +60,14 @@
+     }
+   }
+ 
+-  draw(isSetResponseDrawing = false) {
++  draw() {
+     // The rendering of YASR is synchronous and can take time, especially when populating numerous results.
+     // Setting a timeout resolves the visualization of other components without waiting for YASR to finish drawing.
++    this.showLoader(this.translationService.translate("loader.message.query.editor.render.results"));
+     setTimeout(() => {
+       this.updatePluginElementVisibility();
+-      super.draw(isSetResponseDrawing);
+-    }, 0);
++      super.draw();
++    }, 100);
+   }
+ 
+   updatePluginSelectorNames() {
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision f14627eb14ec95d0093b281b69a112e8c0eacdc7)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 159da8d173e9b71169d661056879c70f5c3bbf3e)
+@@ -40,6 +40,7 @@
+   public fallbackInfoEl: HTMLDivElement;
+   public resultsEl: HTMLDivElement;
+   public pluginControls!: HTMLDivElement;
++  private loader: HTMLElement | undefined;
+   public config: Config;
+   public storage: YStorage;
+   public plugins: { [name: string]: Plugin<any> } = {};
+@@ -49,6 +50,7 @@
+   private selectedPlugin: string | undefined;
+ 
+   public readonly translationService: TranslationService;
++  public readonly timeFormattingService: TimeFormattingService | undefined;
+   readonly yasqe: Yasqe;
+ 
+   // Utils
+@@ -60,6 +62,7 @@
+     this.yasqe = yasqe;
+     this.rootEl = document.createElement("div");
+     this.rootEl.className = "yasr";
++    this.timeFormattingService = conf.timeFormattingService;
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasr.defaults, conf);
+ 
+@@ -67,6 +70,9 @@
+     this.translationService = this.config.translationService;
+     this.storage = new YStorage(Yasr.storageNamespace);
+     this.getConfigFromStorage();
++    if (this.config.showQueryLoader) {
++      this.createLoader();
++    }
+     this.headerEl = document.createElement("div");
+     this.headerEl.className = "yasr_header";
+     this.rootEl.appendChild(this.headerEl);
+@@ -189,10 +195,13 @@
+     }
+     return supportedPlugins.sort((p1, p2) => p2.priority - p1.priority).map((p) => p.name);
+   }
+-  public draw(isSetResponseDrawing = false) {
++  public draw() {
+     this.updateHelpButton();
+     this.updateResponseInfo();
+-    if (!this.results) return;
++    if (!this.results) {
++      this.hideLoader();
++      return;
++    }
+     this.updatePluginSelectorNames();
+     const compatiblePlugins = this.getCompatiblePlugins();
+     if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
+@@ -218,9 +227,6 @@
+       this.drawnPlugin = pluginToDraw;
+ 
+       this.emit("draw", this, this.plugins[pluginToDraw]);
+-      if (isSetResponseDrawing) {
+-        this.yasqe.emitEvent("internalSetResponseStartedEvent");
+-      }
+       const plugin = this.plugins[pluginToDraw];
+       const initPromise = plugin.initialize ? plugin.initialize() : Promise.resolve();
+       initPromise
+@@ -240,18 +246,12 @@
+           },
+           (_e) => console.error
+         )
+-        .finally(() => {
+-          if (isSetResponseDrawing) {
+-            this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
+-          }
+-        });
++        .finally(() => this.hideLoader());
+     } else {
+       this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
+       this.updateExportHeaders();
+       this.updatePluginSelectors(compatiblePlugins);
+-      if (isSetResponseDrawing) {
+-        this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
+-      }
++      this.hideLoader();
+     }
+   }
+   //just an alias for `draw`. That way, we've got a consistent api with yasqe
+@@ -294,6 +294,48 @@
+   getPluginSelectorsEl(): HTMLUListElement {
+     return this.pluginSelectorsEl;
+   }
++
++  createLoader() {
++    if (this.loader) {
++      return;
++    }
++    this.loader = document.createElement("loader-component");
++    // @ts-ignore
++    this.loader.additionalMessage = this.translationService.translate(
++      "loader.message.query.editor.executing.additional_message"
++    );
++    // @ts-ignore
++    this.loader.timeFormattingService = this.timeFormattingService;
++    this.loader.hidden = true;
++    this.rootEl.appendChild(this.loader);
++  }
++
++  showLoader(message: string, showQueryProgress = false) {
++    if (!this.loader) {
++      return;
++    }
++    // @ts-ignore
++    this.loader.message = message;
++    // @ts-ignore
++    this.loader.showQueryProgress = showQueryProgress;
++    // @ts-ignore
++    this.loader.hidden = false;
++    addClass(this.headerEl, "hidden");
++    addClass(this.resultsEl, "hidden");
++    addClass(this.fallbackInfoEl, "hidden");
++  }
++
++  hideLoader() {
++    if (!this.loader) {
++      return;
++    }
++    removeClass(this.headerEl, "hidden");
++    removeClass(this.resultsEl, "hidden");
++    removeClass(this.fallbackInfoEl, "hidden");
++    // @ts-ignore
++    this.loader.hidden = true;
++  }
++
+   drawPluginSelectors() {
+     this.pluginSelectorsEl = document.createElement("ul");
+     this.pluginSelectorsEl.className = "yasr_btnGroup";
+@@ -631,7 +673,7 @@
+     draw = true
+   ) {
+     if (!data) {
+-      this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
++      this.hideLoader();
+       return;
+     }
+     this.results = new Parser(
+@@ -644,7 +686,7 @@
+     );
+ 
+     if (draw) {
+-      this.draw(true);
++      this.draw();
+     }
+ 
+     this.storeResponse();
+@@ -710,6 +752,7 @@
+   downloadAsOptions?: { labelKey: string; value: any }[];
+ 
+   showResultInfo: boolean;
++  showQueryLoader: boolean;
+   sparqlResponse?: string;
+   /**
+    * Custom renderers for errors.
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision f14627eb14ec95d0093b281b69a112e8c0eacdc7)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 159da8d173e9b71169d661056879c70f5c3bbf3e)
+@@ -209,6 +209,8 @@
+       pageLength: -1,
+       data: rows,
+       columns: columns,
++      // Switched off for optimization purposes.
++      // Our cells are calculated dynamically, and with this configuration on, rendering the datatable results becomes very slow.
+       autoWidth: false,
+       language: {
+         info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
