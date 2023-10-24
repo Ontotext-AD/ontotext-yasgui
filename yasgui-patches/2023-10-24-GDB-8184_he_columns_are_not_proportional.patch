@@ -1,0 +1,20 @@
+Subject: [PATCH] GDB-8184: The columns are not proportional
+---
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision f14627eb14ec95d0093b281b69a112e8c0eacdc7)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision da5d9f58e8ecc6dce7b5d93a9cf4b77675262f3f)
+@@ -223,9 +223,7 @@
+     this.dataTable = $(this.tableEl).DataTable(dtConfig);
+     this.tableEl.style.removeProperty("width");
+     this.tableEl.style.width = this.tableEl.clientWidth + "px";
+-    const widths = Array.from(this.tableEl.querySelectorAll("th")).map((h) => h.offsetWidth - 26);
+     this.tableResizer = new ColumnResizer.default(this.tableEl, {
+-      widths: this.persistentConfig.compact === true ? widths : [this.getSizeFirstColumn(), ...widths.slice(1)],
+       partialRefresh: true,
+       onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
+       headerOnly: false,
