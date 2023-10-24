@@ -5,6 +5,7 @@ export default function get(): Config {
     translationService: TranslationService.INSTANCE,
     timeFormattingService: TimeFormattingService.INSTANCE,
     showResultInfo: true,
+    showQueryLoader: true,
     persistenceId: function (yasr) {
       //Traverse parents untl we've got an id
       // Get matching parent elements

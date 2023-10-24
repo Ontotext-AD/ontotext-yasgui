@@ -1,5 +1,5 @@
 import Yasr, { Config } from "@triply/yasr";
-import { addClass, removeClass, TimeFormattingService, TranslationParameter } from "@triply/yasgui-utils";
+import { addClass, removeClass, TranslationParameter } from "@triply/yasgui-utils";
 import Yasqe from "@triply/yasqe";
 
 export class ExtendedYasr extends Yasr {
@@ -9,12 +9,10 @@ export class ExtendedYasr extends Yasr {
   externalPluginsConfigurations: Map<string, any> | undefined;
 
   private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
-  private timeFormattingService: TimeFormattingService | undefined;
   private readonly persistentJson: any;
 
   constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
     super(yasqe, parent, conf, persistentJson?.yasr.response);
-    this.timeFormattingService = conf.timeFormattingService;
     this.persistentJson = persistentJson;
     this.externalPluginsConfigurations = conf.externalPluginsConfigurations;
     if (yasqe.config.paginationOn) {
@@ -62,13 +60,14 @@ export class ExtendedYasr extends Yasr {
     }
   }
 
-  draw(isSetResponseDrawing = false) {
+  draw() {
     // The rendering of YASR is synchronous and can take time, especially when populating numerous results.
     // Setting a timeout resolves the visualization of other components without waiting for YASR to finish drawing.
+    this.showLoader(this.translationService.translate("loader.message.query.editor.render.results"));
     setTimeout(() => {
       this.updatePluginElementVisibility();
-      super.draw(isSetResponseDrawing);
-    }, 0);
+      super.draw();
+    }, 100);
   }
 
   updatePluginSelectorNames() {

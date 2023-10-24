@@ -40,6 +40,7 @@ export class Yasr extends EventEmitter {
   public fallbackInfoEl: HTMLDivElement;
   public resultsEl: HTMLDivElement;
   public pluginControls!: HTMLDivElement;
+  private loader: HTMLElement | undefined;
   public config: Config;
   public storage: YStorage;
   public plugins: { [name: string]: Plugin<any> } = {};
@@ -49,6 +50,7 @@ export class Yasr extends EventEmitter {
   private selectedPlugin: string | undefined;
 
   public readonly translationService: TranslationService;
+  public readonly timeFormattingService: TimeFormattingService | undefined;
   readonly yasqe: Yasqe;
 
   // Utils
@@ -60,6 +62,7 @@ export class Yasr extends EventEmitter {
     this.yasqe = yasqe;
     this.rootEl = document.createElement("div");
     this.rootEl.className = "yasr";
+    this.timeFormattingService = conf.timeFormattingService;
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasr.defaults, conf);
 
@@ -67,6 +70,9 @@ export class Yasr extends EventEmitter {
     this.translationService = this.config.translationService;
     this.storage = new YStorage(Yasr.storageNamespace);
     this.getConfigFromStorage();
+    if (this.config.showQueryLoader) {
+      this.createLoader();
+    }
     this.headerEl = document.createElement("div");
     this.headerEl.className = "yasr_header";
     this.rootEl.appendChild(this.headerEl);
@@ -189,10 +195,13 @@ export class Yasr extends EventEmitter {
     }
     return supportedPlugins.sort((p1, p2) => p2.priority - p1.priority).map((p) => p.name);
   }
-  public draw(isSetResponseDrawing = false) {
+  public draw() {
     this.updateHelpButton();
     this.updateResponseInfo();
-    if (!this.results) return;
+    if (!this.results) {
+      this.hideLoader();
+      return;
+    }
     this.updatePluginSelectorNames();
     const compatiblePlugins = this.getCompatiblePlugins();
     if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
@@ -218,9 +227,6 @@ export class Yasr extends EventEmitter {
       this.drawnPlugin = pluginToDraw;
 
       this.emit("draw", this, this.plugins[pluginToDraw]);
-      if (isSetResponseDrawing) {
-        this.yasqe.emitEvent("internalSetResponseStartedEvent");
-      }
       const plugin = this.plugins[pluginToDraw];
       const initPromise = plugin.initialize ? plugin.initialize() : Promise.resolve();
       initPromise
@@ -240,18 +246,12 @@ export class Yasr extends EventEmitter {
           },
           (_e) => console.error
         )
-        .finally(() => {
-          if (isSetResponseDrawing) {
-            this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
-          }
-        });
+        .finally(() => this.hideLoader());
     } else {
       this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
       this.updateExportHeaders();
       this.updatePluginSelectors(compatiblePlugins);
-      if (isSetResponseDrawing) {
-        this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
-      }
+      this.hideLoader();
     }
   }
   //just an alias for `draw`. That way, we've got a consistent api with yasqe
@@ -294,6 +294,48 @@ export class Yasr extends EventEmitter {
   getPluginSelectorsEl(): HTMLUListElement {
     return this.pluginSelectorsEl;
   }
+
+  createLoader() {
+    if (this.loader) {
+      return;
+    }
+    this.loader = document.createElement("loader-component");
+    // @ts-ignore
+    this.loader.additionalMessage = this.translationService.translate(
+      "loader.message.query.editor.executing.additional_message"
+    );
+    // @ts-ignore
+    this.loader.timeFormattingService = this.timeFormattingService;
+    this.loader.hidden = true;
+    this.rootEl.appendChild(this.loader);
+  }
+
+  showLoader(message: string, showQueryProgress = false) {
+    if (!this.loader) {
+      return;
+    }
+    // @ts-ignore
+    this.loader.message = message;
+    // @ts-ignore
+    this.loader.showQueryProgress = showQueryProgress;
+    // @ts-ignore
+    this.loader.hidden = false;
+    addClass(this.headerEl, "hidden");
+    addClass(this.resultsEl, "hidden");
+    addClass(this.fallbackInfoEl, "hidden");
+  }
+
+  hideLoader() {
+    if (!this.loader) {
+      return;
+    }
+    removeClass(this.headerEl, "hidden");
+    removeClass(this.resultsEl, "hidden");
+    removeClass(this.fallbackInfoEl, "hidden");
+    // @ts-ignore
+    this.loader.hidden = true;
+  }
+
   drawPluginSelectors() {
     this.pluginSelectorsEl = document.createElement("ul");
     this.pluginSelectorsEl.className = "yasr_btnGroup";
@@ -631,7 +673,7 @@ export class Yasr extends EventEmitter {
     draw = true
   ) {
     if (!data) {
-      this.yasqe.emitEventAsync("internalSetResponseFinishedEvent");
+      this.hideLoader();
       return;
     }
     this.results = new Parser(
@@ -644,7 +686,7 @@ export class Yasr extends EventEmitter {
     );
 
     if (draw) {
-      this.draw(true);
+      this.draw();
     }
 
     this.storeResponse();
@@ -710,6 +752,7 @@ export interface Config {
   downloadAsOptions?: { labelKey: string; value: any }[];
 
   showResultInfo: boolean;
+  showQueryLoader: boolean;
   sparqlResponse?: string;
   /**
    * Custom renderers for errors.

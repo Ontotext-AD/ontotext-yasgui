@@ -209,6 +209,8 @@ export default class Table implements Plugin<PluginConfig> {
       pageLength: -1,
       data: rows,
       columns: columns,
+      // Switched off for optimization purposes.
+      // Our cells are calculated dynamically, and with this configuration on, rendering the datatable results becomes very slow.
       autoWidth: false,
       language: {
         info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
