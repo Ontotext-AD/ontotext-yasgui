@@ -39,12 +39,6 @@ export class LoaderComponent {
 
   private updateState() {
     if (this.hidden) {
-      console.log('Hide message', Date.now());
-    } else {
-      console.log("Show message", Date.now());
-    }
-    console.log('Message is: ', this.message);
-    if (this.hidden) {
       this.clearLoader();
       this.hostElement.classList.add('hidden');
     } else {

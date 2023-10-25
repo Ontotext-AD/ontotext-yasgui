@@ -107,6 +107,7 @@
   "yasr.plugin_control.plugin.name.extended_table": "Tableau",
   "yasr.plugin_control.plugin.name.response": "Réponse brute",
   "yasr.plugin_control.plugin.name.table": "Tableau",
+  "yasr.plugin_control.plugin.name.pivot-table": "Table de pivotement",
   "yasr.plugin_control.shows_view.btn.aria_label": "Affiche la vue {{name}}",
   "yasr.plugin_control.response_chip.timestamp.minutes_ago": "minutes",
   "yasr.plugin_control.response_chip.timestamp.moments_ago": "il y a quelques instants",
