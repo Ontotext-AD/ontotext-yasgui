@@ -1,5 +1,6 @@
 import {HtmlUtil} from '../utils/html-util';
 import {ExternalYasguiConfiguration} from '../../models/external-yasgui-configuration';
+import {YasrPlugin} from '../../models/yasr-plugin';
 
 export class YasrService {
 
@@ -17,6 +18,11 @@ export class YasrService {
    *
    */
   static readonly ESCAPED_HTML_DOUBLE_GREATER = '&gt;&gt';
+
+  static registerPlugin(name: string, plugin: YasrPlugin, enable = true) {
+    // @ts-ignore
+    Yasr.registerPlugin(name, plugin, enable);
+  }
 
   static getPluginsConfigurations(externalConfiguration: ExternalYasguiConfiguration): Map<string, any> {
     const pluginsConfigurations = new Map<string, any>();
