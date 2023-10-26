@@ -140,6 +140,13 @@ export class YasrSteps {
     this.getYasr().find('.select_extended_response').click();
   }
 
+  static getPivotTablePluginTab() {
+    return YasrSteps.getYasr().find('.select_pivot-table');
+  }
+
+  static openPivotPluginTab() {
+    YasrSteps.getPivotTablePluginTab().click();
+  }
 
   static getRawResults() {
     return this.getYasr().find('.yasr_results');

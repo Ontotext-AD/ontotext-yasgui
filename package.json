@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/Ontotext-AD/ontotext-yasgui#readme",
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.5",
     "cypress": "^12.10.0",
     "cypress-real-events": "^1.7.6",
     "eslint-plugin-cypress": "^2.12.1",
