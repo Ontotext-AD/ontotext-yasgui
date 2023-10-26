@@ -1,6 +1,7 @@
 import {HtmlUtil} from '../utils/html-util';
 import {ExternalYasguiConfiguration} from '../../models/external-yasgui-configuration';
 import {YasrPlugin} from '../../models/yasr-plugin';
+import {SparqlUtils} from '../utils/sparql-utils';
 
 export class YasrService {
 
@@ -240,7 +241,7 @@ class CellContentContext {
 
   getShortUri(uri: string) {
     if (!this.fullUriToShortUri.has(uri)) {
-      this.fullUriToShortUri.set(uri, this.uriToPrefixWithLocalName(uri));
+      this.fullUriToShortUri.set(uri, SparqlUtils.uriToPrefixWithLocalName(uri, this.prefixes));
     }
     return this.fullUriToShortUri.get(uri);
   }
@@ -263,20 +264,5 @@ class CellContentContext {
 
   isShacl() {
     return this.shacl;
-  }
-
-  /**
-   * Returns short uri of <code>uri</code>. For example: if <code>uri</code> is "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" then function
-   * will return "rdf:type". The "rdf" prefix have to be described in <code>prefixes</code> otherwise full <code>uri</code> will be returned.
-   * @param uri - full uri of a rdf resource. For example http://www.w3.org/1999/02/22-rdf-syntax-ns#type.
-   */
-  private uriToPrefixWithLocalName(uri: string): string {
-    for (const prefixLabel in this.prefixes) {
-      const prefix = this.prefixes[prefixLabel];
-      if (uri.indexOf(prefix) == 0) {
-        return prefixLabel + ":" + uri.substring(prefix.length);
-      }
-    }
-    return uri;
   }
 }

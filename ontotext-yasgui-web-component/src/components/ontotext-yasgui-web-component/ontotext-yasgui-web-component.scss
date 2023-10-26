@@ -4,6 +4,7 @@
 @import "src/css/toolbar";
 @import "src/css/icons";
 @import 'src/css/external/tippy';
+@import 'src/css/external/pivot';
 
 :host {
   display: block;
@@ -457,3 +458,4 @@
     white-space: pre-wrap;
   }
 }
+
