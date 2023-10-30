@@ -733,7 +733,7 @@ export class OntotextYasguiWebComponent {
       // * Build the internal yasgui configuration using the provided external configuration
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
       // * Build a yasgui instance using the configuration
-      YasrService.registerPlugin('pivot-table', PivotTablePlugin as any);
+      YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.afterInit();
     }
