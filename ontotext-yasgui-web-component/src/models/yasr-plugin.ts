@@ -49,5 +49,5 @@ export interface DownloadInfo {
    */
   getData: () => string;
   filename: string;
-  title: string;
+  title?: string;
 }

@@ -1,0 +1,87 @@
+.pivot-table-plugin {
+  overflow: auto;
+
+  .pvtUi {
+    border-collapse: collapse;
+
+    .pvtUnused.pivottable-plugin-unused-variables, .pvtCols.pivottable-plugin-columns,
+    .pvtVals.pivottable-plugin-values, .pvtRows.pivottable-plugin-rows {
+      background: transparent;
+    }
+
+    .pivottable-plugin-unused-variables-header, .pivottable-plugin-columns-header,
+    .pivottable-plugin-values-header, .pivottable-plugin-rows-header {
+      color: #999;
+      text-align: left;
+      margin-left: 8px !important;
+      margin-bottom: 8px !important;
+      font-style: italic;
+    }
+
+    td.pvtUnused.pivottable-plugin-unused-variables, td.pvtCols.pivottable-plugin-columns,
+    td.pvtVals.pivottable-plugin-values, td.pvtRows.pivottable-plugin-rows {
+      border: 1px solid #ddd;
+    }
+
+    .pvtAttr.povottable-plugin-variable {
+      background: #337ab7 !important;
+      color: #FFFFFF;
+      padding: 4px 7px;
+
+      .pvtTriangle {
+        color: #FFFFFF;
+      }
+
+      .pivottable-plugin-variable-icon {
+        display: inline-block;
+        margin-left: 6px;
+        vertical-align: sub;
+
+        svg {
+          fill: #FFFFFF;
+        }
+      }
+    }
+
+    .pvtTable {
+      tr th {
+        background-color: #f2f2f2;
+      }
+
+      .pvtAxisLabel {
+        background-color: #337ab7;
+        color: #fff;
+      }
+
+      .pvtTotalLabel {
+        background-color: #f2f2f2;
+      }
+
+      .pvtRowLabel {
+        background-color: #f2f2f2;
+        text-align: center;
+      }
+    }
+  }
+
+  .pvtRendererArea textarea {
+    border-color: #dddddd;
+  }
+}
+
+.yasr {
+  .pivot-table-download-as-button {
+    font-size: 16px;
+    font-weight: 400;
+    padding: 5px 16px;
+    line-height: 1.25;
+    border: none;
+    outline: none;
+    color: #FFFFFF;
+    cursor: pointer;
+    background-color: #e84e0f;
+    .pivot-table-download-as-button-label {
+      padding-left: 8px;
+    }
+  }
+}

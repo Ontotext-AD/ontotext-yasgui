@@ -79,6 +79,12 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
   private updateDownloadAsElementVisibility(element: any, yasr: Yasr) {
     element.classList.add("hidden");
 
+    const downloadAsConfiguration = this.pluginNameToPluginsConfigurations.get(element.pluginName);
+    if (!downloadAsConfiguration) {
+      // if we don't have a configuration for that plugin, we hidde the button.
+      return;
+    }
+
     // Download as dropdown is not visible
     // when executed query is for explain plan query,
     if (yasr.yasqe.getIsExplainPlanQuery()) {
