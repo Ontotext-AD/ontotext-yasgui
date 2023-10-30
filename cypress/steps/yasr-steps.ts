@@ -141,7 +141,7 @@ export class YasrSteps {
   }
 
   static getPivotTablePluginTab() {
-    return YasrSteps.getYasr().find('.select_pivot-table');
+    return YasrSteps.getYasr().find('.select_pivot-table-plugin');
   }
 
   static openPivotPluginTab() {

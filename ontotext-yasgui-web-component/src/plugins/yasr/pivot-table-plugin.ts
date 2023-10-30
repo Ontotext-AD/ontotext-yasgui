@@ -1,15 +1,15 @@
 import {YasrPlugin} from '../../models/yasr-plugin';
 import {TranslationService} from '../../services/translation.service';
 import {SvgUtil} from '../../services/utils/svg-util';
-import {HtmlUtil} from '../../services/utils/html-util';
 import {SparqlUtils} from '../../services/utils/sparql-utils';
+import {HtmlUtil} from '../../services/utils/html-util';
 
 export class PivotTablePlugin implements YasrPlugin {
 
   // TODO add persistence
   // @ts-ignore
   private static readonly PERSISTENCE_ID = 'pivot';
-  private static readonly PLUGIN_CLASS_NAME = 'pivot-table-plugin';
+  public static readonly PLUGIN_NAME = 'pivot-table-plugin';
 
   // @ts-ignore
   private yasr: Yasr;
@@ -30,14 +30,14 @@ export class PivotTablePlugin implements YasrPlugin {
 
   initialize(): Promise<void> {
     return new Promise(resolve => {
-      HtmlUtil.addScriptTag('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js');
-      HtmlUtil.addScriptTag('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js');
-      HtmlUtil.addScriptTag('https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
-      HtmlUtil.addScriptTag('https://www.google.com/jsapi');
-      HtmlUtil.addScriptTag('https://www.gstatic.com/charts/loader.js');
-      HtmlUtil.addScriptTag('https://pivottable.js.org/dist/pivot.js');
-      HtmlUtil.addScriptTag('https://pivottable.js.org/dist/d3_renderers.js');
-      HtmlUtil.addScriptTag('https://pivottable.js.org/dist/gchart_renderers.js', () => resolve());
+      HtmlUtil.loadCss('https://pivottable.js.org/dist/pivot.css');
+      HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js');
+      HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js');
+      HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
+      HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js');
+      HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/pivot.js');
+      HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/d3_renderers.js');
+      HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/gchart_renderers.js', resolve);
     });
   }
 
@@ -66,13 +66,13 @@ export class PivotTablePlugin implements YasrPlugin {
 
   private showPlugin(renderers) {
     const pluginHtml = document.createElement("div");
-    pluginHtml.className = PivotTablePlugin.PLUGIN_CLASS_NAME;
+    pluginHtml.className = PivotTablePlugin.PLUGIN_NAME;
     this.yasr.resultsEl.appendChild(pluginHtml);
 
     // @ts-ignore
     google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
     // @ts-ignore
-    $(`.${PivotTablePlugin.PLUGIN_CLASS_NAME}`).pivotUI((callback) => this.getResults(callback), {renderers});
+    $(`.${PivotTablePlugin.PLUGIN_NAME}`).pivotUI((callback) => this.getResults(callback), {renderers});
   }
 
   /**

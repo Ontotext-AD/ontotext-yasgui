@@ -12,23 +12,27 @@ export class HtmlUtil {
     return textArea.value;
   }
 
-  static addScriptTag(url: string, onLoadHandler: () => void | undefined = undefined, async = false) {
-    const loader = document.createElement('script');
-    loader.setAttribute('src',url);
-    loader.async = async;
-    if (onLoadHandler) {
-      loader.addEventListener('load', onLoadHandler);
+  static loadJavaScript(url: string, onLoadHandler: () => void | undefined = undefined, async = false) {
+    if (!document.querySelector(`script[src="${url}"]`)) {
+      const loader = document.createElement('script');
+      loader.setAttribute('src', url);
+      loader.async = async;
+      if (onLoadHandler) {
+        loader.addEventListener('load', onLoadHandler);
+      }
+      document.head.appendChild(loader);
+    } else if (typeof onLoadHandler === "function") {
+      onLoadHandler();
     }
-    document.head.appendChild(loader);
   }
 
-  static addCssTag(url: string, onLoadHandler: () => void | undefined = undefined, async = false) {
-    const loader = document.createElement('script');
-    loader.setAttribute('src',url);
-    loader.async = async;
-    if (onLoadHandler) {
-      loader.addEventListener('load', onLoadHandler);
+  static loadCss(url: string) {
+    if (!document.querySelector(`link[href="${url}"]`)) {
+      const loader = document.createElement('link');
+      loader.setAttribute('href', url);
+      loader.rel = 'stylesheet';
+      loader.type = 'text/css';
+      document.head.appendChild(loader);
     }
-    document.head.appendChild(loader);
   }
 }
