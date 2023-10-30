@@ -1,4 +1,4 @@
-import {YasrPlugin} from '../../models/yasr-plugin';
+import {DownloadInfo, YasrPlugin} from '../../models/yasr-plugin';
 import {TranslationService} from '../../services/translation.service';
 import {SvgUtil} from '../../services/utils/svg-util';
 import {SparqlUtils} from '../../services/utils/sparql-utils';
@@ -17,8 +17,9 @@ export class PivotTablePlugin implements YasrPlugin {
   private translationService: TranslationService;
 
   helpReference: string;
-  public label = "pivot-table";
+  public label = PivotTablePlugin.PLUGIN_NAME;
   public priority = 4;
+  private pluginElement: HTMLDivElement | undefined;
 
   // @ts-ignore
   constructor(yasr: Yasr) {
@@ -37,6 +38,7 @@ export class PivotTablePlugin implements YasrPlugin {
       HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js');
       HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/pivot.js');
       HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/d3_renderers.js');
+      HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/export_renderers.js');
       HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/gchart_renderers.js', resolve);
     });
   }
@@ -47,6 +49,11 @@ export class PivotTablePlugin implements YasrPlugin {
 
   draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
     this.showPlugin(this.getRenders());
+    this.addUnusedVariableHeader();
+    this.addColumnsHeader();
+    this.valuesHeader();
+    this.rowsHeader();
+    this.updateVariablesElement();
   }
 
   getIcon(): Element | undefined {
@@ -59,20 +66,97 @@ export class PivotTablePlugin implements YasrPlugin {
     // TODO remove all listeners if any.
   }
 
+  download(_filename?: string): DownloadInfo | undefined {
+
+    const pivotTableTableElement = document.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`);
+    // @ts-ignore
+    const options = $.data(pivotTableTableElement, 'pivotUIOptions');
+
+    if (options) {
+      switch (options.rendererName) {
+        case PivotTableRendererName.TSV_EXPORT:
+          return this.getTSVDownloadInfo(options);
+        case PivotTableRendererName.TABLE:
+        case PivotTableRendererName.TABLE_BARCHART:
+        case PivotTableRendererName.HEATMAP:
+        case PivotTableRendererName.ROW_HEATMAP:
+        case PivotTableRendererName.COL_HEATMAP:
+          return this.getCSVDownloadInfo();
+        case PivotTableRendererName.BAR_CHART:
+        case PivotTableRendererName.LINE_CHART:
+        case PivotTableRendererName.STACKED_BAR_CHART:
+        case PivotTableRendererName.AREA_CHART:
+        case PivotTableRendererName.SCATTER_CHART:
+          return this.getSvgDownloadInfo(options);
+      }
+    }
+
+    return;
+  }
+
+  private getSvgDownloadInfo(_options): DownloadInfo | undefined {
+    return {
+      contentType: "image/svg+xml",
+      filename: "queryResults.svg",
+      getData: () => {
+
+        // TODO after persistence try to use the render instead  loading from the DOM.
+        // const svgEl = this.getRenderedElement(options).find('svg')[0];
+        const svgEl = document.querySelector('.pvtRendererArea svg');
+        return svgEl.outerHTML;
+      }
+    };
+  }
+
+  private getTSVDownloadInfo(_options): DownloadInfo | undefined {
+    return {
+      contentType: "text/tsv",
+      filename: "queryResults.tsv",
+      getData: () => {
+        // TODO after persistence try to use the render instead loading from the DOM.
+        // return this.getRenderedElement(options).html();
+        return document.querySelector('.pvtRendererArea textarea').innerHTML;
+      }
+    };
+  }
+
+  private getCSVDownloadInfo(): DownloadInfo | undefined {
+    return {
+      contentType: "text/csv",
+      filename: "queryResults.csv",
+      getData: () => HtmlUtil.tableToCsv(document.querySelector('.pvtRendererArea table'))
+    };
+  }
+
+  // @ts-ignore
+  private getRenderedElement(options) {
+    const input = (callback) => this.getResults(callback);
+    // @ts-ignore
+    const pivotData = $.pivotUtilities.PivotData;
+    const materializedInput = [];
+    pivotData.forEachRecord(input, options.derivedAttributes, function (record) {
+      materializedInput.push(record);
+    });
+
+    return options.renderers[options.rendererName](new pivotData(materializedInput, options));
+  }
+
   private getRenders(): any {
     // @ts-ignore
-    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities.d3_renderers, $.pivotUtilities.gchart_renderers);
+    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities.d3_renderers, $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
   }
 
   private showPlugin(renderers) {
-    const pluginHtml = document.createElement("div");
-    pluginHtml.className = PivotTablePlugin.PLUGIN_NAME;
-    this.yasr.resultsEl.appendChild(pluginHtml);
+    this.pluginElement = document.createElement("div");
+    this.pluginElement.className = PivotTablePlugin.PLUGIN_NAME;
+    this.yasr.resultsEl.appendChild(this.pluginElement);
 
     // @ts-ignore
     google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
     // @ts-ignore
-    $(`.${PivotTablePlugin.PLUGIN_NAME}`).pivotUI((callback) => this.getResults(callback), {renderers});
+    const pivotUI = $(`.${PivotTablePlugin.PLUGIN_NAME}`).pivotUI((callback) => this.getResults(callback), {renderers});
+    // @ts-ignore
+    const exportRenderers = $.pivotUtilities.export_renderers;
   }
 
   /**
@@ -123,4 +207,71 @@ export class PivotTablePlugin implements YasrPlugin {
     }
     return null;
   }
+
+  private addUnusedVariableHeader(): void {
+    const unusedVariablesContainer = this.pluginElement.querySelector('.pvtUnused');
+    unusedVariablesContainer.classList.add('pivottable-plugin-unused-variables');
+    const unusedVariablesHeaderElement = document.createElement('div');
+    unusedVariablesHeaderElement.classList.add('pivottable-plugin-unused-variables-header');
+    unusedVariablesHeaderElement.innerText = this.yasr.translationService.translate('Available Variables');
+    unusedVariablesContainer.prepend(unusedVariablesHeaderElement);
+  }
+
+  private addColumnsHeader(): void {
+    const columnsContainer = this.pluginElement.querySelector('.pvtCols');
+    columnsContainer.classList.add('pivottable-plugin-columns');
+    const columnsHeaderElement = document.createElement('div');
+    columnsHeaderElement.classList.add('pivottable-plugin-columns-header');
+    columnsHeaderElement.innerText = this.yasr.translationService.translate('Columns');
+    columnsContainer.prepend(columnsHeaderElement);
+  }
+
+  private valuesHeader(): void {
+    const valuesContainer = this.pluginElement.querySelector('.pvtVals');
+    valuesContainer.classList.add('pivottable-plugin-values');
+    const valuesHeaderElement = document.createElement('div');
+    valuesHeaderElement.classList.add('pivottable-plugin-values-header');
+    valuesHeaderElement.innerText = this.yasr.translationService.translate('Cells');
+    valuesContainer.prepend(valuesHeaderElement);
+  }
+
+  private rowsHeader(): void {
+    const rowsContainer = this.pluginElement.querySelector('.pvtRows');
+    rowsContainer.classList.add('pivottable-plugin-rows');
+    const rowsHeaderElement = document.createElement('div');
+    rowsHeaderElement.classList.add('pivottable-plugin-rows-header');
+    rowsHeaderElement.innerText = this.yasr.translationService.translate('Rows');
+    rowsContainer.prepend(rowsHeaderElement);
+  }
+
+  private updateVariablesElement() {
+    this.pluginElement.querySelectorAll('.pvtAttr')
+      .forEach((variableElement) => this.updateVariableElement(variableElement));
+  }
+
+  private updateVariableElement(variableElement: Element) {
+    variableElement.classList.add('povottable-plugin-variable');
+    const dropdownElement = variableElement.querySelector('.pvtTriangle');
+    const icon = document.createElement('div');
+    icon.classList.add('pivottable-plugin-variable-icon');
+    icon.innerHTML = SvgUtil.getPivotTableValueIcon();
+    variableElement.insertBefore(icon, dropdownElement);
+
+    //SvgUtil.getPivotTableValueIcon()
+  }
+}
+
+export enum PivotTableRendererName {
+  TABLE = 'Table',
+  TABLE_BARCHART = 'Table Barchart',
+  HEATMAP = 'Heatmap',
+  ROW_HEATMAP = 'Row Heatmap',
+  COL_HEATMAP = 'Col Heatmap',
+  TREEMAP = 'Treemap',
+  LINE_CHART = 'Line Chart',
+  BAR_CHART = 'Bar Chart',
+  STACKED_BAR_CHART = 'Stacked Bar Chart',
+  AREA_CHART = 'Area Chart',
+  SCATTER_CHART = 'Scatter Chart',
+  TSV_EXPORT = 'TSV Export'
 }
