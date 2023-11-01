@@ -59,6 +59,10 @@ export class QueryStubs {
     }).as('updaeResponse');
   }
 
+  static stubChartDataQuery() {
+    cy.intercept('/repositories/chart-data', {fixture: '/queries/chart-data-response.json'}).as('chart-data-request');
+  }
+
   static stubQueryResults(queryDescription: QueryStubDescription) {
     const resultType = queryDescription.resultType;
     const pageSize = queryDescription.pageSize;

@@ -208,6 +208,22 @@
       .yasr_response_chip {
         min-height: 50px;
         background-color: $color-onto-table-header-background;
+
+        #openChartConfigBtn {
+          color: #333;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          text-align: center;
+          vertical-align: middle;
+          cursor: pointer;
+          padding: 6px 12px;
+          user-select: none;
+        }
+
+        #openChartConfigBtn:hover {
+          background-color: #ebebeb;
+          border-color: #adadad;
+        }
       }
 
       .pageSizeWrapper, .switch {
@@ -253,8 +269,7 @@
 
       /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
       .dataTable tbody td div.uri-cell:hover .resource-copy-link, .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
-      .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link
-      {
+      .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link {
         display: inline;
         padding-left: 10px;
         padding-right: 10px;

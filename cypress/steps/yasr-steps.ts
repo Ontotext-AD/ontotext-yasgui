@@ -200,4 +200,24 @@ export class YasrSteps {
   static getEmptyResultElement() {
     return cy.get('.yasr_response_chip.empty');
   }
+
+  static openChartsTab() {
+    this.getYasr().find('.select_charts').click();
+  }
+
+  static getGoogleChartConfigButton() {
+    return this.getYasr().find('#openChartConfigBtn');
+  }
+
+  static openGoogleChartsConfig() {
+    this.getGoogleChartConfigButton().click();
+  }
+
+  static getGoogleDataTable() {
+    return this.getYasr().find('.google-visualization-table-table');
+  }
+
+  static getGoogleChartVisualization() {
+    return this.getYasr().find('.yasr_results svg');
+  }
 }

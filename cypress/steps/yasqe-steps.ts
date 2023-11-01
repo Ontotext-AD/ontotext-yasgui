@@ -60,7 +60,7 @@ export class YasqeSteps {
   static executeQuery(index = 0) {
     this.getExecuteQueryButton(index).click();
     LoaderSteps.getLoader(index).should('not.be.visible');
-    // Wait a wile for the response information to be present.
+    // Wait a while for the response information to be present.
     YasrSteps.getResponseInfo(index)
       .should('not.have.class', 'hidden')
       .should('not.have.class', 'empty')

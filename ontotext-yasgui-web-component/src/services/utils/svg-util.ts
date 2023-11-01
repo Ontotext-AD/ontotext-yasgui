@@ -4,18 +4,14 @@ export class SvgUtil {
   }
 
   static getPivotTableIconSvgTag(): string {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-                <rect width="48" height="48" fill="white" fill-opacity="0.01"/>
-                <path  fill="white" stroke="#000000" stroke-width="4" d="M42.0004 4H6.00005C4.89546 4 4.00002 4.89546 4.00005 6.00005L4.00104 42.0001C4.00107 43.1046 4.8965 44 6.00104 44H42.0004C43.105 44 44.0004 43.1046 44.0004 42V6C44.0004 4.89543 43.105 4 42.0004 4Z"/>
-                <path d="M20.0088 34.0083H33.5005V20.0083" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M24.5 38.5L23 37L20 34L23 31L24.5 29.5" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M29 24.5L30.5 23L33.5 20L36.5 23L38 24.5" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M14 4L14 44" stroke="black" stroke-width="4" stroke-linecap="round"/>
-                <path d="M4 14.0378L44 14" stroke="black" stroke-width="4" stroke-linecap="round"/>
-                <path d="M8 4H28" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 44H28" stroke="#000000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M44 8V18" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-                <path d="M4 8L4 18" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
-            </svg>`
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+        <path d="M400-640v-200h360q33 0 56.5 23.5T840-760v120H400ZM200-120q-33 0-56.5-23.5T120-200v-360h200v440H200Zm-80-520v-120q0-33 23.5-56.5T200-840h120v200H120ZM520-80 360-240l160-160 56 56-62 64h86q33 0 56.5-23.5T680-360v-88l-64 64-56-56 160-160 160 160-56 56-64-64v88q0 66-47 113t-113 47h-86l62 64-56 56Z"/>
+      </svg>`;
+  }
+
+  static getYasrChartPluginIcon(): string {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+        <path d="M200-120q-33 0-56.5-23.5T120-200v-640h80v640h640v80H200Zm40-120v-360h160v360H240Zm200 0v-560h160v560H440Zm200 0v-200h160v200H640Z"/>
+      </svg>`;
   }
 }
