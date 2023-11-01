@@ -16,7 +16,7 @@ export class SparqlUtils {
    *   }
    * </pre>
    */
-  static uriToPrefixWithLocalName(uri: string, prefixes: { [label: string]: string }): string {
+  static uriToPrefixWithLocalName(uri: string, prefixes: Record<string, string>): string {
     for (const prefixLabel in prefixes) {
       const prefix = prefixes[prefixLabel];
       if (uri.indexOf(prefix) == 0) {
@@ -24,5 +24,12 @@ export class SparqlUtils {
       }
     }
     return uri;
+  }
+
+  static mapPrefixesToNamespaces(prefixes: Record<string, string>): Record<string, string> {
+    return Object.keys(prefixes).reduce<Record<string, string>>((acc, key) => {
+      acc[prefixes[key]] = key;
+      return acc;
+    }, {});
   }
 }

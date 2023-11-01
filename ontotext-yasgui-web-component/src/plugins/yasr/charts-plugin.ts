@@ -1,6 +1,8 @@
 import {DownloadInfo, YasrPlugin} from '../../models/yasr-plugin';
 import {TranslationService} from '../../services/translation.service';
 import {SvgUtil} from '../../services/utils/svg-util';
+import {HtmlUtil} from "../../services/utils/html-util";
+import {SparqlUtils} from "../../services/utils/sparql-utils";
 
 export class ChartsPlugin implements YasrPlugin {
   // @ts-ignore
@@ -9,12 +11,12 @@ export class ChartsPlugin implements YasrPlugin {
   private translationService: TranslationService;
   public static readonly PLUGIN_NAME = 'charts';
   public label = "charts";
-  helpReference: string;
   public priority = 7;
-
+  helpReference: string;
   private chartEditor = null;
   private wrapper = null;
   private loaded = false;
+  private chartEditorOkHandler = undefined;
 
   // @ts-ignore
   constructor(yasr: Yasr) {
@@ -29,14 +31,10 @@ export class ChartsPlugin implements YasrPlugin {
   }
 
   initialize(): Promise<void> {
-    console.log('1. init plugin', this.loaded);
     return new Promise((resolve) => {
       // One script tag loads all the required libraries!
-      const loader = document.createElement('script');
-      loader.setAttribute('src', 'https://www.gstatic.com/charts/loader.js');
-      loader.async = false;
-      loader.addEventListener('load', this.chartLoadHandler.bind(this));
-      document.head.appendChild(loader);
+      HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js', this.chartLoadHandler.bind(this));
+
       const interval = setInterval(() => {
         if (this.loaded) {
           clearInterval(interval);
@@ -46,26 +44,44 @@ export class ChartsPlugin implements YasrPlugin {
     });
   }
 
+  // @ts-ignore
   download?(filename?: string): DownloadInfo | undefined {
-    console.log('download', filename);
     return;
   }
 
   draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
-    console.log('draw',);
-    if (!window['google'] || !window['google'].visualization || !this.chartEditor) {
-      // init it
-    } else {
-      // just use it
-      this.initEditor();
-      this.doDraw();
-    }
+    this.initEditor();
+    this.drawChart();
   }
 
-  private doDraw() {
+  getIcon(): Element | undefined {
+    const icon = document.createElement('div');
+    icon.innerHTML = SvgUtil.getYasrChartPluginIcon();
+    return icon;
+  }
+
+  destroy(): void {
+    // @ts-ignore
+    google.visualization.events.removeListener(this.chartEditorOkHandler);
+  }
+
+  private drawChart() {
     this.yasr.resultsEl.innerHTML = '';
     this.addChartConfigButton();
+    const dataTable = this.buildModel();
+    this.createChartContainer();
+    // @ts-ignore
+    this.wrapper = new google.visualization.ChartWrapper({
+      chartType: 'Table',
+      dataTable: dataTable,
+      containerId: 'visualization'
+    });
+    this.wrapper.setOption("width", '100%');
+    this.wrapper.setOption("height", 600);
+    this.wrapper.draw();
+  }
 
+  private buildModel() {
     // @ts-ignore
     const dataTable = new google.visualization.DataTable();
     const jsonResults = this.yasr.results.getAsJson();
@@ -83,41 +99,21 @@ export class ChartsPlugin implements YasrPlugin {
       dataTable.addColumn(type, variable);
     });
 
-    let usedPrefixes = this.yasr.getPrefixes();
+    const prefixes = SparqlUtils.mapPrefixesToNamespaces(this.yasr.getPrefixes());
 
     jsonResults.results.bindings.forEach((binding) => {
-      const row = [];
-      jsonResults.head.vars.forEach((variable, columnId) => {
-        row.push(this.castGoogleType(binding[variable], usedPrefixes, dataTable.getColumnType(columnId)));
+      const row = jsonResults.head.vars.map((variable, columnId) => {
+        return ChartsPlugin.castGoogleType(binding[variable], prefixes, dataTable.getColumnType(columnId));
       });
       dataTable.addRow(row);
     });
+    return dataTable;
+  }
 
+  private createChartContainer() {
     const pluginHtml = document.createElement("div");
     pluginHtml.id = 'visualization';
     this.yasr.resultsEl.appendChild(pluginHtml);
-
-    // @ts-ignore
-    this.wrapper = new google.visualization.ChartWrapper({
-      chartType: 'Table',
-      dataTable: dataTable,
-      containerId: 'visualization'
-    });
-
-    this.wrapper.setOption("width", '100%');
-    this.wrapper.setOption("height", 600);
-    this.wrapper.draw();
-    // this.yasr.updateHeader();
-  }
-
-  getIcon(): Element | undefined {
-    const icon = document.createElement('div');
-    icon.innerHTML = SvgUtil.getYasrChartPluginIcon();
-    return icon;
-  }
-
-  destroy(): void {
-    // TODO remove all listeners if any.
   }
 
   private redrawChart() {
@@ -125,18 +121,13 @@ export class ChartsPlugin implements YasrPlugin {
   }
 
   private chartLoadHandler() {
-    console.log('loaded',);
     // @ts-ignore
     google.charts.load('current', {packages: ['charteditor']}).then(this.onLoadCallback.bind(this));
-    // @ts-ignore
-    // google.charts.setOnLoadCallback(this.onLoadCallback.bind(this));
   }
 
   private onLoadCallback() {
     this.initEditor();
-
-    this.doDraw();
-
+    this.drawChart();
     // chart loader and modules are loaded
     this.loaded = true;
   }
@@ -145,7 +136,7 @@ export class ChartsPlugin implements YasrPlugin {
     // @ts-ignore
     this.chartEditor = new google.visualization.ChartEditor();
     // @ts-ignore
-    google.visualization.events.addListener(this.chartEditor, 'ok', this.redrawChart.bind(this));
+    this.chartEditorOkHandler = google.visualization.events.addListener(this.chartEditor, 'ok', this.redrawChart.bind(this));
   }
 
   private addChartConfigButton() {
@@ -162,7 +153,7 @@ export class ChartsPlugin implements YasrPlugin {
     infoContainer.prepend(openConfigButton);
   }
 
-  private getGoogleTypeForBinding(binding) {
+  private static getGoogleTypeForBinding(binding): string | null {
     if (!binding) {
       return null;
     }
@@ -193,11 +184,11 @@ export class ChartsPlugin implements YasrPlugin {
     }
   }
 
-  private getGoogleTypeForBindings(bindings, varName) {
+  private getGoogleTypeForBindings(bindings, varName): string {
     const types = {};
     let typeCount = 0;
     bindings.forEach((binding) => {
-      const type = this.getGoogleTypeForBinding(binding[varName]);
+      const type = ChartsPlugin.getGoogleTypeForBinding(binding[varName]);
       if (type != null) {
         if (!(type in types)) {
           types[type] = 0;
@@ -209,7 +200,7 @@ export class ChartsPlugin implements YasrPlugin {
     if (typeCount == 0) {
       return 'string';
     } else if (typeCount == 1) {
-      for (let type in types) {
+      for (const type in types) {
         //just return this one
         return type;
       }
@@ -220,7 +211,7 @@ export class ChartsPlugin implements YasrPlugin {
     }
   }
 
-  private castGoogleType(binding, prefixes, googleType) {
+  private static castGoogleType(binding, prefixes, googleType) {
     if (binding == null) {
       return null;
     }
@@ -242,9 +233,12 @@ export class ChartsPlugin implements YasrPlugin {
           // the date function does not parse -any- date (including most xsd dates!)
           // datetime and time seem to be fine though.
           // so, first try our custom parser. if that does not work, try the regular date parser anyway
-          const date = this.parseXmlSchemaDate(binding.value);
-          if (date) return date;
+          const date = ChartsPlugin.parseXmlSchemaDate(binding.value);
+          if (date) {
+            return date;
+          }
         case 'http://www.w3.org/2001/XMLSchema#dateTime':
+          return new Date(binding.value);
         case 'http://www.w3.org/2001/XMLSchema#time':
           return new Date(binding.value);
         default:
@@ -252,23 +246,22 @@ export class ChartsPlugin implements YasrPlugin {
       }
     } else {
       if (binding.type == 'uri') {
-        return this.uriToPrefixed(prefixes, binding.value);
+        return ChartsPlugin.uriToPrefixed(prefixes, binding.value);
       } else {
         return binding.value;
       }
     }
   }
 
-  private uriToPrefixed(prefixes, uri) {
+  private static uriToPrefixed(prefixes, uri): string {
+    let prefixedUri = uri;
     if (prefixes) {
-      for (let prefix in prefixes) {
-        if (uri.indexOf(prefixes[prefix]) == 0) {
-          uri = prefix + ':' + uri.substring(prefixes[prefix].length);
-          break;
-        }
+      const prefix = prefixes[uri];
+      if (prefix && uri.indexOf(prefix) === 0) {
+        prefixedUri = prefix + ':' + prefixedUri.substring(prefix.length);
       }
     }
-    return uri;
+    return prefixedUri;
   }
 
   // There are no PROPER xml schema to js date parsers
@@ -276,9 +269,9 @@ export class ChartsPlugin implements YasrPlugin {
   // And: I'm not going to write one myself
   // There are other hacky solutions (regular expressions based on trial/error) such as http://stackoverflow.com/questions/2731579/convert-an-xml-schema-date-string-to-a-javascript-date
   // But if we're doing hacky stuff, I at least want to do it MYSELF!
-  private parseXmlSchemaDate(dateString) {
+  private static parseXmlSchemaDate(dateString): Date | null {
     //change +02:00 to Z+02:00 (something which is parseable by js date)
-    const date = new Date(dateString.replace(/(\d)([\+-]\d{2}:\d{2})/, '$1Z$2'));
+    const date = new Date(dateString.replace(/(\d)([+-]\d{2}:\d{2})/, '$1Z$2'));
     // @ts-ignore
     if (isNaN(date)) return null;
     return date;
