@@ -20,7 +20,7 @@ describe('Pivot table plugin', () => {
     // and execute a query
     YasqeSteps.executeQuery();
 
-    // Then I expect the "Pivot table" to be visible.
+    // Then I expect the "Pivot table" tab to be visible.
     YasrSteps.getPivotTablePluginTab().should('be.visible');
 
     // When I open "Pivot Table" plugin
