@@ -1,0 +1,7 @@
+gvjs_q(gvjs_2b, gvjs_nY, void 0);
+gvjs_nY.prototype.draw = gvjs_nY.prototype.draw;
+gvjs_nY.prototype.getSelection = gvjs_nY.prototype.getSelection;
+gvjs_nY.prototype.getVisibleChartRange = gvjs_nY.prototype.U$;
+gvjs_nY.prototype.setVisibleChartRange = gvjs_nY.prototype.setVisibleChartRange;
+gvjs_nY.prototype.showDataColumns = gvjs_nY.prototype.Nfa;
+gvjs_nY.prototype.hideDataColumns = gvjs_nY.prototype.Waa;

@@ -27,6 +27,7 @@ import {YasqeButtonType} from '../../models/yasqe-button-name';
 import {YasqeService} from '../../services/yasqe/yasqe-service';
 import {YasrService} from '../../services/yasr/yasr-service';
 import {PivotTablePlugin} from '../../plugins/yasr/pivot-table-plugin';
+import {ChartsPlugin} from "../../plugins/yasr/charts-plugin";
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -734,6 +735,7 @@ export class OntotextYasguiWebComponent {
       const yasguiConfiguration = this.yasguiConfigurationBuilder.build(externalConfiguration);
       // * Build a yasgui instance using the configuration
       YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
+      YasrService.registerPlugin(ChartsPlugin.PLUGIN_NAME, ChartsPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.afterInit();
     }

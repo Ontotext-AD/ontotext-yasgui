@@ -5,6 +5,10 @@ module.exports = function (req, res, next) {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(queryResponse));
+  } else if (req.url === '/repositories/chart-data') {
+    // custom response overriding the dev server
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(chartDataResponse));
   } else if (req.url.endsWith('/repositories/test-repo/namespaces')) {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(namespacesResponse));
@@ -123,6 +127,7 @@ const localNamesResponse = {
     "description": "http://www.w3.org/ns/ldp#Non<b>RDF</b>Source"
   }]
 }
+
 const namespacesResponse = {
   "head": {
     "vars": [
@@ -245,6 +250,107 @@ const namespacesResponse = {
     ]
   }
 };
+
+const chartDataResponse = {
+  "head" : {
+    "vars" : [
+      "country",
+      "temperature"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "1"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "3"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "11"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "50"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "1"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "12"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "123"
+        }
+      }
+    ]
+  }
+}
 
 const queryResponse = {
   "head": {

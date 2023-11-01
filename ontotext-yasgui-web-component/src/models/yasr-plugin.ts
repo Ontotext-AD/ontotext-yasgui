@@ -10,20 +10,22 @@ export interface YasrPlugin {
   priority: number;
 
   /**
-   * Checks if the plugin can render the response.
-   */
-  canHandleResults(): boolean;
-
-  /**
    * A unique string of plugin. It will be used for translation of plugin name.
    * For instance: if name is "test-plugin" then the translation label key will be "yasr.plugin_control.plugin.name.test-plugin";
    */
   label: string;
 
   /**
+   * Checks if the plugin can render the response.
+   */
+  canHandleResults(): boolean;
+
+  /**
    * It is called during the initialization of the plugin.
    */
   initialize?(): Promise<void>;
+
+  download?(filename?: string): DownloadInfo | undefined;
 
   /**
    * It is called during the destruction of the plugin.
@@ -38,4 +40,14 @@ export interface YasrPlugin {
   draw(persistentConfig: any, runtimeConfig?: any): Promise<void> | void;
 
   getIcon(): Element | undefined;
+}
+
+export interface DownloadInfo {
+  contentType: string;
+  /**
+   * File contents as a string or a data url
+   */
+  getData: () => string;
+  filename: string;
+  title: string;
 }

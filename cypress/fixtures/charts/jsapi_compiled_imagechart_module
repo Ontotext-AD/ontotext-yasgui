@@ -1,0 +1,1078 @@
+var gvjs_UT = "#00000000"
+  , gvjs_VT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-."
+  , gvjs_WT = "__ImageChartId__"
+  , gvjs_XT = "error: cannot draw chart"
+  , gvjs_YT = "google-visualization-sparkline-default"
+  , gvjs_ZT = "google-visualization-sparkline-selected";
+function gvjs__T(a) {
+  if (a instanceof gvjs_Zf)
+    return a;
+  a = gvjs_2f(a);
+  var b = gvjs_0f(a).replace(/(\r\n|\r|\n)/g, gvjs_la);
+  return gvjs_3f(b, a.getDirection())
+}
+gvjs_fD.prototype.V3 = gvjs_V(7, function(a) {
+  gvjs_jD(this, gvjs__T(a))
+});
+function gvjs_0T(a, b, c, d) {
+  if (null != a)
+    for (a = a.firstChild; a; ) {
+      if (b(a) && (c.push(a),
+        d) || gvjs_0T(a, b, c, d))
+        return !0;
+      a = a.nextSibling
+    }
+  return !1
+}
+function gvjs_1T(a) {
+  return Array.prototype.join.call(arguments, "")
+}
+function gvjs_hja(a, b) {
+  var c = [];
+  return gvjs_0T(a, b, c, !0) ? c[0] : void 0
+}
+function gvjs_2T(a) {
+  var b = gvjs_ija
+    , c = a && a.colors;
+  return c && 0 < c.length ? c : (a = (null === a || void 0 === a ? void 0 : a.color) || null) ? [a] : b
+}
+;/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function gvjs_3T(a, b, c, d, e) {
+  gvjs_MC.call(this, d);
+  this.Ee = new gvjs_Xm(e || "//chart.googleapis.com/chart");
+  this.OO = "";
+  this.jy = [];
+  this.E3 = [];
+  this.wT = [];
+  this.Qr = [];
+  this.Hsa = [];
+  this.Pva = [];
+  this.YJ = [];
+  this.l1 = {};
+  this.Eta = {};
+  this.IR = {};
+  this.Fta = {};
+  this.rp(a);
+  this.wg(b, c);
+  this.Xa = gvjs_4T(this) ? 0 : Infinity
+}
+gvjs_t(gvjs_3T, gvjs_MC);
+gvjs_ = gvjs_3T.prototype;
+gvjs_.gha = 2048;
+gvjs_.apa = 0;
+gvjs_.bpa = 0;
+gvjs_.Cb = -Infinity;
+gvjs_.Pn = null;
+gvjs_.fya = 13.5;
+gvjs_.j5 = "333333";
+gvjs_.E1 = null;
+gvjs_.J = function() {
+  var a = this.Tb();
+  this.H = this.wa().J("IMG", {
+    src: gvjs_5T(this),
+    "class": "aAAaGVIZSENTINELaAAa-serverchart-image",
+    width: a[0],
+    height: a[1]
+  })
+}
+;
+gvjs_.vf = function(a) {
+  var b = gvjs_5T(this).toString();
+  if (!(b instanceof gvjs_vf)) {
+    var c = /^data:image\//i.test(b);
+    b = gvjs_Wy(b, c)
+  }
+  a.src = gvjs_xf(b);
+  this.H = a
+}
+;
+gvjs_.setUri = function(a) {
+  this.Ee = a
+}
+;
+function gvjs_5T(a) {
+  if ("" != a.OO)
+    var b = gvjs_6T(a, a.OO);
+  else
+    (b = gvjs_6T(a, "e")) || (b = gvjs_6T(a, "s"));
+  b || a.dispatchEvent(new gvjs_7T(a.Ee.toString()));
+  return a.Ee
+}
+function gvjs_jja(a, b) {
+  var c = [];
+  b.forEach(function(d) {
+    d.area = d.area || "bg";
+    d.effect = d.effect || "s";
+    c.push([d.area, d.effect, d.color].join())
+  });
+  c = c.join("|");
+  a.Ld("chf", c)
+}
+gvjs_.rp = function(a) {
+  this.Ee.Ld("cht", a)
+}
+;
+gvjs_.getType = function() {
+  return this.Ee.cg.get("cht")
+}
+;
+gvjs_.wg = function(a, b) {
+  a = [a || 300, b || 150].join("x");
+  this.Ee.Ld("chs", a)
+}
+;
+gvjs_.Tb = function() {
+  return this.Ee.cg.get("chs").split("x")
+}
+;
+gvjs_.yT = function(a) {
+  this.Xa = a
+}
+;
+gvjs_.xT = function(a) {
+  this.Cb = a
+}
+;
+function gvjs_8T(a) {
+  a = a.getType();
+  return "br" == a || "bhg" == a || "bhs" == a || "bvg" == a || "bvs" == a
+}
+function gvjs_4T(a) {
+  a = a.getType();
+  return "p" == a || "p3" == a || "pc" == a
+}
+function gvjs_9T(a) {
+  a = a.getType();
+  return "br" == a || "bhg" == a || "bhs" == a
+}
+gvjs_.isMap = function() {
+  var a = this.getType();
+  return "t" == a || "tuss" == a || "twoc" == a
+}
+;
+function gvjs_$T(a) {
+  a = a.getType();
+  return "br" == a || "bhs" == a || "bvs" == a
+}
+gvjs_.Ld = function(a, b) {
+  this.Ee.Ld(a, b)
+}
+;
+gvjs_.removeParameter = function(a) {
+  this.Ee.removeParameter(a)
+}
+;
+gvjs_.setTitle = function(a) {
+  this.Pn = a;
+  this.Ee.Ld("chtt", this.Pn.replace(/\n/g, "|"))
+}
+;
+gvjs_.setTitleColor = function(a) {
+  this.j5 = a;
+  this.Ee.Ld("chts", this.j5 + "," + this.fya)
+}
+;
+gvjs_.getTitleColor = function() {
+  return this.j5
+}
+;
+function gvjs_aU(a, b) {
+  a.YJ.push(b);
+  a.Ee.Ld("chxt", a.YJ.join(","));
+  return a.YJ.length - 1
+}
+function gvjs_bU(a, b, c) {
+  a.l1[b] = c;
+  b = gvjs_cU(a, a.l1, ":|", "|");
+  a.Ee.Ld("chxl", b)
+}
+function gvjs_dU(a, b, c, d) {
+  var e = Infinity;
+  for (var f = 0, g = b.length; f < g; ++f) {
+    var h = b[f];
+    null != h && h < e && (e = h)
+  }
+  e < a.Xa && (a.Xa = e);
+  e = -Infinity;
+  f = 0;
+  for (g = b.length; f < g; ++f)
+    h = b[f],
+    null != h && h > e && (e = h);
+  e > a.Cb && (a.Cb = e);
+  if (void 0 !== d) {
+    if (a.wT.length < a.jy.length)
+      throw Error("Cannot start adding legends text after first element.");
+    a.wT.push(d);
+    a.Ee.Ld("chdl", a.wT.join("|"))
+  }
+  a.jy.push(b);
+  a.E3.push(c);
+  a.Ee.Ld("chco", a.E3.join(","))
+}
+gvjs_.getData = function(a) {
+  return void 0 !== a ? this.jy[a] : this.jy
+}
+;
+function gvjs_6T(a, b) {
+  for (var c = [], d = 0, e = a.jy.length; d < e; ++d) {
+    var f = c
+      , g = d;
+    var h = a;
+    for (var k = a.jy[d], l = a.Xa, m = a.Cb, n = b, p = [], q = 0, r = k.length; q < r; ++q) {
+      var t = k[q];
+      var u = "e" == n;
+      if (null === t || void 0 === t || isNaN(t) || t < l || t > m)
+        t = u ? "__" : "_";
+      else if ("t" == n)
+        t = String(t);
+      else {
+        var v = .5;
+        m > l && (v = (t - l) / (m - l));
+        t = u ? gvjs_VT.charAt(Math.floor(v * gvjs_eU / 64)) + gvjs_VT.charAt(Math.floor(v * gvjs_eU % 64)) : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(Math.round(61 * v))
+      }
+      p.push(t)
+    }
+    h = p.join("t" == h.OO ? "," : "");
+    f[g] = h
+  }
+  c = c.join("t" == b ? "|" : ",");
+  b = null == a.E1 ? gvjs_1T(b, ":", c) : gvjs_1T(b, a.E1, ":", c);
+  a.Ee.Ld("chd", b);
+  return a.Ee.toString().length < a.gha
+}
+function gvjs_cU(a, b, c, d) {
+  var e = []
+    , f = 0;
+  for (a = a.YJ.length; f < a; ++f)
+    b[f] && e.push(f + c + b[f].join(d));
+  return e.join("|")
+}
+var gvjs_eU = Math.pow(64, 2) - 1;
+gvjs_3T.prototype.M = function() {
+  gvjs_3T.G.M.call(this);
+  delete this.Qr;
+  delete this.Hsa;
+  delete this.Pva;
+  delete this.apa;
+  delete this.bpa;
+  delete this.E3;
+  delete this.wT;
+  delete this.jy;
+  this.Ee = null;
+  delete this.Xa;
+  delete this.Cb;
+  this.Pn = null;
+  delete this.YJ;
+  delete this.l1;
+  delete this.Eta;
+  delete this.IR;
+  delete this.Fta
+}
+;
+function gvjs_7T(a) {
+  gvjs_1h.call(this, "uritoolong");
+  this.uri = a
+}
+gvjs_t(gvjs_7T, gvjs_1h);
+function gvjs_fU(a, b) {
+  gvjs_Qn.call(this, b);
+  this.k8 = a;
+  this.Sd = new gvjs_wi(this,this.container)
+}
+gvjs_o(gvjs_fU, gvjs_Qn);
+gvjs_ = gvjs_fU.prototype;
+gvjs_.Sc = function(a) {
+  this.Sd.Sc(a)
+}
+;
+gvjs_.oP = function(a, b, c, d) {
+  return b && (b = b.width,
+  typeof b === gvjs_l && gvjs_Yy(b) && (b = Number(b)),
+  typeof b === gvjs_g && 30 <= b && (!d || b <= d)) || a && (b = a.clientWidth,
+  30 <= b && (!d || b <= d)) ? b : c || 400
+}
+;
+gvjs_.qI = function(a, b, c, d, e) {
+  return b && (b = b.height,
+  typeof b === gvjs_l && gvjs_Yy(b) && (b = Number(b)),
+  typeof b === gvjs_g && b >= (e || 30) && (!d || b <= d)) || a && (b = a.clientHeight,
+  b >= (e || 30) && (!d || b <= d)) ? b : c || 200
+}
+;
+function gvjs_gU(a) {
+  return 0 < a.$() && a.W(0) == gvjs_l ? 1 : 0
+}
+function gvjs_hU(a, b) {
+  gvjs_G(b, "load", a.gx.bind(a));
+  gvjs_G(b, gvjs_Rb, a.Sc.bind(a, gvjs_XT))
+}
+gvjs_.gx = function() {
+  gvjs_I(this, gvjs_i, null)
+}
+;
+gvjs_.xya = function(a) {
+  gvjs_I(this, "on" + a.type, a)
+}
+;
+function gvjs_kja(a) {
+  return gvjs_hja(a.container, function(b) {
+    return b.tagName ? "map" === String(b.tagName).toLowerCase() : !1
+  })
+}
+function gvjs_iU(a) {
+  return "r" == a || "rs" == a
+}
+function gvjs_lja(a, b, c, d) {
+  for (var e = Math.floor(1E5 * Math.random()); c.j(gvjs_WT + e); )
+    e++;
+  e = gvjs_WT + e;
+  var f = c.J(gvjs_ls, {
+    id: e,
+    name: e
+  });
+  c.appendChild(a.container, f);
+  b.useMap = "#" + e;
+  (new gvjs_8m(d)).fetch({
+    chof: "json"
+  }).then(function(g) {
+    if (g.chartshape) {
+      var h = gvjs_kja(a);
+      if (null == h)
+        a.Sc("Cannot create events map");
+      else
+        for (var k = g.chartshape.length - 1; 0 <= k; k--) {
+          var l = c.createElement(gvjs_at);
+          l.coords = g.chartshape[k].coords;
+          l.shape = g.chartshape[k].type;
+          for (var m = gvjs_jU.length, n = 0; n < m; n++) {
+            var p = new gvjs_1h(gvjs_jU[n],l);
+            p.type = gvjs_jU[n];
+            p.region = g.chartshape[k].name;
+            gvjs_G(l, gvjs_jU[n], a.xya.bind(a, p), !0)
+          }
+          h.appendChild(l)
+        }
+    }
+  })
+}
+gvjs_.Rd = function(a, b, c) {
+  a = c || {};
+  if (b && this.container && this.k8)
+    if (c = this.IG(b, a)) {
+      b = gvjs_5T(c);
+      if (!b || !b.gp) {
+        var d = (new gvjs_Xm(gvjs_Ph().location.href)).gp;
+        "http" != d && "https" != d && gvjs_Ym(b, "http")
+      }
+      if (b.toString().length > c.gha) {
+        c = b.cg.get("chs");
+        c = c.split("x");
+        a = gvjs_Oh().createElement(gvjs_Ma);
+        a.width = c[0];
+        a.height = c[1];
+        a.frameBorder = "0";
+        a.scrolling = "no";
+        a.marginHeight = "0";
+        a.marginWidth = "0";
+        this.container.appendChild(a);
+        c = a.contentDocument;
+        c || (c = a.contentWindow.document);
+        c.open();
+        c.close();
+        d = c;
+        var e = d.getElementsByTagName(gvjs_yb)[0];
+        c = d.createElement("form");
+        e.appendChild(c);
+        e = b.cg.cj();
+        e = gvjs_8d(e);
+        for (var f = e.next(); !f.done; f = e.next()) {
+          f = f.value;
+          var g = b.cg.get(f)
+            , h = d.createElement(gvjs_fv);
+          h.type = gvjs_0u;
+          h.name = f;
+          h.value = g;
+          c.appendChild(h)
+        }
+        gvjs_1m(b, null);
+        b = b.toString();
+        b = b instanceof gvjs_vf ? b : gvjs_Wy(b);
+        c.action = gvjs_xf(b);
+        c.method = "POST";
+        gvjs_hU(this, a);
+        c.submit()
+      } else
+        c.R(this.container),
+          d = c.j(),
+          gvjs_hU(this, d),
+        a.enableEvents && (a = c.wa(),
+          gvjs_lja(this, d, a, b))
+    } else
+      this.Sc(gvjs_XT)
+}
+;
+gvjs_.IG = function(a, b) {
+  var c;
+  b = b || {};
+  var d = this.k8, e, f = !0;
+  switch (d) {
+    case 2:
+      var g = "lc";
+      break;
+    case 1:
+      f = b.showAxisLines;
+      null == f && (f = !0);
+      g = f ? "lc" : "ls";
+      break;
+    case 3:
+      g = b.is3D ? "p3" : "p";
+      break;
+    case 4:
+      var h = b.isVertical;
+      g = b.isStacked;
+      null == g && (g = !0);
+      g = g ? h ? "bvs" : "bhs" : h ? "bvg" : "bhg";
+      break;
+    case 5:
+      g = b.cht;
+      break;
+    default:
+      return null
+  }
+  gvjs_hh(this.container);
+  var k = b;
+  var l = "lr" == g || "lc" == g || "ls" == g;
+  var m = this.container;
+  h = (c = k && k.isInternal) ? void 0 : 1E3;
+  var n = c ? void 0 : 1E3;
+  if ("t" == g || "tuss" == g || "twoc" == g)
+    h = 440,
+      n = 220;
+  h = this.oP(m, k, 0, h);
+  k = l ? this.qI(m, k, 0, n, 15) : this.qI(m, k, 0, n);
+  c || (c = h * k,
+  3E5 < c && (c = Math.sqrt(c / 3E5),
+    h /= c,
+    k /= c));
+  c = Math.floor(h);
+  l = Math.floor(k);
+  h = new gvjs_3T(g,c,l);
+  b.addPadding && (c = k = .19 * c,
+    l = m = .19 * l,
+    c = [c, k, l, m].join(),
+    h.Ee.Ld("chma", c));
+  if (c = !(b && b.isInternal))
+    k = h.Tb(),
+      c = parseInt(k[0], 10),
+      k = parseInt(k[1], 10),
+      c = !(1E3 < c || 1E3 < k ? 0 : 3E5 >= c * k);
+  if (c)
+    throw Error("Assertion failed: invalid size.");
+  (c = b.title) && h.setTitle(c);
+  k = b.singleColumnDisplay;
+  var p = a.$();
+  l = a.ca();
+  var q = 0 < p && a.W(0) != gvjs_g;
+  m = 0;
+  for (var r = q ? 1 : 0; r < p; ) {
+    if (a.W(r) == gvjs_g) {
+      if (null == k || r == k)
+        break;
+      m++
+    }
+    r++
+  }
+  if (null != k || 3 == d)
+    var t = 1;
+  c = 0;
+  n = !1;
+  for (e = r; e < p; e++)
+    if (a.W(e) == gvjs_g) {
+      if (t && c == t)
+        break;
+      null == k && a.Ga(e) && !gvjs_4T(h) && "s" != g && "lxy" != g && (n = !0);
+      c++
+    }
+  var u = b.min
+    , v = b.max;
+  if (gvjs_4T(h))
+    u = 0,
+      v = null;
+  else if (gvjs_8T(h)) {
+    if (!u || gvjs_$T(h) && 1 < c)
+      u = 0;
+    if (gvjs_$T(h) && 1 < c)
+      for (p = 0; p < l; p++) {
+        var w = 0;
+        e = r;
+        for (t = 0; t < c; e++)
+          a.W(e) == gvjs_g && (w += a.getValue(p, e),
+            t++);
+        if (!v || w > v)
+          v = w
+      }
+  }
+  (u || 0 === u) && h.yT(u);
+  (v || 0 === v) && h.xT(v);
+  t = b.showCategoryLabels;
+  null == t && (t = f);
+  if (q && t) {
+    t = [];
+    for (p = 0; p < l; p++)
+      t.push(a.Ha(p, 0) || "");
+    if (gvjs_4T(h))
+      b.legend != gvjs_f && h.Ld("chdl", t.join("|")),
+      b.labels == gvjs_Zv && (h.Qr = t,
+        h.Ee.Ld("chl", h.Qr.join("|")));
+    else if (gvjs_9T(h))
+      t.reverse(),
+        gvjs_aU(h, "y"),
+        gvjs_bU(h, 0, t);
+    else if ((e = gvjs_8T(h)) || (e = h.getType(),
+      e = "lr" == e || "lc" == e || "ls" == e || "lxy" == e),
+    e || gvjs_iU(g))
+      gvjs_aU(h, "x"),
+        gvjs_bU(h, 0, t)
+  }
+  t = "r";
+  switch (b.legend) {
+    case gvjs_$c:
+      t = "l";
+      break;
+    case gvjs_vx:
+      t = "t";
+      break;
+    case gvjs_vt:
+      t = "b";
+      break;
+    case gvjs_f:
+      n = !1
+  }
+  h.Ee.Ld("chdlp", t);
+  e = r;
+  for (t = 0; t < c; e++)
+    if (a.W(e) == gvjs_g) {
+      r = [];
+      q = n ? a.Ga(e) || "" : void 0;
+      for (p = 0; p < l; p++)
+        r.push(a.getValue(p, e));
+      p = gvjs_kU(null != k ? m : t, b);
+      gvjs_dU(h, r, p, q);
+      gvjs_4T(h) && b.labels == gvjs_Vd && (h.Qr = r,
+        h.Ee.Ld("chl", h.Qr.join("|")));
+      t++
+    }
+  if (gvjs_8T(h) || gvjs_iU(g) || "gom" == g || "lr" == g || "lc" == g || "ls" == g)
+    t = b.showValueLabels,
+    null == t && (t = f),
+    t && (f = "y",
+    gvjs_9T(h) && (f = "x"),
+      t = b.valueLabelsInterval,
+    null == t && gvjs_iU(g) && null == b.chds && (t = (h.Cb - h.Xa) / 4),
+      gvjs_lU(h, f, {
+        interval: t
+      }));
+  gvjs_8T(h) && h.Ee.Ld("chbh", "a");
+  g = b.firstHiddenColumn;
+  null != g && (g -= gvjs_gU(a),
+    h.E1 = g);
+  if (2 == d || b.fill) {
+    d = c;
+    g = b;
+    f = [];
+    t = null == g.firstHiddenColumn ? d : g.firstHiddenColumn;
+    for (c = 0; c < t; c++)
+      k = gvjs_kU(c, g),
+        k = ["b", k, c, c + 1 == t ? d : c + 1, 0],
+        f.push(k.join(","));
+    d = f.join("|");
+    h.Ee.Ld("chm", d);
+    d = [];
+    g = h.Xa;
+    d.push(g);
+    d.push(g);
+    gvjs_dU(h, d, "00000000", void 0)
+  }
+  this.ip(h, a, b);
+  this.setBackgroundColor(h, b);
+  return h
+}
+;
+gvjs_.setBackgroundColor = function(a, b) {
+  b = b.backgroundColor;
+  null != b && (b = b.replace("#", ""),
+    gvjs_jja(a, [{
+      area: "bg",
+      color: b
+    }]))
+}
+;
+function gvjs_mja(a, b) {
+  if (gvjs_iU(a))
+    return b.$() - gvjs_gU(b);
+  switch (a) {
+    case "p":
+    case "pc":
+    case "s":
+      return b.ca();
+    case "v":
+      return 3;
+    case "br":
+    case "bhg":
+    case "bhs":
+    case "bvg":
+    case "bvs":
+    case "lc":
+      return b.$() - gvjs_gU(b);
+    case "lxy":
+      return (b.$() - gvjs_gU(b)) / 2;
+    default:
+      return null
+  }
+}
+gvjs_.ip = function(a, b, c) {
+  if ("lc" != a.getType()) {
+    var d = c.singleColumnDisplay;
+    if (null == d) {
+      c = gvjs_2T(c);
+      b = gvjs_mja(a.getType(), b);
+      b = null === b ? c.length : b;
+      d = [];
+      for (var e = 0; e < b; e++)
+        d[e] = c[e % c.length];
+      c = d = d.join(",").replace(/#/g, "");
+      gvjs_5T(a).Ld("chco", c)
+    } else
+      c = gvjs_kU(d, c),
+        gvjs_5T(a).Ld("chco", c)
+  }
+}
+;
+function gvjs_lU(a, b, c) {
+  c = c || {};
+  b = gvjs_aU(a, b);
+  var d = null != c.min ? c.min : a.Xa
+    , e = null != c.max ? c.max : a.Cb;
+  isFinite(d) && isFinite(e) ? d == e ? gvjs_bU(a, b, ["", d, ""]) : (c = c.interval,
+    a.IR[b] = [d, e],
+  void 0 !== c && a.IR[b].push(c),
+    c = gvjs_cU(a, a.IR, ",", ","),
+    a.Ee.Ld("chxr", c)) : (d = isFinite(d) ? d : "",
+    e = isFinite(e) ? e : "",
+    gvjs_bU(a, b, [d, e]))
+}
+function gvjs_kU(a, b) {
+  var c = b.singleColumnDisplay;
+  null != c && (a = c);
+  c = (c = b.chco) && typeof c == gvjs_l && -1 == c.indexOf("|") ? c.split(",") : gvjs_2T(b);
+  a = c[a % c.length];
+  "#" == a.charAt(0) && (a = a.substring(1));
+  return a
+}
+var gvjs_ija = ["#3399CC", "#80C65A", "#FF0000", "#FFCC33", "#BBCCED", "#3399CC", "#990066", gvjs_wr]
+  , gvjs_jU = [gvjs_Wt, gvjs_ld, gvjs_kd];
+function gvjs_mU(a) {
+  gvjs_fU.call(this, 5, a);
+  this.Q8 = null
+}
+gvjs_o(gvjs_mU, gvjs_fU);
+gvjs_mU.prototype.ip = function(a, b, c) {
+  null == c.colors && "s" == a.getType() ? a.removeParameter("chco") : gvjs_fU.prototype.ip.call(this, a, b, c)
+}
+;
+gvjs_mU.prototype.IG = function(a, b) {
+  if (!a || !this.getContainer())
+    return null;
+  var c = b;
+  c = c ? gvjs_x(c) : {};
+  b = c.cht;
+  null == b && (b = "lc",
+    c.cht = b);
+  var d = c.chs;
+  null != d && (d = d.split("x"),
+    c.width = parseInt(d[0], 10),
+    c.height = parseInt(d[1], 10));
+  "gom" == b && (null == c.min && (c.min = 0),
+  null == c.max && (c.max = 100));
+  b = c;
+  c = gvjs_fU.prototype.IG.call(this, a, b);
+  d = b;
+  for (var e in d)
+    if (!gvjs_nja[e]) {
+      var f = d[e];
+      if (null != f) {
+        var g = e;
+        gvjs_5T(c).Ld(g, f)
+      }
+    }
+  e = b;
+  b = c.getType();
+  d = null == e.chxt;
+  if (gvjs_iU(b))
+    d && 0 == gvjs_gU(a) && (b = gvjs_aU(c, "x"),
+      gvjs_bU(c, b, "0 45 90 135 180 225 270 315".split(" ")));
+  else
+    switch (b) {
+      case "t":
+        b = a.$();
+        (d = 2 == b) || this.Sc("The DataTable has an unexpected number of columns.  Expected: 2, actual: " + b);
+        if (d && gvjs_nU(this, a, 0, gvjs_l) && gvjs_nU(this, a, 1, gvjs_g)) {
+          b = "";
+          for (d = 0; d < a.ca(); d++)
+            b += a.getValue(d, 0);
+          gvjs_5T(c).Ld("chld", b)
+        }
+        break;
+      case "s":
+      case "lxy":
+        if (d) {
+          g = e.chds;
+          g = typeof g === gvjs_l ? g.split(",") : [];
+          b = g[0];
+          d = g[1];
+          f = g[2];
+          g = g[3];
+          f = void 0 !== f ? f : b;
+          g = void 0 !== g ? g : d;
+          var h = e.valueLabelsInterval;
+          gvjs_lU(c, "x", {
+            min: b,
+            max: d,
+            interval: h
+          });
+          gvjs_lU(c, "y", {
+            min: f,
+            max: g,
+            interval: h
+          })
+        }
+    }
+  (b = null != e.chds) || (b = e.chm,
+    b = typeof b === gvjs_l && "N" == b.charAt(0));
+  b && (c.OO = "t");
+  b = e.annotationColumns;
+  if (null != b && 0 !== b.length) {
+    d = gvjs_gU(a);
+    e = [];
+    for (f = 0; f < b.length; f++) {
+      g = b[f];
+      h = g.column;
+      var k = g.positionColumn || d;
+      k -= d;
+      var l = g.color;
+      l = l || "000000";
+      "#" == l.charAt(0) && (l = l.substring(1));
+      var m = {
+        low: -1,
+        medium: 0,
+        high: 1
+      }[g.priority] || 0
+        , n = "t";
+      "flag" == g.type && (n = "f");
+      for (var p = 0; p < a.ca(); p++) {
+        var q = a.getValue(p, h);
+        if (null != q) {
+          var r = [];
+          r.push(n + q);
+          r.push(l);
+          r.push(k);
+          r.push(p);
+          r.push(g.size);
+          r.push(m);
+          r = r.join(",");
+          e.push(r)
+        }
+      }
+    }
+    a = c.Ee.cg.get("chm");
+    null != a && 0 < a.length && e.push(a);
+    0 < e.length && (a = e.join("|"),
+      c.Ee.Ld("chm", a))
+  }
+  this.Q8 = (a = gvjs_5T(c)) ? a.toString() : null;
+  return c
+}
+;
+gvjs_mU.prototype.Ooa = function() {
+  return this.Q8
+}
+;
+function gvjs_nU(a, b, c, d) {
+  b = b.W(c);
+  (c = d == b) || a.Sc("The DataTable column has an unexpected type.  Expected: " + d + ", actual: " + b);
+  return c
+}
+var gvjs_nja = {
+  annotationColumns: !0,
+  backgroundColor: !0,
+  color: !0,
+  colors: !0,
+  enableEvents: !0,
+  fill: !0,
+  firstHiddenColumn: !0,
+  height: !0,
+  labels: !0,
+  legend: !0,
+  max: !0,
+  min: !0,
+  showCategoryLabels: !0,
+  showValueLabels: !0,
+  singleColumnDisplay: !0,
+  title: !0,
+  width: !0,
+  valueLabelsInterval: !0,
+  chd: !0,
+  chs: !0
+};
+function gvjs_oU(a) {
+  gvjs_fU.call(this, 2, a)
+}
+gvjs_o(gvjs_oU, gvjs_fU);
+function gvjs_pU(a) {
+  gvjs_fU.call(this, 4, a)
+}
+gvjs_o(gvjs_pU, gvjs_fU);
+function gvjs_qU(a) {
+  gvjs_mU.call(this, a)
+}
+gvjs_o(gvjs_qU, gvjs_mU);
+gvjs_qU.prototype.IG = function(a, b) {
+  b = b ? gvjs_x(b) : {};
+  a = a.Gr();
+  a.G_(0, [["", 0, 0, 0, 0]]);
+  a.Yn([["", 0, 0, 0, 0]]);
+  b.cht = "lc";
+  b.color = gvjs_UT;
+  b.colors = [gvjs_UT];
+  b.legend = gvjs_f;
+  var c = b.monochrome ? "000000" : ""
+    , d = "1:" + (a.ca() - 2)
+    , e = b.candlestickWidth;
+  e = typeof e === gvjs_g ? String(e) : "20";
+  b.chm = ["F", c, "0", d, e].join();
+  return gvjs_mU.prototype.IG.call(this, a, b)
+}
+;
+function gvjs_rU(a) {
+  gvjs_fU.call(this, 1, a)
+}
+gvjs_o(gvjs_rU, gvjs_fU);
+function gvjs_sU(a) {
+  gvjs_fU.call(this, 3, a)
+}
+gvjs_o(gvjs_sU, gvjs_fU);
+function gvjs_tU(a, b) {
+  gvjs_Qn.call(this, a);
+  this.Se = new gvjs_$n;
+  this.xr = [];
+  this.bm = [];
+  this.ea = new gvjs_KA(this);
+  this.D = b || gvjs_Oh()
+}
+gvjs_o(gvjs_tU, gvjs_Qn);
+gvjs_ = gvjs_tU.prototype;
+gvjs_.getSelection = function() {
+  return this.Se.getSelection()
+}
+;
+gvjs_.setSelection = function(a) {
+  var b = this.Se.setSelection(a);
+  if (this.container) {
+    var c = gvjs_ao(b.An, gvjs_Fb);
+    for (a = 0; a < c.length; a++)
+      gvjs_uU(this, c[a], gvjs_YT);
+    b = gvjs_ao(b.uB, gvjs_Fb);
+    for (a = 0; a < b.length; a++)
+      gvjs_uU(this, b[a], gvjs_ZT)
+  }
+}
+;
+function gvjs_oja(a, b, c) {
+  c = c.labelPosition;
+  a.D.qc(a.container);
+  var d = a.D.J(gvjs_ss, {
+    "class": gvjs_YT
+  })
+    , e = a.D.J(gvjs_ts, {
+    "class": gvjs_YT
+  });
+  a.D.appendChild(a.container, d);
+  a.D.appendChild(d, e);
+  a.xr = [];
+  a.bm = [];
+  var f = a.D.J(gvjs_vs, {
+    "class": gvjs_YT
+  });
+  for (d = 0; d < b.$(); d++) {
+    var g = null
+      , h = gvjs_eo(a.Se, d) ? gvjs_ZT : gvjs_YT;
+    h = a.D.J(gvjs_us, {
+      "class": h
+    });
+    a.D.appendChild(f, h);
+    a.xr[d] = h
+  }
+  c == gvjs_$c && (g = a.D.J(gvjs_vs, {
+    "class": gvjs_YT
+  }),
+    a.D.appendChild(e, g));
+  a.D.appendChild(e, f);
+  c == gvjs_j && (g = a.D.J(gvjs_vs, {
+    "class": gvjs_YT
+  }),
+    a.D.appendChild(e, g));
+  if (g)
+    for (d = 0; d < b.$(); d++)
+      c = a.D.J(gvjs_us, {
+        "class": a.xr[d].className
+      }),
+        a.D.appendChild(g, c),
+        a.bm[d] = c
+}
+function gvjs_pja(a, b, c) {
+  c = c.labelPosition;
+  a.D.qc(a.container);
+  var d = a.D.J(gvjs_ss, {
+    "class": gvjs_YT
+  })
+    , e = a.D.J(gvjs_ts, {
+    "class": gvjs_YT
+  });
+  a.D.appendChild(a.container, d);
+  a.D.appendChild(d, e);
+  a.xr = [];
+  a.bm = [];
+  for (d = 0; d < b.$(); d++) {
+    var f = gvjs_YT;
+    gvjs_eo(a.Se, d) && (f = gvjs_ZT);
+    var g = a.D.J(gvjs_vs, {
+      "class": f
+    });
+    a.D.appendChild(e, g);
+    var h = a.D.J(gvjs_us, {
+      "class": f
+    });
+    c == gvjs_j ? (a.D.appendChild(g, h),
+      f = a.D.J(gvjs_us, {
+        "class": f
+      }),
+      a.D.appendChild(g, f),
+      a.xr[d] = h,
+      a.bm[d] = f) : (c == gvjs_$c && (f = a.D.J(gvjs_us, {
+      "class": f
+    }),
+      a.D.appendChild(g, f),
+      a.bm[d] = f),
+      a.D.appendChild(g, h));
+    a.xr[d] = h
+  }
+}
+function gvjs_vU(a, b) {
+  for (var c = 0; c < b.length; c++) {
+    var d = b[c];
+    a.ea.o(d, gvjs_gd, gvjs_s(a.UC, a, c));
+    a.ea.o(d, gvjs_kd, gvjs_s(a.xqa, a, c));
+    a.ea.o(d, gvjs_ld, gvjs_s(a.yqa, a, c))
+  }
+}
+function gvjs_qja(a, b) {
+  for (var c = 0; c < a.bm.length; c++)
+    a.D.V3(a.bm[c], b.Ga(c))
+}
+gvjs_.Rd = function(a, b, c) {
+  var d = c || {}
+    , e = 0;
+  typeof d.title === gvjs_l && (d.title = [d.title]);
+  gvjs_Zg(new gvjs_wi(this,this.container), gvjs_s(function() {
+    this.lM(b);
+    "h" == d.layout ? gvjs_oja(this, b, d) : gvjs_pja(this, b, d);
+    var f = d.labelPosition == gvjs_$c || d.labelPosition == gvjs_j
+      , g = "h" == d.layout;
+    gvjs_vU(this, this.xr);
+    f && (gvjs_qja(this, b),
+      gvjs_vU(this, this.bm));
+    for (var h = this.xr, k = 0; k < h.length; k++) {
+      var l = h[k]
+        , m = new gvjs_fU(1,l)
+        , n = gvjs_x(d)
+        , p = m.oP(this.container, d)
+        , q = m.qI(this.container, d);
+      g ? (p && (n.width = Math.floor(p / h.length - 2)),
+      q && (n.height = q - 2),
+      f && (n.height -= this.bm[0].clientHeight)) : (q && (n.height = Math.floor(q / h.length - 2)),
+      p && (n.width = p - 2),
+      f && (n.width -= this.bm[0].clientWidth));
+      n.title = d.title ? d.title[k] : null;
+      n.min = d.min ? d.min[k] : null;
+      n.max = d.max ? d.max[k] : null;
+      n.singleColumnDisplay = k;
+      gvjs_oi(m, gvjs_Rb, gvjs_s(function(r) {
+        gvjs_I(this, gvjs_Rb, r)
+      }, this));
+      gvjs_oi(m, gvjs_i, gvjs_s(function() {
+        e++;
+        e == h.length && gvjs_I(this, gvjs_i, {})
+      }, this));
+      m.draw(b, n);
+      l.firstChild.className = "google-visualization-sparkline-image"
+    }
+  }, this))
+}
+;
+gvjs_.UC = function(a) {
+  a = gvjs_eo(this.Se, a) ? null : [{
+    column: a
+  }];
+  this.setSelection(a);
+  gvjs_I(this, gvjs_k, {})
+}
+;
+gvjs_.xqa = function(a) {
+  gvjs_uU(this, a, gvjs_eo(this.Se, a) ? gvjs_ZT : gvjs_YT)
+}
+;
+gvjs_.yqa = function(a) {
+  gvjs_uU(this, a, "google-visualization-sparkline-over")
+}
+;
+function gvjs_uU(a, b, c) {
+  a.xr[b].className = c;
+  a.bm[b] && (a.bm[b].className = c)
+}
+gvjs_.lM = function(a) {
+  for (var b = a.$(), c = 0; c < b; c++) {
+    var d = a.W(c);
+    if (d != gvjs_g)
+      throw Error("Invalid type in column " + c + ". Expected: number, actual: " + d + ".");
+  }
+}
+;
+gvjs_.M = function() {
+  gvjs_E(this.ea);
+  delete this.ea;
+  delete this.xr;
+  delete this.bm;
+  gvjs_Qn.prototype.M.call(this)
+}
+;
+gvjs_q(gvjs_vc, gvjs_mU, void 0);
+gvjs_mU.prototype.getImageUrl = gvjs_mU.prototype.Ooa;
+gvjs_mU.prototype.draw = gvjs_mU.prototype.draw;
+gvjs_q(gvjs_sc, gvjs_oU, void 0);
+gvjs_oU.prototype.draw = gvjs_oU.prototype.draw;
+gvjs_q(gvjs_tc, gvjs_pU, void 0);
+gvjs_pU.prototype.draw = gvjs_pU.prototype.draw;
+gvjs_q(gvjs_uc, gvjs_qU, void 0);
+gvjs_qU.prototype.draw = gvjs_qU.prototype.draw;
+gvjs_q(gvjs_wc, gvjs_rU, void 0);
+gvjs_rU.prototype.draw = gvjs_rU.prototype.draw;
+gvjs_q(gvjs_xc, gvjs_sU, void 0);
+gvjs_sU.prototype.draw = gvjs_sU.prototype.draw;
+gvjs_q(gvjs_yc, gvjs_tU, void 0);
+gvjs_tU.prototype.draw = gvjs_tU.prototype.draw;
+gvjs_tU.prototype.getSelection = gvjs_tU.prototype.getSelection;
+gvjs_tU.prototype.setSelection = gvjs_tU.prototype.setSelection;

@@ -1,0 +1,100 @@
+{
+  "head" : {
+    "vars" : [
+      "country",
+      "temperature"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "1"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "3"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "11"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "50"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "1"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "12"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "123"
+        }
+      }
+    ]
+  }
+}
