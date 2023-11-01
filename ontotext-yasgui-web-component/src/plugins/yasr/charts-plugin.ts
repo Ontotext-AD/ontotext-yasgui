@@ -44,8 +44,8 @@ export class ChartsPlugin implements YasrPlugin {
     });
   }
 
-  // @ts-ignore
   download?(filename?: string): DownloadInfo | undefined {
+    console.log('download', filename);
     return;
   }
 
@@ -229,7 +229,7 @@ export class ChartsPlugin implements YasrPlugin {
         case 'http://www.w3.org/2001/XMLSchema#gDay':
         case 'http://www.w3.org/2001/XMLSchema#gMonth':
           return Number(binding.value);
-        case 'http://www.w3.org/2001/XMLSchema#date':
+        case 'http://www.w3.org/2001/XMLSchema#date': {
           // the date function does not parse -any- date (including most xsd dates!)
           // datetime and time seem to be fine though.
           // so, first try our custom parser. if that does not work, try the regular date parser anyway
@@ -237,6 +237,8 @@ export class ChartsPlugin implements YasrPlugin {
           if (date) {
             return date;
           }
+          break;
+        }
         case 'http://www.w3.org/2001/XMLSchema#dateTime':
           return new Date(binding.value);
         case 'http://www.w3.org/2001/XMLSchema#time':
