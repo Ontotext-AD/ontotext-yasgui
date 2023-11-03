@@ -9,6 +9,9 @@ module.exports = function (req, res, next) {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(chartDataResponse));
+  } else if (req.url === '/repositories/chart-data-small-set') {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(chartDataSmallSetResponse));
   } else if (req.url.endsWith('/repositories/test-repo/namespaces')) {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(namespacesResponse));
@@ -346,6 +349,62 @@ const chartDataResponse = {
           "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
           "type" : "literal",
           "value" : "123"
+        }
+      }
+    ]
+  }
+}
+const chartDataSmallSetResponse = {
+  "head" : {
+    "vars" : [
+      "country",
+      "temperature"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "1"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book1"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "3"
+        }
+      },
+      {
+        "country" : {
+          "type" : "uri",
+          "value" : "http://example/book2"
+        },
+        "temperature" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "1"
         }
       }
     ]

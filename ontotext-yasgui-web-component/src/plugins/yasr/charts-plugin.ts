@@ -4,19 +4,35 @@ import {SvgUtil} from '../../services/utils/svg-util';
 import {HtmlUtil} from "../../services/utils/html-util";
 import {SparqlUtils} from "../../services/utils/sparql-utils";
 
+export interface PluginConfig {
+  width: string;
+  height: string;
+}
+
+export interface ChartsPersistentConfig {
+  chartState: any;
+  chartOptions: any;
+}
+
 export class ChartsPlugin implements YasrPlugin {
+  private config: PluginConfig;
   // @ts-ignore
   private yasr: Yasr;
   // @ts-ignore
   private translationService: TranslationService;
+  private chartEditor = null;
+  private wrapper = null;
+  private chartEditorOkHandler = undefined;
+  protected persistentConfig = {} as ChartsPersistentConfig;
+
+  helpReference: string;
   public static readonly PLUGIN_NAME = 'charts';
   public label = "charts";
   public priority = 7;
-  helpReference: string;
-  private chartEditor = null;
-  private wrapper = null;
-  private loaded = false;
-  private chartEditorOkHandler = undefined;
+  public static defaults: PluginConfig = {
+    width: '100%',
+    height: '600px'
+  }
 
   // @ts-ignore
   constructor(yasr: Yasr) {
@@ -24,6 +40,7 @@ export class ChartsPlugin implements YasrPlugin {
       this.yasr = yasr;
       this.translationService = this.yasr.config.translationService;
     }
+    this.config = ChartsPlugin.defaults;
   }
 
   canHandleResults(): boolean {
@@ -31,27 +48,23 @@ export class ChartsPlugin implements YasrPlugin {
   }
 
   initialize(): Promise<void> {
-    return new Promise((resolve) => {
-      // One script tag loads all the required libraries!
-      HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js', this.chartLoadHandler.bind(this));
-
-      const interval = setInterval(() => {
-        if (this.loaded) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 100)
+    return new Promise<void>((resolve) => {
+      HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js', () => {
+        // @ts-ignore
+        google.charts.load('current', {packages: ['charteditor']}).then(resolve);
+      });
     });
+  }
+
+  draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
+    this.persistentConfig = { ...this.persistentConfig, ..._persistentConfig };
+    this.initEditor();
+    this.drawChart();
   }
 
   download?(filename?: string): DownloadInfo | undefined {
     console.log('download', filename);
     return;
-  }
-
-  draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
-    this.initEditor();
-    this.drawChart();
   }
 
   getIcon(): Element | undefined {
@@ -68,16 +81,29 @@ export class ChartsPlugin implements YasrPlugin {
   private drawChart() {
     this.yasr.resultsEl.innerHTML = '';
     this.addChartConfigButton();
-    const dataTable = this.buildModel();
+    const chartState = this.persistentConfig.chartState && JSON.parse(this.persistentConfig.chartState);
+    const dataModel = this.buildModel();
+    let dataTable = undefined;
+    if(chartState && chartState.dataTable.rows.length === dataModel.getNumberOfRows() && chartState.dataTable.cols.length === dataModel.getNumberOfColumns()) {
+      dataTable = chartState.dataTable;
+    } else {
+      dataTable = dataModel;
+    }
+
     this.createChartContainer();
     // @ts-ignore
     this.wrapper = new google.visualization.ChartWrapper({
-      chartType: 'Table',
+      chartType: chartState ? chartState.chartType : 'Table',
       dataTable: dataTable,
-      containerId: 'visualization'
+      containerId: this.getContainerId()
     });
-    this.wrapper.setOption("width", '100%');
-    this.wrapper.setOption("height", 600);
+
+    if (chartState) {
+      this.wrapper.setOptions(chartState.options)
+    } else {
+      this.wrapper.setOption('width', this.config.width);
+      this.wrapper.setOption('height', this.config.height);
+    }
     this.wrapper.draw();
   }
 
@@ -110,26 +136,23 @@ export class ChartsPlugin implements YasrPlugin {
     return dataTable;
   }
 
+  private getContainerId(): string {
+    const tabId = this.yasr.yasqe.tabId;
+    return `${tabId}_visualization`
+  }
+
   private createChartContainer() {
     const pluginHtml = document.createElement("div");
-    pluginHtml.id = 'visualization';
+    pluginHtml.id = this.getContainerId();
     this.yasr.resultsEl.appendChild(pluginHtml);
   }
 
   private redrawChart() {
-    this.chartEditor.getChartWrapper().draw(document.getElementById('visualization'));
-  }
-
-  private chartLoadHandler() {
-    // @ts-ignore
-    google.charts.load('current', {packages: ['charteditor']}).then(this.onLoadCallback.bind(this));
-  }
-
-  private onLoadCallback() {
-    this.initEditor();
-    this.drawChart();
-    // chart loader and modules are loaded
-    this.loaded = true;
+    const chartWrapper = this.chartEditor.getChartWrapper();
+    chartWrapper.draw(document.getElementById(this.getContainerId()));
+    this.persistentConfig.chartOptions = chartWrapper.getOptions();
+    this.persistentConfig.chartState = chartWrapper.toJSON();
+    this.yasr.storePluginConfig(ChartsPlugin.PLUGIN_NAME, this.persistentConfig);
   }
 
   private initEditor() {
