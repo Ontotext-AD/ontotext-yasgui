@@ -51,8 +51,8 @@ export class PivotTablePlugin implements YasrPlugin {
     this.showPlugin(this.getRenders());
     this.addUnusedVariableHeader();
     this.addColumnsHeader();
-    this.valuesHeader();
-    this.rowsHeader();
+    this.addValuesHeader();
+    this.addRowsHeader();
     this.updateVariablesElement();
   }
 
@@ -68,7 +68,7 @@ export class PivotTablePlugin implements YasrPlugin {
 
   download(_filename?: string): DownloadInfo | undefined {
 
-    const pivotTableTableElement = document.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`);
+    const pivotTableTableElement = this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`);
     // @ts-ignore
     const options = $.data(pivotTableTableElement, 'pivotUIOptions');
 
@@ -102,7 +102,7 @@ export class PivotTablePlugin implements YasrPlugin {
 
         // TODO after persistence try to use the render instead  loading from the DOM.
         // const svgEl = this.getRenderedElement(options).find('svg')[0];
-        const svgEl = document.querySelector('.pvtRendererArea svg');
+        const svgEl = this.yasr.rootEl.querySelector('.pvtRendererArea svg');
         return svgEl.outerHTML;
       }
     };
@@ -115,7 +115,7 @@ export class PivotTablePlugin implements YasrPlugin {
       getData: () => {
         // TODO after persistence try to use the render instead loading from the DOM.
         // return this.getRenderedElement(options).html();
-        return document.querySelector('.pvtRendererArea textarea').innerHTML;
+        return this.yasr.rootEl.querySelector('.pvtRendererArea textarea').innerHTML;
       }
     };
   }
@@ -124,7 +124,7 @@ export class PivotTablePlugin implements YasrPlugin {
     return {
       contentType: "text/csv",
       filename: "queryResults.csv",
-      getData: () => HtmlUtil.tableToCsv(document.querySelector('.pvtRendererArea table'))
+      getData: () => HtmlUtil.tableToCsv(this.yasr.rootEl.querySelector('.pvtRendererArea table'))
     };
   }
 
@@ -153,10 +153,10 @@ export class PivotTablePlugin implements YasrPlugin {
 
     // @ts-ignore
     google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
+
     // @ts-ignore
-    const pivotUI = $(`.${PivotTablePlugin.PLUGIN_NAME}`).pivotUI((callback) => this.getResults(callback), {renderers});
-    // @ts-ignore
-    const exportRenderers = $.pivotUtilities.export_renderers;
+    $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`))
+      .pivotUI((callback) => this.getResults(callback), {renderers});
   }
 
   /**
@@ -226,7 +226,7 @@ export class PivotTablePlugin implements YasrPlugin {
     columnsContainer.prepend(columnsHeaderElement);
   }
 
-  private valuesHeader(): void {
+  private addValuesHeader(): void {
     const valuesContainer = this.pluginElement.querySelector('.pvtVals');
     valuesContainer.classList.add('pivottable-plugin-values');
     const valuesHeaderElement = document.createElement('div');
@@ -235,7 +235,7 @@ export class PivotTablePlugin implements YasrPlugin {
     valuesContainer.prepend(valuesHeaderElement);
   }
 
-  private rowsHeader(): void {
+  private addRowsHeader(): void {
     const rowsContainer = this.pluginElement.querySelector('.pvtRows');
     rowsContainer.classList.add('pivottable-plugin-rows');
     const rowsHeaderElement = document.createElement('div');
