@@ -1,5 +1,5 @@
 import {YasrToolbarPlugin} from '../../../models/yasr-toolbar-plugin';
-import {PivotTablePlugin} from '../../../plugins/yasr/pivot-table-plugin';
+import {PivotTablePlugin} from '../../../plugins/yasr/pivot-table/pivot-table-plugin';
 import {HtmlUtil} from '../../utils/html-util';
 import {DownloadInfo} from '../../../models/yasr-plugin';
 

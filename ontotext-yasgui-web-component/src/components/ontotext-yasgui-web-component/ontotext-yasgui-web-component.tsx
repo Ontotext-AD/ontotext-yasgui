@@ -26,7 +26,7 @@ import {InternalCountQueryResponseEvent} from '../../models/internal-events/inte
 import {YasqeButtonType} from '../../models/yasqe-button-name';
 import {YasqeService} from '../../services/yasqe/yasqe-service';
 import {YasrService} from '../../services/yasr/yasr-service';
-import {PivotTablePlugin} from '../../plugins/yasr/pivot-table-plugin';
+import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugin';
 import {ChartsPlugin} from "../../plugins/yasr/charts-plugin";
 
 /**
