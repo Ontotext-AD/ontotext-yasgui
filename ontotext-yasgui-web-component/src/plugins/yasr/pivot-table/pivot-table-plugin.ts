@@ -4,6 +4,8 @@ import {SvgUtil} from '../../../services/utils/svg-util';
 import {SparqlUtils} from '../../../services/utils/sparql-utils';
 import {HtmlUtil} from '../../../services/utils/html-util';
 import {PivotTableDownloadUtil} from './pivot-table-download-util';
+import {PivotTableConfig, PivotTablePersistentConfig} from '../../../models/plugins/pivot-table/pivot-table-persistent-config';
+import {PivotTableRendererName} from '../../../models/plugins/pivot-table/pivot-table-renderer-name';
 
 export class PivotTablePlugin implements YasrPlugin {
 
@@ -48,8 +50,11 @@ export class PivotTablePlugin implements YasrPlugin {
     return this.yasr.results && this.yasr.results.getVariables && this.yasr.results.getVariables() && this.yasr.results.getVariables().length > 0;
   }
 
-  draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
-    this.showPlugin(this.getRenders());
+  draw(persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
+    const config: PivotTableConfig = { ...persistentConfig}
+    config.renderers = this.getRenders()
+    config.onRefresh = this.onRefresh();
+    this.showPlugin(config);
     this.addUnusedVariableHeader();
     this.addColumnsHeader();
     this.addValuesHeader();
@@ -96,7 +101,7 @@ export class PivotTablePlugin implements YasrPlugin {
     return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities.d3_renderers, $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
   }
 
-  private showPlugin(renderers) {
+  private showPlugin(config: PivotTableConfig) {
     this.pluginElement = document.createElement("div");
     this.pluginElement.className = PivotTablePlugin.PLUGIN_NAME;
     this.yasr.resultsEl.appendChild(this.pluginElement);
@@ -106,7 +111,7 @@ export class PivotTablePlugin implements YasrPlugin {
 
     // @ts-ignore
     $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`))
-      .pivotUI((callback) => this.getResults(callback), {renderers});
+      .pivotUI((callback) => this.getResults(callback), config);
   }
 
   /**
@@ -209,19 +214,25 @@ export class PivotTablePlugin implements YasrPlugin {
 
     //SvgUtil.getPivotTableValueIcon()
   }
-}
 
-export enum PivotTableRendererName {
-  TABLE = 'Table',
-  TABLE_BARCHART = 'Table Barchart',
-  HEATMAP = 'Heatmap',
-  ROW_HEATMAP = 'Row Heatmap',
-  COL_HEATMAP = 'Col Heatmap',
-  TREEMAP = 'Treemap',
-  LINE_CHART = 'Line Chart',
-  BAR_CHART = 'Bar Chart',
-  STACKED_BAR_CHART = 'Stacked Bar Chart',
-  AREA_CHART = 'Area Chart',
-  SCATTER_CHART = 'Scatter Chart',
-  TSV_EXPORT = 'TSV Export'
+  private onRefresh(): (pivotUIOptions) => void  {
+    return (pivotUIOptions) => {
+      this.yasr.storePluginConfig(PivotTablePlugin.PLUGIN_NAME, this.toPivotTablePersistentConfig(pivotUIOptions));
+    }
+  }
+
+  private toPivotTablePersistentConfig(pivotUIOptions): PivotTablePersistentConfig {
+    return {
+      cols: pivotUIOptions.cols,
+      rows: pivotUIOptions.rows,
+      colOrder: pivotUIOptions.colOrder,
+      rowOrder: pivotUIOptions.rowOrder,
+      vals: pivotUIOptions.vals,
+      exclusions: pivotUIOptions.exclusions,
+      inclusions: pivotUIOptions.inclusions,
+      inclusionsInfo: pivotUIOptions.inclusionsInfo,
+      aggregatorName: pivotUIOptions.aggregatorName,
+      rendererName: pivotUIOptions.rendererName,
+    };
+  }
 }
