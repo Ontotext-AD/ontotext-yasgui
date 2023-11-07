@@ -168,7 +168,7 @@ export class PivotTablePlugin implements YasrPlugin {
     unusedVariablesContainer.classList.add('pivottable-plugin-unused-variables');
     const unusedVariablesHeaderElement = document.createElement('div');
     unusedVariablesHeaderElement.classList.add('pivottable-plugin-unused-variables-header');
-    unusedVariablesHeaderElement.innerText = this.yasr.translationService.translate('Available Variables');
+    unusedVariablesHeaderElement.innerText = this.yasr.translationService.translate('yasr.plugin_control.plugin.name.pivot-table-plugin.available_variables');
     unusedVariablesContainer.prepend(unusedVariablesHeaderElement);
   }
 
@@ -177,7 +177,7 @@ export class PivotTablePlugin implements YasrPlugin {
     columnsContainer.classList.add('pivottable-plugin-columns');
     const columnsHeaderElement = document.createElement('div');
     columnsHeaderElement.classList.add('pivottable-plugin-columns-header');
-    columnsHeaderElement.innerText = this.yasr.translationService.translate('Columns');
+    columnsHeaderElement.innerText = this.yasr.translationService.translate('yasr.plugin_control.plugin.name.pivot-table-plugin.columns');
     columnsContainer.prepend(columnsHeaderElement);
   }
 
@@ -186,7 +186,7 @@ export class PivotTablePlugin implements YasrPlugin {
     valuesContainer.classList.add('pivottable-plugin-values');
     const valuesHeaderElement = document.createElement('div');
     valuesHeaderElement.classList.add('pivottable-plugin-values-header');
-    valuesHeaderElement.innerText = this.yasr.translationService.translate('Cells');
+    valuesHeaderElement.innerText = this.yasr.translationService.translate('yasr.plugin_control.plugin.name.pivot-table-plugin.cells');
     valuesContainer.prepend(valuesHeaderElement);
   }
 
@@ -195,7 +195,7 @@ export class PivotTablePlugin implements YasrPlugin {
     rowsContainer.classList.add('pivottable-plugin-rows');
     const rowsHeaderElement = document.createElement('div');
     rowsHeaderElement.classList.add('pivottable-plugin-rows-header');
-    rowsHeaderElement.innerText = this.yasr.translationService.translate('Rows');
+    rowsHeaderElement.innerText = this.yasr.translationService.translate('yasr.plugin_control.plugin.name.pivot-table-plugin.rows');
     rowsContainer.prepend(rowsHeaderElement);
   }
 
