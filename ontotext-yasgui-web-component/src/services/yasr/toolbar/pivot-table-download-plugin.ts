@@ -16,7 +16,7 @@ export class PivotTableDownloadPlugin implements YasrToolbarPlugin {
   //@ts-ignore
   updateElement(element: HTMLElement, yasr: Yasr): void {
     // if we don't have a configuration for that plugin, we hidde the button.
-    element.classList.toggle('hidden', PivotTablePlugin.PLUGIN_NAME !== yasr.getSelectedPluginName());
+    element.classList.toggle('hidden', !yasr.results || PivotTablePlugin.PLUGIN_NAME !== yasr.getSelectedPluginName());
     element.innerHTML = `<span class="pivot-table-download-as-button-label">${yasr.translationService.translate('yasr.plugin_control.download_as.pivot_table.dropdown.label')}</span>`;
   }
 
