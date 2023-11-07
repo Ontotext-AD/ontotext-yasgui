@@ -1,8 +1,9 @@
-import {DownloadInfo, YasrPlugin} from '../../models/yasr-plugin';
-import {TranslationService} from '../../services/translation.service';
-import {SvgUtil} from '../../services/utils/svg-util';
-import {SparqlUtils} from '../../services/utils/sparql-utils';
-import {HtmlUtil} from '../../services/utils/html-util';
+import {DownloadInfo, YasrPlugin} from '../../../models/yasr-plugin';
+import {TranslationService} from '../../../services/translation.service';
+import {SvgUtil} from '../../../services/utils/svg-util';
+import {SparqlUtils} from '../../../services/utils/sparql-utils';
+import {HtmlUtil} from '../../../services/utils/html-util';
+import {PivotTableDownloadUtil} from './pivot-table-download-util';
 
 export class PivotTablePlugin implements YasrPlugin {
 
@@ -67,78 +68,27 @@ export class PivotTablePlugin implements YasrPlugin {
   }
 
   download(_filename?: string): DownloadInfo | undefined {
-
-    const pivotTableTableElement = this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`);
     // @ts-ignore
-    const options = $.data(pivotTableTableElement, 'pivotUIOptions');
-
+    const options = $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`)).data('pivotUIOptions');
     if (options) {
       switch (options.rendererName) {
         case PivotTableRendererName.TSV_EXPORT:
-          return this.getTSVDownloadInfo(options);
+          return PivotTableDownloadUtil.getTSVDownloadInfo(this.yasr);
         case PivotTableRendererName.TABLE:
         case PivotTableRendererName.TABLE_BARCHART:
         case PivotTableRendererName.HEATMAP:
         case PivotTableRendererName.ROW_HEATMAP:
         case PivotTableRendererName.COL_HEATMAP:
-          return this.getCSVDownloadInfo();
+          return PivotTableDownloadUtil.getCSVDownloadInfo(this.yasr);
         case PivotTableRendererName.BAR_CHART:
         case PivotTableRendererName.LINE_CHART:
         case PivotTableRendererName.STACKED_BAR_CHART:
         case PivotTableRendererName.AREA_CHART:
         case PivotTableRendererName.SCATTER_CHART:
-          return this.getSvgDownloadInfo(options);
+          return PivotTableDownloadUtil.getSvgDownloadInfo(this.yasr);
       }
     }
-
     return;
-  }
-
-  private getSvgDownloadInfo(_options): DownloadInfo | undefined {
-    return {
-      contentType: "image/svg+xml",
-      filename: "queryResults.svg",
-      getData: () => {
-
-        // TODO after persistence try to use the render instead  loading from the DOM.
-        // const svgEl = this.getRenderedElement(options).find('svg')[0];
-        const svgEl = this.yasr.rootEl.querySelector('.pvtRendererArea svg');
-        return svgEl.outerHTML;
-      }
-    };
-  }
-
-  private getTSVDownloadInfo(_options): DownloadInfo | undefined {
-    return {
-      contentType: "text/tsv",
-      filename: "queryResults.tsv",
-      getData: () => {
-        // TODO after persistence try to use the render instead loading from the DOM.
-        // return this.getRenderedElement(options).html();
-        return this.yasr.rootEl.querySelector('.pvtRendererArea textarea').innerHTML;
-      }
-    };
-  }
-
-  private getCSVDownloadInfo(): DownloadInfo | undefined {
-    return {
-      contentType: "text/csv",
-      filename: "queryResults.csv",
-      getData: () => HtmlUtil.tableToCsv(this.yasr.rootEl.querySelector('.pvtRendererArea table'))
-    };
-  }
-
-  // @ts-ignore
-  private getRenderedElement(options) {
-    const input = (callback) => this.getResults(callback);
-    // @ts-ignore
-    const pivotData = $.pivotUtilities.PivotData;
-    const materializedInput = [];
-    pivotData.forEachRecord(input, options.derivedAttributes, function (record) {
-      materializedInput.push(record);
-    });
-
-    return options.renderers[options.rendererName](new pivotData(materializedInput, options));
   }
 
   private getRenders(): any {
