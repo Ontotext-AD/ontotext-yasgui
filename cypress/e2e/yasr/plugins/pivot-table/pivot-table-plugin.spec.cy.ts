@@ -42,7 +42,7 @@ describe('Pivot table plugin', () => {
     PivotTableSteps.verifyColVariable(2, 'A new book');
   });
 
-  it.only('Should persist pivot table and configuration', () => {
+  it('Should persist pivot table and configuration', () => {
     // When I am on page with ontotext-web-component on it,
     // and execute a query
     YasqeSteps.executeQuery();
