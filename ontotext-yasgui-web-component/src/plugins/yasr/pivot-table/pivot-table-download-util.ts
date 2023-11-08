@@ -130,6 +130,7 @@ export class PivotTableDownloadUtil {
     if (PivotTableDownloadUtil.needToQuoteString(value, config)) {
       return `"${value}"`;
     }
+    return value;
   }
 
   private static toCSVFormat(data: string[][], config: TableToCsvConfiguration): string {
