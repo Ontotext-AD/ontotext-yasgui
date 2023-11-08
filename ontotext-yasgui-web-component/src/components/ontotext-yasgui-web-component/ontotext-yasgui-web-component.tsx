@@ -27,7 +27,7 @@ import {YasqeButtonType} from '../../models/yasqe-button-name';
 import {YasqeService} from '../../services/yasqe/yasqe-service';
 import {YasrService} from '../../services/yasr/yasr-service';
 import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugin';
-import {ChartsPlugin} from "../../plugins/yasr/charts-plugin";
+import {ChartsPlugin} from "../../plugins/yasr/charts/charts-plugin";
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to

@@ -1,8 +1,9 @@
-import {DownloadInfo, YasrPlugin} from '../../models/yasr-plugin';
-import {TranslationService} from '../../services/translation.service';
-import {SvgUtil} from '../../services/utils/svg-util';
-import {HtmlUtil} from "../../services/utils/html-util";
-import {SparqlUtils} from "../../services/utils/sparql-utils";
+import {DownloadInfo, YasrPlugin} from '../../../models/yasr-plugin';
+import {TranslationService} from '../../../services/translation.service';
+import {SvgUtil} from '../../../services/utils/svg-util';
+import {HtmlUtil} from "../../../services/utils/html-util";
+import {SparqlUtils} from "../../../services/utils/sparql-utils";
+import {Yasr} from "../../../models/yasr";
 
 export interface PluginConfig {
   width: string;
@@ -28,13 +29,12 @@ export class ChartsPlugin implements YasrPlugin {
   helpReference: string;
   public static readonly PLUGIN_NAME = 'charts';
   public label = "charts";
-  public priority = 7;
+  public priority = 3;
   public static defaults: PluginConfig = {
     width: '100%',
     height: '600px'
   }
 
-  // @ts-ignore
   constructor(yasr: Yasr) {
     if (yasr) {
       this.yasr = yasr;
@@ -62,9 +62,57 @@ export class ChartsPlugin implements YasrPlugin {
     this.drawChart();
   }
 
-  download?(filename?: string): DownloadInfo | undefined {
-    console.log('download', filename);
-    return;
+  download(_filename?: string): DownloadInfo | undefined {
+    if (!this.yasr.results) {
+      return null;
+    }
+    const svgEl = this.yasr.resultsEl.getElementsByTagName('svg');
+    if (svgEl.length > 0) {
+      return this.exportSvg(svgEl[0]);
+    }
+    //ok, not a svg. is it a table?
+    const tableEl = this.yasr.resultsEl.querySelectorAll('.google-visualization-table-table');
+    if (tableEl.length > 0) {
+      return this.exportCsv()
+    }
+  }
+
+  private exportSvg(svgEl: any): DownloadInfo {
+    const svg = svgEl.cloneNode(true);
+    let htmlString = svg.outerHTML;
+    // wrap in div, so users can more easily tune width/height
+    htmlString = '<div style="width: 800px; height: 600px;">\n' + htmlString + '\n</div>';
+    return {
+      contentType: "image/svg+xml",
+      filename: "queryResults.svg",
+      getData: () => {
+        return htmlString;
+      }
+    };
+  }
+
+  private exportCsv(): DownloadInfo {
+    // @ts-ignore
+    const data = this.wrapper.getDataTable();
+    // build column headings
+    let csvColumns = '';
+    for (let i = 0; i < data.getNumberOfColumns(); i++) {
+      csvColumns += data.getColumnLabel(i);
+      if (i < (data.getNumberOfColumns() - 1)) {
+        csvColumns += ',';
+      }
+    }
+    csvColumns += '\n';
+    // @ts-ignore
+    let csv = google.visualization.dataTableToCsv(data);
+    csv = csvColumns + csv;
+    return {
+      getData: () => {
+        return csv;
+      },
+      filename: "queryResults.csv",
+      contentType: "text/csv"
+    };
   }
 
   getIcon(): Element | undefined {
@@ -301,6 +349,8 @@ export class ChartsPlugin implements YasrPlugin {
     if (isNaN(date)) return null;
     return date;
   }
+
+
 }
 
 function TypesMappingError(msg, types, varName) {

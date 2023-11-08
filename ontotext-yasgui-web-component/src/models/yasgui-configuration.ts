@@ -191,7 +191,7 @@ export interface YasguiConfiguration {
       defaultPlugin: string,
 
       /**
-       * Describes the order of how plugins will be displayed.
+       * Describes the order of how YASR plugins will be displayed.
        * For example: ["extended_table", "response"]
        */
       pluginOrder: string[],
@@ -307,6 +307,6 @@ export const defaultYasqeConfig: Record<string, any> = {
 
 export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
-  pluginOrder: ["extended_table", "response"],
+  pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts'],
   showQueryLoader: true,
 }
