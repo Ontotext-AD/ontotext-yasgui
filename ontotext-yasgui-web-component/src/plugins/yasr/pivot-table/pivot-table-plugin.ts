@@ -6,6 +6,7 @@ import {HtmlUtil} from '../../../services/utils/html-util';
 import {PivotTableDownloadUtil} from './pivot-table-download-util';
 import {PivotTableConfig, PivotTablePersistentConfig} from '../../../models/plugins/pivot-table/pivot-table-persistent-config';
 import {PivotTableRendererName} from '../../../models/plugins/pivot-table/pivot-table-renderer-name';
+import {GOOGLE_CHART} from './google_chart_render';
 
 export class PivotTablePlugin implements YasrPlugin {
 
@@ -90,6 +91,11 @@ export class PivotTablePlugin implements YasrPlugin {
       case PivotTableRendererName.STACKED_BAR_CHART:
       case PivotTableRendererName.AREA_CHART:
       case PivotTableRendererName.SCATTER_CHART:
+      case PivotTableRendererName.GOOGLE_LINE_CHART:
+      case PivotTableRendererName.GOOGLE_BAR_CHART:
+      case PivotTableRendererName.GOOGLE_STACKED_BAR_CHART:
+      case PivotTableRendererName.GOOGLE_AREA_CHART:
+      case PivotTableRendererName.GOOGLE_SCATTER_CHART:
         return true;
     }
     return false;
@@ -131,7 +137,11 @@ export class PivotTablePlugin implements YasrPlugin {
 
   private getRenders(): any {
     // @ts-ignore
-    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities.d3_renderers, $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
+    if (!$.pivotUtilities.google_chart_renderers) {
+      GOOGLE_CHART();
+    }
+    // @ts-ignore
+    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities.d3_renderers, $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers, $.pivotUtilities.google_chart_renderers);
   }
 
   private showPlugin(config: PivotTableConfig) {
