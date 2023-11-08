@@ -210,7 +210,7 @@ export class ExtendedYasr extends Yasr {
       ? this.getUpdateTypeQueryResponseInfo()
       : this.getQueryTypeQueryResponseInfo();
     const resultTimeInfo = this.getResultTimeMessage(responseTime, queryFinishedTime);
-    responseInfoElement.innerHTML = `${warningIcon} ${resultInfo} ${resultTimeInfo}`;
+    responseInfoElement.innerHTML = `<span class="response-info-message">${warningIcon} ${resultInfo} ${resultTimeInfo}</span>`;
   }
 
   private getCountResultMessage(bindings: any[]): string {
