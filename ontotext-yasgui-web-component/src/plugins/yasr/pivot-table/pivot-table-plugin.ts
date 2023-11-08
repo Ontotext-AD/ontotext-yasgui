@@ -50,7 +50,22 @@ export class PivotTablePlugin implements YasrPlugin {
     return this.yasr.results && this.yasr.results.getVariables && this.yasr.results.getVariables() && this.yasr.results.getVariables().length > 0;
   }
 
-  draw(persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
+  draw(persistentConfig: PivotTablePersistentConfig, _runtimeConfig?: any): Promise<void> | void {
+    // @ts-ignore
+    // If the render is not a Google chart or the Google visualization module has already been loaded, we can draw the plugin synchronously.
+    if (!persistentConfig || !this.isGoogleChartRender(persistentConfig.rendererName) || google.visualization) {
+      this.drawPivotTable(persistentConfig);
+    } else {
+      // @ts-ignore
+      google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
+      // @ts-ignore
+      google.setOnLoadCallback(() => {
+        this.drawPivotTable(persistentConfig);
+      });
+    }
+  }
+
+  private drawPivotTable(persistentConfig: PivotTablePersistentConfig) {
     const config: PivotTableConfig = { ...persistentConfig}
     config.renderers = this.getRenders()
     config.onRefresh = this.onRefresh();
@@ -60,6 +75,18 @@ export class PivotTablePlugin implements YasrPlugin {
     this.addValuesHeader();
     this.addRowsHeader();
     this.updateVariablesElement();
+  }
+
+  private isGoogleChartRender(renderName: string) {
+    switch (renderName) {
+      case PivotTableRendererName.BAR_CHART:
+      case PivotTableRendererName.LINE_CHART:
+      case PivotTableRendererName.STACKED_BAR_CHART:
+      case PivotTableRendererName.AREA_CHART:
+      case PivotTableRendererName.SCATTER_CHART:
+        return true;
+    }
+    return false;
   }
 
   getIcon(): Element | undefined {
@@ -105,10 +132,6 @@ export class PivotTablePlugin implements YasrPlugin {
     this.pluginElement = document.createElement("div");
     this.pluginElement.className = PivotTablePlugin.PLUGIN_NAME;
     this.yasr.resultsEl.appendChild(this.pluginElement);
-
-    // @ts-ignore
-    google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
-
     // @ts-ignore
     $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`))
       .pivotUI((callback) => this.getResults(callback), config);
