@@ -211,14 +211,50 @@ export class PivotTablePlugin implements YasrPlugin {
     icon.classList.add('pivottable-plugin-variable-icon');
     icon.innerHTML = SvgUtil.getPivotTableValueIcon();
     variableElement.insertBefore(icon, dropdownElement);
-
-    //SvgUtil.getPivotTableValueIcon()
   }
 
   private onRefresh(): (pivotUIOptions) => void  {
     return (pivotUIOptions) => {
+      if (pivotUIOptions) {
+        switch (pivotUIOptions.rendererName) {
+          case PivotTableRendererName.BAR_CHART:
+          case PivotTableRendererName.LINE_CHART:
+          case PivotTableRendererName.STACKED_BAR_CHART:
+          case PivotTableRendererName.AREA_CHART:
+          case PivotTableRendererName.SCATTER_CHART:
+            this.addChartConfigButton();
+            break;
+          default:
+            this.removeChartConfigButton();
+        }
+      }
+      // FIX ME: When a chart renderer is selected and configured using the Google Chart Editor (by double-clicking on the SVG or clicking on 'Chart Config'),
+      // the configuration is not persisted.
       this.yasr.storePluginConfig(PivotTablePlugin.PLUGIN_NAME, this.toPivotTablePersistentConfig(pivotUIOptions));
     }
+  }
+
+  private removeChartConfigButton() {
+    const element = this.yasr.resultsEl.parentElement.querySelector('#openPivotTableChartConfigBtn');
+    if (!element) {
+      return;
+    }
+    element.remove();
+  }
+
+  private addChartConfigButton() {
+    if (this.yasr.resultsEl.parentElement.querySelector('#openPivotTableChartConfigBtn')) {
+      return;
+    }
+    const openConfigButton = document.createElement('button');
+    openConfigButton.id = 'openPivotTableChartConfigBtn';
+    openConfigButton.innerHTML = this.translationService.translate("yasr.plugin_control.plugin.charts.config.button");
+    openConfigButton.addEventListener('click', () => {
+      // @ts-ignore
+      $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`)).find('div[dir="ltr"]').dblclick();
+    });
+    const infoContainer = this.yasr.resultsEl.parentElement.querySelector('.yasr_header .yasr_response_chip');
+    infoContainer.prepend(openConfigButton);
   }
 
   private toPivotTablePersistentConfig(pivotUIOptions): PivotTablePersistentConfig {
