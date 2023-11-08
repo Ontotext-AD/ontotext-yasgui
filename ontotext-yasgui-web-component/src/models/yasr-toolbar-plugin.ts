@@ -1,3 +1,5 @@
+import {Yasr} from "./yasr";
+
 /**
  * An interface for elements that can be plugged into yasr toolbar.
  * These elements will be sorted depends on {@link YasrToolbarPlugin#getOrder};
@@ -9,7 +11,6 @@ export interface YasrToolbarPlugin {
    *
    * @param yasr - the parent yasr of toolbar.
    */
-  //@ts-ignore
   createElement(yasr: Yasr): HTMLElement;
 
   /**
@@ -18,7 +19,6 @@ export interface YasrToolbarPlugin {
    * @param element - the element created in {@link YasrToolbarPlugin#createElement}.
    * @param yasr - the parent yasr of toolbar.
    */
-  //@ts-ignore
   updateElement(element: HTMLElement, yasr: Yasr): void;
 
   /**
@@ -34,6 +34,5 @@ export interface YasrToolbarPlugin {
    * @param element - the element created in {@link YasrToolbarPlugin#createElement}.
    * @param yasr - the parent yasr of toolbar.
    */
-  //@ts-ignore
   destroy(element: HTMLElement, yasr: Yasr): void;
 }

@@ -19,6 +19,7 @@ import {PaginationYasrToolbarPlugin} from '../../yasr/toolbar/pagination-yasr-to
 import {YasqeMode} from '../../../models/yasqe-mode';
 import {TimeFormattingService} from '../../utils/time-formatting-service';
 import {PivotTableDownloadPlugin} from '../../yasr/toolbar/pivot-table-download-plugin';
+import {ChartDownloadPlugin} from "../../yasr/toolbar/chart-download-plugin";
 
 /**
  * Builder for yasgui configuration.
@@ -108,6 +109,7 @@ export class YasguiConfigurationBuilder {
       const downloadAsYasrToolbarPlugin = new DownloadAsYasrToolbarPlugin(this.serviceFactory, externalConfiguration.pluginsConfigurations);
       yasrToolbarElements.push(downloadAsYasrToolbarPlugin);
       yasrToolbarElements.push(new PivotTableDownloadPlugin());
+      yasrToolbarElements.push(new ChartDownloadPlugin());
     }
 
     if (config.yasguiConfig.paginationOn) {

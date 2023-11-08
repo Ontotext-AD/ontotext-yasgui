@@ -135,6 +135,7 @@
   "yasr.plugin_control.download_as.table.dropdown.label": "Obtenir un extrait HTML pour intégrer les résultats dans une page web",
   "yasr.plugin_control.download_as.raw_response.dropdown.label": "Obtenir un extrait HTML pour intégrer les résultats dans une page web",
   "yasr.plugin_control.download_as.pivot_table.dropdown.label": "Obtenir un extrait HTML pour intégrer les résultats dans une page web",
+  "yasr.plugin_control.download_as.charts.dropdown.label": "Obtenir un extrait HTML pour intégrer les résultats dans une page web",
   "yasr.plugin_control.download_as.sparql_results_json.label": "JSON",
   "yasr.plugin_control.download_as.sparql_results_json_ld.label": "JSON-LD",
   "yasr.plugin_control.download_as.sparql_results_ndjson_ld.label": "NDJSON-LD",

@@ -214,7 +214,7 @@ export interface ExternalYasguiConfiguration {
   defaultPlugin: string
 
   /**
-   * Describes the order of how plugins will be displayed.
+   * Describes the order of how YASR plugins will be displayed.
    * For example: ["extended_table", "response"]
    */
   pluginOrder: string[]
