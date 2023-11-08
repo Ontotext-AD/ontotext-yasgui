@@ -1,0 +1,17 @@
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 9e0f320f6b5f9437cea8a131ed56238f4636d369)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 7a29c271ae557a93de1d7740a5e492cd547a6ae8)
+@@ -210,7 +210,7 @@
+       ? this.getUpdateTypeQueryResponseInfo()
+       : this.getQueryTypeQueryResponseInfo();
+     const resultTimeInfo = this.getResultTimeMessage(responseTime, queryFinishedTime);
+-    responseInfoElement.innerHTML = `${warningIcon} ${resultInfo} ${resultTimeInfo}`;
++    responseInfoElement.innerHTML = `<span class="response-info-message">${warningIcon} ${resultInfo} ${resultTimeInfo}</span>`;
+   }
+ 
+   private getCountResultMessage(bindings: any[]): string {
