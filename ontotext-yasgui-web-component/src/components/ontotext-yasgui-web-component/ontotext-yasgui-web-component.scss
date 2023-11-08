@@ -210,7 +210,7 @@
         min-height: 50px;
         background-color: $color-onto-table-header-background;
 
-        #openChartConfigBtn {
+        #openChartConfigBtn, #openPivotTableChartConfigBtn {
           color: #333;
           background-color: #fff;
           border: 1px solid #ccc;
@@ -221,7 +221,7 @@
           user-select: none;
         }
 
-        #openChartConfigBtn:hover {
+        #openChartConfigBtn:hover, #openPivotTableChartConfigBtn {
           background-color: #ebebeb;
           border-color: #adadad;
         }
