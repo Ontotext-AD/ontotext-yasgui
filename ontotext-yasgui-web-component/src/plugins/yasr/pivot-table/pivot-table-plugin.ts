@@ -52,22 +52,16 @@ export class PivotTablePlugin implements YasrPlugin {
 
   draw(persistentConfig: PivotTablePersistentConfig, _runtimeConfig?: any): Promise<void> | void {
     // @ts-ignore
-    // if Google module visualization is loaded then we can continue with drawing.
-    if (google.visualization) {
+    // If the render is not a Google chart or the Google visualization module has already been loaded, we can draw the plugin synchronously.
+    if (!persistentConfig || !this.isGoogleChartRender(persistentConfig.rendererName) || google.visualization) {
       this.drawPivotTable(persistentConfig);
     } else {
       // @ts-ignore
       google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
-      // If the render is a Google chart we have to wait the module to be loaded.
-      if (persistentConfig && this.isGoogleChartRender(persistentConfig.rendererName)) {
-        // @ts-ignore
-        google.setOnLoadCallback(() => {
-          this.drawPivotTable(persistentConfig);
-        });
-      } else {
-        // If the render is not a Google chart or the Google we can continue with drawing.
+      // @ts-ignore
+      google.setOnLoadCallback(() => {
         this.drawPivotTable(persistentConfig);
-      }
+      });
     }
   }
 
