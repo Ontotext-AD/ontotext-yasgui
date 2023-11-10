@@ -70,7 +70,6 @@ export class Dropdown {
   private onSelect(value: string) {
     this.open = false;
     this.valueChanged.emit(new InternalDropdownValueSelectedEvent(value));
-    console.log('selected', value);
   }
 
   private toggleComponent(): void {
