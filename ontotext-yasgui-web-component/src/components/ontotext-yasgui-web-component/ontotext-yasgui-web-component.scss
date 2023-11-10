@@ -263,14 +263,21 @@
       }
 
       .literal-cell {
+        word-break: break-word !important;
         overflow-wrap: break-word;
         -webkit-hyphens: auto;
         -moz-hyphens: auto;
         hyphens: auto;
+
+        p {
+          // needed in order for the ellipsis to work
+          display: inline;
+        }
       }
 
       /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
-      .dataTable tbody td div.uri-cell:hover .resource-copy-link, .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
+      .dataTable tbody td div.uri-cell:hover .resource-copy-link,
+      .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
       .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link {
         display: inline;
         padding-left: 10px;
