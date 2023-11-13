@@ -356,7 +356,8 @@ export default class Table implements Plugin<PluginConfig> {
     ellipseSwitchComponent.addEventListener("change", this.handleSetEllipsisToggle);
     this.tableEllipseSwitch.type = "checkbox";
     ellipseSwitchComponent.appendChild(this.tableEllipseSwitch);
-    this.tableEllipseSwitch.defaultChecked = this.persistentConfig.isEllipsed !== false;
+    // isEllipsed should be unchecked by default
+    this.tableEllipseSwitch.defaultChecked = this.persistentConfig.isEllipsed !== undefined ? this.persistentConfig.isEllipsed : false;
     this.tableControls.appendChild(ellipseToggleWrapper);
 
     // Create table filter
