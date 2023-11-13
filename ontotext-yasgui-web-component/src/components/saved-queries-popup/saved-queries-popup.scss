@@ -14,7 +14,7 @@
   background-color: #fff;
 
   .saved-queries-popup {
-    height: 250px;
+    max-height: 250px;
     width: 300px;
     overflow-y: scroll;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
