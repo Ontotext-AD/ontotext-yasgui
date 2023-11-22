@@ -263,16 +263,11 @@
       }
 
       .literal-cell {
-        word-break: break-word !important;
+        word-break: normal !important;
         overflow-wrap: break-word;
         -webkit-hyphens: auto;
         -moz-hyphens: auto;
         hyphens: auto;
-
-        p {
-          // needed in order for the ellipsis to work
-          display: inline;
-        }
       }
 
       /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
@@ -302,7 +297,8 @@
         border: none;
         background-color: transparent;
         padding: 0;
-        margin: 0
+        margin: 0;
+        white-space: pre-wrap;
       }
 
       .dataTable td div.triple-cell .triple-close:hover .resource-copy-link {
