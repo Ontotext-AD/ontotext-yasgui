@@ -126,8 +126,7 @@ export class YasrService {
 
   // @ts-ignore
   private static getLiteralCellContent(binding: Parser.BindingValue): string {
-    const literalAsString = this.getLiteralAsString(binding, true);
-    return `<div lang="${YasrService.getLang(binding, 'xx')}" class="literal-cell"><p title='${literalAsString}' class="nonUri">${literalAsString}</p></div>`;
+    return `<div lang="${YasrService.getLang(binding, 'xx')}" class="literal-cell"><p class="nonUri">${this.getLiteralAsString(binding, true)}</p></div>`;
   }
 
   //@ts-ignore
