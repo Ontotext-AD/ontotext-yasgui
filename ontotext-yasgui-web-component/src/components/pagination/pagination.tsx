@@ -32,7 +32,7 @@ export class Pagination {
   }
 
   private fetchLastShownPage(): number {
-    let currentPageNumber = this.pageNumber;
+    const currentPageNumber = this.pageNumber;
     let lastShownPage = currentPageNumber;
     const pagesAfterCurrent = currentPageNumber <= 3 ? this.VISIBLE_PAGES_COUNT - currentPageNumber : this.PAGES_COUNT_AROUND_CURRENT;
     for (let pageNumber = 0; pageNumber < pagesAfterCurrent; pageNumber++) {
