@@ -7,8 +7,8 @@ import {Page} from '../../models/page';
   shadow: false,
 })
 export class Pagination {
-  private readonly NUMBER_SHOWN_PAGE_BEFORE_SELECTED = 2;
-  private readonly NUMBER_SHOWN_PAGE_AFTER_SELECTED = 2;
+  private readonly VISIBLE_PAGES_COUNT = 5;
+  private readonly PAGES_COUNT_AROUND_CURRENT = 2;
   @Prop() pageNumber = 1;
   @Prop() pageSize = 10;
   @Prop() totalElements: number;
@@ -32,26 +32,33 @@ export class Pagination {
   }
 
   private fetchLastShownPage(): number {
-    let lastShownPage = this.pageNumber;
-    for (let pageNumber = 0; pageNumber < this.NUMBER_SHOWN_PAGE_AFTER_SELECTED; pageNumber++) {
-      if ((this.pageNumber + pageNumber) * this.pageSize < this.getTotalElements()) {
+    let currentPageNumber = this.pageNumber;
+    let lastShownPage = currentPageNumber;
+    const pagesAfterCurrent = currentPageNumber <= 3 ? this.VISIBLE_PAGES_COUNT - currentPageNumber : this.PAGES_COUNT_AROUND_CURRENT;
+    for (let pageNumber = 0; pageNumber < pagesAfterCurrent; pageNumber++) {
+      if ((currentPageNumber + pageNumber) * this.pageSize < this.totalElements) {
         lastShownPage += 1;
       }
     }
     return lastShownPage;
   }
 
-  private getTotalElements(): number {
-    return this.totalElements;
-  }
-
   private fetchFirstShownPage(): number {
-    const firstShownPage = this.pageNumber - this.NUMBER_SHOWN_PAGE_BEFORE_SELECTED;
-    return firstShownPage < 1 ? 1 : firstShownPage;
+    const currentPageNumber = this.pageNumber;
+    const totalPages = Math.ceil(this.totalElements / this.pageSize);
+    let startFrom;
+    if (currentPageNumber - this.PAGES_COUNT_AROUND_CURRENT <= 1) {
+      startFrom = 1
+    } else if (totalPages - this.PAGES_COUNT_AROUND_CURRENT > currentPageNumber) {
+      startFrom = currentPageNumber - this.PAGES_COUNT_AROUND_CURRENT;
+    } else {
+      startFrom = (totalPages - this.VISIBLE_PAGES_COUNT) + 1;
+    }
+    return startFrom;
   }
 
   private previousButtonDisabled(): boolean {
-    return this.pageNumber < 2;
+    return this.pageNumber < this.PAGES_COUNT_AROUND_CURRENT;
   }
 
   private nextButtonDisabled(): boolean {

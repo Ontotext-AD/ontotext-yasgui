@@ -145,13 +145,13 @@ describe('Yasr result pagination', () => {
       YasrSteps.getResultLink(0, 2).should('have.text', 'ontogen:page_1-row_1-column_2');
     });
 
-    it('should have two more page around selected page', () => {
+    it('should work with less than 5 result pages', () => {
       PaginationPageSteps.switchToComponentThree();
       // When I visit a page with "ontotext-yasgui" component on it.
-      // And execute a query which results on 6 pages.
+      // And execute a query which results on 3 pages.
       const queryDescription = new QueryStubDescription()
         .setPageSize(10)
-        .setTotalElements(58);
+        .setTotalElements(28);
       QueryStubs.stubQueryResults(queryDescription);
       YasqeSteps.executeQuery();
       PaginationSteps.waitPageSelected(1);
@@ -160,64 +160,158 @@ describe('Yasr result pagination', () => {
       PaginationSteps.getPageNumberButton(1).should('have.class', 'selected-page');
       PaginationSteps.getPageNumberButton(2).should('be.visible');
       PaginationSteps.getPageNumberButton(3).should('be.visible');
-      PaginationSteps.getPageNumberButton(4).should('not.exist');
-      PaginationSteps.getPageNumberButton(4).should('not.exist');
-      PaginationSteps.getPageNumberButton(5).should('not.exist');
-      PaginationSteps.getPageNumberButton(6).should('not.exist');
-      PaginationSteps.getNextPageButton().should('not.be.disabled');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+      PaginationSteps.getPreviousPageButton().should('be.disabled');
 
       // When select second page
       PaginationSteps.clickOnPageNumberButton(2);
       PaginationSteps.waitPageSelected(2);
-
-      PaginationSteps.getPreviousPageButton().should('not.be.disabled');
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
       PaginationSteps.getPageNumberButton(1).should('be.visible');
       PaginationSteps.getPageNumberButton(2).should('have.class', 'selected-page');
       PaginationSteps.getPageNumberButton(3).should('be.visible');
-      PaginationSteps.getPageNumberButton(4).should('be.visible');
-      PaginationSteps.getPageNumberButton(5).should('not.exist');
-      PaginationSteps.getPageNumberButton(6).should('not.exist');
-      PaginationSteps.getNextPageButton().should('not.be.disabled');
+      PaginationSteps.getNextPageButton().should('be.enabled');
 
       // When select third page
       PaginationSteps.clickOnPageNumberButton(3);
       PaginationSteps.waitPageSelected(3);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
+      PaginationSteps.getPageNumberButton(1).should('be.visible');
+      PaginationSteps.getPageNumberButton(2).should('be.visible');
+      PaginationSteps.getPageNumberButton(3).should('have.class', 'selected-page');
+      PaginationSteps.getNextPageButton().should('be.disabled');
+    });
 
-      PaginationSteps.getPreviousPageButton().should('not.be.disabled');
+    it('should work with more than 5 result pages', () => {
+      PaginationPageSteps.switchToComponentThree();
+      // When I visit a page with "ontotext-yasgui" component on it.
+      // And execute a query which results on 9 pages.
+      const queryDescription = new QueryStubDescription()
+        .setPageSize(10)
+        .setTotalElements(88);
+      QueryStubs.stubQueryResults(queryDescription);
+      YasqeSteps.executeQuery();
+      PaginationSteps.waitPageSelected(1);
+
+      PaginationSteps.getPreviousPageButton().should('be.disabled');
+      PaginationSteps.getPageNumberButton(1).should('have.class', 'selected-page');
+      PaginationSteps.getPageNumberButton(2).should('be.visible');
+      PaginationSteps.getPageNumberButton(3).should('be.visible');
+      PaginationSteps.getPageNumberButton(4).should('be.visible');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
+      PaginationSteps.getPageNumberButton(6).should('not.exist');
+      PaginationSteps.getPageNumberButton(7).should('not.exist');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+
+      // When select second page
+      PaginationSteps.clickOnPageNumberButton(2);
+      PaginationSteps.waitPageSelected(2);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
+      PaginationSteps.getPageNumberButton(1).should('be.visible');
+      PaginationSteps.getPageNumberButton(2).should('have.class', 'selected-page');
+      PaginationSteps.getPageNumberButton(3).should('be.visible');
+      PaginationSteps.getPageNumberButton(4).should('be.visible');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
+      PaginationSteps.getPageNumberButton(6).should('not.exist');
+      PaginationSteps.getPageNumberButton(7).should('not.exist');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+
+      // When select third page
+      PaginationSteps.clickOnPageNumberButton(3);
+      PaginationSteps.waitPageSelected(3);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
       PaginationSteps.getPageNumberButton(1).should('be.visible');
       PaginationSteps.getPageNumberButton(2).should('be.visible');
       PaginationSteps.getPageNumberButton(3).should('have.class', 'selected-page');
       PaginationSteps.getPageNumberButton(4).should('be.visible');
       PaginationSteps.getPageNumberButton(5).should('be.visible');
       PaginationSteps.getPageNumberButton(6).should('not.exist');
-      PaginationSteps.getNextPageButton().should('not.be.disabled');
+      PaginationSteps.getPageNumberButton(7).should('not.exist');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+
+      // When select fourth page
+      PaginationSteps.clickOnPageNumberButton(4);
+      PaginationSteps.waitPageSelected(4);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
+      PaginationSteps.getPageNumberButton(1).should('not.exist');
+      PaginationSteps.getPageNumberButton(2).should('be.visible');
+      PaginationSteps.getPageNumberButton(3).should('be.visible');
+      PaginationSteps.getPageNumberButton(4).should('have.class', 'selected-page');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
+      PaginationSteps.getPageNumberButton(6).should('be.visible');
+      PaginationSteps.getPageNumberButton(7).should('not.exist');
+      PaginationSteps.getNextPageButton().should('be.enabled');
 
       // When select fifth page
       PaginationSteps.clickOnPageNumberButton(5);
       PaginationSteps.waitPageSelected(5);
-
-      PaginationSteps.getPreviousPageButton().should('not.be.disabled');
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
       PaginationSteps.getPageNumberButton(1).should('not.exist');
       PaginationSteps.getPageNumberButton(2).should('not.exist');
       PaginationSteps.getPageNumberButton(3).should('be.visible');
       PaginationSteps.getPageNumberButton(4).should('be.visible');
       PaginationSteps.getPageNumberButton(5).should('have.class', 'selected-page');
       PaginationSteps.getPageNumberButton(6).should('be.visible');
-      PaginationSteps.getPageNumberButton(7).should('not.exist');
-      PaginationSteps.getNextPageButton().should('not.be.disabled');
+      PaginationSteps.getPageNumberButton(7).should('be.visible');
+      PaginationSteps.getNextPageButton().should('be.enabled');
 
-      // When select last page
+      // When select the 6th page
       PaginationSteps.clickOnPageNumberButton(6);
       PaginationSteps.waitPageSelected(6);
-
-      PaginationSteps.getPreviousPageButton().should('not.be.disabled');
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
       PaginationSteps.getPageNumberButton(1).should('not.exist');
       PaginationSteps.getPageNumberButton(2).should('not.exist');
       PaginationSteps.getPageNumberButton(3).should('not.exist');
       PaginationSteps.getPageNumberButton(4).should('be.visible');
       PaginationSteps.getPageNumberButton(5).should('be.visible');
       PaginationSteps.getPageNumberButton(6).should('have.class', 'selected-page');
-      PaginationSteps.getPageNumberButton(7).should('not.exist');
+      PaginationSteps.getPageNumberButton(7).should('be.visible');
+      PaginationSteps.getPageNumberButton(8).should('be.visible');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+
+      // When select the 7nd page
+      PaginationSteps.clickOnPageNumberButton(7);
+      PaginationSteps.waitPageSelected(7);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
+      PaginationSteps.getPageNumberButton(1).should('not.exist');
+      PaginationSteps.getPageNumberButton(2).should('not.exist');
+      PaginationSteps.getPageNumberButton(3).should('not.exist');
+      PaginationSteps.getPageNumberButton(4).should('not.exist');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
+      PaginationSteps.getPageNumberButton(6).should('be.visible');
+      PaginationSteps.getPageNumberButton(7).should('have.class', 'selected-page');
+      PaginationSteps.getPageNumberButton(8).should('be.visible');
+      PaginationSteps.getPageNumberButton(9).should('be.visible');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+
+      // When select the 8nd page
+      PaginationSteps.clickOnPageNumberButton(8);
+      PaginationSteps.waitPageSelected(8);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
+      PaginationSteps.getPageNumberButton(1).should('not.exist');
+      PaginationSteps.getPageNumberButton(2).should('not.exist');
+      PaginationSteps.getPageNumberButton(3).should('not.exist');
+      PaginationSteps.getPageNumberButton(4).should('not.exist');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
+      PaginationSteps.getPageNumberButton(6).should('be.visible');
+      PaginationSteps.getPageNumberButton(7).should('be.visible');
+      PaginationSteps.getPageNumberButton(8).should('have.class', 'selected-page');
+      PaginationSteps.getPageNumberButton(9).should('be.visible');
+      PaginationSteps.getNextPageButton().should('be.enabled');
+
+      // When select the 9nd page
+      PaginationSteps.clickOnPageNumberButton(9);
+      PaginationSteps.waitPageSelected(9);
+      PaginationSteps.getPreviousPageButton().should('be.enabled');
+      PaginationSteps.getPageNumberButton(1).should('not.exist');
+      PaginationSteps.getPageNumberButton(2).should('not.exist');
+      PaginationSteps.getPageNumberButton(3).should('not.exist');
+      PaginationSteps.getPageNumberButton(4).should('not.exist');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
+      PaginationSteps.getPageNumberButton(6).should('be.visible');
+      PaginationSteps.getPageNumberButton(7).should('be.visible');
+      PaginationSteps.getPageNumberButton(8).should('be.visible');
+      PaginationSteps.getPageNumberButton(9).should('have.class', 'selected-page');
       PaginationSteps.getNextPageButton().should('be.disabled');
     });
   });
