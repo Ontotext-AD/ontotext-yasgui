@@ -207,9 +207,17 @@
         display: none;
       }
 
+      .yasr_plugin_control {
+        padding-left: 6px;
+      }
+
       .yasr_response_chip {
         min-height: 50px;
         background-color: $color-onto-table-header-background;
+
+        .response-info-message {
+          white-space: normal;
+        }
 
         #openChartConfigBtn, #openPivotTableChartConfigBtn {
           color: #333;
@@ -238,10 +246,34 @@
       }
 
       .tableControls {
+        padding-right: 0;
+        align-items: stretch;
+
+        > div:not(.pageSizeWrapper) {
+          display: flex;
+          align-self: stretch;
+          min-height: 36px;
+        }
+
         .tableFilter:focus, .tableSizer:focus {
           border-color: #00366380 !important;
           outline: none !important;
         }
+      }
+
+      .tableFilter {
+        padding: .5rem .75rem;
+        font-size: 1rem;
+        line-height: 1.25;
+        color: #55595c;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: 0;
+      }
+
+      .tableFilter::placeholder {
+        opacity: 54;
       }
     }
 
