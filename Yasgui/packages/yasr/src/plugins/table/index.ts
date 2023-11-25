@@ -327,21 +327,14 @@ export default class Table implements Plugin<PluginConfig> {
     this.tableControls = document.createElement("div");
     this.tableControls.className = "tableControls";
 
-    // Compact switch
-    const toggleWrapper = document.createElement("div");
-    const switchComponent = document.createElement("label");
-    const textComponent = document.createElement("span");
-    textComponent.innerText = this.translationService.translate("yasr.plugin.table.simple_view.checkbox.label");
-    addClass(textComponent, "label");
-    switchComponent.appendChild(textComponent);
-    addClass(switchComponent, "switch");
-    toggleWrapper.appendChild(switchComponent);
-    this.tableCompactSwitch = document.createElement("input");
-    switchComponent.addEventListener("change", this.handleSetCompactToggle);
-    this.tableCompactSwitch.type = "checkbox";
-    switchComponent.appendChild(this.tableCompactSwitch);
-    this.tableCompactSwitch.defaultChecked = !!this.persistentConfig.compact;
-    this.tableControls.appendChild(toggleWrapper);
+    // Create table filter
+    this.tableFilterField = document.createElement("input");
+    this.tableFilterField.className = "tableFilter";
+    let filterQueryLabel = this.translationService.translate("yasr.plugin.table.table_filter.input.placeholder");
+    this.tableFilterField.placeholder = filterQueryLabel;
+    this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
+    this.tableControls.appendChild(this.tableFilterField);
+    this.tableFilterField.addEventListener("keyup", this.handleTableSearch);
 
     // Ellipsis switch
     const ellipseToggleWrapper = document.createElement("div");
@@ -360,14 +353,21 @@ export default class Table implements Plugin<PluginConfig> {
     this.tableEllipseSwitch.defaultChecked = this.persistentConfig.isEllipsed !== undefined ? this.persistentConfig.isEllipsed : false;
     this.tableControls.appendChild(ellipseToggleWrapper);
 
-    // Create table filter
-    this.tableFilterField = document.createElement("input");
-    this.tableFilterField.className = "tableFilter";
-    let filterQueryLabel = this.translationService.translate("yasr.plugin.table.table_filter.input.placeholder");
-    this.tableFilterField.placeholder = filterQueryLabel;
-    this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
-    this.tableControls.appendChild(this.tableFilterField);
-    this.tableFilterField.addEventListener("keyup", this.handleTableSearch);
+    // Compact switch
+    const toggleWrapper = document.createElement("div");
+    const switchComponent = document.createElement("label");
+    const textComponent = document.createElement("span");
+    textComponent.innerText = this.translationService.translate("yasr.plugin.table.simple_view.checkbox.label");
+    addClass(textComponent, "label");
+    switchComponent.appendChild(textComponent);
+    addClass(switchComponent, "switch");
+    toggleWrapper.appendChild(switchComponent);
+    this.tableCompactSwitch = document.createElement("input");
+    switchComponent.addEventListener("change", this.handleSetCompactToggle);
+    this.tableCompactSwitch.type = "checkbox";
+    switchComponent.appendChild(this.tableCompactSwitch);
+    this.tableCompactSwitch.defaultChecked = !!this.persistentConfig.compact;
+    this.tableControls.appendChild(toggleWrapper);
 
     // Create page wrapper
     const pageSizerWrapper = document.createElement("div");
