@@ -55,7 +55,7 @@
 
   @media (max-width: 768px) {
     .ontotext-dropdown-button:after {
-      display: none;
+      padding-left: 0 !important;
     }
     .button-name {
       display: none;
