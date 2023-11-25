@@ -426,20 +426,20 @@ export class Yasr extends EventEmitter {
     this.fallbackInfoEl.appendChild(textElement);
   }
   private drawPluginElement() {
-    const spaceElement = document.createElement("div");
-    addClass(spaceElement, "space_element");
-    this.headerEl.appendChild(spaceElement);
     this.pluginControls = document.createElement("div");
     this.pluginControls.setAttribute("id", "yasr_plugin_control");
     addClass(this.pluginControls, "yasr_plugin_control");
     this.pluginControls.setAttribute("aria-controls", this.resultsEl.id);
     this.headerEl.appendChild(this.pluginControls);
+    const spaceElement = document.createElement("div");
+    addClass(spaceElement, "space_element");
+    this.headerEl.appendChild(spaceElement);
   }
 
   private drawHeader() {
     this.drawPluginSelectors();
-    this.drawResponseInfo();
     this.drawPluginElement();
+    this.drawResponseInfo();
     this.drawDownloadIcon();
     this.drawDocumentationButton();
   }
