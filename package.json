@@ -1,6 +1,6 @@
 {
   "name": "ontotext-yasgui",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Base project of \"ontotext-yasgui-web-component\" component. It holds yasgui source code and ontotext-yasgui-web-component customization project for Ontotext.",
   "scripts": {
     "install": "sh scripts/install.sh",
@@ -39,6 +39,6 @@
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
-    "yarn": "^1.22.19"
+    "yarn": "^1.22.21"
   }
 }
