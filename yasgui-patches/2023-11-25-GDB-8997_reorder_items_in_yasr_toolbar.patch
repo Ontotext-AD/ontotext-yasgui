@@ -1,0 +1,101 @@
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision d799eeffe43fe703dc379365183602d2ee610532)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision f76464235897c5033b3cd628e28a49fb1f91ab36)
+@@ -426,20 +426,20 @@
+     this.fallbackInfoEl.appendChild(textElement);
+   }
+   private drawPluginElement() {
+-    const spaceElement = document.createElement("div");
+-    addClass(spaceElement, "space_element");
+-    this.headerEl.appendChild(spaceElement);
+     this.pluginControls = document.createElement("div");
+     this.pluginControls.setAttribute("id", "yasr_plugin_control");
+     addClass(this.pluginControls, "yasr_plugin_control");
+     this.pluginControls.setAttribute("aria-controls", this.resultsEl.id);
+     this.headerEl.appendChild(this.pluginControls);
++    const spaceElement = document.createElement("div");
++    addClass(spaceElement, "space_element");
++    this.headerEl.appendChild(spaceElement);
+   }
+ 
+   private drawHeader() {
+     this.drawPluginSelectors();
+-    this.drawResponseInfo();
+     this.drawPluginElement();
++    this.drawResponseInfo();
+     this.drawDownloadIcon();
+     this.drawDocumentationButton();
+   }
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision d799eeffe43fe703dc379365183602d2ee610532)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision f76464235897c5033b3cd628e28a49fb1f91ab36)
+@@ -327,21 +327,14 @@
+     this.tableControls = document.createElement("div");
+     this.tableControls.className = "tableControls";
+ 
+-    // Compact switch
+-    const toggleWrapper = document.createElement("div");
+-    const switchComponent = document.createElement("label");
+-    const textComponent = document.createElement("span");
+-    textComponent.innerText = this.translationService.translate("yasr.plugin.table.simple_view.checkbox.label");
+-    addClass(textComponent, "label");
+-    switchComponent.appendChild(textComponent);
+-    addClass(switchComponent, "switch");
+-    toggleWrapper.appendChild(switchComponent);
+-    this.tableCompactSwitch = document.createElement("input");
+-    switchComponent.addEventListener("change", this.handleSetCompactToggle);
+-    this.tableCompactSwitch.type = "checkbox";
+-    switchComponent.appendChild(this.tableCompactSwitch);
+-    this.tableCompactSwitch.defaultChecked = !!this.persistentConfig.compact;
+-    this.tableControls.appendChild(toggleWrapper);
++    // Create table filter
++    this.tableFilterField = document.createElement("input");
++    this.tableFilterField.className = "tableFilter";
++    let filterQueryLabel = this.translationService.translate("yasr.plugin.table.table_filter.input.placeholder");
++    this.tableFilterField.placeholder = filterQueryLabel;
++    this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
++    this.tableControls.appendChild(this.tableFilterField);
++    this.tableFilterField.addEventListener("keyup", this.handleTableSearch);
+ 
+     // Ellipsis switch
+     const ellipseToggleWrapper = document.createElement("div");
+@@ -360,14 +353,21 @@
+     this.tableEllipseSwitch.defaultChecked = this.persistentConfig.isEllipsed !== undefined ? this.persistentConfig.isEllipsed : false;
+     this.tableControls.appendChild(ellipseToggleWrapper);
+ 
+-    // Create table filter
+-    this.tableFilterField = document.createElement("input");
+-    this.tableFilterField.className = "tableFilter";
+-    let filterQueryLabel = this.translationService.translate("yasr.plugin.table.table_filter.input.placeholder");
+-    this.tableFilterField.placeholder = filterQueryLabel;
+-    this.tableFilterField.setAttribute("aria-label", filterQueryLabel);
+-    this.tableControls.appendChild(this.tableFilterField);
+-    this.tableFilterField.addEventListener("keyup", this.handleTableSearch);
++    // Compact switch
++    const toggleWrapper = document.createElement("div");
++    const switchComponent = document.createElement("label");
++    const textComponent = document.createElement("span");
++    textComponent.innerText = this.translationService.translate("yasr.plugin.table.simple_view.checkbox.label");
++    addClass(textComponent, "label");
++    switchComponent.appendChild(textComponent);
++    addClass(switchComponent, "switch");
++    toggleWrapper.appendChild(switchComponent);
++    this.tableCompactSwitch = document.createElement("input");
++    switchComponent.addEventListener("change", this.handleSetCompactToggle);
++    this.tableCompactSwitch.type = "checkbox";
++    switchComponent.appendChild(this.tableCompactSwitch);
++    this.tableCompactSwitch.defaultChecked = !!this.persistentConfig.compact;
++    this.tableControls.appendChild(toggleWrapper);
+ 
+     // Create page wrapper
+     const pageSizerWrapper = document.createElement("div");
