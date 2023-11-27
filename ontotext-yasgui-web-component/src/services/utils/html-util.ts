@@ -1,9 +1,8 @@
 export class HtmlUtil {
 
-  static encodeHTMLEntities(text: string): string {
-    const textArea = document.createElement('textarea');
-    textArea.innerText = text;
-    return textArea.innerHTML;
+  static escapeHTMLEntities(text: string): string {
+    //taken from http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
   }
 
   static decodeHTMLEntities(text: string): string {
