@@ -220,8 +220,12 @@ export class ChartsPlugin implements YasrPlugin {
     openConfigButton.addEventListener('click', () => {
       this.chartEditor.openDialog(this.wrapper, {});
     });
-    const infoContainer = this.yasr.resultsEl.parentElement.querySelector('.yasr_header .yasr_response_chip');
-    infoContainer.prepend(openConfigButton);
+    // Wrap it in a div so that it can be easily styled without clashing with the header layout styles
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add('chart-config-control');
+    buttonWrapper.prepend(openConfigButton);
+    const infoContainer = this.yasr.resultsEl.parentElement.querySelector('.yasr_header .space_element');
+    infoContainer.insertAdjacentElement('beforebegin', buttonWrapper);
   }
 
   private static getGoogleTypeForBinding(binding): string | null {

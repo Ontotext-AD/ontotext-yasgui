@@ -208,6 +208,27 @@
         }
       }
 
+      .chart-config-control {
+        align-self: center;
+        padding-left: 10px;
+      }
+
+      #openChartConfigBtn, #openPivotTableChartConfigBtn {
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        padding: 6px 12px;
+        user-select: none;
+      }
+
+      #openChartConfigBtn:hover, #openPivotTableChartConfigBtn {
+        background-color: #ebebeb;
+        border-color: #adadad;
+      }
+
       .yasr_external_ref_btn, .yasr_downloadIcon {
         display: none;
       }
@@ -222,22 +243,6 @@
 
         .response-info-message {
           white-space: normal;
-        }
-
-        #openChartConfigBtn, #openPivotTableChartConfigBtn {
-          color: #333;
-          background-color: #fff;
-          border: 1px solid #ccc;
-          text-align: center;
-          vertical-align: middle;
-          cursor: pointer;
-          padding: 6px 12px;
-          user-select: none;
-        }
-
-        #openChartConfigBtn:hover, #openPivotTableChartConfigBtn {
-          background-color: #ebebeb;
-          border-color: #adadad;
         }
       }
 
