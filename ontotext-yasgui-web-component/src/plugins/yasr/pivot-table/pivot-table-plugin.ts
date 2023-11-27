@@ -282,8 +282,12 @@ export class PivotTablePlugin implements YasrPlugin {
       // @ts-ignore
       $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`)).find('div[dir="ltr"]').dblclick();
     });
-    const infoContainer = this.yasr.resultsEl.parentElement.querySelector('.yasr_header .yasr_response_chip');
-    infoContainer.prepend(openConfigButton);
+    // Wrap it in a div so that it can be easily styled without clashing with the header layout styles
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.classList.add('chart-config-control');
+    buttonWrapper.prepend(openConfigButton);
+    const infoContainer = this.yasr.resultsEl.parentElement.querySelector('.yasr_header .space_element');
+    infoContainer.insertAdjacentElement('beforebegin', buttonWrapper);
   }
 
   private toPivotTablePersistentConfig(pivotUIOptions): PivotTablePersistentConfig {
