@@ -58,6 +58,11 @@
 
   .yasgui {
 
+    /* prevent overlapping of the query text with the yasqe action buttons on the right side of the editor */
+    .CodeMirror-code {
+      width: 89%;
+    }
+
     .yasqe-fullscreen .CodeMirror {
       position: fixed;
       top: 0;
