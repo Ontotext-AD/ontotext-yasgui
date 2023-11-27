@@ -94,7 +94,7 @@ export class YasrService {
 
     const tripleAsString = this.getValueAsString(binding, false);
     const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}`;
-    const tripleLinkTitle = HtmlUtil.encodeHTMLEntities(tripleAsString);
+    const tripleLinkTitle = HtmlUtil.escapeHTMLEntities(tripleAsString);
 
     return '<div class="triple-cell">' +
       `<a title="${tripleLinkTitle}" class="triple-link" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</a>` +
@@ -104,7 +104,7 @@ export class YasrService {
       `<li>${this.toCellContent(binding.value['o'], context)}</li>` +
       '</ul><div class="triple-close">' +
       `<a title="${tripleLinkTitle}" class="triple-link triple-link-end" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</a>` +
-      `<copy-resource-link-button class="resource-copy-link" uri="${HtmlUtil.encodeHTMLEntities(tripleAsString)}"></copy-resource-link-button>` +
+      `<copy-resource-link-button class="resource-copy-link" uri="${HtmlUtil.escapeHTMLEntities(tripleAsString)}"></copy-resource-link-button>` +
       '</div></div>'
 
   }
@@ -136,10 +136,10 @@ export class YasrService {
       return this.getExplainPlanQueryResponse(binding, forHtml);
     }
     if (binding.type == "bnode") {
-      return YasrService.addWordBreakToLiterals(`_:${HtmlUtil.encodeHTMLEntities(binding.value)}`);
+      return YasrService.addWordBreakToLiterals(`_:${HtmlUtil.escapeHTMLEntities(binding.value)}`);
     }
 
-    const stringRepresentation = HtmlUtil.encodeHTMLEntities(binding.value);
+    const stringRepresentation = HtmlUtil.escapeHTMLEntities(binding.value);
 
     if (binding["xml:lang"]) {
       return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["xml:lang"]}${forHtml ? '</sup>' : ''}`);
@@ -171,7 +171,7 @@ export class YasrService {
   }
   //@ts-ignore
   private static getExplainPlanQueryResponse(binding: Parser.BindingValue, forHtml: boolean): string {
-    const stringRepresentation = HtmlUtil.encodeHTMLEntities(binding.value);
+    const stringRepresentation = HtmlUtil.escapeHTMLEntities(binding.value);
     if (forHtml) {
       return `<div id="explainPlanQuery" class="cm-s-default">${stringRepresentation}</div>`;
     }
