@@ -3,6 +3,10 @@ import {YasqeSteps} from '../../steps/yasqe-steps';
 import {YasrSteps} from '../../steps/yasr-steps';
 import {QueryStubs} from '../../stubs/query-stubs';
 import {YasguiSteps} from '../../steps/yasgui-steps';
+import {
+  DOWNLOAD_AS_CSV_QUERY,
+  DOWNLOAD_AS_JSON_QUERY
+} from "../../stubs/constants";
 
 describe('Download as', () => {
 
@@ -80,7 +84,7 @@ describe('Download as', () => {
     // Then I expect dropdown to be closed
     DownloadAsPageSteps.getCsvDownloadOption().should('not.be.visible');
     // And expect a "downloadAs" event to be fired.
-    DownloadAsPageSteps.getDownloadAsEventElement().contains('{"TYPE":"downloadAs","payload":{"value":"text/csv","pluginName":"extended_table","query":"select * where { \\n ?s ?p ?o . \\n } limit 100","infer":true,"sameAs":true}}');
+    DownloadAsPageSteps.getDownloadAsEventElement().contains(DOWNLOAD_AS_CSV_QUERY);
 
     // When I switch to raw response plugin
     YasrSteps.switchToRawResponsePlugin();
@@ -88,7 +92,7 @@ describe('Download as', () => {
     DownloadAsPageSteps.openDownloadAsDropdown();
     DownloadAsPageSteps.downloadAsJSON();
     // Then I expect a download event to be fired with "Raw Response" plugin name
-    DownloadAsPageSteps.getDownloadAsEventElement().contains('{"TYPE":"downloadAs","payload":{"value":"application/sparql-results+json","pluginName":"extended_response","query":"select * where { \\n ?s ?p ?o . \\n } limit 100","infer":true,"sameAs":true}}');
+    DownloadAsPageSteps.getDownloadAsEventElement().contains(DOWNLOAD_AS_JSON_QUERY);
   });
 
   it('Should emit "downloadAs" event with last executed query', () => {
@@ -100,7 +104,7 @@ describe('Download as', () => {
     // Then I expect dropdown to be closed
     DownloadAsPageSteps.getCsvDownloadOption().should('not.be.visible');
     // And expect a "downloadAs" event to be fired.
-    DownloadAsPageSteps.getDownloadAsEventElement().contains('{"TYPE":"downloadAs","payload":{"value":"text/csv","pluginName":"extended_table","query":"select * where { \\n ?s ?p ?o . \\n } limit 100","infer":true,"sameAs":true}}');
+    DownloadAsPageSteps.getDownloadAsEventElement().contains(DOWNLOAD_AS_CSV_QUERY);
 
     // When I change query
     YasqeSteps.setTabQuery(0, 'select * where { ?changedSubject ?changedPredicate ?changedObject . }');

@@ -1,6 +1,7 @@
 import AutocompletePageSteps from "../../steps/pages/autocomplete-page-steps";
 import {AutocompleteStubs} from "../../stubs/autocomplete-stubs";
 import {YasqeSteps} from "../../steps/yasqe-steps";
+import {DEFAULT_SPARQL_QUERY} from "../../stubs/constants";
 
 describe('Sesame autocomplete', () => {
 
@@ -10,7 +11,7 @@ describe('Sesame autocomplete', () => {
 
   it('Should set apply a prefix if found', () => {
     AutocompleteStubs.stubSesamePrefixesResponse();
-    YasqeSteps.getQuery().should('eq', 'select * where {  \n ?s ?p ?o . \n } limit 100');
+    YasqeSteps.getQuery().should('eq', DEFAULT_SPARQL_QUERY);
     YasqeSteps.clearEditor();
     YasqeSteps.writeInEditor('select * where {{} ?s rdf:');
     cy.get('.CodeMirror-hints').should('be.visible');
