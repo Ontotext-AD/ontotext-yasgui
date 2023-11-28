@@ -1,6 +1,7 @@
 import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/pages/actions-page-steps";
+import {SHARE_QUERY_LINK} from "../../stubs/constants";
 
 describe('Share query action', () => {
     beforeEach(() => {
@@ -16,7 +17,7 @@ describe('Share query action', () => {
         // Then I expect a dialog with the shareable link to appear
         YasqeSteps.getShareSavedQueryDialog().should('be.visible');
         YasqeSteps.getShareSavedQueryDialogTitle().should('contain', 'Copy URL to clipboard');
-        YasqeSteps.getShareSavedQueryLink().should('have.value', 'http://localhost:3333/pages/actions?name=Query&query=select%20*%20where%20%7B%20%20%0A%20%3Fs%20%3Fp%20%3Fo%20.%20%0A%20%7D%20limit%20100&infer=true&sameAs=true');
+        YasqeSteps.getShareSavedQueryLink().should('have.value', SHARE_QUERY_LINK);
         // When I cancel operation
         YasqeSteps.closeShareSavedQueryDialog();
         // Then I expect that the dialog should be closed
@@ -27,6 +28,6 @@ describe('Share query action', () => {
         YasqeSteps.copySavedQueryShareLink();
         // Then I expect that the share link is copied in the clipboard
         YasqeSteps.getShareSavedQueryDialog().should('not.exist');
-        ActionsPageSteps.getSaveQueryPayload().should('have.value', 'http://localhost:3333/pages/actions?name=Query&query=select%20*%20where%20%7B%20%20%0A%20%3Fs%20%3Fp%20%3Fo%20.%20%0A%20%7D%20limit%20100&infer=true&sameAs=true');
+        ActionsPageSteps.getSaveQueryPayload().should('have.value', SHARE_QUERY_LINK);
     });
 });

@@ -2,6 +2,11 @@ import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/pages/actions-page-steps";
 import {YasguiSteps} from "../../steps/yasgui-steps";
+import {
+  DEFAULT_SPARQL_QUERY,
+  SAVED_QUERY2_PAYLOAD,
+  SAVED_QUERY_PAYLOAD
+} from "../../stubs/constants";
 
 describe('Save query action', () => {
     beforeEach(() => {
@@ -133,13 +138,13 @@ describe('Save query action', () => {
         // And the query name should be same as the tab name
         YasqeSteps.getQueryNameField().should('have.value', 'Query');
         // And the query should be same as the one in the current tab
-        YasqeSteps.getQueryField().should('have.value', 'select * where {  \n ?s ?p ?o . \n } limit 100');
+        YasqeSteps.getQueryField().should('have.value', DEFAULT_SPARQL_QUERY);
         // And I click on save button
         YasqeSteps.saveQuery();
         // Then the dialog is closed
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         // And query is saved
-        ActionsPageSteps.getSaveQueryPayload().should('have.value', '{"queryName":"Query","query":"select * where {  \\n ?s ?p ?o . \\n } limit 100","isPublic":false}');
+        ActionsPageSteps.getSaveQueryPayload().should('have.value', SAVED_QUERY_PAYLOAD);
     });
 
     it('Should be able to change the query and save it', () => {
@@ -180,7 +185,7 @@ describe('Save query action', () => {
         // Then the dialog is closed
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         // And query is saved
-        ActionsPageSteps.getSaveQueryPayload().should('have.value', '{"queryName":"Query two","query":"select * where {  \\n ?s ?p ?o . \\n } limit 100","isPublic":false}');
+        ActionsPageSteps.getSaveQueryPayload().should('have.value', SAVED_QUERY2_PAYLOAD);
     });
 
     it('Should reset the error message from previous failure', () => {

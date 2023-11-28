@@ -5,6 +5,7 @@ import ActionsPageSteps from "../../steps/pages/actions-page-steps";
 import {YasguiSteps} from "../../steps/yasgui-steps";
 import {KeyboardShortcutSteps} from '../../steps/keyboard-shortcut-steps';
 import {KeyboardShortcutPageSteps} from '../../steps/pages/keyboard-shortcut-page-steps';
+import {DEFAULT_SPARQL_QUERY_FROM_LOG} from "../../stubs/constants";
 
 describe('Execute query action', () => {
   beforeEach(() => {
@@ -34,11 +35,11 @@ describe('Execute query action', () => {
   }, () => {
     ActionsPageSteps.visit();
     YasqeSteps.executeQuery();
-    ActionsPageSteps.getEventLog().should('have.value', '\n"select * where {  \\n ?s ?p ?o . \\n } limit 100"');
+    ActionsPageSteps.getEventLog().should('have.value', DEFAULT_SPARQL_QUERY_FROM_LOG);
     YasguiSteps.openANewTab();
     ActionsPageSteps.clearEventLog();
     YasqeSteps.executeQuery(1);
-    ActionsPageSteps.getEventLog().should('have.value', '\n"select * where {  \\n ?s ?p ?o . \\n } limit 100"');
+    ActionsPageSteps.getEventLog().should('have.value', DEFAULT_SPARQL_QUERY_FROM_LOG);
   });
 
   it('should not run explain plan query for update query ', {
