@@ -288,7 +288,7 @@ export const defaultYasguiConfig: Record<string, any> = {
 }
 
 export const defaultYasqeConfig: Record<string, any> = {
-  query: 'select * where {  \n ?s ?p ?o . \n } limit 100',
+  query: 'select * where {\n\t?s ?p ?o .\n} limit 100',
   initialQuery: '',
   createShareableLink: null,
   yasqeActionButtons: [

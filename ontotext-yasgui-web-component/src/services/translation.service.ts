@@ -10,7 +10,7 @@ export class TranslationService {
 
   setLanguage(lang: string = DEFAULT_LANG) {
     if (!this.bundle || !this.bundle[this.currentLang]) {
-      console.warn('Missing locale file for [' + this.currentLang + ']');
+      console.warn(`Missing locale file for [${this.currentLang}]`);
       this.currentLang = DEFAULT_LANG;
     } else {
       this.currentLang = lang;
@@ -52,7 +52,7 @@ export class TranslationService {
   translate(key: string, parameters?: TranslationParameter[]): string {
     let translation = this.bundle[this.currentLang][key];
     if (!translation) {
-      // Fallback to English
+      // Fallback to the default language
       translation = this.bundle[DEFAULT_LANG][key];
     }
 
@@ -61,7 +61,7 @@ export class TranslationService {
       return translation;
     }
 
-    console.warn('Missing translation for [' + key + '] key in [' + this.currentLang + '] locale');
+    console.warn(`Missing translation for [${key}] key in [${this.currentLang}] locale`);
     return key;
   }
 
@@ -69,13 +69,13 @@ export class TranslationService {
     if (parameters) {
       return parameters.reduce(
         // replace all occurrence of parameter key with parameter value.
-        (translation, parameter) => this.replaceAll(translation, parameter),
+        (translation, parameter) => TranslationService.replaceAll(translation, parameter),
         translation);
     }
     return translation;
   }
 
-  private replaceAll(translation: string, parameter: TranslationParameter): string {
+  private static replaceAll(translation: string, parameter: TranslationParameter): string {
     return parameter ? translation.split(`{{${parameter.key}}}`).join(parameter.value) : translation;
   }
 }
