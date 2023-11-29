@@ -217,14 +217,18 @@ export class Yasgui extends EventEmitter {
   }
 
   public getTabByNameAndQuery(name: string, query: string) {
-    return find(this._tabs, (tab) => {
-      if (tab.getName() === name) {
-        // We can't get the query directly from the tab because if the tab hasn't been opened before
-        // then the yasqe won't be initialized. That's why we get the query from the tab's persistence.
+    // first try to find a tab with the provided name and then find one which has the same query
+    const tabsWithSameName = Object.values(this._tabs).filter((tab) => tab.getName() === name);
+    let foundTabWithSameQuery: Tab | undefined = tabsWithSameName.find((tab) => {
         return tab.getPersistedJson()?.yasqe?.value === query;
-      }
-      return false;
     });
+    // if no tab with the exact name and query is found, then search for a tab having only the same query
+    if (!foundTabWithSameQuery) {
+        foundTabWithSameQuery = Object.values(this._tabs).find((tab) => {
+            return tab.getPersistedJson()?.yasqe?.value === query;
+        })
+    }
+    return foundTabWithSameQuery;
   }
 
   public getTab(tabId?: string): Tab | undefined {
