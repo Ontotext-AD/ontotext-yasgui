@@ -14,6 +14,8 @@ export interface Yasr {
 
   resultsContainer: any;
 
+  rootEl: any;
+
   resultsEl: any;
 
   translationService: any;
