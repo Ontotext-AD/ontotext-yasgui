@@ -416,13 +416,19 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Handler for the event fired when the saved query is selected from the saved queries list.
+   * Handles the event fired when the saved query is selected from the saved queries list. Tries to
+   * find a tab with the same name and query inside and opens it. Otherwise opens a new tab with
+   * provided parameters.
    */
   @Listen('internalSaveQuerySelectedEvent')
   savedQuerySelectedHandler(event: CustomEvent<SaveQueryData>) {
     const queryData: SaveQueryData = event.detail;
     this.showSavedQueriesPopup = false;
-    this.ontotextYasgui.createNewTab(queryData.queryName, queryData.query);
+    this.openTab({
+      queryName: queryData.queryName,
+      query: queryData.query,
+      owner: undefined
+    });
   }
 
   /**
