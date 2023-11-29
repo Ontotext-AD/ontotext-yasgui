@@ -103,6 +103,8 @@ export class PivotTablePlugin implements YasrPlugin {
 
   destroy(): void {
     // TODO remove all listeners if any.
+    const configButtonWrapper = this.yasr.rootEl.querySelector('.yasr_header .chart-config-control');
+    configButtonWrapper?.remove();
   }
 
   download(_filename?: string): DownloadInfo | undefined {

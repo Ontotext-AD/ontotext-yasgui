@@ -124,6 +124,8 @@ export class ChartsPlugin implements YasrPlugin {
   destroy(): void {
     // @ts-ignore
     google.visualization.events.removeListener(this.chartEditorOkHandler);
+    const configButtonWrapper = this.yasr.rootEl.querySelector('.yasr_header .chart-config-control');
+    configButtonWrapper?.remove();
   }
 
   private drawChart() {
