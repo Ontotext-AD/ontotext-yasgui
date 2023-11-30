@@ -3,18 +3,71 @@ import fr from '../i18n/locale-fr.json'
 import {DEFAULT_LANG} from '../configurations/constants';
 import {Translations} from '../models/yasgui-configuration';
 
+export type LanguageChangeObserver = {
+  name: string;
+  notify: (language: string) => void;
+}
+
+export interface TranslationParameter {
+  key: string;
+  value: string;
+}
+
+/**
+ * Service responsible for translation operations in the component.
+ */
 export class TranslationService {
   private currentLang = DEFAULT_LANG;
 
   private bundle = {en, fr}
 
-  setLanguage(lang: string = DEFAULT_LANG) {
+  private languageChangeObservers: LanguageChangeObserver[] = [];
+
+  /**
+   * Sets the language which should be used for registered labels. If there is no registered bundle
+   * for the provided language, then the default language will be set and used.
+   * This method also notifies all registered LanguageChangeObserver's.
+   *
+   * @param lang The language to be set.
+   */
+  setLanguage(lang: string = DEFAULT_LANG): void {
     if (!this.bundle || !this.bundle[this.currentLang]) {
       console.warn(`Missing locale file for [${this.currentLang}]`);
       this.currentLang = DEFAULT_LANG;
     } else {
       this.currentLang = lang;
     }
+    this.notifyLanguageChangeObservers(this.currentLang);
+  }
+
+  /**
+   * Subscribes the observer for further language change events.
+   *
+   * @param observer The observer to be registered for the language change events.
+   * @return Returns an unsubscribe function which can be called by the observer to unsubscribe
+   * itself.
+   */
+  subscribeForLanguageChange(observer: LanguageChangeObserver): () => void {
+    const existingObserverIndex = this.languageChangeObservers.findIndex((subscription) => subscription.name === observer.name);
+    if (existingObserverIndex === -1) {
+      this.languageChangeObservers.push(observer);
+    }
+    return () => this.unsubscribeFromLanguageChange(observer);
+  }
+
+  /**
+   * Unsubscribes the observer from the language change events.
+   * @param observer The observer to be unsubscribed.
+   */
+  unsubscribeFromLanguageChange(observer: LanguageChangeObserver): void {
+    const existingObserverIndex = this.languageChangeObservers.findIndex((subscription) => subscription.name === observer.name);
+    if (existingObserverIndex !== -1) {
+      this.languageChangeObservers.splice(existingObserverIndex, 1);
+    }
+  }
+
+  private notifyLanguageChangeObservers(currentLang: string) {
+    this.languageChangeObservers.forEach((observer) => observer.notify(currentLang));
   }
 
   /**
@@ -49,6 +102,12 @@ export class TranslationService {
     });
   }
 
+  /**
+   * Translates the provided key using the currently selected language by applying the parameters if
+   * provided.
+   * @param key The key for the label which needs to be translated.
+   * @param parameters Optional parameters which to be applied during the translation.
+   */
   translate(key: string, parameters?: TranslationParameter[]): string {
     let translation = this.bundle[this.currentLang][key];
     if (!translation) {
@@ -80,7 +139,3 @@ export class TranslationService {
   }
 }
 
-export interface TranslationParameter {
-  key: string;
-  value: string;
-}

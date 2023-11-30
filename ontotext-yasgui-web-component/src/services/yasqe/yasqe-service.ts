@@ -7,10 +7,12 @@ import {InternalShareQueryEvent} from '../../models/internal-events/internal-sha
 import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
 import {YasqeButtonName, YasqeButtonType} from '../../models/yasqe-button-name';
 import {InternalCreateSavedQueryEvent} from '../../models/internal-events/internal-create-saved-query-event';
+import {YasguiBuilder} from "../yasgui/yasgui-builder";
 
 export class YasqeService {
 
   private eventService: EventService;
+  private readonly yasguiBuilder: YasguiBuilder;
   private translationService: TranslationService;
 
   //@ts-ignore
@@ -18,18 +20,51 @@ export class YasqeService {
 
   private static pluginButtonNameToClassNameMapping: Map<YasqeButtonType, string>;
 
-
   constructor(serviceFactory: ServiceFactory) {
+    this.yasguiBuilder = serviceFactory.get(YasguiBuilder);
     this.eventService = serviceFactory.getEventService();
-    this.initPluginButtonNameToClassNameMapping();
+    YasqeService.initPluginButtonNameToClassNameMapping();
     this.translationService = serviceFactory.get(TranslationService);
+    this.translationService.subscribeForLanguageChange({
+      name: 'YasqeServiceLanguageChangeObserver',
+      notify: (currentLang) => this.onLanguageChange(currentLang)
+    });
     this.buttonBuilders.set(YasqeButtonName.CREATE_SAVED_QUERY, () => this.buildCreateSaveQueryButton());
     this.buttonBuilders.set(YasqeButtonName.SHOW_SAVED_QUERIES, () => this.buildShowSavedQueriesButton());
     this.buttonBuilders.set(YasqeButtonName.SHARE_QUERY, () => this.buildShareQueryButton());
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration, yasqe) => this.buildInferAndSameAsButtons(externalConfiguration, yasqe));
   }
 
-  private initPluginButtonNameToClassNameMapping() {
+  private onLanguageChange(_currentLang: string) {
+    let button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)}`) as HTMLElement;
+    let tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
+    TooltipService.updateTooltip(button, tooltip)
+
+    button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)}`) as HTMLElement;
+    tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
+    TooltipService.updateTooltip(button, tooltip)
+
+    button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
+    tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
+    TooltipService.updateTooltip(button, tooltip)
+
+    const ontotextYasgui = this.yasguiBuilder.getInstance();
+    if (ontotextYasgui) {
+      const yasqe = ontotextYasgui.getYasqe();
+      const inferredValue = yasqe.getInfer();
+      const sameAsValue = yasqe.getSameAs();
+      const sameAsButton = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.EXPANDS_RESULTS)}`) as HTMLElement;
+      const sameAsButtonTooltipEl = sameAsButton?.parentElement;
+      const inferStatementsButton = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.INFER_STATEMENTS)}`) as HTMLElement;
+      const inferStatementButtonTooltipEl = inferStatementsButton?.parentElement;
+      if (sameAsButtonTooltipEl && inferStatementButtonTooltipEl) {
+        this.updateInferredElement(inferStatementButtonTooltipEl, sameAsButtonTooltipEl, inferredValue, sameAsValue);
+        this.updateSameAsElement(sameAsButtonTooltipEl, sameAsValue, inferredValue);
+      }
+    }
+  }
+
+  private static initPluginButtonNameToClassNameMapping() {
     YasqeService.pluginButtonNameToClassNameMapping = new Map();
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.CREATE_SAVED_QUERY, `yasqe_${YasqeButtonName.CREATE_SAVED_QUERY}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHOW_SAVED_QUERIES, `yasqe_${YasqeButtonName.SHOW_SAVED_QUERIES}Button`);
@@ -202,9 +237,6 @@ export class YasqeService {
 
   /**
    * Initializes the state of infer and same as buttons.
-   *
-   *
-   *
    *
    * @param yasqe - the yasqe.
    * @param defaultInfer - default value of infer if not set in <code>yasqe</code>
