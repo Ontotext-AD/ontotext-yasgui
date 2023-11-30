@@ -1,4 +1,5 @@
 import {Yasgui} from '../../../Yasgui/packages/yasgui'
+import {Yasqe} from '../models/yasqe';
 import {YasguiConfiguration} from './yasgui-configuration';
 import {TabQueryModel} from "./external-yasgui-configuration";
 
@@ -40,6 +41,10 @@ export class OntotextYasgui {
     this.yasgui.getTab().yasqe.on(eventName, (...args) => {
       callback(args);
     });
+  }
+
+  getYasqe(): Yasqe {
+    return this.yasgui.getTab().getYasqe();
   }
 
   setQuery(query: string): void {

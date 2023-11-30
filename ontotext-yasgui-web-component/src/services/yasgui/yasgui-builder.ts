@@ -8,6 +8,8 @@ import {HtmlElementsUtil} from '../utils/html-elements-util';
  * instance.
  */
 export class YasguiBuilder {
+  private instance: OntotextYasgui;
+
   /**
    * Builds an instance of Yasgui and wraps it in an OntotextYasgui adapter instance.
    *
@@ -15,9 +17,19 @@ export class YasguiBuilder {
    * @param yasguiConfiguration - the yasgui configuration merged with the external one.
    */
   build(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration): OntotextYasgui {
-    const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
-    // monkey patches have to be applied before return yasgui.
-    return new OntotextYasgui(yasgui, yasguiConfiguration);
+    if (!this.instance) {
+      const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
+      // patches have to be applied before returning yasgui instance.
+      this.instance = new OntotextYasgui(yasgui, yasguiConfiguration);
+    }
+    return this.instance;
+  }
+
+  /**
+   * Returns the OntotextYasgui instance if created or undefined otherwise.
+   */
+  getInstance(): OntotextYasgui | undefined {
+    return this.instance;
   }
 
   private createYasguiInstance(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration): any {

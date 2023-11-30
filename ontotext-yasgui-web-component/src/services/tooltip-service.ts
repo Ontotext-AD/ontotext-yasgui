@@ -23,7 +23,7 @@ export class TooltipService {
   }
 
   static updateTooltip(element: HTMLElement, tooltip?: string, placement?: string): void {
-    const parentElement = element.parentElement;
+    const parentElement = element?.parentElement;
     if (parentElement && 'yasgui-tooltip' === parentElement.tagName.toLowerCase()) {
       TooltipService.updateTooltipData(parentElement, tooltip);
       TooltipService.updatePlacement(parentElement, placement);
