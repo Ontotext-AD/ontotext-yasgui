@@ -49,8 +49,8 @@ export class YasqeService {
     TooltipService.updateTooltip(button, tooltip)
 
     const ontotextYasgui = this.yasguiBuilder.getInstance();
-    if (ontotextYasgui) {
-      const yasqe = ontotextYasgui.getYasqe();
+    const yasqe = ontotextYasgui?.getYasqe();
+    if (ontotextYasgui && yasqe) {
       const inferredValue = yasqe.getInfer();
       const sameAsValue = yasqe.getSameAs();
       const sameAsButton = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.EXPANDS_RESULTS)}`) as HTMLElement;
