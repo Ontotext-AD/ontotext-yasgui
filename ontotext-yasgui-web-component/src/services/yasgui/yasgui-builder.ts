@@ -17,11 +17,9 @@ export class YasguiBuilder {
    * @param yasguiConfiguration - the yasgui configuration merged with the external one.
    */
   build(hostElement: HTMLElement, yasguiConfiguration: YasguiConfiguration): OntotextYasgui {
-    if (!this.instance) {
-      const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
-      // patches have to be applied before returning yasgui instance.
-      this.instance = new OntotextYasgui(yasgui, yasguiConfiguration);
-    }
+    const yasgui = this.createYasguiInstance(hostElement, yasguiConfiguration);
+    // patches have to be applied before returning yasgui instance.
+    this.instance = new OntotextYasgui(yasgui, yasguiConfiguration);
     return this.instance;
   }
 
