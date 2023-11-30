@@ -493,20 +493,53 @@
     }
   }
 
+  /* On horizontal orientation we make yasqe and yasr to have 50% width and make them float left
+   in order to make them appear next to each other.*/
   &.orientation-horizontal {
 
     .yasgui {
       display: grid;
+      position: relative;
 
-      .tabPanel > div {
-        display: grid;
-        grid-template-columns: 0 1fr 1fr;
-        position: relative;
+      /* Contract the tabs list because we move the yasr container up to the yasgui top border in
+      order to have the yasqe and yasr tabs be aligned properly.*/
+      .tabsList {
+        width: 50%;
+      }
+
+      .tabPanel {
+        /* unset the position in order to allow yasr container which is absolute positioned to be
+        top aligned to the closest relative positioned parent which must be the yasgui */
+        position: unset;
+      }
+
+      .tabPanel > div:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      .tabPanel .yasqe {
+        padding-right: 15px;
       }
 
       // this targets the yasqe container
       .tabPanel > div > div:nth-of-type(2) {
-        padding-right: 15px;
+        float: left;
+        width: 50%;
+        /* make it absolute in order to allow proper resizing when there is a query with long lines
+        inside the editor*/
+        position: absolute;
+      }
+
+      // this targets the yasr container
+      .tabPanel > div > div:nth-of-type(3) {
+        float: left;
+        width: 50%;
+        /* move yasr container up to the yasgui top border in order to align the tabs of the yasqe and yasr */
+        position: absolute;
+        top: 0;
+        right: 0;
       }
     }
   }
