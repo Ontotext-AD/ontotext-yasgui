@@ -223,6 +223,8 @@ export class OntotextYasguiWebComponent {
 
   /**
    * Allows the client to set a query in the current opened tab.
+   * The cursor position is preserved.
+   *
    * @param query The query that should be set in the current focused tab.
    */
   @Method()

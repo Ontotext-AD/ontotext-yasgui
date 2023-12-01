@@ -47,8 +47,14 @@ export class OntotextYasgui {
     return this.yasgui?.getTab().getYasqe();
   }
 
+  /**
+   * Sets a query value in the editor by preserving the cursor position.
+   * @param query The query value to be set.
+   */
   setQuery(query: string): void {
+    const cursor = this.yasgui.getTab().getYasqe().getDoc().getCursor();
     this.yasgui.getTab().getYasqe().setValue(query);
+    this.yasgui.getTab().getYasqe().getDoc().setCursor(cursor);
   }
 
   query(): Promise<any> {
