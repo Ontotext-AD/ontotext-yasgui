@@ -260,6 +260,10 @@ export class YasqeSteps {
     this.getExpandResultsOverSameAsButton().click();
   }
 
+  static getCodeMirrorEl() {
+    return this.getEditor().find('.CodeMirror');
+  }
+
   static getCodeMirror() {
     return this.getEditor().find('.CodeMirror').then(($el) => {
       // @ts-ignore

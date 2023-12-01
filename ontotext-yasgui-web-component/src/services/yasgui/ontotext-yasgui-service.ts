@@ -1,4 +1,4 @@
-import {YasguiConfiguration} from '../../models/yasgui-configuration';
+import {Orientation, YasguiConfiguration} from '../../models/yasgui-configuration';
 import {VisualisationUtils} from '../utils/visualisation-utils';
 import {HtmlElementsUtil} from '../utils/html-elements-util';
 import {TranslationService} from '../translation.service';
@@ -57,7 +57,7 @@ export class OntotextYasguiService {
 
   private static initButtonsStyling(hostElement: HTMLElement, config: YasguiConfiguration): void {
     // Initialize render buttons styling.
-    VisualisationUtils.changeRenderMode(hostElement, config.render);
+    VisualisationUtils.changeRenderMode(hostElement, config.render, config.orientation === Orientation.VERTICAL);
 
     // Initialize orientation button styling.
     const orientation = config.orientation;
