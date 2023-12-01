@@ -38,6 +38,16 @@ describe('View modes', () => {
         // And I expect that render yasqe in the toolbar to be selected
         ToolbarPageSteps.showToolbar();
         ToolbarPageSteps.isYasqeModeSelected();
+        // And yasqe should have set a height css property to expand it to a full width
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style').and('match', /height:/);
+        // When I select the yasgui mode again
+        ViewModePageSteps.switchToModeYasgui();
+        // Then I expect that yasqe and yasr will be both visible
+        YasqeSteps.getYasqe().should('be.visible');
+        YasrSteps.getYasr().should('be.visible');
+        // And the height css property will be removed to allow yasqe expand only to the with not
+        // occupied by yasr
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style', '');
     });
 
     it('Should render mode-yasr', () => {
@@ -69,8 +79,16 @@ describe('View modes', () => {
         YasguiSteps.isHorizontalOrientation();
         // And the toolbar orientation button should be set to horizontal
         ToolbarPageSteps.isHorizontalOrientation();
-        // When I switch to vertical orientation
+        // And yasqe should have set a height css property to expand it to a full width
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style').and('match', /height:/);
+        // When I switch to yasqe mode
+        ViewModePageSteps.switchToModeYasqe();
+        // And yasqe should have set a height css property to expand it to a full width
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style').and('match', /height:/);
+        // When I switch orientation to vertical
         ViewModePageSteps.switchToVerticalOrientation();
+        // And yasqe should have set a height css property to expand it to a full width
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style').and('match', /height:/);
         // Then I expect yasqe and yasr to be placed on top of each other
         YasguiSteps.isVerticalOrientation();
         // And the toolbar orientation button should be set to horizontal

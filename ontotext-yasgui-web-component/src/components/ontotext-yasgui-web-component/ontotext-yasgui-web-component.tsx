@@ -180,6 +180,11 @@ export class OntotextYasguiWebComponent {
   @State() isVerticalOrientation = true;
 
   /**
+   * Holds the rendering mode currently applied to the yasgui component.
+   */
+  @State() renderingMode = this.getRenderMode();
+
+  /**
    * Flag controlling the visibility of the save query dialog.
    */
   @State() showSaveQueryDialog = false;
@@ -212,7 +217,7 @@ export class OntotextYasguiWebComponent {
   changeRenderMode(newRenderMode): Promise<void> {
     return this.getOntotextYasgui()
       .then(() => {
-        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode);
+        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.getOrientationMode());
       });
   }
 
@@ -369,6 +374,7 @@ export class OntotextYasguiWebComponent {
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.refresh();
+        VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation));
       });
   }
 
@@ -587,7 +593,7 @@ export class OntotextYasguiWebComponent {
 
   private changeOrientation() {
     this.isVerticalOrientation = !this.isVerticalOrientation;
-    VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation);
+    VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation, this.renderingMode);
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.refresh();
@@ -710,6 +716,11 @@ export class OntotextYasguiWebComponent {
     });
   }
 
+  private changeRenderingMode(mode: RenderingMode): void {
+    this.renderingMode = mode;
+    VisualisationUtils.changeRenderMode(this.hostElement, mode, this.isVerticalOrientation);
+  }
+
   private isOntotextYasguiInitialiazed(): boolean {
     return !!this.ontotextYasgui && !!this.ontotextYasgui.getInstance();
   }
@@ -774,15 +785,15 @@ export class OntotextYasguiWebComponent {
       <Host class={classList}>
         <div class="yasgui-toolbar hidden">
           <button class="yasgui-btn btn-mode-yasqe"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASQE)}>
+                  onClick={() => this.changeRenderingMode(RenderingMode.YASQE)}>
             {this.translationService.translate('yasgui.toolbar.mode_yasqe.btn.label')}
           </button>
           <button class="yasgui-btn btn-mode-yasgui"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASGUI)}>
+                  onClick={() => this.changeRenderingMode(RenderingMode.YASGUI)}>
             {this.translationService.translate('yasgui.toolbar.mode_yasgui.btn.label')}
           </button>
           <button class="yasgui-btn btn-mode-yasr"
-                  onClick={() => VisualisationUtils.changeRenderMode(this.hostElement, RenderingMode.YASR)}>
+                  onClick={() => this.changeRenderingMode(RenderingMode.YASR)}>
             {this.translationService.translate('yasgui.toolbar.mode_yasr.btn.label')}
           </button>
           <yasgui-tooltip
