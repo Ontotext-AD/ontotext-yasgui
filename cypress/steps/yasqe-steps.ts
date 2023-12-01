@@ -67,7 +67,7 @@ export class YasqeSteps {
       .should('be.visible');
   }
 
-  static executeQueryWithoutWaiteResult(index = 0) {
+  static executeQueryWithoutWaitResult(index = 0) {
     this.getExecuteQueryButton(index).click();
   }
 

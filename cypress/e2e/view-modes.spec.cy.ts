@@ -32,7 +32,6 @@ describe('View modes', () => {
         // Then Only yasqe should be visible
         YasqeSteps.getYasqe().should('be.visible');
         YasguiSteps.getTabs().should('have.length', 1);
-        YasqeSteps.executeQueryWithoutWaiteResult();
         // And yasr should be hidden
         YasrSteps.getYasr().should('not.be.visible');
         // And I expect that render yasqe in the toolbar to be selected
@@ -48,6 +47,20 @@ describe('View modes', () => {
         // And the height css property will be removed to allow yasqe expand only to the with not
         // occupied by yasr
         YasqeSteps.getCodeMirrorEl().should('have.attr', 'style', '');
+    });
+
+    it('Should switch to yasgui mode when query is executed', () => {
+      // When I configure mode-yasqe
+      ViewModePageSteps.switchToModeYasqe();
+      // Then Only yasqe should be visible
+      YasqeSteps.getYasqe().should('be.visible');
+      YasrSteps.getYasr().should('not.be.visible');
+      // When I run a query
+      YasqeSteps.executeQueryWithoutWaitResult();
+      // Then I expect rendering mode to be switched back to yasgui
+      YasqeSteps.getYasqe().should('be.visible');
+      YasrSteps.getYasr().should('be.visible');
+      ToolbarPageSteps.isYasguiModeSelected();
     });
 
     it('Should render mode-yasr', () => {

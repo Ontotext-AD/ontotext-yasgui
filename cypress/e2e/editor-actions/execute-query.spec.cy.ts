@@ -23,7 +23,7 @@ describe('Execute query action', () => {
   it('Should display a progress indicator during query execution', () => {
     QueryStubs.stubDefaultQueryResponse(2000);
     ActionsPageSteps.visit();
-    YasqeSteps.executeQueryWithoutWaiteResult();
+    YasqeSteps.executeQueryWithoutWaitResult();
     YasqeSteps.getTabWithProgressBar().should('exist');
   });
 
@@ -82,7 +82,7 @@ describe('Execute query action', () => {
     KeyboardShortcutPageSteps.setVirtualRepository();
     YasqeSteps.clearEditor();
     YasqeSteps.writeInEditor("INSERT DATA { ontogen:name rdf:label \"Test name\"");
-    YasqeSteps.executeQueryWithoutWaiteResult();
+    YasqeSteps.executeQueryWithoutWaitResult();
 
     // Then I expect the query don't run,
     YasrSteps.getResultsTable().should('not.exist');

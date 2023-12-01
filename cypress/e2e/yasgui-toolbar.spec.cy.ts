@@ -64,7 +64,7 @@ describe('Yasgui Toolbar', () => {
         // Then yasqe should be visible
         YasqeSteps.getYasqe().should('be.visible');
         YasguiSteps.getTabs().should('have.length', 1);
-        YasqeSteps.executeQueryWithoutWaiteResult();
+        YasqeSteps.executeQueryWithoutWaitResult();
         // And yasr should be not visible
         YasrSteps.getYasr().should('not.be.visible');
         // And only yasqe button have to be selected
