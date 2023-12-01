@@ -240,6 +240,7 @@ export class OntotextYasguiWebComponent {
   query(): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
+        console.log('run query', );
         return ontotextYasgui.query();
       });
   }
@@ -566,6 +567,7 @@ export class OntotextYasguiWebComponent {
 
   @Listen('internalQueryEvent')
   onQuery(event: CustomEvent<InternalQueryEvent>): void {
+    this.changeRenderMode(RenderingMode.YASGUI);
     this.output.emit(toOutputEvent(event));
   }
 
