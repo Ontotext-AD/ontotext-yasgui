@@ -58,6 +58,8 @@ export function getAsValue<E, A>(valueOrFn: E | ((arg: A) => E), arg: A): E {
   return valueOrFn;
 }
 
+type TranslationCallback = (translation: string) => void;
+
 export class TranslationService {
   private static _INSTANCE: TranslationService;
 
@@ -70,6 +72,15 @@ export class TranslationService {
 
   translate(key: string, _parameters?: TranslationParameter[]): string {
     return key;
+  }
+
+  onTranslate(
+    messageLabelKey: string,
+    translationCallback: TranslationCallback = () => {},
+    _translationParameter: TranslationParameter[] = []
+  ) {
+    translationCallback(messageLabelKey);
+    return () => {};
   }
 }
 
