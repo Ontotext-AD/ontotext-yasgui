@@ -50,8 +50,11 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Cmd-K');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      //@ts-ignore
-      Yasqe.defaults.extraKeys['Shift-Ctrl-K'](yasqe);
+      const lineNumber = yasqe.getDoc().getCursor().line;
+      //delete current line including the linebreak after
+      return yasqe.getDoc().replaceRange("",
+        {ch: 0, line: lineNumber},
+        {ch: 0, line: lineNumber + 1});
     };
     return keyboardShortcut;
   }
