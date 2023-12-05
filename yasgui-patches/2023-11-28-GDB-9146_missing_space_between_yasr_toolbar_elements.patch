@@ -1,0 +1,21 @@
+Subject: [PATCH] GDB-9146: The button Visual in tab Pivot table and Google tab should have a distance with the button GET HTML
+---
+Index: Yasgui/packages/yasr/src/main.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/main.scss b/Yasgui/packages/yasr/src/main.scss
+--- a/Yasgui/packages/yasr/src/main.scss	(revision 41930b7327006ae83feccb880d7e865264136632)
++++ b/Yasgui/packages/yasr/src/main.scss	(revision 2d3061e97f4da6da06fdad1f6a0468e3cd991767)
+@@ -163,8 +163,8 @@
+   .yasr-toolbar {
+     display: flex;
+     .yasr-toolbar-element {
+-      padding-left: 10px;
+-      padding-right: 10px;
++      margin-left: 6px;
++      margin-right: 6px;
+     }
+   }
+ }
