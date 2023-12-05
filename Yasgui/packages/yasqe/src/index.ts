@@ -106,6 +106,7 @@ export class Yasqe extends CodeMirror {
   public readonly eventService: EventService;
   private readonly isVirtualRepository: boolean;
   private readonly tabId: string;
+  private subscriptions: any[] = [];
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -997,9 +998,9 @@ export class Yasqe extends CodeMirror {
   /**
    * Shows notification
    * @param key reference to the notification
-   * @param message the message to display
+   * @param messageLabelKey the message label key to display
    */
-  public showNotification(key: string, message: string) {
+  public showNotification(key: string, messageLabelKey: string) {
     if (!this.notificationEls[key]) {
       // We create one wrapper for each notification, since there is no interactivity with the container (yet) we don't need to keep a reference
       const notificationContainer = document.createElement("div");
@@ -1017,7 +1018,12 @@ export class Yasqe extends CodeMirror {
     }
     const el = this.notificationEls[key];
     addClass(el, "active");
-    el.innerText = message;
+
+    this.subscriptions.push(
+      this.translationService.onTranslate(messageLabelKey, (translation) => {
+        el.innerText = translation;
+      })
+    );
   }
   /**
    * Hides notification
@@ -1184,6 +1190,7 @@ export class Yasqe extends CodeMirror {
   }
 
   public destroy() {
+    this.subscriptions.forEach((subscription) => subscription());
     //  Abort running query;
     this.abortQuery();
     this.unregisterEventListeners();
