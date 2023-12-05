@@ -35,7 +35,7 @@ export class PivotTablePlugin implements YasrPlugin {
   initialize(): Promise<void> {
     return new Promise(resolve => {
       HtmlUtil.loadCss('https://pivottable.js.org/dist/pivot.css');
-      HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js');
+      HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js');
       HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js');
       HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
       HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js');
