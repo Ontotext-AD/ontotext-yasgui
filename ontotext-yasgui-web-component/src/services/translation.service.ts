@@ -13,6 +13,13 @@ export interface TranslationParameter {
   value: string;
 }
 
+type TranslationCallback = (translation: string) => void;
+
+interface TranslationObserver {
+  parameters: TranslationParameter[];
+  callback: TranslationCallback;
+}
+
 /**
  * Service responsible for translation operations in the component.
  */
@@ -22,6 +29,40 @@ export class TranslationService {
   private bundle = {en, fr}
 
   private languageChangeObservers: LanguageChangeObserver[] = [];
+  private translationChangedObservers: Record<string, TranslationObserver[]> = {};
+
+  /**
+   * Translates the <code>messageLabelKey</code> with <code>translationParameter</code> and call <code>translationCallback</code> with translation of current language.
+   * The <code>translationCallback</code> is called upon subscription and whenever the selected language is changed.
+   *
+   * @param messageLabelKey - The label key for the translation.
+   * @param translationCallback - A function to be called when translating the `messageLabelKey`.
+   * @param translationParameter - Parameters, if needed, for translation.
+   * @returns A function that, when called, unsubscribes the provided callback from further translation updates.
+   */
+  public onTranslate(messageLabelKey: string, translationCallback: TranslationCallback = () => {/*do nothing*/}, translationParameter: TranslationParameter[] = []) {
+    this.translationChangedObservers[messageLabelKey] = this.translationChangedObservers[messageLabelKey] || [];
+
+    const observer: TranslationObserver = {parameters: translationParameter, callback: translationCallback};
+    this.translationChangedObservers[messageLabelKey].push(observer);
+
+    translationCallback(this.translate(messageLabelKey, translationParameter));
+
+    return () => {
+      const index = this.translationChangedObservers[messageLabelKey].indexOf(observer);
+      if (index !== -1) {
+        this.translationChangedObservers[messageLabelKey].splice(index, 1);
+      }
+    };
+  }
+
+  private notifyTranslationsChanged(): void {
+    Object.keys(this.translationChangedObservers).forEach((eventName) => {
+      const observers = this.translationChangedObservers[eventName] || [];
+      observers.forEach((observer) => observer.callback(this.translate(eventName, observer.parameters)));
+    });
+  }
+
 
   /**
    * Sets the language which should be used for registered labels. If there is no registered bundle
@@ -38,6 +79,7 @@ export class TranslationService {
       this.currentLang = lang;
     }
     this.notifyLanguageChangeObservers(this.currentLang);
+    this.notifyTranslationsChanged();
   }
 
   /**

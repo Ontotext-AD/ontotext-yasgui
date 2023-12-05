@@ -173,6 +173,7 @@ Type: `Promise<any>`
 ### `setQuery(query: string) => Promise<void>`
 
 Allows the client to set a query in the current opened tab.
+The cursor position is preserved.
 
 #### Returns
 
