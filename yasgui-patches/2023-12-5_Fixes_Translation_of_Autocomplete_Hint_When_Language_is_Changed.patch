@@ -1,0 +1,129 @@
+Subject: [PATCH] Fixes Translation of Autocomplete Hint When Language is Changed
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision fb9368561b3f184482ac77c281a41cf32f7db3f3)
++++ b/Yasgui/packages/utils/src/index.ts	(revision 87a8f3dd6e69dc0aabfac210c0ae8554569f6eb4)
+@@ -58,6 +58,8 @@
+   return valueOrFn;
+ }
+ 
++type TranslationCallback = (translation: string) => void;
++
+ export class TranslationService {
+   private static _INSTANCE: TranslationService;
+ 
+@@ -71,6 +73,15 @@
+   translate(key: string, _parameters?: TranslationParameter[]): string {
+     return key;
+   }
++
++  onTranslate(
++    messageLabelKey: string,
++    translationCallback: TranslationCallback = () => {},
++    _translationParameter: TranslationParameter[] = []
++  ) {
++    translationCallback(messageLabelKey);
++    return () => {};
++  }
+ }
+ 
+ export class TimeFormattingService {
+Index: Yasgui/packages/yasqe/src/autocompleters/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/index.ts b/Yasgui/packages/yasqe/src/autocompleters/index.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision fb9368561b3f184482ac77c281a41cf32f7db3f3)
++++ b/Yasgui/packages/yasqe/src/autocompleters/index.ts	(revision 87a8f3dd6e69dc0aabfac210c0ae8554569f6eb4)
+@@ -127,10 +127,7 @@
+       return false;
+     }
+     if (!this.config.autoShow) {
+-      this.yasqe.showNotification(
+-        this.config.name,
+-        this.yasqe.translationService.translate("yasqe.autocomplete.notification.info.help_info_message")
+-      );
++      this.yasqe.showNotification(this.config.name, "yasqe.autocomplete.notification.info.help_info_message");
+     }
+     this.emit("validPosition", this);
+     return true;
+@@ -334,10 +331,7 @@
+   var reqProtocol = window.location.protocol.indexOf("http") === 0 ? "https://" : "http://";
+   const notificationKey = "autocomplete_" + type;
+   if (!token || !token.string || token.string.trim().length == 0) {
+-    yasqe.showNotification(
+-      notificationKey,
+-      yasqe.translationService.translate("yasqe.autocomplete.notification.info.nothing_to_autocomplete")
+-    );
++    yasqe.showNotification(notificationKey, "yasqe.autocomplete.notification.info.nothing_to_autocomplete");
+     return Promise.resolve([]);
+   }
+   // //if notification bar is there, show a loader
+@@ -362,10 +356,7 @@
+         return [];
+       },
+       (_e) => {
+-        yasqe.showNotification(
+-          notificationKey,
+-          yasqe.translationService.translate("yasqe.autocomplete.notification.error.failed_fetching_suggestions")
+-        );
++        yasqe.showNotification(notificationKey, "yasqe.autocomplete.notification.error.failed_fetching_suggestions");
+       }
+     );
+ };
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision fb9368561b3f184482ac77c281a41cf32f7db3f3)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 87a8f3dd6e69dc0aabfac210c0ae8554569f6eb4)
+@@ -106,6 +106,7 @@
+   public readonly eventService: EventService;
+   private readonly isVirtualRepository: boolean;
+   private readonly tabId: string;
++  private subscriptions: any[] = [];
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
+@@ -997,9 +998,9 @@
+   /**
+    * Shows notification
+    * @param key reference to the notification
+-   * @param message the message to display
++   * @param messageLabelKey the message label key to display
+    */
+-  public showNotification(key: string, message: string) {
++  public showNotification(key: string, messageLabelKey: string) {
+     if (!this.notificationEls[key]) {
+       // We create one wrapper for each notification, since there is no interactivity with the container (yet) we don't need to keep a reference
+       const notificationContainer = document.createElement("div");
+@@ -1017,7 +1018,12 @@
+     }
+     const el = this.notificationEls[key];
+     addClass(el, "active");
+-    el.innerText = message;
++
++    this.subscriptions.push(
++      this.translationService.onTranslate(messageLabelKey, (translation) => {
++        el.innerText = translation;
++      })
++    );
+   }
+   /**
+    * Hides notification
+@@ -1184,6 +1190,7 @@
+   }
+ 
+   public destroy() {
++    this.subscriptions.forEach((subscription) => subscription());
+     //  Abort running query;
+     this.abortQuery();
+     this.unregisterEventListeners();
