@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { addClass, removeClass, getAsValue, EventService } from "@triply/yasgui-utils";
+import { addClass, removeClass, getAsValue, EventService, EXPLAIN_PLAN_TYPE } from "@triply/yasgui-utils";
 import { TabListEl } from "./TabElements";
 import TabPanel from "./TabPanel";
 import {
@@ -28,7 +28,7 @@ export interface PersistedJson {
     value: string;
     infer?: boolean;
     sameAs?: boolean;
-    isExplainPlanQuery?: boolean;
+    explainPlanQueryType?: EXPLAIN_PLAN_TYPE;
     editorHeight?: string;
     pageSize?: number;
     pageNumber?: number;
@@ -344,7 +344,7 @@ export class Tab extends EventEmitter {
       editorHeight: this.persistentJson.yasqe.editorHeight ? this.persistentJson.yasqe.editorHeight : undefined,
       infer: this.persistentJson.yasqe.infer,
       sameAs: this.persistentJson.yasqe.sameAs,
-      isExplainPlanQuery: this.persistentJson.yasqe.isExplainPlanQuery,
+      explainPlanQueryType: this.persistentJson.yasqe.explainPlanQueryType,
       pageNumber: this.persistentJson.yasqe.pageNumber || this.yasgui.config.pageNumber,
       pageSize: this.persistentJson.yasqe.pageSize || this.yasgui.config.pageSize,
       paginationOn: this.yasgui.config.paginationOn,
@@ -481,7 +481,7 @@ export class Tab extends EventEmitter {
     if (pageNumber !== undefined) {
       this.persistentJson.yasqe.pageNumber = pageNumber;
     }
-    this.persistentJson.yasqe.isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
+    this.persistentJson.yasqe.explainPlanQueryType = yasqe.getExplainPlanQueryType();
   };
   private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
     return (
@@ -490,7 +490,7 @@ export class Tab extends EventEmitter {
       yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs ||
       yasqe.getPageSize() !== this.persistentJson.yasqe.pageSize ||
       yasqe.getPageNumber() !== this.persistentJson.yasqe.pageNumber ||
-      yasqe.getIsExplainPlanQuery() !== this.persistentJson.yasqe.isExplainPlanQuery
+      yasqe.getExplainPlanQueryType() !== this.persistentJson.yasqe.explainPlanQueryType
     );
   };
   handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
