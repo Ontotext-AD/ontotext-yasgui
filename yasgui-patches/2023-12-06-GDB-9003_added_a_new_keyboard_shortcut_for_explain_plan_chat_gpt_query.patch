@@ -1,0 +1,184 @@
+Subject: [PATCH] Added a new keyboard shortcut for Explain plan Chat GPT query
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision 20a67b9febc2df76699dec1e4c0406bf356857eb)
++++ b/Yasgui/packages/utils/src/index.ts	(revision c14ec10efacb65e5a5ef97ce3f7891685c53926a)
+@@ -146,3 +146,8 @@
+   messageLabelKey?: string;
+   parameters?: TranslationParameter[];
+ }
++
++export enum EXPLAIN_PLAN_TYPE {
++  EXPLAIN = "explain",
++  CHAT_GPT_EXPLAIN = "gpt",
++}
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 20a67b9febc2df76699dec1e4c0406bf356857eb)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision c14ec10efacb65e5a5ef97ce3f7891685c53926a)
+@@ -1,5 +1,5 @@
+ import { EventEmitter } from "events";
+-import { addClass, removeClass, getAsValue, EventService } from "@triply/yasgui-utils";
++import { addClass, removeClass, getAsValue, EventService, EXPLAIN_PLAN_TYPE } from "@triply/yasgui-utils";
+ import { TabListEl } from "./TabElements";
+ import TabPanel from "./TabPanel";
+ import {
+@@ -28,7 +28,7 @@
+     value: string;
+     infer?: boolean;
+     sameAs?: boolean;
+-    isExplainPlanQuery?: boolean;
++    explainPlanQueryType?: EXPLAIN_PLAN_TYPE;
+     editorHeight?: string;
+     pageSize?: number;
+     pageNumber?: number;
+@@ -344,7 +344,7 @@
+       editorHeight: this.persistentJson.yasqe.editorHeight ? this.persistentJson.yasqe.editorHeight : undefined,
+       infer: this.persistentJson.yasqe.infer,
+       sameAs: this.persistentJson.yasqe.sameAs,
+-      isExplainPlanQuery: this.persistentJson.yasqe.isExplainPlanQuery,
++      explainPlanQueryType: this.persistentJson.yasqe.explainPlanQueryType,
+       pageNumber: this.persistentJson.yasqe.pageNumber || this.yasgui.config.pageNumber,
+       pageSize: this.persistentJson.yasqe.pageSize || this.yasgui.config.pageSize,
+       paginationOn: this.yasgui.config.paginationOn,
+@@ -481,7 +481,7 @@
+     if (pageNumber !== undefined) {
+       this.persistentJson.yasqe.pageNumber = pageNumber;
+     }
+-    this.persistentJson.yasqe.isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
++    this.persistentJson.yasqe.explainPlanQueryType = yasqe.getExplainPlanQueryType();
+   };
+   private hasPersistenceJsonBeenChanged = (yasqe: Yasqe) => {
+     return (
+@@ -490,7 +490,7 @@
+       yasqe.getSameAs() !== this.persistentJson.yasqe.sameAs ||
+       yasqe.getPageSize() !== this.persistentJson.yasqe.pageSize ||
+       yasqe.getPageNumber() !== this.persistentJson.yasqe.pageNumber ||
+-      yasqe.getIsExplainPlanQuery() !== this.persistentJson.yasqe.isExplainPlanQuery
++      yasqe.getExplainPlanQueryType() !== this.persistentJson.yasqe.explainPlanQueryType
+     );
+   };
+   handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 20a67b9febc2df76699dec1e4c0406bf356857eb)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision c14ec10efacb65e5a5ef97ce3f7891685c53926a)
+@@ -1,5 +1,6 @@
+ import {
+   EventService,
++  EXPLAIN_PLAN_TYPE,
+   NotificationMessageService,
+   TranslationParameter,
+   TranslationService,
+@@ -100,7 +101,7 @@
+   private sameAs?: boolean;
+   private pageSize?: number;
+   private pageNumber?: number;
+-  private isExplainPlanQuery?: boolean;
++  private explainPlanQueryType?: EXPLAIN_PLAN_TYPE;
+   public readonly translationService: TranslationService;
+   public readonly notificationMessageService: NotificationMessageService;
+   public readonly eventService: EventService;
+@@ -126,7 +127,7 @@
+     this.eventService = this.config.eventService;
+     this.infer = this.config.infer;
+     this.sameAs = this.config.sameAs;
+-    this.isExplainPlanQuery = this.config.isExplainPlanQuery;
++    this.explainPlanQueryType = this.config.explainPlanQueryType;
+     this.pageNumber = this.config.pageNumber;
+     this.pageSize = this.config.pageSize;
+     this.tabId = this.config.tabId;
+@@ -272,12 +273,16 @@
+     return this.pageSize;
+   }
+ 
+-  public setIsExplainPlanQuery(isExplainPlanQuery: boolean): void {
+-    this.isExplainPlanQuery = isExplainPlanQuery;
++  public setExplainPlanQueryType(explainType?: EXPLAIN_PLAN_TYPE): void {
++    this.explainPlanQueryType = explainType;
++  }
++
++  public getExplainPlanQueryType(): EXPLAIN_PLAN_TYPE | undefined {
++    return this.explainPlanQueryType;
+   }
+ 
+-  public getIsExplainPlanQuery(): boolean | undefined {
+-    return this.isExplainPlanQuery;
++  public isExplainPlanQuery(): boolean {
++    return !!this.explainPlanQueryType;
+   }
+ 
+   isQueryRunning() {
+@@ -1090,10 +1095,10 @@
+   /**
+    * Querying
+    */
+-  public query(config?: Sparql.YasqeAjaxConfig, isExplainPlanQuery = false) {
++  public query(config?: Sparql.YasqeAjaxConfig, explainType?: EXPLAIN_PLAN_TYPE | undefined) {
+     if (this.config.queryingDisabled) return Promise.reject("Querying is disabled.");
+ 
+-    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery() || this.isDescribeQuery())) {
++    if (!!explainType && !(this.isSelectQuery() || this.isConstructQuery() || this.isDescribeQuery())) {
+       const message = this.translationService.translate(
+         "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message"
+       );
+@@ -1101,7 +1106,7 @@
+       return Promise.reject();
+     }
+ 
+-    if (isExplainPlanQuery && this.isVirtualRepository) {
++    if (!!explainType && this.isVirtualRepository) {
+       const message = this.translationService.translate("yasqe.explain_query.virtual_repository.error.message");
+       this.notificationMessageService.warning("explain_not_allowed", message);
+       return Promise.reject();
+@@ -1115,7 +1120,7 @@
+ 
+     // Abort previous request
+     this.abortQuery();
+-    this.setIsExplainPlanQuery(isExplainPlanQuery);
++    this.setExplainPlanQueryType(explainType);
+     return Sparql.executeQuery(this, config);
+   }
+ 
+@@ -1357,7 +1362,7 @@
+   sameAs?: boolean;
+   pageSize?: number;
+   pageNumber?: number;
+-  isExplainPlanQuery?: boolean;
++  explainPlanQueryType?: EXPLAIN_PLAN_TYPE;
+   paginationOn?: boolean;
+   keyboardShortcutDescriptions?: [];
+   isVirtualRepository: boolean;
+Index: Yasgui/packages/yasqe/src/sparql.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+--- a/Yasgui/packages/yasqe/src/sparql.ts	(revision 20a67b9febc2df76699dec1e4c0406bf356857eb)
++++ b/Yasgui/packages/yasqe/src/sparql.ts	(revision c14ec10efacb65e5a5ef97ce3f7891685c53926a)
+@@ -267,9 +267,10 @@
+     data["sameAs"] = `${sameAs}`;
+   }
+ 
+-  const isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
++  const isExplainPlanQuery = yasqe.isExplainPlanQuery();
+   if (isExplainPlanQuery) {
+     data["explain"] = "true";
++    data["explainType"] = yasqe.getExplainPlanQueryType()!;
+   }
+ 
+   if (yasqe.config.paginationOn) {
