@@ -26,7 +26,7 @@ describe('Keyboard Shortcuts', () => {
       // and have title
       KeyboardShortcutSteps.getInfoDialogTitle().should('have.text', 'Keyboard shortcuts');
       // and expect see information for all available actions.
-      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 17);
+      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 18);
     });
 
     it('should open dialog with information only for readonly keyboard shortcuts actions', () => {
@@ -223,12 +223,12 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnSwitchToNextTabShortcut();
 
       // Then I expect last tab to be active.
-      YasguiSteps.getCurrentTab().contains( 'Unnamed 2');
+      YasguiSteps.getCurrentTab().contains('Unnamed 2');
 
       // When press the "Switch to the next tab" keyboard shortcut.
       KeyboardShortcutSteps.clickOnSwitchToNextTabShortcut();
       // Then I expect last tab to be active.
-      YasguiSteps.getCurrentTab().contains( 'Unnamed 2');
+      YasguiSteps.getCurrentTab().contains('Unnamed 2');
     });
 
     it('should trigger "SWITCH_PREVIOUS_TAB" action', () => {
@@ -244,13 +244,13 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnSwitchToPreviousTabShortcut();
 
       // Then I expect last tab to be active.
-      YasguiSteps.getCurrentTab().contains( 'Unnamed');
+      YasguiSteps.getCurrentTab().contains('Unnamed');
 
       // When press the "Switch to the next tab" keyboard shortcut.
       KeyboardShortcutSteps.clickOnSwitchToPreviousTabShortcut();
 
       // Then I expect last tab to be active.
-      YasguiSteps.getCurrentTab().contains( 'Unnamed');
+      YasguiSteps.getCurrentTab().contains('Unnamed');
     });
 
     it('should trigger "CREATE_SAVE_QUERY" action', () => {
@@ -286,5 +286,18 @@ describe('Keyboard Shortcuts', () => {
       // Then I expect to see explain plan message.
       YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
     });
+  });
+
+  it('should trigger "EXECUTE_CHAT_GPT_EXPLAIN_PLAN_FOR_QUERY" action on DESCRIBE query', () => {
+
+    YasqeSteps.clearEditor();
+    YasqeSteps.writeInEditor('DESCRIBE * WHERE {\n ?s ?p ?o \n}');
+    // Given: I visit a page with "ontotext-yasgui-web-component" in it,
+    QueryStubs.stubExplainPlanQueryResponse();
+    // When press the "Chat gpt explain plan" keyboard shortcut.
+    KeyboardShortcutSteps.clickOnExplainPlanChatGptQueryShortcut();
+
+    // Then I expect to see explain plan message.
+    YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
   });
 });

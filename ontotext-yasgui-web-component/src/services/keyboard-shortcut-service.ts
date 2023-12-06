@@ -1,4 +1,4 @@
-import {KeyboardShortcutDescription, KeyboardShortcutName} from '../models/keyboard-shortcut-description';
+import {EXPLAIN_PLAN_TYPE, KeyboardShortcutDescription, KeyboardShortcutName} from '../models/keyboard-shortcut-description';
 import {YasguiConfiguration} from '../models/yasgui-configuration';
 import {YasqeButtonName} from '../models/yasqe-button-name';
 import {YasqeService} from './yasqe/yasqe-service';
@@ -19,6 +19,7 @@ export class KeyboardShortcutService {
     if (config.yasguiConfig.yasqe.showQueryButton) {
       keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteQuery());
       keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteExplainPlanForQuery());
+      keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteChatGPTExplainPlanForQuery());
       keyboardShortcutDescriptions.push(KeyboardShortcutService.createCreateTab());
       keyboardShortcutDescriptions.push(KeyboardShortcutService.createSavedQuery());
       keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToNextTab());
@@ -173,7 +174,20 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-Enter');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      yasqe.query(undefined, true).catch(() => {
+      yasqe.query(undefined, EXPLAIN_PLAN_TYPE.EXPLAIN).catch(() => {
+        // catch this to avoid unhandled rejection
+      });
+    };
+    return keyboardShortcut;
+  }
+
+  private static createExecuteChatGPTExplainPlanForQuery(): KeyboardShortcutDescription {
+    const keyboardShortcut = new KeyboardShortcutDescription()
+    keyboardShortcut.NAME = KeyboardShortcutName.EXECUTE_CHAT_GPT_EXPLAIN_PLAN_FOR_QUERY;
+    keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Enter');
+    keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Enter');
+    keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
+      yasqe.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
         // catch this to avoid unhandled rejection
       });
     };
