@@ -47,6 +47,10 @@ export class OntotextYasgui {
     return this.yasgui?.getTab().getYasqe();
   }
 
+  leaveFullScreen(): void {
+    this.getYasqe()?.leaveFullScreen();
+  }
+
   /**
    * Sets a query value in the editor by preserving the cursor position.
    * @param query The query value to be set.
