@@ -22,6 +22,6 @@ export enum KeyboardShortcutName {
   SWITCH_NEXT_TAB = 'switch_next_tab',
   SWITCH_PREVIOUS_TAB = 'switch_previous_tab',
   CLOSES_ALL_TABS = 'closes_all_tabs',
-  F11 = 'f11',
+  FULL_SCREEN = 'full_screen',
   ESC = 'esc'
 }

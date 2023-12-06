@@ -254,8 +254,9 @@ export class KeyboardShortcutService {
 
   private static createF11(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
-    keyboardShortcut.NAME = KeyboardShortcutName.F11;
-    keyboardShortcut.keyboardShortcuts.push('F11');
+    keyboardShortcut.NAME = KeyboardShortcutName.FULL_SCREEN;
+    keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-F');
+    keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-F');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       yasqe.toggleFullScreen();
