@@ -2,6 +2,8 @@ import {YasrToolbarPlugin} from '../../../models/yasr-toolbar-plugin';
 import {ServiceFactory} from '../../service-factory';
 import {TranslationService} from '../../translation.service';
 import {DropdownOption} from '../../../models/dropdown-option';
+import {Yasr} from '../../../models/yasgui/yasr';
+import {QueryType} from '../../../models/yasgui/query-type';
 
 export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
 
@@ -24,7 +26,6 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
     });
   }
 
-  //@ts-ignore
   createElement(yasr: Yasr): HTMLElement {
     const downloadAsElement = document.createElement("ontotext-download-as");
     downloadAsElement.translationService = this.translationService;
@@ -32,7 +33,6 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
     return downloadAsElement;
   }
 
-  //@ts-ignore
   updateElement(element: any, yasr: Yasr): void {
     if (!element) {
       return;
@@ -75,7 +75,6 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
     }
   }
 
-  //@ts-ignore
   private updateDownloadAsElementVisibility(element: any, yasr: Yasr) {
     element.classList.add("hidden");
 
@@ -87,7 +86,7 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
 
     // Download as dropdown is not visible
     // when executed query is for explain plan query,
-    if (yasr.yasqe.getIsExplainPlanQuery()) {
+    if (yasr.yasqe.isExplainPlanQuery()) {
       return;
     }
     // or there is no results.
@@ -142,9 +141,9 @@ class DefaultDownloadAsConfiguration extends DownloadAsPluginConfiguration {
   //@ts-ignore
   getOptions(yasr: Yasr): DropdownOption[] {
     switch (yasr.yasqe.getQueryType()) {
-      case 'SELECT':
-      case 'CONSTRUCT':
-      case 'DESCRIBE':
+      case QueryType.SELECT:
+      case QueryType.CONSTRUCT:
+      case QueryType.DESCRIBE:
         return [{
           labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
           value: "application/sparql-results+json",

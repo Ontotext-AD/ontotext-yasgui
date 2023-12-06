@@ -3,7 +3,7 @@ import {TranslationService} from '../../../services/translation.service';
 import {SvgUtil} from '../../../services/utils/svg-util';
 import {HtmlUtil} from "../../../services/utils/html-util";
 import {SparqlUtils} from "../../../services/utils/sparql-utils";
-import {Yasr} from "../../../models/yasr";
+import {Yasr} from "../../../models/yasgui/yasr";
 
 export interface PluginConfig {
   width: string;

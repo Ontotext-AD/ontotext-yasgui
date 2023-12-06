@@ -1,7 +1,7 @@
 import {YasrToolbarPlugin} from '../../../models/yasr-toolbar-plugin';
 import {DownloadInfo} from '../../../models/yasr-plugin';
 import {ChartsPlugin} from "../../../plugins/yasr/charts/charts-plugin";
-import {Yasr} from "../../../models/yasr";
+import {Yasr} from "../../../models/yasgui/yasr";
 import {HtmlUtil} from "../../utils/html-util";
 
 export class ChartDownloadPlugin implements YasrToolbarPlugin {
