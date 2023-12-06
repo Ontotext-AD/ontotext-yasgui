@@ -84,6 +84,8 @@
   "yasqe.keyboard_shortcuts.dialog.item.switch_previous_tab.description": "Passer à l'onglet suivant",
   "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.label": "[Ctrl|Cmd]-Shift-F4",
   "yasqe.keyboard_shortcuts.dialog.item.closes_all_tabs.description": "Ferme tous les onglets sauf celui en cours",
+  "yasqe.keyboard_shortcuts.dialog.item.execute_chat_gpt_explain_plan_for_query.label": "Alt-[Ctrl|Cmd]-Enter",
+  "yasqe.keyboard_shortcuts.dialog.item.execute_chat_gpt_explain_plan_for_query.description": "Expliquer la requête/résultat avec ChatGPT",
   "yasqe.keyboard_shortcuts.dialog.item.full_screen.label": "[Ctrl|Cmd]-Alt-F",
   "yasqe.keyboard_shortcuts.dialog.item.full_screen.description": "Plein écran/Quitter le plein écran",
   "yasqe.keyboard_shortcuts.dialog.item.explain_exit_fullscreen.message": "[Ctrl|Cmd]-Alt-F ou Échap pour quitter le mode plein écran.",

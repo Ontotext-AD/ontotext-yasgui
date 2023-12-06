@@ -3,6 +3,7 @@ import {Prefixes} from '../../../Yasgui/packages/yasr';
 import {BeforeUpdateQueryResult} from './before-update-query-result';
 import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 import {YasqeMode} from './yasqe-mode';
+import {KeyboardShortcutName} from './keyboard-shortcut-description';
 
 export interface ExternalYasguiConfiguration {
   // ***********************************************************
@@ -289,6 +290,12 @@ export interface ExternalYasguiConfiguration {
    * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
    */
   sparqlResponse: string | undefined;
+
+  /**
+   * Configuration that controls which keyboard shortcuts are enabled.
+   *
+   */
+  keyboardShortcutConfiguration: Record<KeyboardShortcutName, boolean>[];
 }
 
 export type AutocompleteLoader = () => any;

@@ -122,6 +122,28 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **sameAs**: the value of "sameAs" parameter when a query is executed. Default value is true.
 - **immutableSameAs**: if set to true, the 'sameAs' value cannot be changed. Default value is false.
 - **language**: the language being used when the component is initialized. Default value is "en".
+- **keyboardShortcutConfiguration**: This is an object with key-value pairs. The key is the name of the keyboard shortcut, and the value is
+  a boolean that controls whether the shortcut should be visible. The shortcut will be visible if it is not set in the configuration or is
+  set with a value of true. All possible values for the keys are:
+  - trigger_autocompletion
+  - delete_current_line
+  - comment_selected_line
+  - copy_line_down
+  - copy_line_up
+  - auto_format_selected_line
+  - indent_current_line_more
+  - indent_current_line_less
+  - execute_query_or_update
+  - execute_explain_plan_for_query
+  - execute_chat_gpt_explain_plan_for_query
+  - create_tab
+  - create_save_query
+  - switch_next_tab
+  - switch_previous_tab
+  - closes_all_tabs
+  - full_screen
+  - esc
+
 
 ## Developers guide
 

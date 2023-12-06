@@ -11,7 +11,7 @@ export class KeyboardShortcutPageSteps {
     cy.get('#setVirtualRepo').realClick();
   }
 
-  static hideRunButton() {
-    cy.get('#hideRunButton').click();
+  static removeExecutableShortcuts() {
+    cy.get('#removeExecutableShortcuts').click();
   }
 }

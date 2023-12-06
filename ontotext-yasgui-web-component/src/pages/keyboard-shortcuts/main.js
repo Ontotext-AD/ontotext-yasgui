@@ -1,4 +1,15 @@
-let ontoElement = getOntotextYasgui();
+let ontoElement = document.querySelector("ontotext-yasgui");
+ontoElement.config = {
+  keyboardShortcutConfiguration: {
+    execute_explain_plan_for_query: true,
+    execute_chat_gpt_explain_plan_for_query: true,
+  },
+  endpoint: () => {
+    return "/repositories/test-repo";
+  },
+  prefixes: getPrefixes(),
+  componentId: 'keyboard-shortcut'
+};
 
 ontoElement.addEventListener('output', (evt) => {
   if ('notificationMessage' === evt.detail.TYPE) {
@@ -6,10 +17,19 @@ ontoElement.addEventListener('output', (evt) => {
   }
 });
 
-function hideRunButton() {
+function removeExecutableShortcuts() {
   ontoElement.config = {
     ...ontoElement.config,
-    showQueryButton: false
+    keyboardShortcutConfiguration: {
+      execute_query_or_update: false,
+      execute_explain_plan_for_query: false,
+      execute_chat_gpt_explain_plan_for_query: false,
+      create_tab: false,
+      create_save_query: false,
+      switch_next_tab: false,
+      switch_previous_tab: false,
+      closes_all_tabs: false,
+    }
   };
 }
 

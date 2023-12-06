@@ -41,6 +41,9 @@ export class YasguiConfigurationBuilder {
    */
   build(externalConfiguration: ExternalYasguiConfiguration): YasguiConfiguration {
     const config: YasguiConfiguration = {};
+
+    config.keyboardShortcutConfiguration = Object.assign({}, defaultYasguiConfig.keyboardShortcutConfiguration, externalConfiguration.keyboardShortcutConfiguration);
+
     // prepare the adapter config
     config.render = externalConfiguration.render || defaultOntotextYasguiConfig.render;
     config.orientation = externalConfiguration.orientation || defaultOntotextYasguiConfig.orientation;
