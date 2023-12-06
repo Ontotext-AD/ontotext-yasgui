@@ -1,4 +1,4 @@
-import {Yasr} from "./yasr";
+import {Yasr} from "./yasgui/yasr";
 
 /**
  * An interface for elements that can be plugged into yasr toolbar.

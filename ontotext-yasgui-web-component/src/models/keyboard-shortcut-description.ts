@@ -25,3 +25,8 @@ export enum KeyboardShortcutName {
   FULL_SCREEN = 'full_screen',
   ESC = 'esc'
 }
+
+export enum EXPLAIN_PLAN_TYPE {
+  EXPLAIN= 'explain',
+  CHAT_GPT_EXPLAIN = 'gpt'
+}

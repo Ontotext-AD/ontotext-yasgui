@@ -1,10 +1,10 @@
 import {YasrToolbarPlugin} from '../../../models/yasr-toolbar-plugin';
+import {Yasr} from '../../../models/yasgui/yasr';
 
 export class PaginationYasrToolbarPlugin implements YasrToolbarPlugin {
 
   private yasrIdToEventListenerMapper = new Map<string, any>();
 
-  //@ts-ignore
   createElement(yasr: Yasr): HTMLElement {
     const element: Page = (document.createElement("ontotext-pagination") as unknown) as Page;
     const pageSelectedListener = this.pageSelectedHandler(yasr);
@@ -13,7 +13,6 @@ export class PaginationYasrToolbarPlugin implements YasrToolbarPlugin {
     return element;
   }
 
-  //@ts-ignore
   updateElement(element: HTMLElement, yasr: Yasr): void {
     const paginationElement: Page = element;
     paginationElement.pageNumber = yasr.yasqe?.getPageNumber();
@@ -36,14 +35,13 @@ export class PaginationYasrToolbarPlugin implements YasrToolbarPlugin {
     }
   }
 
-  //@ts-ignore
   private updateQueryResultPaginationVisibility(resultQueryPaginationElement: Page, yasr: Yasr) {
 
     resultQueryPaginationElement.classList.add('hidden');
 
     // Pagination is not visible
     // when executed query is for explain plan query,
-    if (yasr.yasqe.getIsExplainPlanQuery()) {
+    if (yasr.yasqe.isExplainPlanQuery()) {
       return;
     }
     // or pagination is on first page and page hasn't results,
@@ -73,7 +71,6 @@ export class PaginationYasrToolbarPlugin implements YasrToolbarPlugin {
     return false;
   }
 
-  //@ts-ignore
   private pageSelectedHandler(yasr: Yasr) {
     return (pageEvent: any) => {
       const page: Page = pageEvent.detail;

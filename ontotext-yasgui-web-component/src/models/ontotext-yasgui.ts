@@ -1,7 +1,7 @@
-import {Yasgui} from '../../../Yasgui/packages/yasgui'
-import {Yasqe} from '../models/yasqe';
+import {Yasqe} from './yasgui/yasqe';
 import {YasguiConfiguration} from './yasgui-configuration';
 import {TabQueryModel} from "./external-yasgui-configuration";
+import {Yasgui} from './yasgui/yasgui';
 
 /**
  * An adapter around the actual yasgui instance.
@@ -37,7 +37,6 @@ export class OntotextYasgui {
   }
 
   registerYasqeEventListener(eventName, callback): void {
-    // @ts-ignore
     this.yasgui.getTab().yasqe.on(eventName, (...args) => {
       callback(args);
     });
@@ -85,13 +84,11 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getQueryType();
   }
 
-  // @ts-ignore
-  getEmbeddedResultAsJson(): Parser.SparqlResults {
+  getEmbeddedResultAsJson(): string {
     return this.yasgui.getTab().getYasr().results.getAsJson();
   }
 
-  // @ts-ignore
-  getEmbeddedResultAsCSV(): Parser.SparqlResults {
+  getEmbeddedResultAsCSV(): string {
     return this.yasgui.getTab().getYasr().results.asCsv();
   }
 
