@@ -1,5 +1,6 @@
 import {
   EventService,
+  EXPLAIN_PLAN_TYPE,
   NotificationMessageService,
   TranslationParameter,
   TranslationService,
@@ -100,7 +101,7 @@ export class Yasqe extends CodeMirror {
   private sameAs?: boolean;
   private pageSize?: number;
   private pageNumber?: number;
-  private isExplainPlanQuery?: boolean;
+  private explainPlanQueryType?: EXPLAIN_PLAN_TYPE;
   public readonly translationService: TranslationService;
   public readonly notificationMessageService: NotificationMessageService;
   public readonly eventService: EventService;
@@ -126,7 +127,7 @@ export class Yasqe extends CodeMirror {
     this.eventService = this.config.eventService;
     this.infer = this.config.infer;
     this.sameAs = this.config.sameAs;
-    this.isExplainPlanQuery = this.config.isExplainPlanQuery;
+    this.explainPlanQueryType = this.config.explainPlanQueryType;
     this.pageNumber = this.config.pageNumber;
     this.pageSize = this.config.pageSize;
     this.tabId = this.config.tabId;
@@ -272,12 +273,16 @@ export class Yasqe extends CodeMirror {
     return this.pageSize;
   }
 
-  public setIsExplainPlanQuery(isExplainPlanQuery: boolean): void {
-    this.isExplainPlanQuery = isExplainPlanQuery;
+  public setExplainPlanQueryType(explainType?: EXPLAIN_PLAN_TYPE): void {
+    this.explainPlanQueryType = explainType;
   }
 
-  public getIsExplainPlanQuery(): boolean | undefined {
-    return this.isExplainPlanQuery;
+  public getExplainPlanQueryType(): EXPLAIN_PLAN_TYPE | undefined {
+    return this.explainPlanQueryType;
+  }
+
+  public isExplainPlanQuery(): boolean {
+    return !!this.explainPlanQueryType;
   }
 
   isQueryRunning() {
@@ -1090,10 +1095,10 @@ export class Yasqe extends CodeMirror {
   /**
    * Querying
    */
-  public query(config?: Sparql.YasqeAjaxConfig, isExplainPlanQuery = false) {
+  public query(config?: Sparql.YasqeAjaxConfig, explainType?: EXPLAIN_PLAN_TYPE | undefined) {
     if (this.config.queryingDisabled) return Promise.reject("Querying is disabled.");
 
-    if (isExplainPlanQuery && !(this.isSelectQuery() || this.isConstructQuery() || this.isDescribeQuery())) {
+    if (!!explainType && !(this.isSelectQuery() || this.isConstructQuery() || this.isDescribeQuery())) {
       const message = this.translationService.translate(
         "yasqe.keyboard_shortcuts.action.explain_plan_query.warning.message"
       );
@@ -1101,7 +1106,7 @@ export class Yasqe extends CodeMirror {
       return Promise.reject();
     }
 
-    if (isExplainPlanQuery && this.isVirtualRepository) {
+    if (!!explainType && this.isVirtualRepository) {
       const message = this.translationService.translate("yasqe.explain_query.virtual_repository.error.message");
       this.notificationMessageService.warning("explain_not_allowed", message);
       return Promise.reject();
@@ -1115,7 +1120,7 @@ export class Yasqe extends CodeMirror {
 
     // Abort previous request
     this.abortQuery();
-    this.setIsExplainPlanQuery(isExplainPlanQuery);
+    this.setExplainPlanQueryType(explainType);
     return Sparql.executeQuery(this, config);
   }
 
@@ -1357,7 +1362,7 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   sameAs?: boolean;
   pageSize?: number;
   pageNumber?: number;
-  isExplainPlanQuery?: boolean;
+  explainPlanQueryType?: EXPLAIN_PLAN_TYPE;
   paginationOn?: boolean;
   keyboardShortcutDescriptions?: [];
   isVirtualRepository: boolean;

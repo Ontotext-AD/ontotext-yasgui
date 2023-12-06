@@ -267,9 +267,10 @@ export function getUrlArguments(yasqe: Yasqe, _config: Config["requestConfig"]):
     data["sameAs"] = `${sameAs}`;
   }
 
-  const isExplainPlanQuery = yasqe.getIsExplainPlanQuery();
+  const isExplainPlanQuery = yasqe.isExplainPlanQuery();
   if (isExplainPlanQuery) {
     data["explain"] = "true";
+    data["explainType"] = yasqe.getExplainPlanQueryType()!;
   }
 
   if (yasqe.config.paginationOn) {

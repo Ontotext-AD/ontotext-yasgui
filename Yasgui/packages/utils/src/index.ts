@@ -146,3 +146,8 @@ export class QueryError extends Error {
   messageLabelKey?: string;
   parameters?: TranslationParameter[];
 }
+
+export enum EXPLAIN_PLAN_TYPE {
+  EXPLAIN = "explain",
+  CHAT_GPT_EXPLAIN = "gpt",
+}
