@@ -6,4 +6,6 @@
 export interface Yasqe {
   getInfer: () => boolean;
   getSameAs: () => boolean;
+
+  leaveFullScreen: () => void;
 }

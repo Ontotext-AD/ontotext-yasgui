@@ -571,6 +571,10 @@ export class OntotextYasguiWebComponent {
   onQuery(event: CustomEvent<InternalQueryEvent>): void {
     this.changeRenderMode(RenderingMode.YASGUI);
     this.output.emit(toOutputEvent(event));
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.leaveFullScreen();
+      });
   }
 
   @Listen('internalQueryExecuted')
