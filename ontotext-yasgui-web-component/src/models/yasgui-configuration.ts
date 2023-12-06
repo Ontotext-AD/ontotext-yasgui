@@ -5,6 +5,7 @@ import {BeforeUpdateQueryResult} from './before-update-query-result';
 import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 import {EventService} from '../services/event-service';
 import {TimeFormattingService} from '../services/utils/time-formatting-service';
+import {KeyboardShortcutName} from './keyboard-shortcut-description';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -67,6 +68,12 @@ export interface YasguiConfiguration {
    * Registered yasqe autocomplete handlers. Every handler is mapped by its name.
    */
   yasqeAutocomplete?: Record<string, AutocompleteLoader>;
+
+  /**
+   * Configuration that controls which keyboard shortcuts are enabled.
+   *
+   */
+  keyboardShortcutConfiguration?: Record<KeyboardShortcutName, boolean>[];
 
   // ***********************************************************
   //
@@ -276,6 +283,10 @@ export const defaultYasguiConfig: Record<string, any> = {
   immutableSameAs: false,
   pageSize: 10,
   paginationOn: true,
+  keyboardShortcutConfiguration: {
+    execute_explain_plan_for_query: false,
+    execute_chat_gpt_explain_plan_for_query: false
+  },
   getRepositoryStatementsCount: () => Promise.resolve(),
   beforeUpdateQuery: () => Promise.resolve({}),
   headers: () => {

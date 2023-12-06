@@ -1,8 +1,11 @@
+import {Yasqe} from './yasgui/yasqe';
+
+export type KeyboardExecuteFunction = (yasqe: Yasqe) => void;
+
 export class KeyboardShortcutDescription {
 
   NAME: KeyboardShortcutName;
   keyboardShortcuts: string[] = [];
-  //@ts-ignore
   executeFunction: (yasqe: Yasqe) => void
 }
 
@@ -31,3 +34,5 @@ export enum EXPLAIN_PLAN_TYPE {
   EXPLAIN= 'explain',
   CHAT_GPT_EXPLAIN = 'gpt'
 }
+
+export type CreateKeyboardShortCutFunction = () => KeyboardShortcutDescription;

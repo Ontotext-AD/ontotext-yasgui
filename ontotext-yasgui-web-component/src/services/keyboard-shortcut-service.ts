@@ -1,4 +1,9 @@
-import {EXPLAIN_PLAN_TYPE, KeyboardShortcutDescription, KeyboardShortcutName} from '../models/keyboard-shortcut-description';
+import {
+  CreateKeyboardShortCutFunction,
+  EXPLAIN_PLAN_TYPE,
+  KeyboardShortcutDescription,
+  KeyboardShortcutName
+} from '../models/keyboard-shortcut-description';
 import {YasguiConfiguration} from '../models/yasgui-configuration';
 import {YasqeButtonName} from '../models/yasqe-button-name';
 import {YasqeService} from './yasqe/yasqe-service';
@@ -6,28 +11,18 @@ import {Yasqe} from '../models/yasgui/yasqe';
 import {IndentSelection} from '../models/yasgui/indent-selection';
 
 export class KeyboardShortcutService {
+
+  private static keyboardShortcutNameToFactoryFunction = KeyboardShortcutService.initAllKeyboardShortcuts();
+
   static initKeyboardShortcutMapping = (config: YasguiConfiguration): KeyboardShortcutDescription[] => {
     const keyboardShortcutDescriptions = [];
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createTriggerAutocomplete());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createDeleteCurrentLine());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createCommentCurrentLine());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createCopyLineDown());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createCopyLineUp());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createAutoFormat());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createIndentMore());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createIndentLess());
-    if (config.yasguiConfig.yasqe.showQueryButton) {
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteQuery());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteExplainPlanForQuery());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createExecuteChatGPTExplainPlanForQuery());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createCreateTab());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createSavedQuery());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToNextTab());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createSwitchToPreviousTab());
-      keyboardShortcutDescriptions.push(KeyboardShortcutService.createCloseAllTabs());
-    }
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createF11());
-    keyboardShortcutDescriptions.push(KeyboardShortcutService.createEscape());
+    const insertAll = !config.keyboardShortcutConfiguration || config.keyboardShortcutConfiguration.length < 1;
+    KeyboardShortcutService.keyboardShortcutNameToFactoryFunction
+      .forEach((factoryFunction: CreateKeyboardShortCutFunction, keyboardShortcutName: KeyboardShortcutName) => {
+        if (insertAll || config.keyboardShortcutConfiguration[keyboardShortcutName] === undefined || config.keyboardShortcutConfiguration[keyboardShortcutName]) {
+          keyboardShortcutDescriptions.push(factoryFunction());
+        }
+      });
     return keyboardShortcutDescriptions;
   };
 
@@ -253,7 +248,7 @@ export class KeyboardShortcutService {
     return keyboardShortcut;
   }
 
-  private static createF11(): KeyboardShortcutDescription {
+  private static createFullScreen(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.FULL_SCREEN;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-F');
@@ -272,5 +267,28 @@ export class KeyboardShortcutService {
       yasqe.leaveFullScreen();
     };
     return keyboardShortcut;
+  }
+
+  private static initAllKeyboardShortcuts(): Map<string, CreateKeyboardShortCutFunction> {
+    const keyboardShortcuts = new Map<string, CreateKeyboardShortCutFunction>();
+    keyboardShortcuts.set(KeyboardShortcutName.TRIGGER_AUTOCOMPLETION, KeyboardShortcutService.createTriggerAutocomplete);
+    keyboardShortcuts.set(KeyboardShortcutName.DELETE_CURRENT_LINE, KeyboardShortcutService.createDeleteCurrentLine);
+    keyboardShortcuts.set(KeyboardShortcutName.COMMENT_SELECTED_LINE, KeyboardShortcutService.createCommentCurrentLine);
+    keyboardShortcuts.set(KeyboardShortcutName.COPY_LINE_DOWN, KeyboardShortcutService.createCopyLineDown);
+    keyboardShortcuts.set(KeyboardShortcutName.COPY_LINE_UP, KeyboardShortcutService.createCopyLineUp);
+    keyboardShortcuts.set(KeyboardShortcutName.AUTO_FORMAT_SELECTED_LINE, KeyboardShortcutService.createAutoFormat);
+    keyboardShortcuts.set(KeyboardShortcutName.INDENT_CURRENT_LINE_MORE, KeyboardShortcutService.createIndentMore);
+    keyboardShortcuts.set(KeyboardShortcutName.INDENT_CURRENT_LINE_LESS, KeyboardShortcutService.createIndentLess);
+    keyboardShortcuts.set(KeyboardShortcutName.EXECUTE_QUERY_OR_UPDATE, KeyboardShortcutService.createExecuteQuery);
+    keyboardShortcuts.set(KeyboardShortcutName.EXECUTE_EXPLAIN_PLAN_FOR_QUERY, KeyboardShortcutService.createExecuteExplainPlanForQuery);
+    keyboardShortcuts.set(KeyboardShortcutName.EXECUTE_CHAT_GPT_EXPLAIN_PLAN_FOR_QUERY, KeyboardShortcutService.createExecuteChatGPTExplainPlanForQuery);
+    keyboardShortcuts.set(KeyboardShortcutName.CREATE_TAB, KeyboardShortcutService.createCreateTab);
+    keyboardShortcuts.set(KeyboardShortcutName.CREATE_SAVE_QUERY, KeyboardShortcutService.createSavedQuery);
+    keyboardShortcuts.set(KeyboardShortcutName.SWITCH_NEXT_TAB, KeyboardShortcutService.createSwitchToNextTab);
+    keyboardShortcuts.set(KeyboardShortcutName.SWITCH_PREVIOUS_TAB, KeyboardShortcutService.createSwitchToPreviousTab);
+    keyboardShortcuts.set(KeyboardShortcutName.CLOSES_ALL_TABS, KeyboardShortcutService.createCloseAllTabs);
+    keyboardShortcuts.set(KeyboardShortcutName.FULL_SCREEN, KeyboardShortcutService.createFullScreen);
+    keyboardShortcuts.set(KeyboardShortcutName.ESC, KeyboardShortcutService.createEscape);
+    return keyboardShortcuts;
   }
 }

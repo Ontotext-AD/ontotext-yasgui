@@ -32,7 +32,7 @@ describe('Keyboard Shortcuts', () => {
     it('should open dialog with information only for readonly keyboard shortcuts actions', () => {
       // When I visit a page with "ontotext-yasgui-web-component" in it,
       // and component is configured to be read only
-      KeyboardShortcutPageSteps.hideRunButton();
+      KeyboardShortcutPageSteps.removeExecutableShortcuts();
 
       // Then I expect to see the "keyboard shortcuts" button in it.
       KeyboardShortcutSteps.getInfoDialogButton().should('be.visible');
@@ -190,7 +190,7 @@ describe('Keyboard Shortcuts', () => {
     it('should not trigger "EXECUTE_QUERY_OR_UPDATE" action when run button is hidden', () => {
       // Given: I visit a page with "ontotext-yasgui-web-component" in it,
       // and a query is typed.
-      KeyboardShortcutPageSteps.hideRunButton();
+      KeyboardShortcutPageSteps.removeExecutableShortcuts();
 
       // When press the "Run query button" keyboard shortcut.
       KeyboardShortcutSteps.clickOnRunQueryShortcut();
