@@ -244,6 +244,7 @@ export class KeyboardShortcutService {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_ALL_TABS;
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F4');
+    keyboardShortcut.keyboardShortcuts.push('Cmd-Ctrl-F4');
     //@ts-ignore
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       yasqe.emit('closeOtherTabs')
