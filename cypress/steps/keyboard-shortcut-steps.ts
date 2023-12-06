@@ -144,4 +144,8 @@ export class KeyboardShortcutSteps {
   static clickOnExplainPlanQueryShortcut() {
     YasqeSteps.getYasqe().type('{ctrl+shift+enter}');
   }
+
+  static clickOnExplainPlanChatGptQueryShortcut() {
+    YasqeSteps.getYasqe().type('{ctrl+alt+enter}');
+  }
 }

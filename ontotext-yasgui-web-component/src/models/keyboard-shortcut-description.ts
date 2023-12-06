@@ -17,6 +17,7 @@ export enum KeyboardShortcutName {
   INDENT_CURRENT_LINE_LESS = 'indent_current_line_less',
   EXECUTE_QUERY_OR_UPDATE = 'execute_query_or_update',
   EXECUTE_EXPLAIN_PLAN_FOR_QUERY = 'execute_explain_plan_for_query',
+  EXECUTE_CHAT_GPT_EXPLAIN_PLAN_FOR_QUERY = 'execute_chat_gpt_explain_plan_for_query',
   CREATE_TAB = 'create_tab',
   CREATE_SAVE_QUERY = 'create_save_query',
   SWITCH_NEXT_TAB = 'switch_next_tab',
