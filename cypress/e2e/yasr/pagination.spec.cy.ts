@@ -182,7 +182,7 @@ describe('Yasr result pagination', () => {
       PaginationSteps.getNextPageButton().should('be.disabled');
     });
 
-    it.only('should work with more than 5 result pages', () => {
+    it('should work with more than 5 result pages', () => {
       PaginationPageSteps.switchToComponentThree();
       // When I visit a page with "ontotext-yasgui" component on it.
       // And execute a query which results on 9 pages.
@@ -292,7 +292,7 @@ describe('Yasr result pagination', () => {
       PaginationSteps.getPageNumberButton(2).should('not.exist');
       PaginationSteps.getPageNumberButton(3).should('not.exist');
       PaginationSteps.getPageNumberButton(4).should('not.exist');
-      PaginationSteps.getPageNumberButton(5).should('not.exist');
+      PaginationSteps.getPageNumberButton(5).should('be.visible');
       PaginationSteps.getPageNumberButton(6).should('be.visible');
       PaginationSteps.getPageNumberButton(7).should('be.visible');
       PaginationSteps.getPageNumberButton(8).should('have.class', 'selected-page');
