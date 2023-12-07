@@ -141,6 +141,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
   - switch_next_tab
   - switch_previous_tab
   - closes_other_tabs
+  - closes_other_tabs_by_left_mouse_click
   - full_screen
   - esc
 

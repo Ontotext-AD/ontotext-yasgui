@@ -243,7 +243,17 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F4');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Ctrl-F4');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      yasqe.emit('closeOtherTabs')
+      yasqe.emit('closeOtherTabs');
+    };
+    return keyboardShortcut;
+  }
+
+  private static createCloseOtherTabsByMouseClick(): KeyboardShortcutDescription {
+    const keyboardShortcut = new KeyboardShortcutDescription()
+    keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_OTHER_TABS_BY_MOUSE_CLICK;
+    keyboardShortcut.executeFunction = () => {
+      // Nothing to do the description is added just to explain the functionality, that closes all other tabs.
+      // This functionality is triggered by clicking on the close tab button while holding down the Shift key.
     };
     return keyboardShortcut;
   }
@@ -287,6 +297,7 @@ export class KeyboardShortcutService {
     keyboardShortcuts.set(KeyboardShortcutName.SWITCH_NEXT_TAB, KeyboardShortcutService.createSwitchToNextTab);
     keyboardShortcuts.set(KeyboardShortcutName.SWITCH_PREVIOUS_TAB, KeyboardShortcutService.createSwitchToPreviousTab);
     keyboardShortcuts.set(KeyboardShortcutName.CLOSES_OTHER_TABS, KeyboardShortcutService.createCloseOtherTabs);
+    keyboardShortcuts.set(KeyboardShortcutName.CLOSES_OTHER_TABS_BY_MOUSE_CLICK, KeyboardShortcutService.createCloseOtherTabsByMouseClick);
     keyboardShortcuts.set(KeyboardShortcutName.FULL_SCREEN, KeyboardShortcutService.createFullScreen);
     keyboardShortcuts.set(KeyboardShortcutName.ESC, KeyboardShortcutService.createEscape);
     return keyboardShortcuts;

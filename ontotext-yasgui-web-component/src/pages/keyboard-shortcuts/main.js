@@ -29,6 +29,7 @@ function removeExecutableShortcuts() {
       switch_next_tab: false,
       switch_previous_tab: false,
       closes_other_tabs: false,
+      closes_other_tabs_by_left_mouse_click: false,
     }
   };
 }

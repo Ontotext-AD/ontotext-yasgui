@@ -31,8 +31,8 @@ export class YasguiSteps {
     this.getTab(index).click();
   }
 
-  static closeTab(index: number) {
-    this.getTabs().eq(index).find('.closeTab').click();
+  static closeTab(index: number, withShift = false) {
+    this.getTabs().eq(index).find('.closeTab').click({shiftKey: withShift});
   }
 
   static openTabContextMenu(index: number) {

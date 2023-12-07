@@ -95,6 +95,34 @@ describe('Yasgui tabs', () => {
     YasguiSteps.getTabs().should('have.length', 1);
     YasguiSteps.getCurrentTabTitle().should('have.text', 'Unnamed 2');
   });
+
+  it('Should ask for confirmation on close other tabs action by clicking close tab button with pressed down shift', () => {
+    // Given I have opened yasgui with a single opened tab
+    // And I have created more tabs
+    openNewTab(1, 2);
+    openNewTab(2, 3);
+    openNewTab(3, 4);
+    // When I click close tab button with pressed down shift button.
+    YasguiSteps.closeTab(1, true);
+    // Then I expect a confirmation dialog to be opened
+    ConfirmationDialogSteps.getConfirmation().should('be.visible');
+    ConfirmationDialogSteps.getConfirmation().should('contain.text', 'Are you sure you want to close all other query tabs?');
+    // When I cancel the operation
+    ConfirmationDialogSteps.reject();
+    ConfirmationDialogSteps.getConfirmation().should('not.exist');
+
+    // When I click close tab button with pressed down shift button.
+    YasguiSteps.closeTab(2, true);
+    // Then I expect a confirmation dialog to be opened
+    ConfirmationDialogSteps.getConfirmation().should('be.visible');
+    ConfirmationDialogSteps.getConfirmation().should('contain.text', 'Are you sure you want to close all other query tabs?');
+    // When I confirm the operation
+    ConfirmationDialogSteps.confirm();
+
+    // Then I expect others tabs to be closed
+    YasguiSteps.getTabs().should('have.length', 1);
+    YasguiSteps.getCurrentTabTitle().should('have.text', 'Unnamed 2');
+  });
 });
 
 function openNewTab(tabIndex: number, expectedTabsCount: number) {
