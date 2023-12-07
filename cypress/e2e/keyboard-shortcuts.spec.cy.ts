@@ -26,7 +26,7 @@ describe('Keyboard Shortcuts', () => {
       // and have title
       KeyboardShortcutSteps.getInfoDialogTitle().should('have.text', 'Keyboard shortcuts');
       // and expect see information for all available actions.
-      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 18);
+      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 19);
     });
 
     it('should open dialog with information only for readonly keyboard shortcuts actions', () => {
