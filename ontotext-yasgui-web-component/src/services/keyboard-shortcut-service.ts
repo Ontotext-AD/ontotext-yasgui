@@ -237,9 +237,9 @@ export class KeyboardShortcutService {
     return keyboardShortcut;
   }
 
-  private static createCloseAllTabs(): KeyboardShortcutDescription {
+  private static createCloseOtherTabs(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
-    keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_ALL_TABS;
+    keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_OTHER_TABS;
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F4');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Ctrl-F4');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -286,7 +286,7 @@ export class KeyboardShortcutService {
     keyboardShortcuts.set(KeyboardShortcutName.CREATE_SAVE_QUERY, KeyboardShortcutService.createSavedQuery);
     keyboardShortcuts.set(KeyboardShortcutName.SWITCH_NEXT_TAB, KeyboardShortcutService.createSwitchToNextTab);
     keyboardShortcuts.set(KeyboardShortcutName.SWITCH_PREVIOUS_TAB, KeyboardShortcutService.createSwitchToPreviousTab);
-    keyboardShortcuts.set(KeyboardShortcutName.CLOSES_ALL_TABS, KeyboardShortcutService.createCloseAllTabs);
+    keyboardShortcuts.set(KeyboardShortcutName.CLOSES_OTHER_TABS, KeyboardShortcutService.createCloseOtherTabs);
     keyboardShortcuts.set(KeyboardShortcutName.FULL_SCREEN, KeyboardShortcutService.createFullScreen);
     keyboardShortcuts.set(KeyboardShortcutName.ESC, KeyboardShortcutService.createEscape);
     return keyboardShortcuts;
