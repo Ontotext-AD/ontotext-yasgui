@@ -25,7 +25,7 @@ export enum KeyboardShortcutName {
   CREATE_SAVE_QUERY = 'create_save_query',
   SWITCH_NEXT_TAB = 'switch_next_tab',
   SWITCH_PREVIOUS_TAB = 'switch_previous_tab',
-  CLOSES_ALL_TABS = 'closes_all_tabs',
+  CLOSES_OTHER_TABS = 'closes_other_tabs',
   FULL_SCREEN = 'full_screen',
   ESC = 'esc'
 }

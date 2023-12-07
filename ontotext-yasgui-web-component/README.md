@@ -140,7 +140,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
   - create_save_query
   - switch_next_tab
   - switch_previous_tab
-  - closes_all_tabs
+  - closes_other_tabs
   - full_screen
   - esc
 

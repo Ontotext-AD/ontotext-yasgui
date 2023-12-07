@@ -28,7 +28,7 @@ function removeExecutableShortcuts() {
       create_save_query: false,
       switch_next_tab: false,
       switch_previous_tab: false,
-      closes_all_tabs: false,
+      closes_other_tabs: false,
     }
   };
 }
