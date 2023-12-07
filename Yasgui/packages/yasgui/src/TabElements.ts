@@ -131,7 +131,13 @@ export class TabListEl {
     closeBtn.setAttribute("tabindex", "-1");
     closeBtn.setAttribute("aria-hidden", "true");
     addClass(closeBtn, "closeTab");
-    closeBtn.addEventListener("click", handleDeleteTab);
+    closeBtn.addEventListener("click", (event) => {
+      if (event.shiftKey) {
+        this.yasgui.getTab(this.tabId)?.getYasqe()?.emit("closeOtherTabs");
+      } else {
+        handleDeleteTab(event);
+      }
+    });
     tabLinkEl.appendChild(closeBtn);
 
     const renameEl = (this.renameEl = document.createElement("input"));
