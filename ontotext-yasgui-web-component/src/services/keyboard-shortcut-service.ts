@@ -1,5 +1,5 @@
 import {
-  CreateKeyboardShortCutFunction,
+  CreateKeyboardShortcutFunction,
   EXPLAIN_PLAN_TYPE,
   KeyboardShortcutDescription,
   KeyboardShortcutName
@@ -18,7 +18,7 @@ export class KeyboardShortcutService {
     const keyboardShortcutDescriptions = [];
     const insertAll = !config.keyboardShortcutConfiguration || config.keyboardShortcutConfiguration.length < 1;
     KeyboardShortcutService.keyboardShortcutNameToFactoryFunction
-      .forEach((factoryFunction: CreateKeyboardShortCutFunction, keyboardShortcutName: KeyboardShortcutName) => {
+      .forEach((factoryFunction: CreateKeyboardShortcutFunction, keyboardShortcutName: KeyboardShortcutName) => {
         if (insertAll || config.keyboardShortcutConfiguration[keyboardShortcutName] === undefined || config.keyboardShortcutConfiguration[keyboardShortcutName]) {
           keyboardShortcutDescriptions.push(factoryFunction());
         }
@@ -269,8 +269,8 @@ export class KeyboardShortcutService {
     return keyboardShortcut;
   }
 
-  private static initAllKeyboardShortcuts(): Map<string, CreateKeyboardShortCutFunction> {
-    const keyboardShortcuts = new Map<string, CreateKeyboardShortCutFunction>();
+  private static initAllKeyboardShortcuts(): Map<string, CreateKeyboardShortcutFunction> {
+    const keyboardShortcuts = new Map<string, CreateKeyboardShortcutFunction>();
     keyboardShortcuts.set(KeyboardShortcutName.TRIGGER_AUTOCOMPLETION, KeyboardShortcutService.createTriggerAutocomplete);
     keyboardShortcuts.set(KeyboardShortcutName.DELETE_CURRENT_LINE, KeyboardShortcutService.createDeleteCurrentLine);
     keyboardShortcuts.set(KeyboardShortcutName.COMMENT_SELECTED_LINE, KeyboardShortcutService.createCommentCurrentLine);

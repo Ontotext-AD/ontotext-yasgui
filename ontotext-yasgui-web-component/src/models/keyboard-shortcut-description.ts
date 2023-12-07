@@ -35,4 +35,4 @@ export enum EXPLAIN_PLAN_TYPE {
   CHAT_GPT_EXPLAIN = 'gpt'
 }
 
-export type CreateKeyboardShortCutFunction = () => KeyboardShortcutDescription;
+export type CreateKeyboardShortcutFunction = () => KeyboardShortcutDescription;
