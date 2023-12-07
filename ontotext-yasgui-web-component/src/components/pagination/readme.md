@@ -13,7 +13,7 @@
 | `pageElements`  | `page-elements`  |             | `number`  | `undefined` |
 | `pageNumber`    | `page-number`    |             | `number`  | `1`         |
 | `pageSize`      | `page-size`      |             | `number`  | `10`        |
-| `totalElements` | `total-elements` |             | `number`  | `undefined` |
+| `totalElements` | `total-elements` |             | `number`  | `0`         |
 
 
 ## Events

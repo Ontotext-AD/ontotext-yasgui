@@ -11,7 +11,7 @@ export class Pagination {
   private readonly PAGES_COUNT_AROUND_CURRENT = 2;
   @Prop() pageNumber = 1;
   @Prop() pageSize = 10;
-  @Prop() totalElements: number;
+  @Prop() totalElements = 0;
   @Prop() pageElements: number;
   @Prop() hasMorePages: boolean | undefined;
 
@@ -22,8 +22,9 @@ export class Pagination {
   }
 
   private getShownPageNumbers(): number[] {
-    const firstShownPage = this.fetchFirstShownPage();
     const lastShownPage = this.fetchLastShownPage();
+    const firstShownPage = this.fetchFirstShownPage(lastShownPage);
+
     const pages = [];
     for (let index = firstShownPage; index <= lastShownPage; index++) {
       pages.push(index);
@@ -43,18 +44,9 @@ export class Pagination {
     return lastShownPage;
   }
 
-  private fetchFirstShownPage(): number {
-    const currentPageNumber = this.pageNumber;
-    const totalPages = Math.ceil(this.totalElements / this.pageSize);
-    let startFrom;
-    if (currentPageNumber - this.PAGES_COUNT_AROUND_CURRENT <= 1) {
-      startFrom = 1
-    } else if (totalPages - this.PAGES_COUNT_AROUND_CURRENT > currentPageNumber) {
-      startFrom = currentPageNumber - this.PAGES_COUNT_AROUND_CURRENT;
-    } else {
-      startFrom = (totalPages - this.VISIBLE_PAGES_COUNT) + 1;
-    }
-    return startFrom;
+  private fetchFirstShownPage(lastShownPage: number): number {
+    const firstPage = lastShownPage - this.VISIBLE_PAGES_COUNT + 1;
+    return firstPage < 1 ? 1 : firstPage;
   }
 
   private previousButtonDisabled(): boolean {
