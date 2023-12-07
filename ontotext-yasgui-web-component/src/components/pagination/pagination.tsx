@@ -44,17 +44,8 @@ export class Pagination {
   }
 
   private fetchFirstShownPage(): number {
-    const currentPageNumber = this.pageNumber;
-    const totalPages = Math.ceil(this.totalElements / this.pageSize);
-    let startFrom;
-    if (currentPageNumber - this.PAGES_COUNT_AROUND_CURRENT <= 1) {
-      startFrom = 1
-    } else if (totalPages - this.PAGES_COUNT_AROUND_CURRENT > currentPageNumber) {
-      startFrom = currentPageNumber - this.PAGES_COUNT_AROUND_CURRENT;
-    } else {
-      startFrom = (totalPages - this.VISIBLE_PAGES_COUNT) + 1;
-    }
-    return startFrom;
+    const firstShownPage = this.pageNumber - this.PAGES_COUNT_AROUND_CURRENT;
+    return firstShownPage < 1 ? 1 : firstShownPage;
   }
 
   private previousButtonDisabled(): boolean {
