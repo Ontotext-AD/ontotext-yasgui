@@ -18,7 +18,10 @@ export class PaginationYasrToolbarPlugin implements YasrToolbarPlugin {
     paginationElement.pageNumber = yasr.yasqe?.getPageNumber();
     paginationElement.pageSize = yasr.yasqe?.getPageSize();
     paginationElement.pageElements = yasr.results?.getBindings()?.length || 0;
-    paginationElement.totalElements = yasr.persistentJson?.yasr.response?.totalElements || yasr.results?.totalElements || -1;
+    const totalElements = yasr.persistentJson?.yasr.response?.totalElements || yasr.results?.totalElements;
+    if (totalElements) {
+      paginationElement.totalElements = totalElements;
+    }
     paginationElement.hasMorePages = yasr.results?.getHasMorePages();
     this.updateQueryResultPaginationVisibility(paginationElement, yasr);
   }
