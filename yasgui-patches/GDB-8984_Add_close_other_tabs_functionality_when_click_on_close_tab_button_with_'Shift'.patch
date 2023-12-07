@@ -1,0 +1,25 @@
+Subject: [PATCH] GDB-8984: Add close other tabs functionality when click on close tab button with 'Shift' key pressed
+---
+Index: Yasgui/packages/yasgui/src/TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
+--- a/Yasgui/packages/yasgui/src/TabElements.ts	(revision 38a534a546aac8af22dc6aa743bf231127aa9e39)
++++ b/Yasgui/packages/yasgui/src/TabElements.ts	(revision b3e4d80b8d883d42f58062f26d9de74ef99d237f)
+@@ -131,7 +131,13 @@
+     closeBtn.setAttribute("tabindex", "-1");
+     closeBtn.setAttribute("aria-hidden", "true");
+     addClass(closeBtn, "closeTab");
+-    closeBtn.addEventListener("click", handleDeleteTab);
++    closeBtn.addEventListener("click", (event) => {
++      if (event.shiftKey) {
++        this.yasgui.getTab(this.tabId)?.getYasqe()?.emit("closeOtherTabs");
++      } else {
++        handleDeleteTab(event);
++      }
++    });
+     tabLinkEl.appendChild(closeBtn);
+ 
+     const renameEl = (this.renameEl = document.createElement("input"));
