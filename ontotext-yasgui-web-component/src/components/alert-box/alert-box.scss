@@ -1,0 +1,22 @@
+.alert-box {
+  position: relative;
+  margin: 10px 0;
+
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #8a6d3b;
+    opacity: .2;
+
+    &:hover {
+      text-decoration: none;
+      color: #000;
+      opacity: .5;
+    }
+  }
+}
