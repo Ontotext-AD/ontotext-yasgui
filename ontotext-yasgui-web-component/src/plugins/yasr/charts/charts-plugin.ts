@@ -148,6 +148,15 @@ export class ChartsPlugin implements YasrPlugin {
       containerId: this.getContainerId()
     });
 
+    // Generic handler for chart errors. For now we just remove them all because we show our own
+    // customized error. See https://ontotext.atlassian.net/browse/GDB-9147
+    // @ts-ignore
+    google.visualization.events.addListener(this.wrapper, 'error', (_googleError) => {
+      const container = document.getElementById(this.wrapper.getContainerId())
+      // @ts-ignore
+      google.visualization.errors.removeAll(container);
+    });
+
     if (chartState) {
       this.wrapper.setOptions(chartState.options)
     } else {
@@ -167,7 +176,7 @@ export class ChartsPlugin implements YasrPlugin {
         type = this.getGoogleTypeForBindings(jsonResults.results.bindings, variable);
       } catch (e) {
         if (e instanceof TypesMappingError) {
-          // yasr.warn(e.toHtml())
+          this.yasr.showWarning(e.msg)
         } else {
           throw e;
         }
@@ -284,7 +293,8 @@ export class ChartsPlugin implements YasrPlugin {
     } else {
       // we have conflicting types. Throw error
       console.log('Mapping bindings to types failed', types, varName);
-      throw new TypesMappingError('Mapping bindings to types failed', types, varName);
+      throw new TypesMappingError(
+        this.translationService.translate('yasr.exceptions.conflict_render', [{key: 'varName', value: varName}]));
     }
   }
 
@@ -355,12 +365,10 @@ export class ChartsPlugin implements YasrPlugin {
     if (isNaN(date)) return null;
     return date;
   }
-
-
 }
 
-function TypesMappingError(msg, types, varName) {
-  this.msg = msg;
-  this.types = types;
-  this.varName = varName;
+export class TypesMappingError {
+  constructor(public msg: string) {
+    this.msg = msg;
+  }
 }

@@ -45,4 +45,7 @@ export interface Yasr {
   getPrefixes: any;
 
   getTabId: () => string;
+
+  showWarning: (message: string) => void;
+  hideWarning: () => void;
 }
