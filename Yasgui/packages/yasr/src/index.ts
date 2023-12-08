@@ -94,6 +94,28 @@ export class Yasr extends EventEmitter {
       this.setResponse(resp, undefined, undefined, undefined, undefined, undefined, draw);
     }
   }
+
+  public showWarning(message: string) {
+    this.hideWarning();
+    if (message) {
+        const alertBoxEl = document.createElement('alert-box');
+        // @ts-ignore
+        alertBoxEl.message = message;
+        // @ts-ignore
+        alertBoxEl.isVisible = true;
+        // @ts-ignore
+        alertBoxEl.type = 'warning';
+        this.rootEl.prepend(alertBoxEl);
+    }
+  }
+
+  public hideWarning() {
+      let alertBoxEl = this.rootEl.querySelector('alert-box');
+      if (alertBoxEl) {
+          alertBoxEl.remove();
+      }
+  }
+
   private getConfigFromStorage() {
     const storageId = this.getStorageId(this.config.persistenceLabelConfig);
     if (storageId) {
@@ -275,6 +297,7 @@ export class Yasr extends EventEmitter {
     return {};
   }
   public selectPlugin(plugin: string) {
+    this.hideWarning();
     if (this.selectedPlugin === plugin) {
       // Don't re-render when selecting the same plugin. Also see #1893
       return;

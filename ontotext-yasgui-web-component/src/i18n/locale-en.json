@@ -98,6 +98,7 @@
   "yasr.message_info.removed_statements.message": "Removed {{countAffectedRepositoryStatements}} statements.",
   "yasr.message_info.added_statements.message": "Added {{countAffectedRepositoryStatements}} statements.",
   "yasr.message_info.no_changes.message": "The number of statements did not change.",
+  "yasr.exceptions.conflict_render": "Conflicting data types found for variable {{varName}}. Assuming all values of this variable are \"string\". As a result, several Google Charts will not render values of this particular variable. To avoid this issue, cast the values in your SPARQL query to the intended xsd datatype",
   "yasr.plugin_control.disabled.btn.tooltip": "Download not supported for this result representation",
   "yasr.plugin_control.download_results.btn.label": "Download as",
   "yasr.plugin_control.info.count_result": "{{countResults}} result",
