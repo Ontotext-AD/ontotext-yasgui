@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { AlertBoxType } from "./components/alert-box/alert-box";
 import { TranslationService } from "./services/translation.service";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { CopyLinkDialogConfig, CopyLinkObserver } from "./components/copy-link-dialog/copy-link-dialog";
@@ -21,6 +22,23 @@ import { OutputEvent } from "./models/output-events/output-event";
 import { YasqeButtonType } from "./models/yasqe-button-name";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
+    /**
+     * Implementation of dismissible alert box component which can be configured.
+     */
+    interface AlertBox {
+        /**
+          * The message which should be displayed in the alert. If the message is not provided, then the alert is not displayed.
+         */
+        "message": string;
+        /**
+          * Configures if the icon in the alert should be displayed or not. Default is <code>true</code>
+         */
+        "noIcon": boolean;
+        /**
+          * Defines the alert type which is represented by different color, background and icon. Default is <code>"info"</code>.
+         */
+        "type": AlertBoxType;
+    }
     interface ConfirmationDialog {
         "config": ConfirmationDialogConfig;
         "translationService": TranslationService;
@@ -224,6 +242,15 @@ export interface ShareQueryDialogCustomEvent<T> extends CustomEvent<T> {
     target: HTMLShareQueryDialogElement;
 }
 declare global {
+    /**
+     * Implementation of dismissible alert box component which can be configured.
+     */
+    interface HTMLAlertBoxElement extends Components.AlertBox, HTMLStencilElement {
+    }
+    var HTMLAlertBoxElement: {
+        prototype: HTMLAlertBoxElement;
+        new (): HTMLAlertBoxElement;
+    };
     interface HTMLConfirmationDialogElement extends Components.ConfirmationDialog, HTMLStencilElement {
     }
     var HTMLConfirmationDialogElement: {
@@ -331,6 +358,7 @@ declare global {
         new (): HTMLYasguiTooltipElement;
     };
     interface HTMLElementTagNameMap {
+        "alert-box": HTMLAlertBoxElement;
         "confirmation-dialog": HTMLConfirmationDialogElement;
         "copy-link-dialog": HTMLCopyLinkDialogElement;
         "copy-resource-link-button": HTMLCopyResourceLinkButtonElement;
@@ -349,6 +377,23 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    /**
+     * Implementation of dismissible alert box component which can be configured.
+     */
+    interface AlertBox {
+        /**
+          * The message which should be displayed in the alert. If the message is not provided, then the alert is not displayed.
+         */
+        "message"?: string;
+        /**
+          * Configures if the icon in the alert should be displayed or not. Default is <code>true</code>
+         */
+        "noIcon"?: boolean;
+        /**
+          * Defines the alert type which is represented by different color, background and icon. Default is <code>"info"</code>.
+         */
+        "type"?: AlertBoxType;
+    }
     interface ConfirmationDialog {
         "config"?: ConfirmationDialogConfig;
         /**
@@ -547,6 +592,7 @@ declare namespace LocalJSX {
         "showOnClick"?: false;
     }
     interface IntrinsicElements {
+        "alert-box": AlertBox;
         "confirmation-dialog": ConfirmationDialog;
         "copy-link-dialog": CopyLinkDialog;
         "copy-resource-link-button": CopyResourceLinkButton;
@@ -568,6 +614,10 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            /**
+             * Implementation of dismissible alert box component which can be configured.
+             */
+            "alert-box": LocalJSX.AlertBox & JSXBase.HTMLAttributes<HTMLAlertBoxElement>;
             "confirmation-dialog": LocalJSX.ConfirmationDialog & JSXBase.HTMLAttributes<HTMLConfirmationDialogElement>;
             "copy-link-dialog": LocalJSX.CopyLinkDialog & JSXBase.HTMLAttributes<HTMLCopyLinkDialogElement>;
             "copy-resource-link-button": LocalJSX.CopyResourceLinkButton & JSXBase.HTMLAttributes<HTMLCopyResourceLinkButtonElement>;
