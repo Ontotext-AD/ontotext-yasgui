@@ -171,6 +171,16 @@
       }
     }
 
+    /* Make the datatable horizontally scrollable when there is not enough space to fit the columns */
+    .dataTables_wrapper  {
+      width: 100%;
+      overflow-x: auto;
+
+      table.dataTable  {
+        table-layout: auto;
+      }
+    }
+
     table.dataTable thead th {
       background-color: $color-onto-green;
       text-align: center;
@@ -319,12 +329,20 @@
       }
 
       /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
+      .dataTable tbody td div.uri-cell,
+      .dataTable tbody td div.triple-cell,
+      .dataTable td div.triple-cell {
+        padding-right: 10px;
+      }
+
+      /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
       .dataTable tbody td div.uri-cell:hover .resource-copy-link,
       .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
       .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link {
         display: inline;
-        padding-left: 10px;
+        padding-left: 4px;
         padding-right: 10px;
+        position: absolute;
       }
 
       .dataTable tbody td div.triple-cell ul.triple-list li {
@@ -351,8 +369,9 @@
 
       .dataTable td div.triple-cell .triple-close:hover .resource-copy-link {
         display: inline;
-        padding-left: 10px;
+        padding-left: 4px;
         padding-right: 10px;
+        position: absolute;
       }
 
       .error-response-plugin {
