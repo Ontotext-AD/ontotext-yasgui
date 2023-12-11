@@ -172,9 +172,13 @@
     }
 
     /* Make the datatable horizontally scrollable when there is not enough space to fit the columns */
-    table.dataTable  {
+    .dataTables_wrapper  {
       width: 100%;
-      table-layout: auto;
+      overflow-x: auto;
+
+      table.dataTable  {
+        table-layout: auto;
+      }
     }
 
     table.dataTable thead th {
