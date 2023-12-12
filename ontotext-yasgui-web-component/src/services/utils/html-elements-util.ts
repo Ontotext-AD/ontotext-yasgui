@@ -52,7 +52,7 @@ export class HtmlElementsUtil {
   }
 
   static createAutocompleteHintElement(text: string): HTMLElement {
-    let hint =  document.createElement('span');
+    const hint =  document.createElement('span');
     hint.innerHTML = text;
     hint.style.fontSize = '12px';
     hint.style.color = "gray";

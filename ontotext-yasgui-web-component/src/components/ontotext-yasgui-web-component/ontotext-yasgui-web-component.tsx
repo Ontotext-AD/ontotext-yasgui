@@ -739,16 +739,16 @@ export class OntotextYasguiWebComponent {
   }
 
   registerEventHandlers():void {
-    let hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
+    const hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
       const elRect = document.querySelector('.CodeMirror-hints').getBoundingClientRect();
       document.body.appendChild(hint);
-      let top = `${elRect.top - 20}px`;
+      const topPosition = elRect.top - 20;
       let leftPosition = elRect.right - hint.offsetWidth;
       // move it additionally 40px on the right to prevent overlapping with the current cursor position
       leftPosition = leftPosition < elRect.left ? elRect.left + 40 : leftPosition - 12
-      hint.style.top = top;
+      hint.style.top = `${topPosition}px`;
       hint.style.left = `${leftPosition}px`;
     });
 
