@@ -46,6 +46,7 @@
   "yasqe.action.share.btn.tooltip": "Partagez votre requête",
   "yasqe.action.share.error.general_message": "An error has occurred",
   "yasqe.action.shorten.btn.label": "Raccourcir",
+  "yasqe.autocomplete.hint": "Indice: \"abC\" correspond à \"abC*\", \"ab c*\" et \"ab-c*\".",
   "yasqe.autocomplete.notification.info.help_info_message": "Appuyez sur Alt+Entrée pour l'autocomplétion.",
   "yasqe.autocomplete.notification.info.nothing_to_autocomplete": "Rien à autocompléter encore !",
   "yasqe.autocomplete.notification.error.failed_fetching_suggestions": "Échec de la récupération des suggestions...",

@@ -8,4 +8,6 @@ export class Yasgui {
   addTab: (setActive: boolean, partialTabConfig?: any, opts?: any) => Tab;
 
   destroy: () => void;
+
+  on: (event, handler) => void;
 }
