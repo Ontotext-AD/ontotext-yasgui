@@ -50,4 +50,16 @@ export class HtmlElementsUtil {
       }
     });
   }
+
+  static createAutocompleteHintElement(text: string): HTMLElement {
+    let hint =  document.createElement('span');
+    hint.innerHTML = text;
+    hint.style.fontSize = '12px';
+    hint.style.color = "gray";
+    hint.style.backgroundColor = 'white';
+    hint.style.position = 'absolute';
+    hint.style.zIndex = '3';
+    hint.style.paddingLeft = 12 + 'px';
+    return hint;
+  }
 }

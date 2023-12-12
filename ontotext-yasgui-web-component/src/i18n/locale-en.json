@@ -46,6 +46,7 @@
   "yasqe.action.share.btn.tooltip": "Share your query",
   "yasqe.action.share.error.general_message": "An error has occurred",
   "yasqe.action.shorten.btn.label": "Shorten",
+  "yasqe.autocomplete.hint": "Hint: \"abC\" matches \"abC*\", \"ab c*\" and \"ab-c*\"",
   "yasqe.autocomplete.notification.info.help_info_message": "Press Alt+Enter to autocomplete",
   "yasqe.autocomplete.notification.info.nothing_to_autocomplete": "Nothing to autocomplete yet!",
   "yasqe.autocomplete.notification.error.failed_fetching_suggestions": "Failed fetching suggestions...",

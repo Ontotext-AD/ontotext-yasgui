@@ -738,6 +738,25 @@ export class OntotextYasguiWebComponent {
     this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
   }
 
+  registerEventHandlers():void {
+    let hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
+
+    this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
+      const elRect = document.querySelector('.CodeMirror-hints').getBoundingClientRect();
+      document.body.appendChild(hint);
+      let top = `${elRect.top - 20}px`;
+      let leftPosition = elRect.right - hint.offsetWidth;
+      // move it additionally 40px on the right to prevent overlapping with the current cursor position
+      leftPosition = leftPosition < elRect.left ? elRect.left + 40 : leftPosition - 12
+      hint.style.top = top;
+      hint.style.left = `${leftPosition}px`;
+    });
+
+    this.ontotextYasgui.getInstance().on('autocompletionClose', (_instance, _tab) => {
+      hint.parentNode && hint.parentNode.removeChild(hint);
+    });
+  }
+
   private destroy(): void {
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
@@ -762,6 +781,7 @@ export class OntotextYasguiWebComponent {
       YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
       YasrService.registerPlugin(ChartsPlugin.PLUGIN_NAME, ChartsPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
+      this.registerEventHandlers();
       this.afterInit();
     }
   }
