@@ -67,12 +67,12 @@ export class Completer extends EventEmitter {
   public getCompletions(token?: AutocompletionToken): Promise<string[]> {
     if (!this.config.get) return Promise.resolve([]);
 
-    //No token, so probably getting as bulk
+      //No token, so probably getting as bulk
     if (!token) {
       if (this.config.get instanceof Array) return Promise.resolve(this.config.get);
       //wrapping call in a promise.resolve, so this when a `get` is both async or sync
       return Promise.resolve(this.config.get(this.yasqe)).then((suggestions) => {
-        if (suggestions instanceof Array) return suggestions;
+          if (suggestions instanceof Array) return suggestions;
         return [];
       });
     }
@@ -133,10 +133,42 @@ export class Completer extends EventEmitter {
     return true;
   }
 
-  private getHint(autocompletionToken: AutocompletionToken, suggestedString: string): Hint {
+  /**
+   * Builds a hint object expected by the underlying codemirror.
+   * @param autocompletionToken
+   * @param suggested This in the original api is expected to be string, but here we changed it to
+   * accept also an object in format <code>{type: string, value: string, description: string}</code>.
+   * This is the format in which we load the suggestions. Some of the autocompleters though are
+   * using strings, so we shall support both.
+   */
+  private getHint(autocompletionToken: AutocompletionToken, suggested: any): Hint {
+    // This is being used for the option displayed in the dropdown menu. It usually contains html tags for the highligthing.
+    let suggestedString;
+    // This is the string which will be placed in the editor after the selection from the dropdown menu.
+    // The string needs to be properly transformed so that a valid value to be produced.
+    let suggestedValue;
+    if (typeof suggested === 'string') {
+      suggestedString = suggested;
+      suggestedValue = suggested;
+    } else {
+      suggestedString = suggested.description;
+      suggestedValue = suggested.value
+    }
+
     if (this.config.postProcessSuggestion) {
       suggestedString = this.config.postProcessSuggestion(this.yasqe, autocompletionToken, suggestedString);
     }
+    if (suggested.type === 'uri' && autocompletionToken.tokenPrefix && autocompletionToken.tokenPrefixUri) {
+      // if an uri is selected but the token already contains the prefix for that uri, then just skip the prefix
+      suggestedValue = autocompletionToken.tokenPrefix + suggestedValue.substring(autocompletionToken.tokenPrefixUri.length);
+    } else if (suggested.type === 'uri') {
+      // if an uri is selected, then wrap it in broken braces
+      suggestedValue = '<' + suggestedValue + '>';
+    } else if (suggested.type === 'prefix') {
+      // if a prefix is selected, then append the colon to spare the user to type it by hand
+      suggestedValue = suggestedValue + ':';
+    }
+
     let from: Position | undefined;
     let to: Position;
     const cursor = this.yasqe.getDoc().getCursor();
@@ -153,19 +185,12 @@ export class Completer extends EventEmitter {
       to = <any>autocompletionToken.from;
     }
     return {
-      text: suggestedString,
+      text: suggestedValue,
       displayText: suggestedString,
       from: from,
       to: to,
       render: (el: HTMLElement, _self: Hint, data: any) => {
-          let text: string = data.displayText;
-          if (text.startsWith('<')) {
-              text = text.substring(1, text.length);
-          }
-          if (text.endsWith('>')) {
-              text = text.substring(0, text.length - 1);
-          }
-          el.innerHTML = text;
+          el.innerHTML = data.displayText;
       }
     };
   }
@@ -227,6 +252,11 @@ export class Completer extends EventEmitter {
             ch: token.end,
           },
         };
+        // If the suggestions list is empty, emit the close event, otherwise it won't not happen.
+        // This is needed to subscribers in order to properly handle the menu closing.
+        if (!list.length) {
+          this.yasqe.emit("autocompletionClose");
+        }
         CodeMirror.on(hintResult, "shown", () => {
           this.yasqe.emit("autocompletionShown", (this.yasqe as any).state.completionActive.widget);
         });
