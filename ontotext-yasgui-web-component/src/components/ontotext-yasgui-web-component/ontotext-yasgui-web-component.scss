@@ -1,8 +1,8 @@
-@import "src/components/yasgui/yasgui.min";
-@import "src/css/variables";
+@import 'src/components/yasgui/yasgui.min';
+@import 'src/css/variables';
 @import 'src/css/common';
-@import "src/css/toolbar";
-@import "src/css/icons";
+@import 'src/css/toolbar';
+@import 'src/css/icons';
 @import 'src/css/external/tippy';
 @import 'src/css/pivottable-plugin';
 @import 'src/css/charts-plugin';
@@ -20,7 +20,7 @@
   padding: 2px;
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
   border: 1px solid silver;
-  background: white;
+  background: $color-onto-white;
   max-height: 20em;
   overflow-y: auto;
 }
@@ -40,7 +40,7 @@
 
 .CodeMirror-hint-active {
   background: #3385ff;
-  color: white;
+  color: $color-onto-white;
 }
 
 .CodeMirror-hint-active b {
@@ -57,6 +57,10 @@
   gap: 10px;
 
   .yasgui {
+
+    .CodeMirror {
+      border-color: #eeeeee;
+    }
 
     /* prevent overlapping of the query text with the yasqe action buttons on the right side of the editor */
     .CodeMirror-code {
@@ -160,6 +164,60 @@
         cursor: pointer;
       }
     }
+
+    .tabsList .tab:not(.active) {
+      background-color: #eeeeee;
+    }
+
+    .tabsList .tab.active {
+      margin-bottom: -1px;
+      z-index: 100;
+      border-bottom-color: $color-onto-white;
+    }
+
+
+    .tabsList .tab {
+      border: 1px solid #eeeeee;
+      margin-right: 0.2em;
+      margin-top: 0.2em;
+      padding: 8px;
+
+      .closeTab {
+        margin-left: 10px;
+        display: inline-block;
+      }
+
+      .closeTab:hover {
+        cursor: pointer;
+        color: $color-ontotext-orange-dark;
+
+        .icon-close {
+          transform: scale(1.1);
+        }
+      }
+
+      .closeTab i::before {
+        display: inline-block;
+      }
+
+      .closeTab:hover i::before {
+        transform: scale(1.1);
+      }
+
+      .editable-text-field-wrapper:focus {
+        outline: none;
+      }
+
+      // Overrides the YASGUI style that hides the input of the tab rename input.
+      .editable-text-field {
+        display: inline-block;
+        border: 1px solid $color-onto-grey;
+      }
+    }
+
+    .tabsList .tab.query-invalid .preview-value {
+      border-bottom: dotted 2px $color-onto-red;
+    }
   }
 
   .yasr {
@@ -172,11 +230,11 @@
     }
 
     /* Make the datatable horizontally scrollable when there is not enough space to fit the columns */
-    .dataTables_wrapper  {
+    .dataTables_wrapper {
       width: 100%;
       overflow-x: auto;
 
-      table.dataTable  {
+      table.dataTable {
         table-layout: auto;
       }
     }
@@ -199,7 +257,7 @@
     }
 
     .dataTable tr.even {
-      background-color: white;
+      background-color: $color-onto-white;
     }
 
     .yasr_header > * {
@@ -212,7 +270,7 @@
 
       .yasr_btnGroup {
         width: 100%;
-        background-color: white;
+        background-color: $color-onto-white;
         padding-bottom: 1rem;
 
         .spacer {

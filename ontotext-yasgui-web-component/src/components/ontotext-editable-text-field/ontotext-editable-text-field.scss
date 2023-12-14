@@ -1,0 +1,47 @@
+@import "src/css/variables";
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.editable-text-field-wrapper:hover {
+  cursor: pointer;
+}
+
+.editable-text-field-wrapper {
+  display: inline-block;
+
+  .edit-mode-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .editable-text-field {
+    outline-color: $color-onto-grey;
+    border: 1px solid $color-onto-grey;
+  }
+
+  .save-btn, .cancel-btn {
+    border: none;
+    outline: none;
+    margin-left: 6px;
+  }
+
+  .save-btn {
+    color: white;
+    background-color: $color-ontotext-orange;
+  }
+
+  .save-btn:hover {
+    background-color: $color-ontotext-orange-dark;
+  }
+
+
+  .cancel-btn:hover .cancel-btn-label, .save-btn:hover .save-btn-label {
+    cursor: pointer;
+    transform: scale(1.1);
+    font-weight: 800;
+  }
+}

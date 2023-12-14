@@ -89,6 +89,16 @@ export namespace Components {
         "tooltipLabelKey": string;
         "translationService": TranslationService;
     }
+    interface OntotextEditableTextField {
+        /**
+          * Controls the view mode of component. If true the component will be in Edit mode.
+         */
+        "edit": boolean;
+        /**
+          * The value of the text field.
+         */
+        "value": string;
+    }
     interface OntotextPagination {
         "hasMorePages": boolean | undefined;
         "pageElements": number;
@@ -221,6 +231,10 @@ export interface OntotextDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextDropdownElement;
 }
+export interface OntotextEditableTextFieldCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLOntotextEditableTextFieldElement;
+}
 export interface OntotextPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLOntotextPaginationElement;
@@ -305,6 +319,12 @@ declare global {
         prototype: HTMLOntotextDropdownElement;
         new (): HTMLOntotextDropdownElement;
     };
+    interface HTMLOntotextEditableTextFieldElement extends Components.OntotextEditableTextField, HTMLStencilElement {
+    }
+    var HTMLOntotextEditableTextFieldElement: {
+        prototype: HTMLOntotextEditableTextFieldElement;
+        new (): HTMLOntotextEditableTextFieldElement;
+    };
     interface HTMLOntotextPaginationElement extends Components.OntotextPagination, HTMLStencilElement {
     }
     var HTMLOntotextPaginationElement: {
@@ -368,6 +388,7 @@ declare global {
         "ontotext-dialog-web-component": HTMLOntotextDialogWebComponentElement;
         "ontotext-download-as": HTMLOntotextDownloadAsElement;
         "ontotext-dropdown": HTMLOntotextDropdownElement;
+        "ontotext-editable-text-field": HTMLOntotextEditableTextFieldElement;
         "ontotext-pagination": HTMLOntotextPaginationElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
@@ -461,6 +482,24 @@ declare namespace LocalJSX {
         "onValueChanged"?: (event: OntotextDropdownCustomEvent<InternalDropdownValueSelectedEvent>) => void;
         "tooltipLabelKey"?: string;
         "translationService"?: TranslationService;
+    }
+    interface OntotextEditableTextField {
+        /**
+          * Controls the view mode of component. If true the component will be in Edit mode.
+         */
+        "edit"?: boolean;
+        /**
+          * The "componentModeChanged" event is fired when the view mode changes.
+         */
+        "onComponentModeChanged"?: (event: OntotextEditableTextFieldCustomEvent<boolean>) => void;
+        /**
+          * The "valueChanged" event is fired when the text field value changes.
+         */
+        "onValueChanged"?: (event: OntotextEditableTextFieldCustomEvent<string>) => void;
+        /**
+          * The value of the text field.
+         */
+        "value"?: string;
     }
     interface OntotextPagination {
         "hasMorePages"?: boolean | undefined;
@@ -602,6 +641,7 @@ declare namespace LocalJSX {
         "ontotext-dialog-web-component": OntotextDialogWebComponent;
         "ontotext-download-as": OntotextDownloadAs;
         "ontotext-dropdown": OntotextDropdown;
+        "ontotext-editable-text-field": OntotextEditableTextField;
         "ontotext-pagination": OntotextPagination;
         "ontotext-yasgui": OntotextYasgui;
         "save-query-dialog": SaveQueryDialog;
@@ -627,6 +667,7 @@ declare module "@stencil/core" {
             "ontotext-dialog-web-component": LocalJSX.OntotextDialogWebComponent & JSXBase.HTMLAttributes<HTMLOntotextDialogWebComponentElement>;
             "ontotext-download-as": LocalJSX.OntotextDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextDownloadAsElement>;
             "ontotext-dropdown": LocalJSX.OntotextDropdown & JSXBase.HTMLAttributes<HTMLOntotextDropdownElement>;
+            "ontotext-editable-text-field": LocalJSX.OntotextEditableTextField & JSXBase.HTMLAttributes<HTMLOntotextEditableTextFieldElement>;
             "ontotext-pagination": LocalJSX.OntotextPagination & JSXBase.HTMLAttributes<HTMLOntotextPaginationElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to
