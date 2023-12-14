@@ -176,42 +176,78 @@
     }
 
 
-    .tabsList .tab {
-      border: 1px solid #eeeeee;
-      margin-right: 0.2em;
-      margin-top: 0.2em;
-      padding: 8px;
+    .tabsList {
+      .tab {
+        border: 1px solid #eeeeee;
+        margin-right: 0.2em;
+        margin-top: 0.2em;
+        padding: 8px;
 
-      .closeTab {
-        margin-left: 10px;
-        display: inline-block;
-      }
+        .closeTab {
+          margin-left: 10px;
+          display: inline-block;
+        }
 
-      .closeTab:hover {
-        cursor: pointer;
-        color: $color-ontotext-orange-dark;
+        .closeTab:hover {
+          cursor: pointer;
+          color: $color-ontotext-orange-dark;
 
-        .icon-close {
+          .icon-close {
+            transform: scale(1.1);
+          }
+        }
+
+        .closeTab i::before {
+          display: inline-block;
+        }
+
+        .closeTab:hover i::before {
           transform: scale(1.1);
+        }
+
+        .editable-text-field-wrapper:focus {
+          outline: none;
+        }
+
+        // Overrides the YASGUI style that hides the input of the tab rename input.
+        .editable-text-field {
+          display: inline-block;
+          border: 1px solid $color-onto-grey;
         }
       }
 
-      .closeTab i::before {
-        display: inline-block;
+      .create-tab-tab {
+        margin-top: 0.2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #eeeeee;
+      }
+      .addTab {
+        color: #000042;
+        margin: 0;
+        padding: 0.5em 1em;
+        transform: none;
+        &:hover {
+          color: $color-ontotext-orange-dark;
+          i {
+            transform: scale(1.1);
+          }
+        }
       }
 
-      .closeTab:hover i::before {
-        transform: scale(1.1);
-      }
+      .context-menu {
+        color: #003663
+      ;
+        background-color: #FFFFFF;
 
-      .editable-text-field-wrapper:focus {
-        outline: none;
-      }
+        .context-menu-list {
+          margin: 0;
+        }
 
-      // Overrides the YASGUI style that hides the input of the tab rename input.
-      .editable-text-field {
-        display: inline-block;
-        border: 1px solid $color-onto-grey;
+        .context-menu-item:hover {
+          background-color: #0000001a;
+        }
       }
     }
 

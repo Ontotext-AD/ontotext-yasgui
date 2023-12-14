@@ -283,10 +283,10 @@ export class TabList {
 
     this.addTabEl = document.createElement("div");
     this.addTabEl.setAttribute("role", "presentation");
+    this.addTabEl.className = "create-tab-tab";
 
     const addTabLink = document.createElement("button");
     addTabLink.className = "addTab";
-    addTabLink.textContent = "+";
     const addTabLabel = this.yasgui.translationService.translate("yasgui.tab_list.add_tab.btn.label");
     addTabLink.title = addTabLabel;
     addTabLink.setAttribute("aria-label", addTabLabel);
@@ -300,6 +300,9 @@ export class TabList {
     addTabLink.addEventListener("blur", () => {
       addTabLink.setAttribute("tabindex", "0"); // maintains tabability
     });
+    const icon = document.createElement("i");
+    icon.className = "icon-plus";
+    addTabLink.prepend(icon);
     this.addTabEl.appendChild(addTabLink);
     this._tabsListEl.appendChild(this.addTabEl);
     this.tabContextMenu = TabContextMenu.get(
