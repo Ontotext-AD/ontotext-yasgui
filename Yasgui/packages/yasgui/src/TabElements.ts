@@ -6,13 +6,13 @@ const sortablejs = require("sortablejs");
 require("./TabElements.scss");
 export interface TabList {}
 export class TabListEl {
-  private tabList: TabList;
-  private tabId: string;
-  private yasgui: Yasgui;
+  protected tabList: TabList;
+  protected tabId: string;
+  protected yasgui: Yasgui;
   private renameEl?: HTMLInputElement;
   private nameEl?: HTMLSpanElement;
   public tabEl?: HTMLDivElement;
-  private readonly translationService: TranslationService;
+  protected readonly translationService: TranslationService;
   constructor(yasgui: Yasgui, tabList: TabList, tabId: string) {
     this.tabList = tabList;
     this.yasgui = yasgui;
@@ -170,7 +170,7 @@ export class TabListEl {
 
     return this.tabEl;
   }
-  private openTabConfigMenu(event: MouseEvent) {
+  protected openTabConfigMenu(event: MouseEvent) {
     this.tabList.tabContextMenu?.openConfigMenu(this.tabId, this, event);
   }
   redrawContextMenu() {
@@ -182,7 +182,7 @@ export class TabList {
   yasgui: Yasgui;
 
   private _selectedTab?: string;
-  private addTabEl?: HTMLDivElement;
+  protected addTabEl?: HTMLDivElement;
   public _tabs: { [tabId: string]: TabListEl } = {};
   public _tabsListEl?: HTMLDivElement;
   public tabContextMenu?: TabContextMenu;
@@ -234,7 +234,7 @@ export class TabList {
     const currentTabIndex = allTabs.indexOf(this._selectedTab);
     return currentTabIndex;
   }
-  private handleKeydownArrowKeys = (e: KeyboardEvent) => {
+  protected handleKeydownArrowKeys = (e: KeyboardEvent) => {
     if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
       if (!this._tabsListEl) return;
       const numOfChildren = this._tabsListEl.childElementCount;
