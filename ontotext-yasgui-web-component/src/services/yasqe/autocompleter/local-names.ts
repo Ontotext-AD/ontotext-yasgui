@@ -38,12 +38,7 @@ const getLocalNamesAutocompleter = (localNamesLoader: (term: string) => any) => 
       // TODO: show toast warning on 204 or some error
       return localNamesLoader(query).then((data) => {
         if (data && data.suggestions) {
-          return data.suggestions.map((suggestion) => {
-            // TODO: should we sanitize and
-            // let description = suggestion.description.replaceAll('<b>', '<span class=\'CodeMirror-highlight\'>');
-            // description = description.replaceAll('</b>', '</span>');
-            return suggestion.description;
-          });
+          return data.suggestions.map((suggestion) => suggestion);
         }
         return [];
       });
@@ -103,7 +98,6 @@ const getLocalNamesAutocompleter = (localNamesLoader: (term: string) => any) => 
           if (suggestedString.startsWith("<<") && suggestedString.endsWith(">>")) {
             return suggestedString;
           }
-          suggestedString = "<" + suggestedString + ">";
         }
       }
       return suggestedString;

@@ -742,6 +742,7 @@ export class OntotextYasguiWebComponent {
     const hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
+      hint.parentNode && hint.parentNode.removeChild(hint);
       const elRect = document.querySelector('.CodeMirror-hints').getBoundingClientRect();
       document.body.appendChild(hint);
       const topPosition = elRect.top - 20;
