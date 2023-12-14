@@ -8,6 +8,7 @@ ontoElement.config = {
     return "/repositories/test-repo";
   },
   prefixes: getPrefixes(),
+  yasqeAutocomplete: getYasqeAutocompleter(),
   componentId: 'keyboard-shortcut'
 };
 
