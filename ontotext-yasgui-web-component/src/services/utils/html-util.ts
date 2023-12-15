@@ -13,7 +13,10 @@ export class HtmlUtil {
     return textArea.value;
   }
 
-  static loadJavaScript(url: string, onLoadHandler: () => void | undefined = undefined, async = false) {
+  static loadJavaScript(url: string, onLoadHandler: () => void | undefined = undefined, async = false, shouldReload = false) {
+    if (shouldReload) {
+      this.removeJavaScript(url);
+    }
     if (!document.querySelector(`script[src="${url}"]`)) {
       const loader = document.createElement('script');
       loader.setAttribute('src', url);
@@ -24,6 +27,27 @@ export class HtmlUtil {
       document.head.appendChild(loader);
     } else if (typeof onLoadHandler === "function") {
       onLoadHandler();
+    }
+  }
+
+  static removeJavaScript(url: string) {
+    const scriptTag = document.querySelector(`script[src*="${url}"]`);
+    if (scriptTag) {
+      document.head.removeChild(scriptTag);
+    }
+  }
+
+  static removeAllJavaScriptsThatMatch(urlPattern: string) {
+    const scriptTags = document.querySelectorAll(`script[src*="${urlPattern}"]`);
+    if (scriptTags.length) {
+      scriptTags.forEach((scriptTag) => document.head.removeChild(scriptTag));
+    }
+  }
+
+  static removeAllStyleSheetsThatMatch(urlPattern: string) {
+    const styleTags = document.querySelectorAll(`link[href*="${urlPattern}"]`);
+    if (styleTags.length) {
+      styleTags.forEach((styleTag) => document.head.removeChild(styleTag));
     }
   }
 
