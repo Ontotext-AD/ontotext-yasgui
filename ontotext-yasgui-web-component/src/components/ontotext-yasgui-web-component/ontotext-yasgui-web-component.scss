@@ -223,13 +223,16 @@
         align-items: center;
         background-color: #eeeeee;
       }
+
       .addTab {
         color: #000042;
         margin: 0;
         padding: 0.5em 1em;
         transform: none;
+
         &:hover {
           color: $color-ontotext-orange-dark;
+
           i {
             transform: scale(1.1);
           }
@@ -237,8 +240,7 @@
       }
 
       .context-menu {
-        color: #003663
-      ;
+        color: #003663;
         background-color: #FFFFFF;
 
         .context-menu-list {
