@@ -25,6 +25,7 @@ export class ChartsPlugin implements YasrPlugin {
   private wrapper = null;
   private chartEditorOkHandler = undefined;
   protected persistentConfig = {} as ChartsPersistentConfig;
+  private unsubscribeFromLanguageChange: () => void;
 
   helpReference: string;
   public static readonly PLUGIN_NAME = 'charts';
@@ -43,16 +44,38 @@ export class ChartsPlugin implements YasrPlugin {
     this.config = ChartsPlugin.defaults;
   }
 
+  onLanguageChange(_currentLang): void {
+    this.yasr.resultsEl.parentElement.querySelector('.chart-config-control button').innerHTML = this.translateConfigButtonTitle();
+
+    HtmlUtil.removeAllJavaScriptsThatMatch('https://www.gstatic');
+    HtmlUtil.removeAllStyleSheetsThatMatch('https://www.gstatic');
+    this.init(true);
+  }
+
   canHandleResults(): boolean {
     return !!this.yasr.results && this.yasr.results.getVariables() && this.yasr.results.getVariables().length > 0;
   }
 
   initialize(): Promise<void> {
+    this.unsubscribeFromLanguageChange = this.translationService.subscribeForLanguageChange({
+      name: 'GoogleCharts',
+      notify: (currentLang) => this.onLanguageChange(currentLang)
+    });
+    HtmlUtil.removeAllJavaScriptsThatMatch('https://www.gstatic');
+    HtmlUtil.removeAllStyleSheetsThatMatch('https://www.gstatic');
+    return this.init(false);
+  }
+
+  private init(shouldReload: boolean): Promise<void> {
     return new Promise<void>((resolve) => {
       HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js', () => {
+        let currentLang = this.translationService.getCurrentLang();
         // @ts-ignore
-        google.charts.load('current', {packages: ['charteditor']}).then(resolve);
-      });
+        google.charts.load('current', {
+          packages: ['charteditor'],
+          language: currentLang
+        }).then(resolve);
+      }, false, shouldReload);
     });
   }
 
@@ -123,9 +146,10 @@ export class ChartsPlugin implements YasrPlugin {
 
   destroy(): void {
     // @ts-ignore
-    google.visualization.events.removeListener(this.chartEditorOkHandler);
-    const configButtonWrapper = this.yasr.rootEl.querySelector('.yasr_header .chart-config-control');
+    google.visualization.events?.removeListener(this.chartEditorOkHandler);
+    const configButtonWrapper = this.yasr?.rootEl.querySelector('.yasr_header .chart-config-control');
     configButtonWrapper?.remove();
+    this.unsubscribeFromLanguageChange();
   }
 
   private drawChart() {
@@ -154,7 +178,7 @@ export class ChartsPlugin implements YasrPlugin {
     google.visualization.events.addListener(this.wrapper, 'error', (_googleError) => {
       const container = document.getElementById(this.wrapper.getContainerId())
       // @ts-ignore
-      google.visualization.errors.removeAll(container);
+      google.visualization.errors?.removeAll(container);
     });
 
     if (chartState) {
@@ -227,7 +251,7 @@ export class ChartsPlugin implements YasrPlugin {
     }
     const openConfigButton = document.createElement('button');
     openConfigButton.id = 'openChartConfigBtn';
-    openConfigButton.innerHTML = this.translationService.translate("yasr.plugin_control.plugin.charts.config.button");
+    openConfigButton.innerHTML = this.translateConfigButtonTitle();
     openConfigButton.addEventListener('click', () => {
       this.chartEditor.openDialog(this.wrapper, {});
     });
@@ -237,6 +261,10 @@ export class ChartsPlugin implements YasrPlugin {
     buttonWrapper.prepend(openConfigButton);
     const infoContainer = this.yasr.resultsEl.parentElement.querySelector('.yasr_header .space_element');
     infoContainer.insertAdjacentElement('beforebegin', buttonWrapper);
+  }
+
+  private translateConfigButtonTitle(): string {
+    return this.translationService.translate("yasr.plugin_control.plugin.charts.config.button");
   }
 
   private static getGoogleTypeForBinding(binding): string | null {
