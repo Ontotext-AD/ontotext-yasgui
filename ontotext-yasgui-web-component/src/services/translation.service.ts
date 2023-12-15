@@ -31,6 +31,10 @@ export class TranslationService {
   private languageChangeObservers: LanguageChangeObserver[] = [];
   private translationChangedObservers: Record<string, TranslationObserver[]> = {};
 
+  public getCurrentLang(): string {
+    return this.currentLang;
+  }
+
   /**
    * Translates the <code>messageLabelKey</code> with <code>translationParameter</code> and call <code>translationCallback</code> with translation of current language.
    * The <code>translationCallback</code> is called upon subscription and whenever the selected language is changed.
@@ -151,7 +155,8 @@ export class TranslationService {
    * @param parameters Optional parameters which to be applied during the translation.
    */
   translate(key: string, parameters?: TranslationParameter[]): string {
-    let translation = this.bundle[this.currentLang][key];
+    const bundle = this.bundle[this.currentLang];
+    let translation = bundle && bundle[key];
     if (!translation) {
       // Fallback to the default language
       translation = this.bundle[DEFAULT_LANG][key];
