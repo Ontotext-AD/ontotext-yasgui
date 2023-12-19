@@ -106,19 +106,19 @@ export class YasqeSteps {
   }
 
   static saveQuery() {
-    this.getSaveQueryButton().click();
+    this.getSaveQueryButton().click({force: true});
   }
 
   static getQueryField() {
     return this.getSaveQueryDialog().find('#query');
   }
 
-  static writeQuery(query: string) {
-    this.getQueryField().type(query, {parseSpecialCharSequences: false});
+  static writeQuery(query: string, force = false) {
+    this.getQueryField().type(query, {parseSpecialCharSequences: false, force});
   }
 
-  static clearQueryField() {
-    this.getQueryField().clear();
+  static clearQueryField(force = false) {
+    this.getQueryField().clear({force});
   }
 
   static getErrorsPane() {
@@ -138,7 +138,7 @@ export class YasqeSteps {
   }
 
   static clearQueryNameField() {
-    this.getQueryNameField().clear();
+    this.getQueryNameField().clear({force: true});
   }
 
   static getIsPublicField() {

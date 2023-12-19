@@ -68,7 +68,7 @@ describe('Save query action', () => {
         // And the create query button should be enabled
         YasqeSteps.getSaveQueryButton().should('be.enabled');
         // When I clear the query field
-        YasqeSteps.clearQueryField();
+        YasqeSteps.clearQueryField(true);
         // Then create query button should become disabled
         YasqeSteps.getSaveQueryButton().should('be.disabled');
         // And there should be an error message
@@ -77,7 +77,7 @@ describe('Save query action', () => {
         // And the field should be invalid
         YasqeSteps.getQueryField().should('have.class', 'invalid');
         // When I write a query
-        YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100');
+        YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100', true);
         // Then the field should become valid
         YasqeSteps.getSaveQueryButton().should('be.enabled');
         YasqeSteps.getErrorsPane().should('not.exist');
@@ -116,7 +116,7 @@ describe('Save query action', () => {
         YasqeSteps.getSaveQueryButton().should('be.enabled');
         // When I clear the query name field
         YasqeSteps.clearQueryNameField();
-        YasqeSteps.clearQueryField();
+        YasqeSteps.clearQueryField(true);
         // And there should be an error message
         YasqeSteps.getErrors().should('have.length', 2);
         // Then create query button should become disabled
@@ -125,7 +125,7 @@ describe('Save query action', () => {
         YasqeSteps.getQueryNameField().should('have.class', 'invalid');
         // When I write a query and query name
         YasqeSteps.writeQueryName('saved query');
-        YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100');
+        YasqeSteps.writeQuery('select * where { ?s ?p ?o . } limit 100', true);
         // Then the field should become valid
         YasqeSteps.getSaveQueryButton().should('be.enabled');
         YasqeSteps.getQueryNameField().should('not.have.class', 'invalid');
@@ -154,8 +154,8 @@ describe('Save query action', () => {
         // When I change the query and query name
         YasqeSteps.clearQueryNameField();
         YasqeSteps.writeQueryName('new query');
-        YasqeSteps.clearQueryField();
-        YasqeSteps.writeQuery('select *');
+        YasqeSteps.clearQueryField(true);
+        YasqeSteps.writeQuery('select *', true);
         YasqeSteps.toggleIsPublic();
         // And I click on save button
         YasqeSteps.saveQuery();

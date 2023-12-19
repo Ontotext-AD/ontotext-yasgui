@@ -1,5 +1,6 @@
 import {Component, Event, EventEmitter, h, Host, Listen, Prop} from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
+import {HtmlUtil} from '../../services/utils/html-util';
 
 export type ConfirmationDialogConfig = {
   title: string;
@@ -12,6 +13,10 @@ export type ConfirmationDialogConfig = {
   shadow: false,
 })
 export class ConfirmationDialog {
+
+  private documentOverflow: string
+  private closeButton!: HTMLButtonElement;
+  private confirmButton!: HTMLButtonElement;
 
   @Prop() translationService: TranslationService;
 
@@ -31,13 +36,26 @@ export class ConfirmationDialog {
   @Event() internalConfirmationApprovedEvent: EventEmitter;
 
   /**
-   * Handles the Escape key keydown event and closes the dialog.
+   * Handles the Escape and Tab keys:
+   * <ol>
+   *   <li> Escape - closes the dialog</li>
+   *   <li> Tab - Controls the focused elements to be only the dialog elements.</li>
+   * </ol>
+   *
    * @param ev The keyboard event.
    */
   @Listen('keydown', {target: "window"})
   keydownListener(ev: KeyboardEvent) {
     if (ev.key === 'Escape') {
       this.internalConfirmationRejectedEvent.emit();
+    }
+
+    // Handle Tab key press to manage focus within the dialog
+    if (ev.key === 'Tab') {
+      if (document.activeElement === this.confirmButton) {
+        this.closeButton.focus();
+        ev.preventDefault();
+      }
     }
   }
 
@@ -57,21 +75,33 @@ export class ConfirmationDialog {
     this.internalConfirmationApprovedEvent.emit();
   }
 
+  componentDidLoad(): void {
+    this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
+    this.closeButton.focus();
+  }
+
+  disconnectedCallback() {
+    HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
+  }
+
   render() {
     return (
-      <Host>
+      <Host tabindex='-1'>
         <div class="dialog-overlay" onClick={(evt) => this.onClose(evt)}>
           <div class="dialog confirmation-dialog">
             <div class="dialog-header">
               <h3 class="dialog-title">{this.config.title}</h3>
-              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}></button>
+              <button class="close-button icon-close"
+                      onClick={(evt) => this.onClose(evt)}
+                      ref={(el) => (this.closeButton = el)}></button>
             </div>
             <div class="dialog-body">{this.config.message}</div>
             <div class="dialog-footer">
               <button class="cancel-button"
                       onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
               <button class="confirm-button"
-                      onClick={(evt) => this.onConfirm(evt)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
+                      onClick={(evt) => this.onConfirm(evt)}
+                      ref={(el) => (this.confirmButton = el)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
             </div>
           </div>
         </div>

@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                                                           | Default     |
-| -------- | --------- | ----------- | -------------------------------------------------------------- | ----------- |
-| `config` | --        |             | `{ dialogTitle: string; onClose: (evt: MouseEvent) => void; }` | `undefined` |
+| Property | Attribute | Description | Type                                                                                                                                                             | Default     |
+| -------- | --------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `config` | --        |             | `{ dialogTitle: string; onClose: (evt: KeyboardEvent \| MouseEvent) => void; firstFocusedElement?: () => HTMLElement; lastFocusedElement?: () => HTMLElement; }` | `undefined` |
 
 
 ## Dependencies

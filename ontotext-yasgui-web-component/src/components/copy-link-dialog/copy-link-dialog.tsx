@@ -1,4 +1,4 @@
-import {Component, Element, h, Listen, Prop} from '@stencil/core';
+import {Component, Element, h, Prop} from '@stencil/core';
 import {DialogConfig} from "../ontotext-dialog-web-component/ontotext-dialog-web-component";
 import {ServiceFactory} from "../../services/service-factory";
 import {TranslationService} from "../../services/translation.service";
@@ -11,7 +11,7 @@ export type CopyLinkDialogConfig = {
 export interface CopyLinkObserver {
   onDialogClosed: () => void;
 
-  onLinkCopied:() => void;
+  onLinkCopied: () => void;
 }
 
 @Component({
@@ -21,6 +21,8 @@ export interface CopyLinkObserver {
 })
 export class CopyLinkDialog {
 
+  private shareLink: HTMLInputElement;
+  private copyButton: HTMLButtonElement;
   private translationService: TranslationService;
 
   @Element() hostElement: HTMLElement;
@@ -33,21 +35,12 @@ export class CopyLinkDialog {
 
   @Prop() classes: string
 
-  /**
-   * Handles the Escape key keydown event and closes the dialog.
-   * @param ev The keyboard event.
-   */
-  @Listen('keydown', {target: "window"})
-  keydownListener(ev: KeyboardEvent) {
-    if (ev.key === 'Escape') {
-      this.copyLinkEventsObserver.onDialogClosed();
-    }
-  }
-
   buildDialogConfig(): DialogConfig {
     return {
       dialogTitle: this.config.dialogTitle || this.translationService.translate('yasqe.share.copy_link.dialog.title'),
-      onClose: this.onClose.bind(this)
+      onClose: this.onClose.bind(this),
+      firstFocusedElement: () => this.shareLink,
+      lastFocusedElement: () => this.copyButton
     }
   }
 
@@ -77,11 +70,10 @@ export class CopyLinkDialog {
     this.translationService = this.serviceFactory.get(TranslationService);
   }
 
-  componentDidRender(): void {
-    const inputField: HTMLInputElement = document.querySelector('#shareLink');
-    inputField.focus();
-    // FIXME: For some reason this works only the first time dialog is opened
-    inputField.select();
+  componentDidLoad(): void {
+    setTimeout(() => {
+      this.shareLink.select();
+    });
   }
 
   private static fallbackCopyTextToClipboard(text: string): void {
@@ -127,6 +119,7 @@ export class CopyLinkDialog {
           <div class="copy-link-form">
             <div class="form-field copy-link-field">
               <input type="text" name="shareLink" id="shareLink" autofocus readonly
+                     ref={(el) => (this.shareLink = el)}
                      value={this.config.copyLink}/>
             </div>
           </div>
@@ -135,7 +128,9 @@ export class CopyLinkDialog {
           <button class="secondary-button cancel-button"
                   onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
           <button class="primary-button copy-button"
-                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.copy_link.dialog.copy.btn.label')}</button>
+                  onClick={(evt) => this.onCopy(evt)}
+                  ref={(el) => (this.copyButton = el)}>
+            {this.translationService.translate('yasqe.share.copy_link.dialog.copy.btn.label')}</button>
         </div>
       </ontotext-dialog-web-component>
     );
