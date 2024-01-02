@@ -1,0 +1,39 @@
+Subject: [PATCH] GDB-9309: When I change the order of open tabs in Sparql view and switch to another view, the open tabs are closed
+---
+Index: Yasgui/packages/yasgui/src/extended-TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/extended-TabElements.ts b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+--- a/Yasgui/packages/yasgui/src/extended-TabElements.ts	(revision a74aaeb2a7a613204c48009763d797db222cdb70)
++++ b/Yasgui/packages/yasgui/src/extended-TabElements.ts	(revision 4c285b1fb323a3949f015cf81a8dba95dee30374)
+@@ -6,6 +6,8 @@
+   value?: string;
+ }
+ 
++const TAB_ID_PREFIX = "tab-";
++
+ export class ExtendedTabListEl extends TabListEl {
+   private closeButton?: HTMLSpanElement;
+   public renameTabElement?: EditableTextField;
+@@ -34,7 +36,7 @@
+     renameElement.value = name;
+     renameElement.setAttribute("role", "tab");
+     // use the id for the tabpanel which is tabId to set the actual tab id
+-    renameElement.id = "tab-" + this.tabId;
++    renameElement.id = TAB_ID_PREFIX + this.tabId;
+     renameElement.setAttribute("aria-controls", this.tabId); // respective tabPanel id
+     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
+     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
+@@ -213,8 +215,8 @@
+         const anchorTag = child.children[0]; //this one has an href
+         if (anchorTag) {
+           const href = anchorTag.id;
+-          if (href && href.indexOf("tag-") >= 0) {
+-            tabs.push(href.substring(href.indexOf("tag-") + 1));
++          if (href && href.indexOf(TAB_ID_PREFIX) >= 0) {
++            tabs.push(href.substring(href.indexOf(TAB_ID_PREFIX) + TAB_ID_PREFIX.length));
+           }
+         }
+       }
