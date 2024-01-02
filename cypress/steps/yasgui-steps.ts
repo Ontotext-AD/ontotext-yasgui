@@ -71,6 +71,10 @@ export class EditableTabElement {
     EditableTabElement.getSaveButton().click();
   }
 
+  static pressEnter() {
+    cy.get('body').type('{enter}');
+  }
+
   static getCancelButton() {
     return cy.get('.cancel-btn');
   }

@@ -73,6 +73,13 @@ export class OntotextEditableTextField {
     }
   }
 
+  @Listen('keydown', {target: "document"})
+  keydownListener(ev: KeyboardEvent) {
+    if (ev.key === 'Enter') {
+      this.save();
+    }
+  }
+
   /**
    * Initializes the field that holds edited value when component is loaded.
    */
