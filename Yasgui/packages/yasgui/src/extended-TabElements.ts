@@ -6,6 +6,8 @@ class EditableTextField extends HTMLElement {
   value?: string;
 }
 
+const TAB_ID_PREFIX = "tab-";
+
 export class ExtendedTabListEl extends TabListEl {
   private closeButton?: HTMLSpanElement;
   public renameTabElement?: EditableTextField;
@@ -34,7 +36,7 @@ export class ExtendedTabListEl extends TabListEl {
     renameElement.value = name;
     renameElement.setAttribute("role", "tab");
     // use the id for the tabpanel which is tabId to set the actual tab id
-    renameElement.id = "tab-" + this.tabId;
+    renameElement.id = TAB_ID_PREFIX + this.tabId;
     renameElement.setAttribute("aria-controls", this.tabId); // respective tabPanel id
     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
@@ -213,8 +215,8 @@ export class ExtendedTabList extends TabList {
         const anchorTag = child.children[0]; //this one has an href
         if (anchorTag) {
           const href = anchorTag.id;
-          if (href && href.indexOf("tag-") >= 0) {
-            tabs.push(href.substring(href.indexOf("tag-") + 1));
+          if (href && href.indexOf(TAB_ID_PREFIX) >= 0) {
+            tabs.push(href.substring(href.indexOf(TAB_ID_PREFIX) + TAB_ID_PREFIX.length));
           }
         }
       }
