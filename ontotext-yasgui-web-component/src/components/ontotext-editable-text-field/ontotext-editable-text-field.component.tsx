@@ -75,7 +75,7 @@ export class OntotextEditableTextField {
 
   @Listen('keydown', {target: "document"})
   keydownListener(ev: KeyboardEvent) {
-    if (ev.key === 'Enter') {
+    if (this.edit && ev.key === 'Enter') {
       this.save();
     }
   }
@@ -116,12 +116,12 @@ export class OntotextEditableTextField {
    * Saves the value of text field and emits "valueChanged" event with the new value.
    */
   private save(): void {
-    if (this.value === this.editedValue) {
-      return;
-    }
+    const isValueChanged = this.value === this.editedValue;
     this.value = this.editedValue;
     this.edit = false;
-    this.valueChanged.emit(this.value);
+    if (isValueChanged) {
+      this.valueChanged.emit(this.value);
+    }
   }
 
   /**
