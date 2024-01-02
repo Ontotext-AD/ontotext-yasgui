@@ -46,6 +46,19 @@ describe('Rename tab functionality', () => {
     // Then I expect the tab name has been renamed.
     YasguiSteps.getTabName(0).should('have.text', 'New Value');
   });
+
+  it('should rename the tab when I click on enter key', () => {
+    // When I open the tab name editor,
+    YasguiSteps.getTabName(0).should('have.text', 'Unnamed');
+    YasguiSteps.dblClickTab(0);
+    // and change tab name,
+    EditableTabElement.getValueInput().invoke('val', '').type('New Value');
+    // and press the enter keyboard key.
+    EditableTabElement.pressEnter();
+
+    // Then I expect the tab name has been renamed.
+    YasguiSteps.getTabName(0).should('have.text', 'New Value');
+  });
 });
 
 const openTabNameEditor = (tabName: string) => {
