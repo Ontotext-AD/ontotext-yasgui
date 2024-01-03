@@ -22,7 +22,6 @@ export interface CopyLinkObserver {
 export class CopyLinkDialog {
 
   private shareLink: HTMLInputElement;
-  private copyButton: HTMLButtonElement;
   private translationService: TranslationService;
 
   @Element() hostElement: HTMLElement;
@@ -38,9 +37,7 @@ export class CopyLinkDialog {
   buildDialogConfig(): DialogConfig {
     return {
       dialogTitle: this.config.dialogTitle || this.translationService.translate('yasqe.share.copy_link.dialog.title'),
-      onClose: this.onClose.bind(this),
-      firstFocusedElement: () => this.shareLink,
-      lastFocusedElement: () => this.copyButton
+      onClose: this.onClose.bind(this)
     }
   }
 
@@ -71,6 +68,7 @@ export class CopyLinkDialog {
   }
 
   componentDidLoad(): void {
+    // If not placed inside a setTimeout, the shareLink input is not selected for some reason.
     setTimeout(() => {
       this.shareLink.select();
     });
@@ -118,7 +116,7 @@ export class CopyLinkDialog {
         <div slot="body">
           <div class="copy-link-form">
             <div class="form-field copy-link-field">
-              <input type="text" name="shareLink" id="shareLink" autofocus readonly
+              <input type="text" name="shareLink" readonly
                      ref={(el) => (this.shareLink = el)}
                      value={this.config.copyLink}/>
             </div>
@@ -128,9 +126,7 @@ export class CopyLinkDialog {
           <button class="secondary-button cancel-button"
                   onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
           <button class="primary-button copy-button"
-                  onClick={(evt) => this.onCopy(evt)}
-                  ref={(el) => (this.copyButton = el)}>
-            {this.translationService.translate('yasqe.share.copy_link.dialog.copy.btn.label')}</button>
+                  onClick={(evt) => this.onCopy(evt)}>{this.translationService.translate('yasqe.share.copy_link.dialog.copy.btn.label')}</button>
         </div>
       </ontotext-dialog-web-component>
     );

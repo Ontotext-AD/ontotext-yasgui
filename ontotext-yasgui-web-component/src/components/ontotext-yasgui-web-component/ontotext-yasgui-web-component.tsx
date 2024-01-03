@@ -698,7 +698,6 @@ export class OntotextYasguiWebComponent {
 
   private getShareLinkDialogConfig(): ShareQueryDialogConfig {
     return {
-      dialogTitle: this.translationService.translate('yasqe.share.query.dialog.title'),
       shareQueryLink: this.savedQueryConfig?.shareQueryLink
     }
   }

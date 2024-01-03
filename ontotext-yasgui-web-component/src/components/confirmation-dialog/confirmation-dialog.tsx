@@ -1,6 +1,7 @@
-import {Component, Event, EventEmitter, h, Host, Listen, Prop} from '@stencil/core';
+import {Component, Event, EventEmitter, h, Host, Listen, Prop, Element} from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
 import {HtmlUtil} from '../../services/utils/html-util';
+import {DialogUtil} from '../../services/utils/dialog-util';
 
 export type ConfirmationDialogConfig = {
   title: string;
@@ -15,8 +16,9 @@ export type ConfirmationDialogConfig = {
 export class ConfirmationDialog {
 
   private documentOverflow: string
-  private closeButton!: HTMLButtonElement;
-  private confirmButton!: HTMLButtonElement;
+  private cancelButton: HTMLButtonElement;
+
+  @Element() hostElement: HTMLElement;
 
   @Prop() translationService: TranslationService;
 
@@ -36,12 +38,7 @@ export class ConfirmationDialog {
   @Event() internalConfirmationApprovedEvent: EventEmitter;
 
   /**
-   * Handles the Escape and Tab keys:
-   * <ol>
-   *   <li> Escape - closes the dialog</li>
-   *   <li> Tab - Controls the focused elements to be only the dialog elements.</li>
-   * </ol>
-   *
+   * Handles the Escape key keydown event and closes the dialog.
    * @param ev The keyboard event.
    */
   @Listen('keydown', {target: "window"})
@@ -49,14 +46,10 @@ export class ConfirmationDialog {
     if (ev.key === 'Escape') {
       this.internalConfirmationRejectedEvent.emit();
     }
+  }
 
-    // Handle Tab key press to manage focus within the dialog
-    if (ev.key === 'Tab') {
-      if (document.activeElement === this.confirmButton) {
-        this.closeButton.focus();
-        ev.preventDefault();
-      }
-    }
+  private preventLeavingDialog(ev: KeyboardEvent) {
+    DialogUtil.preventLeavingDialog(this.hostElement, ev);
   }
 
   onClose(evt: MouseEvent): void {
@@ -76,11 +69,13 @@ export class ConfirmationDialog {
   }
 
   componentDidLoad(): void {
+    this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
     this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
-    this.closeButton.focus();
+    this.cancelButton.focus();
   }
 
   disconnectedCallback() {
+    this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
     HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
   }
 
@@ -92,16 +87,15 @@ export class ConfirmationDialog {
             <div class="dialog-header">
               <h3 class="dialog-title">{this.config.title}</h3>
               <button class="close-button icon-close"
-                      onClick={(evt) => this.onClose(evt)}
-                      ref={(el) => (this.closeButton = el)}></button>
+                      onClick={(evt) => this.onClose(evt)}></button>
             </div>
             <div class="dialog-body">{this.config.message}</div>
             <div class="dialog-footer">
               <button class="cancel-button"
-                      onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
+                      onClick={(evt) => this.onClose(evt)}
+                      ref={(el) => (this.cancelButton = el)}>{this.translationService.translate('confirmation.btn.cancel.label')}</button>
               <button class="confirm-button"
-                      onClick={(evt) => this.onConfirm(evt)}
-                      ref={(el) => (this.confirmButton = el)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
+                      onClick={(evt) => this.onConfirm(evt)}>{this.translationService.translate('confirmation.btn.confirm.label')}</button>
             </div>
           </div>
         </div>

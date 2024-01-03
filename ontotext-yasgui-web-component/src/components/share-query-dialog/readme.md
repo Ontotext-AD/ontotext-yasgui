@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property         | Attribute | Description | Type                                               | Default     |
-| ---------------- | --------- | ----------- | -------------------------------------------------- | ----------- |
-| `config`         | --        |             | `{ dialogTitle: string; shareQueryLink: string; }` | `undefined` |
-| `serviceFactory` | --        |             | `ServiceFactory`                                   | `undefined` |
+| Property         | Attribute | Description | Type                          | Default     |
+| ---------------- | --------- | ----------- | ----------------------------- | ----------- |
+| `config`         | --        |             | `{ shareQueryLink: string; }` | `undefined` |
+| `serviceFactory` | --        |             | `ServiceFactory`              | `undefined` |
 
 
 ## Events

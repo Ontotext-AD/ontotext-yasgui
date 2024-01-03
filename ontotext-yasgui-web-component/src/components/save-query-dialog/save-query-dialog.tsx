@@ -6,12 +6,14 @@ import {
   h,
   Host, Listen,
   Prop,
-  State
+  State,
+  Element
 } from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
 import {ServiceFactory} from '../../services/service-factory';
 import {SaveQueryData, UpdateQueryData} from "../../models/saved-query-configuration";
 import {HtmlUtil} from '../../services/utils/html-util';
+import {DialogUtil} from '../../services/utils/dialog-util';
 
 @Component({
   tag: 'save-query-dialog',
@@ -22,8 +24,9 @@ export class SaveQueryDialog {
   private translationService: TranslationService;
 
   private documentOverflow: string
-  private closeButton: HTMLButtonElement;
-  private createButton: HTMLButtonElement;
+  private cancelButton: HTMLButtonElement;
+
+  @Element() hostElement: HTMLElement;
 
   @Prop() serviceFactory: ServiceFactory
 
@@ -70,17 +73,6 @@ export class SaveQueryDialog {
     if (ev.key === 'Escape') {
       this.internalSaveQueryDialogClosedEvent.emit();
     }
-
-    // Handle Tab key press to manage focus within the dialog
-    if (ev.key === 'Tab') {
-      const activeElement = document.activeElement;
-
-      // If we reach the last focused element then next is close button.
-      if (this.createButton === activeElement) {
-        this.closeButton.focus();
-        ev.preventDefault();
-      }
-    }
   }
 
   componentWillLoad(): void {
@@ -98,13 +90,13 @@ export class SaveQueryDialog {
 
   componentDidLoad(): void {
     this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
-    setTimeout(() => {
-      this.closeButton.focus();
-    }, 100);
+    this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
+    this.cancelButton.focus();
   }
 
   disconnectedCallback() {
     HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
+    this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
   }
 
   onClose(evt: MouseEvent): void {
@@ -143,6 +135,10 @@ export class SaveQueryDialog {
 
   handleIsPublicChange(event): void {
     this.isPublic = event.target.checked;
+  }
+
+  private preventLeavingDialog(ev: KeyboardEvent) {
+    DialogUtil.preventLeavingDialog(this.hostElement, ev);
   }
 
   private resolveIsSaveAllowed(): void {
@@ -187,8 +183,7 @@ export class SaveQueryDialog {
             <div class="dialog-header">
               <h3
                 class="dialog-title">{this.translationService.translate('yasqe.actions.save_query.dialog.title')}</h3>
-              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}
-                          ref={(el) => (this.closeButton = el)}></button>
+              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}></button>
             </div>
             <div class="dialog-body">
 
@@ -225,10 +220,10 @@ export class SaveQueryDialog {
             </div>
             <div class="dialog-footer">
               <button class="cancel-button"
-                      onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.cancel.button')}</button>
+                      onClick={(evt) => this.onClose(evt)}
+                      ref={(el) => (this.cancelButton = el)}>{this.translationService.translate('yasqe.actions.save_query.dialog.cancel.button')}</button>
               <button class="ok-button" disabled={!this.isSaveAllowed}
-                      onClick={(evt) => this.onCreate(evt)}
-                      ref={(el) => (this.createButton = el)}>{this.translationService.translate('yasqe.actions.save_query.dialog.create.button')}</button>
+                      onClick={(evt) => this.onCreate(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.create.button')}</button>
             </div>
           </div>
         </div>

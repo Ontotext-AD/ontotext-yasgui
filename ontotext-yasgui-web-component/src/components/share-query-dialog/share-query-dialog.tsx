@@ -3,7 +3,6 @@ import {ServiceFactory} from "../../services/service-factory";
 import {CopyLinkObserver} from '../copy-link-dialog/copy-link-dialog';
 
 export type ShareQueryDialogConfig = {
-  dialogTitle: string;
   shareQueryLink: string;
 }
 
