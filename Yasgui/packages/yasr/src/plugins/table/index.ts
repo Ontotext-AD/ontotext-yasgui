@@ -56,6 +56,7 @@ export default class Table implements Plugin<PluginConfig> {
           onResize?: () => void;
           partialRefresh?: boolean;
           headerOnly?: boolean;
+          disabledColumns?: number[];
         }) => void;
         onResize: () => {};
       }
@@ -225,11 +226,18 @@ export default class Table implements Plugin<PluginConfig> {
     this.dataTable = $(this.tableEl).DataTable(dtConfig);
     this.tableEl.style.removeProperty("width");
     this.tableEl.style.width = this.tableEl.clientWidth + "px";
-    this.tableResizer = new ColumnResizer.default(this.tableEl, {
-      partialRefresh: true,
-      onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
-      headerOnly: false,
-    });
+    // There is an issue with columns resizing. When the table is rendered the columns resizing doesn't working until a column header is clicked.
+    // A possible reason could be that the table columns have not been fully rendered before the table resizer initialized.
+    // The timeout will ensure that the rendering of the table resizer occurs after the table is rendered.
+    setTimeout(() => {
+      this.tableResizer = new ColumnResizer.default(this.tableEl, {
+        partialRefresh: true,
+        onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
+        headerOnly: false,
+        // Ask for this
+        disabledColumns: this.persistentConfig.compact ? [] : [0],
+      });
+    }, 0);
     // DataTables uses the rendered style to decide the widths of columns.
     // Before a draw remove the ellipseTable styling
     if (this.persistentConfig.isEllipsed !== false) {
@@ -254,7 +262,8 @@ export default class Table implements Plugin<PluginConfig> {
           disable: false,
           partialRefresh: true,
           onResize: this.setEllipsisHandlers,
-          headerOnly: true,
+          headerOnly: false,
+          disabledColumns: this.persistentConfig.compact ? [] : [0],
         });
         // Re-add the ellipsis
         addClass(this.tableEl, "ellipseTable");
