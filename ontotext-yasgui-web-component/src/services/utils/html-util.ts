@@ -47,4 +47,26 @@ export class HtmlUtil {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+
+  /**
+   * Setter for the document body overflow property.
+   *
+   * @param newOverflow - the new overflow value.
+   *
+   * @return the old overflow value.
+   */
+  static setDocumentBodyOverflow(newOverflow: string): string {
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = newOverflow;
+    return oldOverflow;
+  }
+
+  /**
+   * Hides the document body overflow.
+   *
+   * @return the value of overflow before set it to hidden.
+   */
+  static hideDocumentBodyOverflow(): string {
+    return HtmlUtil.setDocumentBodyOverflow('hidden');
+  }
 }

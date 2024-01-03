@@ -1,5 +1,6 @@
-import {Component, Event, EventEmitter, h, Host, Listen, Prop} from '@stencil/core';
+import {Component, Event, EventEmitter, h, Host, Listen, Prop, Element} from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
+import {HtmlUtil} from '../../services/utils/html-util';
 
 export type ConfirmationDialogConfig = {
   title: string;
@@ -12,6 +13,12 @@ export type ConfirmationDialogConfig = {
   shadow: false,
 })
 export class ConfirmationDialog {
+  private documentOverflow: string;
+  private closeButton: HTMLButtonElement;
+  /**
+   * The dialog host html element.
+   */
+  @Element() hostElement: HTMLElement;
 
   @Prop() translationService: TranslationService;
 
@@ -39,6 +46,33 @@ export class ConfirmationDialog {
     if (ev.key === 'Escape') {
       this.internalConfirmationRejectedEvent.emit();
     }
+
+  }
+
+  // @Listen('focusout', {target: "window"})
+  // windowFocusoutListener(_ev: KeyboardEvent) {
+  //   this.focusoutHandler(_ev);
+  // }
+
+  focusoutHandler(ev: any) {
+    ev.stopPropagation();
+    const rel = ev.target;
+    console.log(rel);
+    if (!this.hostElement.contains(rel)) {  // if focus moved to another
+      this.closeButton.focus();
+
+    }
+  }
+
+  componentDidLoad(): void {
+    this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
+    this.closeButton.focus();
+    this.hostElement.addEventListener('focusout', this.focusoutHandler.bind(this));
+  }
+
+  disconnectedCallback() {
+    this.hostElement.removeEventListener('focusout', this.focusoutHandler.bind(this));
+    HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
   }
 
   onClose(evt: MouseEvent): void {
@@ -64,7 +98,8 @@ export class ConfirmationDialog {
           <div class="dialog confirmation-dialog">
             <div class="dialog-header">
               <h3 class="dialog-title">{this.config.title}</h3>
-              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}></button>
+              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}
+                      ref={(el) => (this.closeButton = el)}></button>
             </div>
             <div class="dialog-body">{this.config.message}</div>
             <div class="dialog-footer">
@@ -78,5 +113,4 @@ export class ConfirmationDialog {
       </Host>
     );
   }
-
 }
