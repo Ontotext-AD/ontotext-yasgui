@@ -1,11 +1,10 @@
 import {Component, h, Host, Prop, Listen, Element} from '@stencil/core';
 import {HtmlUtil} from '../../services/utils/html-util';
+import {DialogUtil} from '../../services/utils/dialog-util';
 
 export type DialogConfig = {
   dialogTitle: string;
   onClose: (evt: MouseEvent | KeyboardEvent) => void;
-  firstFocusedElement?: () => HTMLElement,
-  lastFocusedElement?: () => HTMLElement,
 }
 
 @Component({
@@ -23,11 +22,7 @@ export class OntotextDialogWebComponent {
   @Prop() config: DialogConfig;
 
   /**
-   * Handles the Escape and Tab keys:
-   * <ol>
-   *   <li> Escape - Calls the close action</li>
-   *   <li> Tab - Controls the focused elements to be only the dialog elements.</li>
-   *
+   * Handles the Escape key keydown event and closes the dialog.
    * @param ev The keyboard event.
    */
   @Listen('keydown', {target: "document"})
@@ -35,43 +30,21 @@ export class OntotextDialogWebComponent {
     if (ev.key === 'Escape') {
       this.closeButton.click();
     }
-
-    // Handle Tab key press to manage focus within the dialog
-    if (ev.key === 'Tab') {
-      const activeElement = document.activeElement;
-      const lastFocusedElement = this.getLastFocusedElement();
-
-      // If we reach the last focused element then next is close button.
-      if (!lastFocusedElement || lastFocusedElement === activeElement) {
-        this.closeButton.focus();
-        ev.preventDefault();
-      }
-
-      // Check if the active element is outside the dialog, then set close button active.
-      if (!this.hostElement.contains(activeElement)) {
-        this.closeButton.focus();
-        ev.preventDefault();
-      }
-
-    }
   }
 
   componentDidLoad(): void {
     this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
-    const firstFocusedElement = this.config.firstFocusedElement && this.config.firstFocusedElement();
-    if (firstFocusedElement) {
-      firstFocusedElement.focus();
-    } else {
-      this.closeButton.focus();
-    }
+    this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
+    this.closeButton.focus();
   }
 
   disconnectedCallback() {
+    this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
     HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
   }
 
-  private getLastFocusedElement(): HTMLElement | undefined {
-    return this.config.lastFocusedElement && this.config.lastFocusedElement();
+  private preventLeavingDialog(ev: KeyboardEvent) {
+    DialogUtil.preventLeavingDialog(this.hostElement, ev);
   }
 
   render() {
