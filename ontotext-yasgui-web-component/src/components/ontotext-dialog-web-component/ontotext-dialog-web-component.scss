@@ -47,7 +47,6 @@
       border: none;
       outline: none;
       cursor: pointer;
-      transition: all .15s ease-out;
 
       &:hover, &:focus {
         font-weight: bold;
@@ -65,22 +64,5 @@
     justify-content: flex-end;
     padding: 15px;
     border-top: 1px solid #e5e5e5;
-
-    button {
-      display: inline-block;
-      font-weight: 400;
-      line-height: 1.25;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: middle;
-      cursor: pointer;
-      user-select: none;
-      border: 1px solid transparent;
-      outline: none;
-      padding: .5rem 1rem;
-      font-size: 1rem;
-      border-radius: 0;
-      transition: all .15s ease-out;
-    }
   }
 }

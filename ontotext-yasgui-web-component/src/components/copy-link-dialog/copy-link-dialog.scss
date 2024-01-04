@@ -24,6 +24,22 @@
     margin-right: 10px;
   }
 
+  .copy-button, .cancel-button {
+      display: inline-block;
+      font-weight: 400;
+      line-height: 1.25;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid transparent;
+      outline: none;
+      padding: .5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0;
+  }
+
   @include primaryButton;
   @include secondaryButton;
 }
