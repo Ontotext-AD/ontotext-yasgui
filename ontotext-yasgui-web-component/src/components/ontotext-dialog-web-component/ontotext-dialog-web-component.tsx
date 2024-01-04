@@ -1,6 +1,5 @@
 import {Component, h, Host, Prop, Listen, Element} from '@stencil/core';
 import {HtmlUtil} from '../../services/utils/html-util';
-import {DialogUtil} from '../../services/utils/dialog-util';
 
 export type DialogConfig = {
   dialogTitle: string;
@@ -44,7 +43,7 @@ export class OntotextDialogWebComponent {
   }
 
   private preventLeavingDialog(ev: KeyboardEvent) {
-    DialogUtil.preventLeavingDialog(this.hostElement, ev);
+    HtmlUtil.preventLeavingDialog(this.hostElement, ev);
   }
 
   render() {

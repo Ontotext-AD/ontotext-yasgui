@@ -1,7 +1,6 @@
 import {Component, Event, EventEmitter, h, Host, Listen, Prop, Element} from '@stencil/core';
 import {TranslationService} from "../../services/translation.service";
 import {HtmlUtil} from '../../services/utils/html-util';
-import {DialogUtil} from '../../services/utils/dialog-util';
 
 export type ConfirmationDialogConfig = {
   title: string;
@@ -49,7 +48,7 @@ export class ConfirmationDialog {
   }
 
   private preventLeavingDialog(ev: KeyboardEvent) {
-    DialogUtil.preventLeavingDialog(this.hostElement, ev);
+    HtmlUtil.preventLeavingDialog(this.hostElement, ev);
   }
 
   onClose(evt: MouseEvent): void {

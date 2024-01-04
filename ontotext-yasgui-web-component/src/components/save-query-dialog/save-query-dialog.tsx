@@ -13,7 +13,6 @@ import {TranslationService} from "../../services/translation.service";
 import {ServiceFactory} from '../../services/service-factory';
 import {SaveQueryData, UpdateQueryData} from "../../models/saved-query-configuration";
 import {HtmlUtil} from '../../services/utils/html-util';
-import {DialogUtil} from '../../services/utils/dialog-util';
 
 @Component({
   tag: 'save-query-dialog',
@@ -138,7 +137,7 @@ export class SaveQueryDialog {
   }
 
   private preventLeavingDialog(ev: KeyboardEvent) {
-    DialogUtil.preventLeavingDialog(this.hostElement, ev);
+    HtmlUtil.preventLeavingDialog(this.hostElement, ev);
   }
 
   private resolveIsSaveAllowed(): void {
