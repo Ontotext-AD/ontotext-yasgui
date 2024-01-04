@@ -75,8 +75,14 @@ export class OntotextEditableTextField {
 
   @Listen('keydown', {target: "document"})
   keydownListener(ev: KeyboardEvent) {
-    if (this.edit && ev.key === 'Enter') {
+    if (!this.edit) {
+      return;
+    }
+
+    if ('Enter' === ev.key) {
       this.save();
+    } else if ('Escape' === ev.key) {
+      this.cancel();
     }
   }
 
