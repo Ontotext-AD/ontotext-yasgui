@@ -71,7 +71,7 @@ export class CopyLinkDialog {
     // If not placed inside a setTimeout, the shareLink input is not selected for some reason.
     setTimeout(() => {
       this.shareLink.select();
-    });
+    }, 100);
   }
 
   private static fallbackCopyTextToClipboard(text: string): void {
