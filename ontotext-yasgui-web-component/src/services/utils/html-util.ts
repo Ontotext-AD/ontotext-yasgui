@@ -1,3 +1,5 @@
+const INTERACTIVE_ELEMENTS_SELECTOR = 'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+
 export class HtmlUtil {
 
   static escapeHTMLEntities(text: string): string {
@@ -76,7 +78,7 @@ export class HtmlUtil {
    * @param parentElement - The parent element containing the focusable elements.
    * @param activeElementSelector - The CSS selector for identifying focusable elements.
    */
-  static focusNextElement(parentElement: HTMLElement, activeElementSelector = 'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'): void {
+  static focusNextElement(parentElement: HTMLElement, activeElementSelector = INTERACTIVE_ELEMENTS_SELECTOR): void {
     const focusableElements: any [] = Array.from(parentElement.querySelectorAll(activeElementSelector));
     if (focusableElements.length > 0) {
       const currentIndex = focusableElements.indexOf(document.activeElement);
@@ -94,7 +96,7 @@ export class HtmlUtil {
    * @param parentElement - The parent element containing the focusable elements.
    * @param activeElementSelector - The CSS selector for identifying focusable elements.
    */
-  static focusPreviousElement(parentElement: HTMLElement, activeElementSelector = 'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'): void {
+  static focusPreviousElement(parentElement: HTMLElement, activeElementSelector = INTERACTIVE_ELEMENTS_SELECTOR): void {
     const focusableElements: any[] = Array.from(parentElement.querySelectorAll(activeElementSelector));
     if (focusableElements.length > 0) {
       const currentIndex = focusableElements.indexOf(document.activeElement);
@@ -102,6 +104,17 @@ export class HtmlUtil {
       const previousActiveElement = focusableElements[previousIndex] as HTMLElement;
       if (previousActiveElement) {
         previousActiveElement.focus();
+      }
+    }
+  }
+
+  static  preventLeavingDialog(hostElement: HTMLElement, ev: KeyboardEvent) {
+    if (ev.key === 'Tab') {
+      ev.preventDefault();
+      if (ev.shiftKey) {
+        HtmlUtil.focusPreviousElement(hostElement);
+      } else {
+        HtmlUtil.focusNextElement(hostElement);
       }
     }
   }
