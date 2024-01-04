@@ -34,6 +34,19 @@ describe('Rename tab functionality', () => {
     verifyEditorClosed('New Value');
   });
 
+  it('should not save changed name of tab when "Escape" button is pressed', () => {
+    YasguiSteps.getTabName(0).should('have.text', 'Unnamed');
+    // When I open a tab name editor,
+    openTabNameEditor('Unnamed');
+    // and change the name of the tab,
+    EditableTabElement.getValueInput().invoke('val', '').type('New Value');
+    // and click on cancel button
+    EditableTabElement.pressEscape();
+
+    // Then I expect the tab name do not be changed,
+    verifyEditorClosed('Unnamed');
+  });
+
   it('should rename tab when click on save button', () => {
     // When I open the tab name editor,
     YasguiSteps.getTabName(0).should('have.text', 'Unnamed');
