@@ -87,7 +87,8 @@ export class TranslationService {
   }
 
   /**
-   * Subscribes the observer for further language change events.
+   * Subscribes the observer for further language change events. The observer name should be unique
+   * The observer is registered only once and if it is already registered, then it will not be.
    *
    * @param observer The observer to be registered for the language change events.
    * @return Returns an unsubscribe function which can be called by the observer to unsubscribe

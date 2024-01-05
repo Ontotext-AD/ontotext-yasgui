@@ -30,6 +30,11 @@ export class HtmlUtil {
     }
   }
 
+  // check if a script is already loaded
+  static isScriptLoaded(url: string) {
+    return !!document.querySelector(`script[src="${url}"]`);
+  }
+
   static removeJavaScript(url: string) {
     const scriptTag = document.querySelector(`script[src*="${url}"]`);
     if (scriptTag) {
@@ -39,6 +44,7 @@ export class HtmlUtil {
 
   static removeAllJavaScriptsThatMatch(urlPattern: string) {
     const scriptTags = document.querySelectorAll(`script[src*="${urlPattern}"]`);
+    console.log(`tags`, urlPattern, scriptTags);
     if (scriptTags.length) {
       scriptTags.forEach((scriptTag) => document.head.removeChild(scriptTag));
     }

@@ -16,6 +16,8 @@ export interface ChartsPersistentConfig {
 }
 
 export class ChartsPlugin implements YasrPlugin {
+  private static LOADER_URL = 'https://www.gstatic.com/charts/loader.js';
+
   private config: PluginConfig;
   // @ts-ignore
   private yasr: Yasr;
@@ -35,6 +37,7 @@ export class ChartsPlugin implements YasrPlugin {
     width: '100%',
     height: '600px'
   }
+  private shouldReinitialize = true;
 
   constructor(yasr: Yasr) {
     if (yasr) {
@@ -42,14 +45,6 @@ export class ChartsPlugin implements YasrPlugin {
       this.translationService = this.yasr.config.translationService;
     }
     this.config = ChartsPlugin.defaults;
-  }
-
-  onLanguageChange(_currentLang): void {
-    this.yasr.resultsEl.parentElement.querySelector('.chart-config-control button').innerHTML = this.translateConfigButtonTitle();
-
-    HtmlUtil.removeAllJavaScriptsThatMatch('https://www.gstatic');
-    HtmlUtil.removeAllStyleSheetsThatMatch('https://www.gstatic');
-    this.init(true);
   }
 
   canHandleResults(): boolean {
@@ -61,15 +56,24 @@ export class ChartsPlugin implements YasrPlugin {
       name: 'GoogleCharts',
       notify: (currentLang) => this.onLanguageChange(currentLang)
     });
-    HtmlUtil.removeAllJavaScriptsThatMatch('https://www.gstatic');
-    HtmlUtil.removeAllStyleSheetsThatMatch('https://www.gstatic');
-    return this.init(false);
+
+    let loaded = HtmlUtil.isScriptLoaded('https://www.gstatic.com/charts/loader.js');
+    console.log('initialize', loaded, this.shouldReinitialize);
+    if (!loaded || this.shouldReinitialize) {
+      HtmlUtil.removeAllJavaScriptsThatMatch('https://www.gstatic');
+      HtmlUtil.removeAllStyleSheetsThatMatch('https://www.gstatic');
+      return this.init(this.shouldReinitialize);
+    }
+    return Promise.resolve();
   }
 
   private init(shouldReload: boolean): Promise<void> {
+    this.shouldReinitialize = false;
+    console.log('1 init');
     return new Promise<void>((resolve) => {
-      HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js', () => {
+      HtmlUtil.loadJavaScript(ChartsPlugin.LOADER_URL, () => {
         let currentLang = this.translationService.getCurrentLang();
+        console.log(`2 init with `, currentLang);
         // @ts-ignore
         google.charts.load('current', {
           packages: ['charteditor'],
@@ -77,6 +81,34 @@ export class ChartsPlugin implements YasrPlugin {
         }).then(resolve);
       }, false, shouldReload);
     });
+  }
+
+  private onLanguageChange(_currentLang): any {
+    this.shouldReinitialize = true;
+    // this.yasr.resultsEl.parentElement.querySelector('.chart-config-control button').innerHTML = this.translateConfigButtonTitle();
+    //
+    // return new Promise<void>((resolve) => {
+    //   let currentLang = this.translationService.getCurrentLang();
+    //   console.log(`onLang`, currentLang);
+    //   HtmlUtil.loadJavaScript(ChartsPlugin.LOADER_URL, () => {
+    //     // @ts-ignore
+    //     google.charts.load('current', {
+    //       packages: ['charteditor'],
+    //       language: currentLang
+    //     }).then(() => {
+    //       console.log(`loaded`, this.wrapper);
+    //       // this.wrapper.draw();
+    //       // this.removeChartContainer();
+    //       // this.initEditor();
+    //       // this.drawChart()
+    //       // this.redrawChart();
+    //       resolve();
+    //     });
+    //   }, false, true);
+    // });
+    //   HtmlUtil.removeAllJavaScriptsThatMatch('https://www.gstatic');
+    //   HtmlUtil.removeAllStyleSheetsThatMatch('https://www.gstatic');
+    //   this.init(true).catch(console.error);
   }
 
   draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
@@ -157,7 +189,7 @@ export class ChartsPlugin implements YasrPlugin {
     this.addChartConfigButton();
     const chartState = this.persistentConfig.chartState && JSON.parse(this.persistentConfig.chartState);
     const dataModel = this.buildModel();
-    let dataTable = undefined;
+    let dataTable: any;
     if(chartState && chartState.dataTable.rows.length === dataModel.getNumberOfRows() && chartState.dataTable.cols.length === dataModel.getNumberOfColumns()) {
       dataTable = chartState.dataTable;
     } else {
@@ -230,8 +262,15 @@ export class ChartsPlugin implements YasrPlugin {
     this.yasr.resultsEl.appendChild(pluginHtml);
   }
 
+  private removeChartContainer() {
+    const container = document.getElementById(this.getContainerId());
+    if (container) {
+      container.remove();
+    }
+  }
+
   private redrawChart() {
-    const chartWrapper = this.chartEditor.getChartWrapper();
+    const chartWrapper = this.chartEditor.getChartWrapper() || this.wrapper;
     chartWrapper.draw(document.getElementById(this.getContainerId()));
     this.persistentConfig.chartOptions = chartWrapper.getOptions();
     this.persistentConfig.chartState = chartWrapper.toJSON();

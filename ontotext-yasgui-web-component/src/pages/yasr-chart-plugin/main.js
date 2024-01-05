@@ -7,3 +7,7 @@ function loadFullData() {
 function loadSmallData() {
   ontoElement.config = {...ontoElement.config, endpoint: () => { return "/repositories/chart-data-small-set" }}
 }
+
+function changeLanguage(lang) {
+  ontoElement.language = lang;
+}
