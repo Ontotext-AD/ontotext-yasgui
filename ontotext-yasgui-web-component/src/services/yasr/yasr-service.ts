@@ -180,7 +180,7 @@ export class YasrService {
   }
 
   private static addWorldBreakTagAfterSpecialCharacters(text) {
-    return text.replace(/([_:/-](?![_:\/-]|sup>))/g, "$1<wbr>");
+    return text.replace(/([_:/-](?![_:/-]|sup>))/g, "$1<wbr>");
   }
 
   private static addWorldBreakTagBeforeSpecialCharacters(text) {
