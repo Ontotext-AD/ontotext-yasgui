@@ -204,6 +204,7 @@ export namespace Components {
     }
     interface SavedQueriesPopup {
         "config": SavedQueriesData;
+        "serviceFactory": ServiceFactory;
     }
     interface ShareQueryDialog {
         "config": ShareQueryDialogConfig;
@@ -612,6 +613,7 @@ declare namespace LocalJSX {
           * Event fired when the share saved query button is triggered.
          */
         "onInternalSavedQuerySelectedForShareEvent"?: (event: SavedQueriesPopupCustomEvent<SaveQueryData>) => void;
+        "serviceFactory"?: ServiceFactory;
     }
     interface ShareQueryDialog {
         "config"?: ShareQueryDialogConfig;

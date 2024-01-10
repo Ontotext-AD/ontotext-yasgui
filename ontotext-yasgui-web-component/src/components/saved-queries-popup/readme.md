@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type               | Default     |
-| -------- | --------- | ----------- | ------------------ | ----------- |
-| `config` | --        |             | `SavedQueriesData` | `undefined` |
+| Property         | Attribute | Description | Type               | Default     |
+| ---------------- | --------- | ----------- | ------------------ | ----------- |
+| `config`         | --        |             | `SavedQueriesData` | `undefined` |
+| `serviceFactory` | --        |             | `ServiceFactory`   | `undefined` |
 
 
 ## Events
