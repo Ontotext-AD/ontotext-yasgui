@@ -372,6 +372,18 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Clears the results of the query.
+   * @param refreshYasr - if true, the YASR component will be refreshed.
+   */
+  @Method()
+  resetResults(refreshYasr: boolean): Promise<any> {
+    return this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.resetResults(refreshYasr);
+      });
+  }
+
+  /**
    * Checks whether the query has been modified after the initialization of the YASQE editor.
    */
   @Method()

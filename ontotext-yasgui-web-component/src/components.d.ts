@@ -32,6 +32,10 @@ export namespace Components {
          */
         "message": string;
         /**
+          * Configures if the close button in the alert should be displayed or not. Default is <code>false</code>
+         */
+        "noButton": boolean;
+        /**
           * Configures if the icon in the alert should be displayed or not. Default is <code>true</code>
          */
         "noIcon": boolean;
@@ -186,6 +190,11 @@ export namespace Components {
           * @param renderingMode - specifies the new view mode of the component when the query is executed.
          */
         "query": (renderingMode?: RenderingMode) => Promise<any>;
+        /**
+          * Clears the results of the query.
+          * @param refreshYasr - if true, the YASR component will be refreshed.
+         */
+        "resetResults": (refreshYasr: boolean) => Promise<any>;
         /**
           * A configuration model related with all the saved queries actions.
          */
@@ -413,6 +422,10 @@ declare namespace LocalJSX {
           * The message which should be displayed in the alert. If the message is not provided, then the alert is not displayed.
          */
         "message"?: string;
+        /**
+          * Configures if the close button in the alert should be displayed or not. Default is <code>false</code>
+         */
+        "noButton"?: boolean;
         /**
           * Configures if the icon in the alert should be displayed or not. Default is <code>true</code>
          */

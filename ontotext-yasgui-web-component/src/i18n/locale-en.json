@@ -51,6 +51,7 @@
   "yasqe.autocomplete.notification.info.nothing_to_autocomplete": "Nothing to autocomplete yet!",
   "yasqe.autocomplete.notification.error.failed_fetching_suggestions": "Failed fetching suggestions...",
   "yasqe.check_syntax.error.invalid_line.prefix": "This line is invalid. Expected: ",
+  "yasr.noresults.box.info": "No results from previous run. Click Run or press Ctrl/Cmd-Enter to execute the current query or update.",
   "yasr.fallback.box.info.for_more_info": "for more information.",
   "yasr.fallback.box.info.info_message": "Could not render results with the {{selectedPluginName}} plugin, the results currently are rendered with the {{selectedPluginName}} plugin.",
   "yasqe.keyboard_shortcuts.btn.label": "keyboard shortcuts",

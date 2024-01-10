@@ -51,6 +51,7 @@
   "yasqe.autocomplete.notification.info.nothing_to_autocomplete": "Rien à autocompléter encore !",
   "yasqe.autocomplete.notification.error.failed_fetching_suggestions": "Échec de la récupération des suggestions...",
   "yasqe.check_syntax.error.invalid_line.prefix": "Cette ligne n'est pas valide. Attendu: ",
+  "yasr.noresults.box.info": "Aucun résultat de l'exécution précédente. Cliquez sur Exécuter ou appuyez sur Ctrl/Cmd-Enter pour exécuter la requête ou la mise à jour en cours.",
   "yasr.fallback.box.info.for_more_info": "pour plus d'informations.",
   "yasr.fallback.box.info.info_message": "Impossible de rendre les résultats avec le plugin {{selectedPluginName}}, les résultats sont actuellement rendus avec le plugin {{selectedPluginName}}.",
   "yasqe.keyboard_shortcuts.btn.label": "raccourcis clavier",

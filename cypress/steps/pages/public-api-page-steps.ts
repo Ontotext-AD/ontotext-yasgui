@@ -54,4 +54,8 @@ export class PublicApiPageSteps {
   static switchToYasrMode() {
     cy.get('#switchToYasrMode').click();
   }
+
+  static resetResults() {
+    cy.get('#resetResults').click();
+  }
 }

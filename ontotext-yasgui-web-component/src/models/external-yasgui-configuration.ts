@@ -65,9 +65,10 @@ export interface ExternalYasguiConfiguration {
 
   /**
    * The sparql endpoint which will be used when a query request is made.
-   * It is important to note that if the endpoint configuration is passed as string, it will be persisted when first time initializes
-   * the instance with specific {@link ExternalYasguiConfiguration#componentId}. Subsequent query executions will
-   * use the endpoint stored in the persistence regardless if the configuration is changed. If the endpoint is defined as a function, it will be called before each query execution.
+   * It is important to note that if the endpoint configuration is passed as string, it will be persisted when first
+   * time initializes the instance with specific {@link ExternalYasguiConfiguration#componentId}. Subsequent query
+   * executions will use the endpoint stored in the persistence regardless if the configuration is changed. If the
+   * endpoint is defined as a function, it will be called before each query execution.
    */
   // @ts-ignore
   endpoint: string | ((yasgui: Yasgui) => string);
@@ -79,7 +80,8 @@ export interface ExternalYasguiConfiguration {
 
   /**
    * Key -> value translations as JSON. If the language is supported, then not needed to pass all label values.
-   * If pass a new language then all label's values have to be present, otherwise they will be translated to the default English language.
+   * If pass a new language then all label's values have to be present, otherwise they will be translated to the default
+   * English language.
    * Example:
    * {
    *   en: {
@@ -140,9 +142,9 @@ export interface ExternalYasguiConfiguration {
    * 4. request configuration: endpoint, headers, method and so on;
    * 5. opened tabs;
    * 5. which tab is active.
-   * The <code>componentId</code> configuration options defines uniqueness of this persistent state. Passed value will be used to generate
-   * the key which will be used into browser local store. For example if value is "123" then the key will be "yasgui__123".
-   * Default value is "ontotext-yasgui-config".
+   * The <code>componentId</code> configuration options defines uniqueness of this persistent state. Passed value will
+   * be used to generate the key which will be used into browser local store. For example if value is "123" then the key
+   * will be "yasgui__123". Default value is "ontotext-yasgui-config".
    */
   componentId: string;
 
@@ -221,8 +223,8 @@ export interface ExternalYasguiConfiguration {
   pluginOrder: string[]
 
   /**
-   * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which fields are supported by
-   * the plugin configuration.
+   * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which
+   * fields are supported by the plugin configuration.
    */
   pluginsConfigurations: Map<string, any>;
 
@@ -237,12 +239,14 @@ export interface ExternalYasguiConfiguration {
   paginationOn: boolean;
 
   /**
-   * A flag that controls creation of "Download as" dropdown. When false, the dropdown will not be created. Default value is true.
+   * A flag that controls creation of "Download as" dropdown. When false, the dropdown will not be created.
+   * Default value is true.
    */
   downloadAsOn: boolean;
 
   /**
-   * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local store.
+   * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local
+   * store.
    * Default value is 100000.
    */
   maxPersistentResponseSize: number;
@@ -259,19 +263,21 @@ export interface ExternalYasguiConfiguration {
   isVirtualRepository?: boolean;
 
   /**
-   * This function will be called before the update query be executed. The client can abort execution of query for some reason and can
-   * provide a message or label key for the reason of aborting.
+   * This function will be called before the update query be executed. The client can abort execution of query for some
+   * reason and can provide a message or label key for the reason of aborting.
    */
   beforeUpdateQuery?: (query: string, tabId: string) => Promise<BeforeUpdateQueryResult>,
 
   /**
-   * This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
+   * This function will be called before and after execution of an update query. Depends on results a corresponding
+   * result message info will be generated.
    */
   getRepositoryStatementsCount?: () => Promise<number>,
 
   /**
-   * If this function is present, then an "Abort query" button wil be displayed when a query is running. If the  button is clicked then
-   * this function will be invoked after the abort operation was triggered. The button will be visible until "ontotext-yasgui-web-component" client resolve returned promise.
+   * If this function is present, then an "Abort query" button wil be displayed when a query is running. If the  button
+   * is clicked then this function will be invoked after the abort operation was triggered. The button will be visible
+   * until "ontotext-yasgui-web-component" client resolve returned promise.
    * @param req - the running request.
    */
   onQueryAborted?: (req) => Promise<void>;
