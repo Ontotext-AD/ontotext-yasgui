@@ -180,6 +180,16 @@ Type: `Promise<any>`
 
 
 
+### `resetResults(refreshYasr: boolean) => Promise<any>`
+
+Clears the results of the query.
+
+#### Returns
+
+Type: `Promise<any>`
+
+
+
 ### `setQuery(query: string) => Promise<void>`
 
 Allows the client to set a query in the current opened tab.

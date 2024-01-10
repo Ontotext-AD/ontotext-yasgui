@@ -68,6 +68,23 @@ export class OntotextYasgui {
     this.yasgui.getTab().getYasqe().abortQuery();
   }
 
+  /**
+   * Removes the sparql results from the in-memory persistence json object. Then it emits a tab change event to apply
+   * the changes in the storage.
+   * @param refreshYasr If true, the yasr will be refreshed.
+   */
+  resetResults(refreshYasr = false): void {
+    Object.values(this.yasgui.persistentConfig?.persistedJson?.tabConfig).forEach((tab: any) => {
+      tab.yasr.response = null
+    });
+    Object.values(this.yasgui._tabs).forEach((tab: any) => {
+      this.yasgui.emitTabChange(tab);
+    });
+    if (refreshYasr) {
+      this.yasgui.getTab().getYasr().refresh();
+    }
+  }
+
   getQuery(): string {
     return this.yasgui.getTab().getYasqe().getValue();
   }

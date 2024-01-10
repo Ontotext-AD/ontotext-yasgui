@@ -11,3 +11,7 @@ function changeActionButtonVisibility(actionButtonName, hide) {
 function changeRenderMode(renderMode) {
   ontoElement.changeRenderMode(renderMode);
 }
+
+function resetResults() {
+  ontoElement.resetResults();
+}

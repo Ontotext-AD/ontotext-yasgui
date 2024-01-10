@@ -8,6 +8,7 @@ import {Yasqe} from './yasqe';
 export interface Yasr {
 
   yasqe: Yasqe;
+  storage: any;
 
   persistentJson: {
     yasr: {
@@ -48,4 +49,5 @@ export interface Yasr {
 
   showWarning: (message: string) => void;
   hideWarning: () => void;
+  refresh: () => void;
 }

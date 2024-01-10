@@ -92,11 +92,13 @@ export class LoaderComponent {
     return (
       <Host class='ontotext-yasgui-loader hidden'>
         <slot>
+          {!this.hidden &&
           <div class='loader-component'>
             <div innerHTML={SvgUtil.getLoaderSvgTag(this.size)}></div>
             <div>{this.message} {this.queryProgress}</div>
             <div>{this.additionalMessage}</div>
           </div>
+          }
         </slot>
       </Host>
     );

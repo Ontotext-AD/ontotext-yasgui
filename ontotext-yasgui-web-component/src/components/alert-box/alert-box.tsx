@@ -29,6 +29,12 @@ export class AlertBox {
    */
   @Prop() noIcon = true;
 
+/**
+   * Configures if the close button in the alert should be displayed or not.
+   * Default is <code>false</code>
+   */
+  @Prop() noButton = false;
+
   /**
    * Controls the visibility of the alert.
    * Default is <code>true</code>
@@ -45,7 +51,7 @@ export class AlertBox {
     return (
       <Host>
         {this.isVisible && <div class={classList}>
-          <a class="close-button" onClick={(evt) => this.onClose(evt)}>&times;</a>
+          {!this.noButton && <a class="close-button" onClick={(evt) => this.onClose(evt)}>&times;</a>}
           <div class="message">{this.message}</div>
         </div>}
       </Host>);
