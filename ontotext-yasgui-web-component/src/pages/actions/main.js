@@ -18,6 +18,10 @@ ontoElement.config = {
   componentId: 'actions'
 };
 
+function changeLanguage(lang) {
+  ontoElement.language = lang;
+}
+
 setQueryListener(ontoElement);
 
 let textAreaElement = document.createElement('textarea');
