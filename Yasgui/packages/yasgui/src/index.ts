@@ -456,6 +456,11 @@ export class Yasgui extends EventEmitter {
     }
     return this._tabs[tabId];
   }
+
+  public emitTabChange(tab: Tab) {
+    this.emit("tabChange", this, tab);
+  }
+
   public restoreLastTab() {
     const config = this.persistentConfig.retrieveLastClosedTab();
     if (config) {

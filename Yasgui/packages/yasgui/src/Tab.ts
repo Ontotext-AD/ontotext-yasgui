@@ -494,6 +494,7 @@ export class Tab extends EventEmitter {
     );
   };
   handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
+    this.yasr?.hideWarning();
     const message = yasqe.isUpdateQuery()
       ? this.yasgui.translationService.translate("loader.message.query.editor.executing.update")
       : this.yasgui.translationService.translate("loader.message.query.editor.evaluating.query");

@@ -95,7 +95,7 @@ export class Yasr extends EventEmitter {
     }
   }
 
-  public showWarning(message: string) {
+  public showWarning(message: string, type: "warning" | "error" | "success" = "warning", noButton = false) {
     this.hideWarning();
     if (message) {
         const alertBoxEl = document.createElement('alert-box');
@@ -104,7 +104,9 @@ export class Yasr extends EventEmitter {
         // @ts-ignore
         alertBoxEl.isVisible = true;
         // @ts-ignore
-        alertBoxEl.type = 'warning';
+        alertBoxEl.type = type;
+        // @ts-ignore
+        alertBoxEl.noButton = noButton;
         this.rootEl.prepend(alertBoxEl);
     }
   }
@@ -220,8 +222,13 @@ export class Yasr extends EventEmitter {
   public draw() {
     this.updateHelpButton();
     this.updateResponseInfo();
+    this.hideWarning();
     if (!this.results) {
       this.hideLoader();
+      addClass(this.headerEl, "hidden");
+      addClass(this.resultsEl, "hidden");
+      addClass(this.fallbackInfoEl, "hidden");
+      this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
       return;
     }
     this.updatePluginSelectorNames();
