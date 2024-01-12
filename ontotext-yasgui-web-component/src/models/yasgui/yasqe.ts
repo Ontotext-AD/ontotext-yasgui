@@ -71,6 +71,7 @@ export class Doc {
 
   replaceRange: (replacement: string | string[], from: Cursor, to?: Cursor, origin?: string) => void;
   getLine: (line: number) => string;
+  isClean: () => boolean;
 }
 
 export class Cursor {

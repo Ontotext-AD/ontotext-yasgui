@@ -369,6 +369,15 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Checks whether the query has been modified after the initialization of the YASQE editor.
+   */
+  @Method()
+  isQueryDirty(): Promise<boolean> {
+    return this.getOntotextYasgui()
+      .then((ontotextYasgui) => ontotextYasgui.isQueryDirty());
+  }
+
+  /**
    * There are rendering problems when the window size is changed. To address this, we added a listener to the window resize event.
    * When the event occurs, we refresh the component to recalculate and resolve the rendering issues.
    */
@@ -378,6 +387,16 @@ export class OntotextYasguiWebComponent {
       .then((ontotextYasgui) => {
         ontotextYasgui.refresh();
         VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation));
+      });
+  }
+
+  @Listen('beforeunload', {target: 'window'})
+  onBeforeunloadHandler() {
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        if (ontotextYasgui.isQueryDirty()) {
+          ontotextYasgui.saveQuery();
+        }
       });
   }
 
