@@ -138,6 +138,16 @@ Type: `Promise<void>`
 
 
 
+### `isQueryDirty() => Promise<boolean>`
+
+Checks whether the query has been modified after the initialization of the YASQE editor.
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
+
 ### `isQueryValid() => Promise<boolean>`
 
 Checks if query is valid.

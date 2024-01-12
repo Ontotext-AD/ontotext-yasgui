@@ -164,6 +164,10 @@ export namespace Components {
          */
         "hideYasqeActionButton": (yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>;
         /**
+          * Checks whether the query has been modified after the initialization of the YASQE editor.
+         */
+        "isQueryDirty": () => Promise<boolean>;
+        /**
           * Checks if query is valid.
          */
         "isQueryValid": () => Promise<boolean>;

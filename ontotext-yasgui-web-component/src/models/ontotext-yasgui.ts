@@ -72,6 +72,14 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getValue();
   }
 
+  saveQuery(): void {
+    this.getInstance().getTab().getYasqe().emit('blur');
+  }
+
+  isQueryDirty(): boolean {
+    return !this.getYasqe().getDoc().isClean();
+  }
+
   isQueryValid(): boolean {
     return this.yasgui.getTab().getYasqe().queryValid;
   }
