@@ -28,7 +28,15 @@ export class YasrService {
   static getPluginsConfigurations(externalConfiguration: ExternalYasguiConfiguration): Map<string, any> {
     const pluginsConfigurations = new Map<string, any>();
     this.addExtendedTableConfiguration(externalConfiguration, pluginsConfigurations);
+    this.addTableConfiguration(externalConfiguration, pluginsConfigurations);
     return pluginsConfigurations;
+  }
+
+  private static addTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, any>): void {
+    const configuration = {
+      maxResizableResultsColumns: externalConfiguration.maxResizableResultsColumns ? externalConfiguration.maxResizableResultsColumns : 19,
+    };
+    pluginsConfigurations.set('table', configuration);
   }
 
   private static addExtendedTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, any>) {

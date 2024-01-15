@@ -1,13 +1,13 @@
-import {YasrTablePluginSteps} from '../../../../steps/yasr-table-plugin-steps';
 import {QueryStubDescription, QueryStubs} from '../../../../stubs/query-stubs';
 import {YasqeSteps} from '../../../../steps/yasqe-steps';
 import {YasrSteps} from '../../../../steps/yasr-steps';
+import {YasrPluginPageSteps} from '../../../../steps/pages/yasr-plugin-page-steps';
 
 describe('Plugin: Table', () => {
 
   beforeEach(() => {
     // Given I visit a page with "ontotex-yasgui-web-component" in it.
-    YasrTablePluginSteps.visit();
+    YasrPluginPageSteps.visit();
   });
 
   context('Copy resource link dialog', () => {

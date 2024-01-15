@@ -101,6 +101,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **showEditorTabs**: If the query editor tabs should be rendered or not;
 - **showResultTabs**: If the results tabs should be rendered or not;
 - **showResultInfo**: If the result information header of YASR should be rendered or not;
+- **maxResizableResultsColumns**: The maximum count of columns in YASR that can be resized. When there are too many columns, YASR may slow down and frequently crash the browser. The default value is 19.
 - **showQueryLoader**: Flag that controls displaying the loader during the run query process. Default value is true;
 - **showToolbar**: If the toolbar with render mode buttons should be rendered or not;
 - **yasqePluginButtons**: Plugin definitions configurations for yasqe action buttons; 

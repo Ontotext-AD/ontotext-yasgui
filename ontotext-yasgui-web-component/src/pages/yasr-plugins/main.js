@@ -11,3 +11,10 @@ function attachMessageHandler() {
     }
   });
 }
+
+function configureSmallResizableColumns() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    maxResizableResultsColumns: 3
+  }
+}

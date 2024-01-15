@@ -287,6 +287,12 @@ export interface ExternalYasguiConfiguration {
   getCellContent: (binding: Parser.BindingValue, prefixes?: Prefixes) => string;
 
   /**
+   * The maximum count of columns in YASR that can be resized. When there are too many columns, YASR may slow down and frequently
+   * crash the browser. The default value is 19.
+   */
+  maxResizableResultsColumns: number;
+
+  /**
    * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
    */
   sparqlResponse: string | undefined;
