@@ -269,11 +269,14 @@
 
     /* Make the datatable horizontally scrollable when there is not enough space to fit the columns */
     .dataTables_wrapper {
-      width: 100%;
-      overflow-x: auto;
-
       table.dataTable {
-        table-layout: auto;
+        table-layout: fixed;
+      }
+
+      table.dataTable.fixedColumns {
+        tr td:not(:first-child), tr th:not(:first-child) {
+          width: 100px;
+        }
       }
     }
 

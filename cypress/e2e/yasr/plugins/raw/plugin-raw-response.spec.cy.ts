@@ -1,14 +1,14 @@
 import {QueryStubs} from '../../../../stubs/query-stubs';
-import {YasrTablePluginSteps} from '../../../../steps/yasr-table-plugin-steps';
 import {YasqeSteps} from '../../../../steps/yasqe-steps';
 import {YasrSteps} from '../../../../steps/yasr-steps';
 import {DownloadAsPageSteps} from "../../../../steps/download-as-page-steps";
+import {YasrPluginPageSteps} from '../../../../steps/pages/yasr-plugin-page-steps';
 
 describe('Plugin: Raw response', () => {
   beforeEach(() => {
     QueryStubs.stubDefaultQueryResponse();
     // Given I visit a page with "ontotex-yasgui-web-component" in it.
-    YasrTablePluginSteps.visit();
+    YasrPluginPageSteps.visit();
   });
 
   it('should be able to render raw response', {

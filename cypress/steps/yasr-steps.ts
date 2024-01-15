@@ -220,4 +220,16 @@ export class YasrSteps {
   static getGoogleChartVisualization() {
     return this.getYasr().find('.yasr_results svg');
   }
+
+  static getResultTableHeaderResizableElement(yasrIndex = 0) {
+    return YasrSteps.getYasr(yasrIndex).get('.grip-resizable');
+  }
+
+  static getHideRowNumbersCheckbox() {
+    return YasrSteps.getYasr(0).find('.row-number-switch');
+  }
+
+  static toggleCompactView() {
+    YasrSteps.getHideRowNumbersCheckbox().click();
+  }
 }

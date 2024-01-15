@@ -5,12 +5,13 @@ import DefaultViewPageSteps from '../../../../steps/default-view-page-steps';
 import {YasrSteps} from '../../../../steps/yasr-steps';
 import {PaginationPageSteps} from '../../../../steps/pages/pagination-page-steps';
 import {PaginationSteps} from '../../../../steps/pagination-steps';
+import {YasrPluginPageSteps} from '../../../../steps/pages/yasr-plugin-page-steps';
 
 describe('Plugin: Table', () => {
 
   beforeEach(() => {
     // Given I visit a page with "ontotex-yasgui-web-component" in it.
-    YasrTablePluginSteps.visit();
+    YasrPluginPageSteps.visit();
   });
 
   describe('Result info message', () => {
