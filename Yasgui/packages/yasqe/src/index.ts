@@ -472,6 +472,7 @@ export class Yasqe extends CodeMirror {
       runButtonTooltip.setAttribute("placement", "top");
       this.queryBtn = document.createElement("button");
       runButtonTooltip.appendChild(this.queryBtn);
+      addClass(runButtonTooltip, "yasqe_tooltip_queryButton");
       this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
       addClass(this.queryBtn, "yasqe_queryButton");
 
