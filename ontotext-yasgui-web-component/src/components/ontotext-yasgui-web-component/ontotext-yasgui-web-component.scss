@@ -92,9 +92,9 @@
         }
 
         // Position the query button at the bottom right corner of the editor.
-        yasgui-tooltip:last-of-type {
-          position: absolute;
-          bottom: 32px;
+        .yasqe_tooltip_queryButton {
+          margin-top: auto;
+          margin-bottom: 32px;
         }
 
         .yasqe_queryButton {
