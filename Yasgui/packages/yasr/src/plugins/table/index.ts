@@ -23,6 +23,7 @@ const DEFAULT_PAGE_SIZE = 50;
 export interface PluginConfig {
   openIriInNewWindow: boolean;
   tableConfig: DataTables.Settings;
+  maxResizableResultsColumns: number;
 }
 
 export interface PersistentConfig {
@@ -72,10 +73,11 @@ export default class Table implements Plugin<PluginConfig> {
     this.yasr = yasr;
     //TODO read options from constructor
     this.translationService = this.yasr.config.translationService;
-    this.config = Table.defaults;
+    this.config = { ...Table.defaults, maxResizableResultsColumns: this.getMaxResizibleColumns() };
   }
   public static defaults: PluginConfig = {
     openIriInNewWindow: true,
+    maxResizableResultsColumns: 19,
     tableConfig: {
       dom: "tip", //  tip: Table, Page Information and Pager, change to ipt for showing pagination on top
       pageLength: DEFAULT_PAGE_SIZE, //default page length
@@ -210,6 +212,10 @@ export default class Table implements Plugin<PluginConfig> {
       pageLength: -1,
       data: rows,
       columns: columns,
+      // DataTables will only render the rows that are initially visible on the page.
+      deferRender: true,
+      // // Switch off the pagination.
+      paging: false,
       // Switched off for optimization purposes.
       // Our cells are calculated dynamically, and with this configuration on, rendering the datatable results becomes very slow.
       autoWidth: false,
@@ -226,18 +232,27 @@ export default class Table implements Plugin<PluginConfig> {
     this.dataTable = $(this.tableEl).DataTable(dtConfig);
     this.tableEl.style.removeProperty("width");
     this.tableEl.style.width = this.tableEl.clientWidth + "px";
-    // There is an issue with columns resizing. When the table is rendered the columns resizing doesn't working until a column header is clicked.
-    // A possible reason could be that the table columns have not been fully rendered before the table resizer initialized.
-    // The timeout will ensure that the rendering of the table resizer occurs after the table is rendered.
-    setTimeout(() => {
-      this.tableResizer = new ColumnResizer.default(this.tableEl, {
-        partialRefresh: true,
-        onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
-        headerOnly: false,
-        // Ask for this
-        disabledColumns: this.persistentConfig.compact ? [] : [0],
-      });
-    }, 0);
+
+    // If it is a compact view, the first column (row number column) is not visible, we decrease the maximum resizable columns.
+    const maxResizableResultsColumns = this.persistentConfig.compact
+      ? this.config.maxResizableResultsColumns - 1
+      : this.config.maxResizableResultsColumns;
+
+    if (columns.length <= maxResizableResultsColumns) {
+      // There is an issue with columns resizing. When the table is rendered the columns resizing doesn't working until a column header is clicked.
+      // A possible reason could be that the table columns have not been fully rendered before the table resizer initialized.
+      // The timeout will ensure that the rendering of the table resizer occurs after the table is rendered.
+      setTimeout(() => {
+        this.tableResizer = new ColumnResizer.default(this.tableEl, {
+          partialRefresh: true,
+          onResize: this.persistentConfig.isEllipsed !== false && this.setEllipsisHandlers,
+          headerOnly: false,
+          disabledColumns: this.persistentConfig.compact ? [] : [0],
+        });
+      }, 0);
+    } else {
+      addClass(this.tableEl, "fixedColumns");
+    }
     // DataTables uses the rendered style to decide the widths of columns.
     // Before a draw remove the ellipseTable styling
     if (this.persistentConfig.isEllipsed !== false) {
@@ -359,7 +374,8 @@ export default class Table implements Plugin<PluginConfig> {
     this.tableEllipseSwitch.type = "checkbox";
     ellipseSwitchComponent.appendChild(this.tableEllipseSwitch);
     // isEllipsed should be unchecked by default
-    this.tableEllipseSwitch.defaultChecked = this.persistentConfig.isEllipsed !== undefined ? this.persistentConfig.isEllipsed : false;
+    this.tableEllipseSwitch.defaultChecked =
+      this.persistentConfig.isEllipsed !== undefined ? this.persistentConfig.isEllipsed : false;
     this.tableControls.appendChild(ellipseToggleWrapper);
 
     // Compact switch
@@ -373,6 +389,7 @@ export default class Table implements Plugin<PluginConfig> {
     toggleWrapper.appendChild(switchComponent);
     this.tableCompactSwitch = document.createElement("input");
     switchComponent.addEventListener("change", this.handleSetCompactToggle);
+    addClass(this.tableCompactSwitch, "row-number-switch");
     this.tableCompactSwitch.type = "checkbox";
     switchComponent.appendChild(this.tableCompactSwitch);
     this.tableCompactSwitch.defaultChecked = !!this.persistentConfig.compact;
@@ -440,6 +457,16 @@ export default class Table implements Plugin<PluginConfig> {
       window.removeEventListener("resize", this.tableResizer.onResize);
       this.tableResizer = undefined;
     }
+  }
+  private getMaxResizibleColumns(): number {
+    let maxResizableResultsColumns = Table.defaults.maxResizableResultsColumns;
+    if (this.yasr.config.externalPluginsConfigurations) {
+      const pluginConfiguration = this.yasr.config.externalPluginsConfigurations.get("table");
+      if (pluginConfiguration) {
+        maxResizableResultsColumns = pluginConfiguration.maxResizableResultsColumns;
+      }
+    }
+    return maxResizableResultsColumns;
   }
   destroy() {
     this.removeControls();
