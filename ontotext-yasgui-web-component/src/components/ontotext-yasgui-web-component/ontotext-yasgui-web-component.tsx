@@ -62,6 +62,7 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
   private readonly notificationMessageService: NotificationMessageService;
+  private viewModeAfterQuery = RenderingMode.YASGUI;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -239,10 +240,10 @@ export class OntotextYasguiWebComponent {
    * Executes the yasqe query.
    */
   @Method()
-  query(): Promise<any> {
+  query(renderingMode: RenderingMode = RenderingMode.YASGUI): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
-        console.log('run query', );
+        this.viewModeAfterQuery = renderingMode;
         return ontotextYasgui.query();
       });
   }
@@ -588,7 +589,8 @@ export class OntotextYasguiWebComponent {
 
   @Listen('internalQueryEvent')
   onQuery(event: CustomEvent<InternalQueryEvent>): void {
-    this.changeRenderMode(RenderingMode.YASGUI);
+    this.changeRenderMode(this.viewModeAfterQuery);
+    this.viewModeAfterQuery = RenderingMode.YASGUI;
     this.output.emit(toOutputEvent(event));
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {

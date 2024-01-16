@@ -170,7 +170,7 @@ Type: `Promise<void>`
 
 
 
-### `query() => Promise<any>`
+### `query(renderingMode?: RenderingMode) => Promise<any>`
 
 Executes the yasqe query.
 

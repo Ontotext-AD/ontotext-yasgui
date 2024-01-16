@@ -19,6 +19,7 @@ import { Page } from "./models/page";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
 import { OutputEvent } from "./models/output-events/output-event";
+import { RenderingMode } from "./models/yasgui-configuration";
 import { YasqeButtonType } from "./models/yasqe-button-name";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
@@ -183,7 +184,7 @@ export namespace Components {
         /**
           * Executes the yasqe query.
          */
-        "query": () => Promise<any>;
+        "query": (renderingMode?: RenderingMode) => Promise<any>;
         /**
           * A configuration model related with all the saved queries actions.
          */
