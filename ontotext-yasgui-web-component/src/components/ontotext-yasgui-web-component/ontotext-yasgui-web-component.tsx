@@ -62,7 +62,7 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
   private readonly notificationMessageService: NotificationMessageService;
-  private viewModeAfterQuery = RenderingMode.YASGUI;
+  private defaultViewMode = RenderingMode.YASGUI;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -237,13 +237,15 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Executes the yasqe query.
+   * Executes the YASQE query from the currently opened tab and switches to the specified <code>renderingMode</code> when the query is executed.
+   *
+   * @param renderingMode - specifies the new view mode of the component when the query is executed.
    */
   @Method()
   query(renderingMode: RenderingMode = RenderingMode.YASGUI): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
-        this.viewModeAfterQuery = renderingMode;
+        this.defaultViewMode = renderingMode;
         return ontotextYasgui.query();
       });
   }
@@ -589,8 +591,8 @@ export class OntotextYasguiWebComponent {
 
   @Listen('internalQueryEvent')
   onQuery(event: CustomEvent<InternalQueryEvent>): void {
-    this.changeRenderMode(this.viewModeAfterQuery);
-    this.viewModeAfterQuery = RenderingMode.YASGUI;
+    this.changeRenderMode(this.defaultViewMode);
+    this.defaultViewMode = RenderingMode.YASGUI;
     this.output.emit(toOutputEvent(event));
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
