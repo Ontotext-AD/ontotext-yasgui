@@ -107,4 +107,19 @@ describe('View modes', () => {
         // And the toolbar orientation button should be set to horizontal
         ToolbarPageSteps.isVerticalOrientation();
     });
+
+    it('Should execute a query and change the view depends on passed arguments', () => {
+      // When I open a page with ontotext-yasgui-web-component component on it,
+      ToolbarPageSteps.isYasguiModeSelected();
+      // And call query method of the component.
+      ViewModePageSteps.executeQueryAndGoToYasr();
+
+      // Then I expect the view mode be YASR
+      ToolbarPageSteps.isYasrModeSelected();
+
+      // When I call query method of component with param 'mode-yasgui'
+      ViewModePageSteps.switchToModeYasqe();
+
+
+    });
 })

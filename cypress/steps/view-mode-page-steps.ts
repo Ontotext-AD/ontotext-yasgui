@@ -38,4 +38,12 @@ export class ViewModePageSteps {
     static showToolbar() {
         this.getShowToolbarButton().click();
     }
+
+    static executeQueryAndGoToYasgui() {
+      cy.get('#executeQueryAndGoToYasqui').click();
+    }
+
+    static executeQueryAndGoToYasr() {
+      cy.get('#executeQueryAndGoToYasr').click();
+    }
 }

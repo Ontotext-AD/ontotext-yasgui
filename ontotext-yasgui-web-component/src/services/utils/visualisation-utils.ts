@@ -26,7 +26,6 @@ export class VisualisationUtils {
           // TODO: this 40px which are contracted by the height are taken from the workbench and
           // probably are related with the workbench footer height.
           newHeight -= 40;
-          console.log('set height', newHeight);
           codemirrorEl.style.setProperty('height', newHeight + 'px');
         }
       });

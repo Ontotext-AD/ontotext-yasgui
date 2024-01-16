@@ -33,3 +33,11 @@ function showToolbar() {
 function hideToolbar() {
   ontoElement.config = {...ontoElement.config, showToolbar: false};
 }
+
+function executeQueryAndGoToYasgui() {
+  ontoElement.query('mode-yasgui');
+}
+
+function executeQueryAndGoToYasr() {
+  ontoElement.query('mode-yasr');
+}
