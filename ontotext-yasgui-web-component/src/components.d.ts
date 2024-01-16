@@ -182,7 +182,8 @@ export namespace Components {
          */
         "openTab": (queryModel: TabQueryModel) => Promise<void>;
         /**
-          * Executes the yasqe query.
+          * Executes the YASQE query from the currently opened tab and switches to the specified <code>renderingMode</code> when the query is executed.
+          * @param renderingMode - specifies the new view mode of the component when the query is executed.
          */
         "query": (renderingMode?: RenderingMode) => Promise<any>;
         /**
