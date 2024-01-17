@@ -32,6 +32,7 @@ describe('Plugin: Charts', () => {
 
   it('Should render results in a datatable by default', () => {
     // When I open the yasr charts tab
+    YasqeSteps.executeQuery();
     YasrSteps.openChartsTab();
     // Then I should not see results
     YasrSteps.getRawResults().should('be.empty');
@@ -47,6 +48,7 @@ describe('Plugin: Charts', () => {
   });
 
   it('Should be able to configure a chart', () => {
+    YasqeSteps.executeQuery();
     configurePieChart();
     // Then I expect to see the pie chart rendered in the results
     YasrSteps.getGoogleChartVisualization().should('be.visible');
@@ -57,6 +59,7 @@ describe('Plugin: Charts', () => {
   });
 
   it('Should persist chart data and configuration', () => {
+    YasqeSteps.executeQuery();
     // Given I have configured a pie chart
     configurePieChart();
     // When I switch to another renderer
