@@ -24,6 +24,11 @@
       margin: 0;
 
       .saved-query {
+        .saved-query-link{
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
         position: relative;
         display: flex;
         justify-content: space-between;
