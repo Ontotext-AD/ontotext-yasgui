@@ -122,7 +122,7 @@ export class SavedQueriesPopup {
           <ul>
             {this.config.savedQueriesList.map((savedQuery) => (
               <li class="saved-query">
-                <a onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
+                <a class="saved-query-link" onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
                 <span class="saved-query-actions">
                   <button class="saved-query-action edit-saved-query icon-edit"
                           title={this.translationService.translate('yasqe.actions.saved_query_dialog.edit.button.tooltip')}
