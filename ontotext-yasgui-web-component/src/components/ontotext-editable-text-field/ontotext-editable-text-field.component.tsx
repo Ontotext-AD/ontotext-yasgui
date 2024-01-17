@@ -122,7 +122,7 @@ export class OntotextEditableTextField {
    * Saves the value of text field and emits "valueChanged" event with the new value.
    */
   private save(): void {
-    const isValueChanged = this.value === this.editedValue;
+    const isValueChanged = this.value !== this.editedValue;
     this.value = this.editedValue;
     this.edit = false;
     if (isValueChanged) {
