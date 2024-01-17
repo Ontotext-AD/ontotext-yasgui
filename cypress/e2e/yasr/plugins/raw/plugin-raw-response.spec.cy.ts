@@ -17,11 +17,11 @@ describe('Plugin: Raw response', () => {
       openMode: 0
     }
   }, () => {
-    // When I open the raw response tab
-    YasrSteps.openRawResponseTab();
-    YasrSteps.getRawResults().should('not.be.visible');
+    // Given I have opened the page
     // And I run a query
     YasqeSteps.executeQuery();
+    // When I open the raw response tab
+    YasrSteps.openRawResponseTab();
     // Then I expect to see the raw JSON response
     YasrSteps.getRawResults().should('be.visible');
     YasrSteps.getShowAllRawResponseButton().should('be.visible');
@@ -37,11 +37,12 @@ describe('Plugin: Raw response', () => {
   });
 
   it('should be able to download response in two formats', () => {
+    // Given I have opened the page
+    // And I executed a query which returns results.
+    YasqeSteps.executeQuery();
     // When I open the raw response tab
     YasrSteps.openRawResponseTab();
-    // When execute a query which returns results.
-    YasqeSteps.executeQuery();
-    // And dropdown is opened.
+    // And I open the download as dropdown.
     DownloadAsPageSteps.openDownloadAsDropdown();
     // Then I expect to have only one option
     DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 2);
