@@ -1,0 +1,80 @@
+Subject: [PATCH] Extend the showWarning function in yasr to allow more fine grain tuning of how exactly the warning should be configured. And make use of it during the yasr initialization when no results are present.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision cac26677ae6d0da5ee4b8d38bc5bbcf0bf86c463)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 2f4d621de6dfaffc935002a1f724b99e32c98ad1)
+@@ -494,6 +494,7 @@
+     );
+   };
+   handleYasqeQuery = (yasqe: Yasqe, req: superagent.SuperAgentRequest) => {
++    this.yasr?.hideWarning();
+     const message = yasqe.isUpdateQuery()
+       ? this.yasgui.translationService.translate("loader.message.query.editor.executing.update")
+       : this.yasgui.translationService.translate("loader.message.query.editor.evaluating.query");
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision cac26677ae6d0da5ee4b8d38bc5bbcf0bf86c463)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 2f4d621de6dfaffc935002a1f724b99e32c98ad1)
+@@ -456,6 +456,11 @@
+     }
+     return this._tabs[tabId];
+   }
++
++  public emitTabChange(tab: Tab) {
++    this.emit("tabChange", this, tab);
++  }
++
+   public restoreLastTab() {
+     const config = this.persistentConfig.retrieveLastClosedTab();
+     if (config) {
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision cac26677ae6d0da5ee4b8d38bc5bbcf0bf86c463)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 2f4d621de6dfaffc935002a1f724b99e32c98ad1)
+@@ -95,7 +95,7 @@
+     }
+   }
+ 
+-  public showWarning(message: string) {
++  public showWarning(message: string, type: "warning" | "error" | "success" = "warning", noButton = false) {
+     this.hideWarning();
+     if (message) {
+         const alertBoxEl = document.createElement('alert-box');
+@@ -104,7 +104,9 @@
+         // @ts-ignore
+         alertBoxEl.isVisible = true;
+         // @ts-ignore
+-        alertBoxEl.type = 'warning';
++        alertBoxEl.type = type;
++        // @ts-ignore
++        alertBoxEl.noButton = noButton;
+         this.rootEl.prepend(alertBoxEl);
+     }
+   }
+@@ -220,8 +222,13 @@
+   public draw() {
+     this.updateHelpButton();
+     this.updateResponseInfo();
++    this.hideWarning();
+     if (!this.results) {
+       this.hideLoader();
++      addClass(this.headerEl, "hidden");
++      addClass(this.resultsEl, "hidden");
++      addClass(this.fallbackInfoEl, "hidden");
++      this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
+       return;
+     }
+     this.updatePluginSelectorNames();
