@@ -12,6 +12,7 @@
 
 .editable-text-field-wrapper {
   display: inline-block;
+  max-width: 200px;
 
   .edit-mode-container {
     display: flex;
@@ -43,5 +44,11 @@
     cursor: pointer;
     transform: scale(1.1);
     font-weight: 800;
+  }
+
+  .preview-value {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
