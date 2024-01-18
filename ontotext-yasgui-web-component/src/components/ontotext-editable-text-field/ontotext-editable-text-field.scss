@@ -11,8 +11,8 @@
 }
 
 .editable-text-field-wrapper {
-  display: inline-block;
-  max-width: 200px;
+  display: flex;
+  align-items: center;
 
   .edit-mode-container {
     display: flex;
@@ -22,6 +22,7 @@
   .editable-text-field {
     outline-color: $color-onto-grey;
     border: 1px solid $color-onto-grey;
+    padding: 0;
   }
 
   .save-btn, .cancel-btn {
@@ -39,14 +40,20 @@
     background-color: $color-ontotext-orange-dark;
   }
 
-
-  .cancel-btn:hover .cancel-btn-label, .save-btn:hover .save-btn-label {
+  .cancel-btn:hover, .save-btn:hover {
     cursor: pointer;
-    transform: scale(1.1);
-    font-weight: 800;
   }
 
+
+  .cancel-btn:hover .cancel-btn-label, .save-btn:hover .save-btn-label {
+    transform: scale(1.2);
+    transition: transform .15s ease-out;
+  }
+
+
   .preview-value {
+    padding-top: 1px;
+    max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -1,4 +1,5 @@
 import {Component, Host, h, Prop, Event, EventEmitter, Listen, Element, Watch} from '@stencil/core';
+import {TranslationService} from '../../services/translation.service';
 
 @Component({
   tag: 'ontotext-editable-text-field',
@@ -32,6 +33,8 @@ export class OntotextEditableTextField {
    * Controls the view mode of component. If true the component will be in Edit mode.
    */
   @Prop({mutable: true}) edit = false;
+
+  @Prop() translationService: TranslationService;
 
   /**
    * Handler for changing view mode of component. When this happened a componentModeChanged even will be fired.
@@ -150,8 +153,14 @@ export class OntotextEditableTextField {
               value={this.editedValue}
               onInput={(event) => this.handleValueChanged(event)}
               ref={(el) => (this.inputElement = el)}></input>
-            <button onClick={() => this.save()} class='save-btn'><span class='save-btn-label icon-tick'></span></button>
-            <button onClick={() => this.cancel()} class='cancel-btn'><span class='cancel-btn-label icon-close'></span></button>
+            <button onClick={() => this.save()} class='save-btn'
+                    title={(this.translationService ? this.translationService.translate('yasqe.tab_list.tab_rename.save.btn.label') : '')}>
+              <span class='save-btn-label icon-tick'></span>
+            </button>
+            <button onClick={() => this.cancel()} class='cancel-btn'
+                    title={(this.translationService ? this.translationService.translate('yasqe.tab_list.tab_rename.cancel.btn.label') : '')}>
+              <span class='cancel-btn-label icon-close'></span>
+            </button>
           </div>
         )}
       </Host>

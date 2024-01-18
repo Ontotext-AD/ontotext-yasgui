@@ -99,6 +99,7 @@ export namespace Components {
           * Controls the view mode of component. If true the component will be in Edit mode.
          */
         "edit": boolean;
+        "translationService": TranslationService;
         /**
           * The value of the text field.
          */
@@ -516,6 +517,7 @@ declare namespace LocalJSX {
           * The "valueChanged" event is fired when the text field value changes.
          */
         "onValueChanged"?: (event: OntotextEditableTextFieldCustomEvent<string>) => void;
+        "translationService"?: TranslationService;
         /**
           * The value of the text field.
          */
