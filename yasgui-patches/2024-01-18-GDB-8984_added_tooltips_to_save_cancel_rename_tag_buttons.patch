@@ -1,0 +1,30 @@
+Subject: [PATCH] GDB-8984: Added tooltips to save/cancel rename tag buttons.
+---
+Index: Yasgui/packages/yasgui/src/extended-TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/extended-TabElements.ts b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+--- a/Yasgui/packages/yasgui/src/extended-TabElements.ts	(revision 021d9ef65ae138511856417e344b276c36248fd6)
++++ b/Yasgui/packages/yasgui/src/extended-TabElements.ts	(revision 5ebdf29dacd8f43f70eb39f99ee977e18783957e)
+@@ -1,9 +1,10 @@
+ import TabList, { TabListEl } from "./TabElements";
+-import { addClass, removeClass } from "@triply/yasgui-utils";
++import { addClass, removeClass, TranslationService } from "@triply/yasgui-utils";
+ 
+ class EditableTextField extends HTMLElement {
+   edit? = false;
+   value?: string;
++  translationService?: TranslationService;
+ }
+ 
+ const TAB_ID_PREFIX = "tab-";
+@@ -37,6 +38,7 @@
+     renameElement.setAttribute("role", "tab");
+     // use the id for the tabpanel which is tabId to set the actual tab id
+     renameElement.id = TAB_ID_PREFIX + this.tabId;
++    renameElement.translationService = this.translationService;
+     renameElement.setAttribute("aria-controls", this.tabId); // respective tabPanel id
+     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
+     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
