@@ -1,0 +1,18 @@
+Subject: [PATCH] Increased the indent spaces in SPARQL editor
+---
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision 81d0f9685ce7ba8717f9677e656db118a253557c)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision 68c0fb87117bfac3e94b9cfec8c41b04d8591d7e)
+@@ -32,6 +32,7 @@
+     tabMode: "indent",
+     lineNumbers: true,
+     lineWrapping: true,
++    indentUnit: 4,
+     foldGutter: {
+       rangeFinder: new (<any>CodeMirror).fold.combine((<any>CodeMirror).fold.brace, (<any>CodeMirror).fold.prefix),
+     },
