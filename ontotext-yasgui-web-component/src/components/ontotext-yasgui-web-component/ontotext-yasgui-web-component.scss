@@ -184,6 +184,10 @@
         margin-top: 0.2em;
         padding: 8px;
 
+        &:hover:not(.active) {
+          border-bottom: 1px solid #dddddd;
+        }
+
         .closeTab {
           margin-left: 10px;
           display: inline-block;
@@ -193,17 +197,14 @@
           cursor: pointer;
           color: $color-ontotext-orange-dark;
 
-          .icon-close {
-            transform: scale(1.1);
+          i::before {
+            transform: scale(1.2);
+            transition: transform .15s ease-out;
           }
         }
 
         .closeTab i::before {
           display: inline-block;
-        }
-
-        .closeTab:hover i::before {
-          transform: scale(1.1);
         }
 
         .editable-text-field-wrapper:focus {
@@ -235,7 +236,8 @@
           color: $color-ontotext-orange-dark;
 
           i {
-            transform: scale(1.1);
+            transform: scale(1.2);
+            transition: transform .15s ease-out;
           }
         }
       }
