@@ -1,9 +1,10 @@
 import TabList, { TabListEl } from "./TabElements";
-import { addClass, removeClass } from "@triply/yasgui-utils";
+import { addClass, removeClass, TranslationService } from "@triply/yasgui-utils";
 
 class EditableTextField extends HTMLElement {
   edit? = false;
   value?: string;
+  translationService?: TranslationService;
 }
 
 const TAB_ID_PREFIX = "tab-";
@@ -37,6 +38,7 @@ export class ExtendedTabListEl extends TabListEl {
     renameElement.setAttribute("role", "tab");
     // use the id for the tabpanel which is tabId to set the actual tab id
     renameElement.id = TAB_ID_PREFIX + this.tabId;
+    renameElement.translationService = this.translationService;
     renameElement.setAttribute("aria-controls", this.tabId); // respective tabPanel id
     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
