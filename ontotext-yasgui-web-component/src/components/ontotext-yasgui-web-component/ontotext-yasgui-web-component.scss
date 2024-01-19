@@ -671,6 +671,34 @@
     }
   }
 
+  &.orientation-horizontal.mode-yasqe {
+
+    .yasgui {
+
+      .tabsList {
+        display: none;
+      }
+
+      .tabPanel > div > div:nth-of-type(2) {
+        width: 100%;
+      }
+    }
+  }
+
+  &.orientation-horizontal.mode-yasr {
+
+    .yasgui {
+
+      .tabsList {
+        display: none;
+      }
+
+      .tabPanel > div > div:nth-of-type(3) {
+        width: 100%;
+      }
+    }
+  }
+
   button, button:focus {
     outline: none;
   }
