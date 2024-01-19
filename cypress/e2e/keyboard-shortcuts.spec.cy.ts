@@ -145,7 +145,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnAutoformatLinesShortcut();
 
       // Then I expect the query to be formatted.
-      YasqeSteps.getQuery().should('eq', 'select * where {\n  ?s ?p ?o.\n} limit 100');
+      YasqeSteps.getQuery().should('eq', 'select * where {\n    ?s ?p ?o.\n} limit 100');
     });
 
     it('should trigger "INDENT_CURRENT_LINE_MORE" action', () => {
@@ -158,7 +158,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnIndentCurrentLineMoreShortcut();
 
       // Then I expect third line to have got more indent.
-      YasqeSteps.getQuery().should('eq', 'select * where { \n?s ?p ?o. \n  } limit 100');
+      YasqeSteps.getQuery().should('eq', 'select * where { \n?s ?p ?o. \n    } limit 100');
     });
 
     it('should trigger "INDENT_CURRENT_LINE_LESS" action', () => {
