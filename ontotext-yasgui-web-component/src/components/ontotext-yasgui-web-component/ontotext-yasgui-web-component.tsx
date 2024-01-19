@@ -777,12 +777,13 @@ export class OntotextYasguiWebComponent {
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
       hint.parentNode && hint.parentNode.removeChild(hint);
-      const elRect = document.querySelector('.CodeMirror-hints').getBoundingClientRect();
-      document.body.appendChild(hint);
-      const topPosition = elRect.top - 20;
+      let codemirrorHints: any = document.querySelector('.CodeMirror-hints');
+      const elRect = codemirrorHints.getBoundingClientRect();
+      codemirrorHints.style.top = elRect.top + 14 + 'px';
+      codemirrorHints.before(hint);
+      const topPosition = elRect.top;
       let leftPosition = elRect.right - hint.offsetWidth;
-      // move it additionally 40px on the right to prevent overlapping with the current cursor position
-      leftPosition = leftPosition < elRect.left ? elRect.left + 40 : leftPosition - 12
+      leftPosition = leftPosition < elRect.left ? elRect.left : leftPosition - 12
       hint.style.top = `${topPosition}px`;
       hint.style.left = `${leftPosition}px`;
     });
