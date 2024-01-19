@@ -39,6 +39,12 @@ export class VisualisationUtils {
     }
   }
 
+  /**
+   * Changes the rendering mode of the yasgui component.
+   * @param hostElement
+   * @param newMode
+   * @param isVerticalOrientation
+   */
   static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode, isVerticalOrientation: boolean): void {
     VisualisationUtils.unselectAllToolbarButtons(hostElement);
     const button = HtmlElementsUtil.getRenderModeButton(hostElement, newMode);

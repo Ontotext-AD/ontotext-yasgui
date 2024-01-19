@@ -137,7 +137,7 @@ export namespace Components {
           * Changes rendering mode of component.
           * @param newRenderMode - then new render mode of component.
          */
-        "changeRenderMode": (newRenderMode: any) => Promise<void>;
+        "changeRenderMode": (newRenderMode: RenderingMode) => Promise<void>;
         /**
           * An input object property containing the yasgui configuration.
          */

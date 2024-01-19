@@ -1,5 +1,5 @@
 import {Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
-import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-configuration';
+import {defaultOntotextYasguiConfig, Orientation, RenderingMode} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -215,10 +215,10 @@ export class OntotextYasguiWebComponent {
    * @param newRenderMode - then new render mode of component.
    */
   @Method()
-  changeRenderMode(newRenderMode): Promise<void> {
+  changeRenderMode(newRenderMode: RenderingMode): Promise<void> {
     return this.getOntotextYasgui()
       .then(() => {
-        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.getOrientationMode());
+        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.getOrientationMode() === Orientation.VERTICAL);
       });
   }
 
