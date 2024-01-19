@@ -779,8 +779,11 @@ export class OntotextYasguiWebComponent {
       hint.parentNode && hint.parentNode.removeChild(hint);
       const codemirrorHints: any = document.querySelector('.CodeMirror-hints');
       const elRect = codemirrorHints.getBoundingClientRect();
-      codemirrorHints.style.top = elRect.top + 14 + 'px';
-      codemirrorHints.before(hint);
+      // We don't use boundingClientRect because it is not accurate in case yasgui is two column layout and dropdown
+      // appears to have incorrect position.
+      const hintsTop = codemirrorHints.style.top.substring(0, codemirrorHints.style.top.length - 2) * 1;
+      codemirrorHints.style.top = hintsTop + 14 + 'px';
+      document.body.appendChild(hint);
       const topPosition = elRect.top - 6;
       let leftPosition = elRect.right - hint.offsetWidth;
       leftPosition = leftPosition < elRect.left ? elRect.left : leftPosition - 12

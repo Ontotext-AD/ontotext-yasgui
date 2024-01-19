@@ -15,7 +15,8 @@ ontoElement.config = {
     "xml": "http://www.w3.org/XML/1998/namespace",
     "voc": "https://swapi.co/vocabulary/",
     "psys": "http://proton.semanticweb.org/protonsys#transitiveOver"
-  }
+  },
+  yasqeAutocomplete: getYasqeAutocompleter()
 };
 
 function renderMode(mode) {
