@@ -59,7 +59,7 @@ export class HtmlElementsUtil {
     hint.style.backgroundColor = 'white';
     hint.style.position = 'absolute';
     hint.style.zIndex = '3';
-    hint.style.paddingLeft = 12 + 'px';
+    hint.style.paddingLeft = 6 + 'px';
     return hint;
   }
 }

@@ -777,12 +777,16 @@ export class OntotextYasguiWebComponent {
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
       hint.parentNode && hint.parentNode.removeChild(hint);
-      const elRect = document.querySelector('.CodeMirror-hints').getBoundingClientRect();
+      const codemirrorHints: any = document.querySelector('.CodeMirror-hints');
+      const elRect = codemirrorHints.getBoundingClientRect();
+      // We don't use boundingClientRect because it is not accurate in case yasgui is two column layout and dropdown
+      // appears to have incorrect position.
+      const hintsTop = codemirrorHints.style.top.substring(0, codemirrorHints.style.top.length - 2) * 1;
+      codemirrorHints.style.top = hintsTop + 14 + 'px';
       document.body.appendChild(hint);
-      const topPosition = elRect.top - 20;
+      const topPosition = elRect.top - 6;
       let leftPosition = elRect.right - hint.offsetWidth;
-      // move it additionally 40px on the right to prevent overlapping with the current cursor position
-      leftPosition = leftPosition < elRect.left ? elRect.left + 40 : leftPosition - 12
+      leftPosition = leftPosition < elRect.left ? elRect.left : leftPosition - 12
       hint.style.top = `${topPosition}px`;
       hint.style.left = `${leftPosition}px`;
     });
