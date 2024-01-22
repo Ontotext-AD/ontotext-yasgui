@@ -1,0 +1,48 @@
+Subject: [PATCH] * Added check for running query before hiding the loader. * Added a check for running query before rendering the loader and added proper message in the loader.
+---
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 6608a8e4d557be82c69265e6e2cb7260f3894075)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision c9d5ed5bff1b82304da8c8b9ae3cc483bc95c718)
+@@ -61,9 +61,18 @@
+   }
+ 
+   draw() {
++    let message = this.translationService.translate("loader.message.query.editor.render.results");
++    // If the query is running, show the loader with proper message.
++    if (this.yasqe.isQueryRunning()) {
++      message = this.yasqe.isUpdateQuery()
++        ? this.translationService.translate("loader.message.query.editor.executing.update")
++        : this.translationService.translate("loader.message.query.editor.evaluating.query");
++        this.showLoader(message, true);
++    } else {
++      this.showLoader(message);
++    }
+     // The rendering of YASR is synchronous and can take time, especially when populating numerous results.
+     // Setting a timeout resolves the visualization of other components without waiting for YASR to finish drawing.
+-    this.showLoader(this.translationService.translate("loader.message.query.editor.render.results"));
+     setTimeout(() => {
+       this.updatePluginElementVisibility();
+       super.draw();
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 6608a8e4d557be82c69265e6e2cb7260f3894075)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision c9d5ed5bff1b82304da8c8b9ae3cc483bc95c718)
+@@ -356,7 +356,8 @@
+   }
+ 
+   hideLoader() {
+-    if (!this.loader) {
++    // don't hide the loader if there is a running query
++    if (!this.loader || this.yasqe.isQueryRunning()) {
+       return;
+     }
+     removeClass(this.headerEl, "hidden");
