@@ -18,9 +18,10 @@ import { InternalDropdownValueSelectedEvent } from "./models/internal-events/int
 import { Page } from "./models/page";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
-import { Tab } from "./models/yasgui/tab";
+import { SavedQueryOpened } from "./models/output-events/saved-query-opened";
 import { OutputEvent } from "./models/output-events/output-event";
 import { RenderingMode } from "./models/yasgui-configuration";
+import { Tab } from "./models/yasgui/tab";
 import { YasqeButtonType } from "./models/yasqe-button-name";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
@@ -580,7 +581,7 @@ declare namespace LocalJSX {
         /**
           * Event emitted whe a saved query is loaded into a tab.
          */
-        "onSaveQueryOpened"?: (event: OntotextYasguiCustomEvent<Tab>) => void;
+        "onSaveQueryOpened"?: (event: OntotextYasguiCustomEvent<SavedQueryOpened>) => void;
         /**
           * Event emitted when saved query share link has to be build by the client.
          */
