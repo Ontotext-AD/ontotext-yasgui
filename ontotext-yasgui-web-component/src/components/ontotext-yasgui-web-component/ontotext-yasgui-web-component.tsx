@@ -29,6 +29,7 @@ import {YasrService} from '../../services/yasr/yasr-service';
 import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugin';
 import {ChartsPlugin} from "../../plugins/yasr/charts/charts-plugin";
 import {Tab} from '../../models/yasgui/tab';
+import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -130,9 +131,9 @@ export class OntotextYasguiWebComponent {
   @Event() updateSavedQuery: EventEmitter<SaveQueryData>;
 
   /**
-   * Event emitted whe a saved query is loaded into a tab.
+   * Event emitted when a saved query is loaded into a tab.
    */
-  @Event() saveQueryOpened: EventEmitter<Tab>;
+  @Event() saveQueryOpened: EventEmitter<SavedQueryOpened>;
 
   /**
    * Event emitted when a saved query should be deleted. In result the client must perform a query
@@ -476,7 +477,7 @@ export class OntotextYasguiWebComponent {
       query: queryData.query,
       owner: undefined
     })
-      .then((tab: Tab) => this.saveQueryOpened.emit(tab));
+      .then((tab: Tab) => this.saveQueryOpened.emit(new SavedQueryOpened(tab)));
   }
 
   /**
