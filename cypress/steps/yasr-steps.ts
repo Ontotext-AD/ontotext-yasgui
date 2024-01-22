@@ -232,4 +232,8 @@ export class YasrSteps {
   static toggleCompactView() {
     YasrSteps.getHideRowNumbersCheckbox().click();
   }
+
+  static getLoader(index?: number) {
+    return YasrSteps.getYasr(index).find('.ontotext-yasgui-loader');
+  }
 }
