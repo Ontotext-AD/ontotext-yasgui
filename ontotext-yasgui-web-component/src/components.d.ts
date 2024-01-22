@@ -579,7 +579,7 @@ declare namespace LocalJSX {
          */
         "onQueryShareLinkCopied"?: (event: OntotextYasguiCustomEvent<any>) => void;
         /**
-          * Event emitted whe a saved query is loaded into a tab.
+          * Event emitted when a saved query is loaded into a tab.
          */
         "onSaveQueryOpened"?: (event: OntotextYasguiCustomEvent<SavedQueryOpened>) => void;
         /**

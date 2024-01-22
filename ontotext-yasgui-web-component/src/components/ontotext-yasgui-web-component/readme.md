@@ -45,7 +45,7 @@ yasgui can be tweaked using the values from the configuration.
 | `loadSavedQueries`     | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`          |
 | `output`               | Event emitter used to send message to the clients of component.                                                                                         | `CustomEvent<OutputEvent>`      |
 | `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`              |
-| `saveQueryOpened`      | Event emitted whe a saved query is loaded into a tab.                                                                                                   | `CustomEvent<SavedQueryOpened>` |
+| `saveQueryOpened`      | Event emitted when a saved query is loaded into a tab.                                                                                                  | `CustomEvent<SavedQueryOpened>` |
 | `shareQuery`           | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<TabQueryModel>`    |
 | `shareSavedQuery`      | Event emitted when saved query share link has to be build by the client.                                                                                | `CustomEvent<SaveQueryData>`    |
 | `updateSavedQuery`     | Event emitted when a query payload is updated and the query name is the same as the one being edited. In result the client must perform a query update. | `CustomEvent<SaveQueryData>`    |
@@ -63,7 +63,7 @@ Type: `Promise<any>`
 
 
 
-### `changeRenderMode(newRenderMode: any) => Promise<void>`
+### `changeRenderMode(newRenderMode: RenderingMode) => Promise<void>`
 
 Changes rendering mode of component.
 
