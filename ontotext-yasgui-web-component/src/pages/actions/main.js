@@ -182,6 +182,15 @@ function openNewQueryAction() {
   });
 }
 
+function openSavedQuery(queryName) {
+  ontoElement.openTab({
+    queryName,
+    query: 'CLEAR GRAPH <http://example>',
+    isPublic: false,
+    owner: 'admin'
+  });
+}
+
 ontoElement.addEventListener("output", (evt) => {
   if ("query" === evt.detail.TYPE) {
     eventLog.value = eventLog.value + '\n' + JSON.stringify(evt.detail.payload.query);

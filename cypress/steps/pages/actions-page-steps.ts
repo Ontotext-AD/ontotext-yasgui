@@ -27,6 +27,18 @@ export default class ActionsPageSteps {
     cy.get('#openNewQueryAction').click();
   }
 
+  static openFirstSavedQuery() {
+    cy.get('#openFirstSavedQuery').click();
+  }
+
+  static openSecondSavedQuery() {
+    cy.get('#openSecondSavedQuery').click();
+  }
+
+  static openQueryWithoutName() {
+    cy.get('#openQueryWithoutName').click();
+  }
+
   static hideShareQueryAction() {
     cy.get('#hideShareQueryAction').click();
   }
