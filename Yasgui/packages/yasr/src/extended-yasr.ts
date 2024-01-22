@@ -61,9 +61,18 @@ export class ExtendedYasr extends Yasr {
   }
 
   draw() {
+    let message = this.translationService.translate("loader.message.query.editor.render.results");
+    // If the query is running, show the loader with proper message.
+    if (this.yasqe.isQueryRunning()) {
+      message = this.yasqe.isUpdateQuery()
+        ? this.translationService.translate("loader.message.query.editor.executing.update")
+        : this.translationService.translate("loader.message.query.editor.evaluating.query");
+        this.showLoader(message, true);
+    } else {
+      this.showLoader(message);
+    }
     // The rendering of YASR is synchronous and can take time, especially when populating numerous results.
     // Setting a timeout resolves the visualization of other components without waiting for YASR to finish drawing.
-    this.showLoader(this.translationService.translate("loader.message.query.editor.render.results"));
     setTimeout(() => {
       this.updatePluginElementVisibility();
       super.draw();

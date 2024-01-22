@@ -356,7 +356,8 @@ export class Yasr extends EventEmitter {
   }
 
   hideLoader() {
-    if (!this.loader) {
+    // don't hide the loader if there is a running query
+    if (!this.loader || this.yasqe.isQueryRunning()) {
       return;
     }
     removeClass(this.headerEl, "hidden");
