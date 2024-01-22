@@ -28,6 +28,7 @@ import {YasqeService} from '../../services/yasqe/yasqe-service';
 import {YasrService} from '../../services/yasr/yasr-service';
 import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugin';
 import {ChartsPlugin} from "../../plugins/yasr/charts/charts-plugin";
+import {Tab} from '../../models/yasgui/tab';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -127,6 +128,11 @@ export class OntotextYasguiWebComponent {
    * edited. In result the client must perform a query update.
    */
   @Event() updateSavedQuery: EventEmitter<SaveQueryData>;
+
+  /**
+   * Event emitted whe a saved query is loaded into a tab.
+   */
+  @Event() saveQueryOpened: EventEmitter<Tab>;
 
   /**
    * Event emitted when a saved query should be deleted. In result the client must perform a query
@@ -279,15 +285,13 @@ export class OntotextYasguiWebComponent {
    * @param queryModel The query model.
    */
   @Method()
-  openTab(queryModel: TabQueryModel): Promise<void> {
+  openTab(queryModel: TabQueryModel): Promise<Tab> {
     // While this does the job in this particular method, we definitely need a more general approach
     // for handling the fact that there is a chance for the client to hit the problem where when the
     // OntotextYasgui instance is created and returned the wrapped Yasgui instance might not be yet
     // initialized.
     return this.getOntotextYasgui()
-      .then((ontotextYasgui) => {
-        ontotextYasgui.openTab(queryModel)
-      });
+      .then((ontotextYasgui) => ontotextYasgui.openTab(queryModel));
   }
 
   /**
@@ -461,7 +465,7 @@ export class OntotextYasguiWebComponent {
   /**
    * Handles the event fired when the saved query is selected from the saved queries list. Tries to
    * find a tab with the same name and query inside and opens it. Otherwise opens a new tab with
-   * provided parameters.
+   * provided parameters. When a saved query is loaded into a tab, emit the 'saveQueryOpened' event with the tab instance.
    */
   @Listen('internalSaveQuerySelectedEvent')
   savedQuerySelectedHandler(event: CustomEvent<SaveQueryData>) {
@@ -471,7 +475,8 @@ export class OntotextYasguiWebComponent {
       queryName: queryData.queryName,
       query: queryData.query,
       owner: undefined
-    });
+    })
+      .then((tab: Tab) => this.saveQueryOpened.emit(tab));
   }
 
   /**

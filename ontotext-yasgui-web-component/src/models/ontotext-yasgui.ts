@@ -2,6 +2,7 @@ import {Yasqe} from './yasgui/yasqe';
 import {YasguiConfiguration} from './yasgui-configuration';
 import {TabQueryModel} from "./external-yasgui-configuration";
 import {Yasgui} from './yasgui/yasgui';
+import {Tab} from './yasgui/tab';
 
 /**
  * An adapter around the actual yasgui instance.
@@ -150,22 +151,24 @@ export class OntotextYasgui {
     return this.getInstance().getTab().getQuery();
   }
 
-  openTab(queryModel: TabQueryModel): void {
+  openTab(queryModel: TabQueryModel): Tab {
     const existingTab = this.getInstance().getTabByNameAndQuery(queryModel?.queryName, queryModel?.query);
     if (existingTab) {
       this.getInstance().selectTabId(existingTab.getId());
+      return existingTab;
     } else {
-      this.createNewTab(queryModel?.queryName, queryModel?.query);
+      return this.createNewTab(queryModel?.queryName, queryModel?.query);
     }
   }
 
-  createNewTab(queryName: string, query: string): void {
+  createNewTab(queryName: string, query: string): Tab {
     const tabInstance = this.getInstance().addTab(true, {
       name: queryName
     });
     if (query) {
       tabInstance.setQuery(query);
     }
+    return tabInstance;
   }
 
   destroy() {

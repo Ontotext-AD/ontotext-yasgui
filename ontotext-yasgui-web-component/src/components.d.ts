@@ -18,6 +18,7 @@ import { InternalDropdownValueSelectedEvent } from "./models/internal-events/int
 import { Page } from "./models/page";
 import { ExternalYasguiConfiguration, TabQueryModel } from "./models/external-yasgui-configuration";
 import { SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData } from "./models/saved-query-configuration";
+import { Tab } from "./models/yasgui/tab";
 import { OutputEvent } from "./models/output-events/output-event";
 import { RenderingMode } from "./models/yasgui-configuration";
 import { YasqeButtonType } from "./models/yasqe-button-name";
@@ -185,7 +186,7 @@ export namespace Components {
           * Allows the client to init the editor using a query model. When the query and query name are found in any existing opened tab, then it'd be focused. Otherwise a new tab will be created and initialized using the provided query model.
           * @param queryModel The query model.
          */
-        "openTab": (queryModel: TabQueryModel) => Promise<void>;
+        "openTab": (queryModel: TabQueryModel) => Promise<Tab>;
         /**
           * Executes the YASQE query from the currently opened tab and switches to the specified <code>renderingMode</code> when the query is executed.
           * @param renderingMode - specifies the new view mode of the component when the query is executed.
@@ -576,6 +577,10 @@ declare namespace LocalJSX {
           * Event emitted when query share link gets copied in the clipboard.
          */
         "onQueryShareLinkCopied"?: (event: OntotextYasguiCustomEvent<any>) => void;
+        /**
+          * Event emitted whe a saved query is loaded into a tab.
+         */
+        "onSaveQueryOpened"?: (event: OntotextYasguiCustomEvent<Tab>) => void;
         /**
           * Event emitted when saved query share link has to be build by the client.
          */
