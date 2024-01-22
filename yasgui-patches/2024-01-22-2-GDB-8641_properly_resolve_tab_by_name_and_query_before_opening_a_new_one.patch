@@ -1,0 +1,29 @@
+Subject: [PATCH] GDB-8641: Properly Resolve Tab by Name and Query Before Opening a New One
+---
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 6c39357ec27b9534552f402d91f13e40b50608c7)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision 56a6e4f702d84ff25285b39e7d54e977279c1a1c)
+@@ -220,13 +220,13 @@
+     // first try to find a tab with the provided name and then find one which has the same query
+     const tabsWithSameName = Object.values(this._tabs).filter((tab) => tab.getName() === name);
+     let foundTabWithSameQuery: Tab | undefined = tabsWithSameName.find((tab) => {
+-        return tab.getPersistedJson()?.yasqe?.value === query;
++      return tab.getPersistedJson()?.yasqe?.value === query;
+     });
+     // if no tab with the exact name and query is found, then search for a tab having only the same query
+-    if (!foundTabWithSameQuery) {
+-        foundTabWithSameQuery = Object.values(this._tabs).find((tab) => {
+-            return tab.getPersistedJson()?.yasqe?.value === query;
+-        })
++    if (!name && !foundTabWithSameQuery) {
++      foundTabWithSameQuery = Object.values(this._tabs).find((tab) => {
++        return tab.getPersistedJson()?.yasqe?.value === query;
++      });
+     }
+     return foundTabWithSameQuery;
+   }
