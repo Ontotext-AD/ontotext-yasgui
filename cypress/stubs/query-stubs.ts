@@ -59,6 +59,10 @@ export class QueryStubs {
     }).as('updaeResponse');
   }
 
+  static stubLongRunningQuery(delay = 3000) {
+    this.stubQueryResponse('/queries/default-query-response.json', 'longRunningQuery', delay);
+  }
+
   static stubChartDataQuery() {
     cy.intercept('/repositories/chart-data', {fixture: '/queries/chart-data-response.json'}).as('chart-data-request');
   }
