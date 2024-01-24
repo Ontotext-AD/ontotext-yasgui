@@ -418,11 +418,6 @@ export class Yasgui extends EventEmitter {
     partialTabConfig?: Partial<PersistedTabJson>,
     opts: { atIndex?: number; avoidDuplicateTabs?: boolean } = {}
   ): Tab | undefined {
-    if (this.isQueryRunning()) {
-      const message = this.translationService.translate("yasqe.tab_list.new_tab.query_running.warning.message");
-      this.notificationMessageService.info("query_is_running", message);
-      return;
-    }
     const tabConfig = merge({}, Tab.getDefaults(this), partialTabConfig);
     if (tabConfig.id && this.getTab(tabConfig.id)) {
       throw new Error("Duplicate tab ID");
