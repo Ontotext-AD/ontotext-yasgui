@@ -615,6 +615,7 @@ export class OntotextYasguiWebComponent {
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.leaveFullScreen();
+        VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation));
       });
   }
 
