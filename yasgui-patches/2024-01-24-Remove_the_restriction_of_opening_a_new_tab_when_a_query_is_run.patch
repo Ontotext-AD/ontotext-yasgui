@@ -1,0 +1,22 @@
+Subject: [PATCH] Remove the restriction of opening a new tab when a query is run
+---
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 881478c9f5f7f7f118617f301286c9452f207458)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision dacd1feeee80eb3f46212c9fd9cd591ef9503268)
+@@ -418,11 +418,6 @@
+     partialTabConfig?: Partial<PersistedTabJson>,
+     opts: { atIndex?: number; avoidDuplicateTabs?: boolean } = {}
+   ): Tab | undefined {
+-    if (this.isQueryRunning()) {
+-      const message = this.translationService.translate("yasqe.tab_list.new_tab.query_running.warning.message");
+-      this.notificationMessageService.info("query_is_running", message);
+-      return;
+-    }
+     const tabConfig = merge({}, Tab.getDefaults(this), partialTabConfig);
+     if (tabConfig.id && this.getTab(tabConfig.id)) {
+       throw new Error("Duplicate tab ID");
