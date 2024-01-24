@@ -32,7 +32,6 @@
   "yasgui.tab_list.menu.new_tab.btn.label": "Nouvel onglet",
   "yasgui.tab_list.menu.rename_tab.btn.label": "Renommer l'onglet",
   "yasgui.tab_list.menu.undo_close_tab.btn.label": "Annuler la fermeture de l'onglet",
-  "yasqe.tab_list.new_tab.query_running.warning.message": "Il est impossible d'ouvrir de nouveaux onglets pendant l'exécution d'une requête ou d'une mise à jour.",
   "yasqe.tab_list.new_tab.query_invalid.warning.message": "La requête contient une erreur de syntaxe. Consultez la ligne concernée pour plus d'informations.",
   "yasqe.tab_list.tab_rename.save.btn.label": "Soumettre",
   "yasqe.tab_list.tab_rename.cancel.btn.label": "Annuler",
