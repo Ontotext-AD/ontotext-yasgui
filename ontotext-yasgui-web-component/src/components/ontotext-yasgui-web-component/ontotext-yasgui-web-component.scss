@@ -279,7 +279,7 @@
       }
 
       table.dataTable.fixedColumns {
-        tr td:not(:first-child), tr th:not(:first-child) {
+        tr td:not(.rowNumber) {
           width: 100px;
         }
       }
