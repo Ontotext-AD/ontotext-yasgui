@@ -84,10 +84,11 @@ export const D3_7_8_5_RENDER = (function () {
   const register = (renderName = 'Treemap') => {
     const render = {};
     render[renderName] = treemapFunction;
-    return $.pivotUtilities.d3_7_8_3_renderers = render;
+    return $.pivotUtilities[D3_7_8_5_RENDER.RENDER_NAME] = render;
   };
 
   return {
     register,
+    RENDER_NAME: 'd3_7_8_5_renderers'
   };
 })();
