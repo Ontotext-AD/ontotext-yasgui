@@ -272,6 +272,8 @@
 
     /* Make the datatable horizontally scrollable when there is not enough space to fit the columns */
     .dataTables_wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
       table.dataTable {
         table-layout: fixed;
       }
