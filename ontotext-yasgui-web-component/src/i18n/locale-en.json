@@ -121,7 +121,7 @@
   "yasr.plugin_control.plugin.name.pivot-table-plugin.cells": "Cells",
   "yasr.plugin_control.plugin.name.pivot-table-plugin.rows": "Rows",
   "yasr.plugin_control.plugin.pivot-table-plugin.charts.config.button": "Chart Config",
-  "yasr.plugin_control.plugin.name.charts": "Charts",
+  "yasr.plugin_control.plugin.name.charts": "Google Chart",
   "yasr.plugin_control.plugin.charts.config.button": "Chart Config",
   "yasr.plugin_control.shows_view.btn.aria_label": "Shows {{name}} view",
   "yasr.plugin_control.response_chip.timestamp.minutes_ago": "minutes ago",
