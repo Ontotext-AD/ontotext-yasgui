@@ -136,7 +136,7 @@ export class PivotTablePlugin implements YasrPlugin {
 
   private getRenders(): any {
     // @ts-ignore
-    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities.d3_7_8_3_renderers, $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
+    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities[D3_7_8_5_RENDER.RENDER_NAME], $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
   }
 
   private showPlugin(config: PivotTableConfig) {
