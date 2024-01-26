@@ -64,6 +64,13 @@ Delimiters used by datatables
       padding-right: 5px !important;
     }
     .dataTable {
+      &:not(.withRowNumber) {
+        tr td:first-child,
+        tr th:first-child {
+          display: none;
+        }
+      }
+
       min-width: 100%;
       box-sizing: border-box;
       // Override border-bottom datatables styling
