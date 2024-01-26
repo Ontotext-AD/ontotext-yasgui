@@ -81,11 +81,39 @@ export class ExtendedTable extends Table {
       return;
     }
     const table = this.dataTable;
-    table.on( 'draw.dt', function () {
+    table.on("draw.dt", function () {
       const PageInfo = table.page.info();
-      table.column(0, { page: 'current' }).nodes().each( function (cell, i) {
-        cell.innerHTML = `<span>${i + 1 + PageInfo.start}</span>`;
-      });
+      table
+        .column(0, { page: "current" })
+        .nodes()
+        .each(function (cell, i) {
+          cell.innerHTML = `<span>${i + 1 + PageInfo.start}</span>`;
+        });
     });
   }
+
+  protected handleSetEllipsisToggle = (event: Event) => {
+    // Store in persistentConfig
+    this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
+    // Update the table
+    this.draw(this.persistentConfig);
+    this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+  };
+
+  protected handleSetCompactToggle = (event: Event) => {
+    // Store in persistentConfig
+    this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
+    // Update the table
+    this.draw(this.persistentConfig);
+    this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+  };
+
+  protected handleTableSizeSelect = (event: Event) => {
+    const pageLength = parseInt((event.target as HTMLSelectElement).value);
+    // Set page length
+    this.dataTable?.page.len(pageLength).draw("page");
+    // Store in persistentConfig
+    this.persistentConfig.pageSize = pageLength;
+    this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+  };
 }
