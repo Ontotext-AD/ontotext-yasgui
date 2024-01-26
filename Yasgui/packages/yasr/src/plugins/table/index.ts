@@ -186,6 +186,10 @@ export default class Table implements Plugin<PluginConfig> {
     return numResults.toString().length * 8;
   }
 
+  getTableElement() {
+    return this.tableEl;
+  }
+
   public draw(persistentConfig: PersistentConfig) {
     this.persistentConfig = { ...this.persistentConfig, ...persistentConfig };
     this.tableEl = document.createElement("table");
@@ -320,7 +324,7 @@ export default class Table implements Plugin<PluginConfig> {
   private handleTableSearch = (event: KeyboardEvent) => {
     this.dataTable?.search((event.target as HTMLInputElement).value).draw("page");
   };
-  private handleTableSizeSelect = (event: Event) => {
+  protected handleTableSizeSelect = (event: Event) => {
     const pageLength = parseInt((event.target as HTMLSelectElement).value);
     // Set page length
     this.dataTable?.page.len(pageLength).draw("page");
@@ -328,14 +332,14 @@ export default class Table implements Plugin<PluginConfig> {
     this.persistentConfig.pageSize = pageLength;
     this.yasr.storePluginConfig("table", this.persistentConfig);
   };
-  private handleSetCompactToggle = (event: Event) => {
+  protected handleSetCompactToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
     // Update the table
     this.draw(this.persistentConfig);
     this.yasr.storePluginConfig("table", this.persistentConfig);
   };
-  private handleSetEllipsisToggle = (event: Event) => {
+  protected handleSetEllipsisToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
     // Update the table
