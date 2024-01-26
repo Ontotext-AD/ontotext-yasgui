@@ -278,8 +278,14 @@
         table-layout: fixed;
       }
 
-      table.dataTable.fixedColumns {
-        tr td:not(.rowNumber) {
+      table.dataTable.fixedColumns:not(.withRowNumber) {
+        tr td, tr th {
+          width: 100px;
+        }
+      }
+
+      table.dataTable.fixedColumns.withRowNumber {
+        tr td:not(:first-child), tr th:not(:first-child) {
           width: 100px;
         }
       }
