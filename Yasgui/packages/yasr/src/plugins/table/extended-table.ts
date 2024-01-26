@@ -2,6 +2,7 @@ import Table, { PersistentConfig } from "./index";
 import Parser from "../../parsers";
 import Yasr from "@triply/yasr";
 import Yasqe from "@triply/yasqe";
+import { addClass, removeClass } from "@triply/yasgui-utils";
 
 export class ExtendedTable extends Table {
   public label = "Extended_Table";
@@ -46,7 +47,6 @@ export class ExtendedTable extends Table {
         searchable: false,
         width: `${this.getSizeFirstColumn()}px`,
         orderable: false,
-        visible: this.persistentConfig.compact !== true,
         render: (data: number, type: any) =>
           type === "filter" || type === "sort" || !type ? data : `<div class="rowNumber">${data}</div>`,
       }, //prepend with row numbers column
@@ -92,6 +92,11 @@ export class ExtendedTable extends Table {
     });
   }
 
+  drawControls() {
+    super.drawControls();
+    this.updateTableRowNumberClasses();
+  }
+
   protected handleSetEllipsisToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
@@ -103,8 +108,7 @@ export class ExtendedTable extends Table {
   protected handleSetCompactToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
-    // Update the table
-    this.draw(this.persistentConfig);
+    this.updateTableRowNumberClasses();
     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
   };
 
@@ -116,4 +120,13 @@ export class ExtendedTable extends Table {
     this.persistentConfig.pageSize = pageLength;
     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
   };
+
+  private updateTableRowNumberClasses() {
+    const tableElement = this.getTableElement();
+    if (this.persistentConfig.compact) {
+      removeClass(tableElement, "withRowNumber");
+    } else {
+      addClass(tableElement, "withRowNumber");
+    }
+  }
 }
