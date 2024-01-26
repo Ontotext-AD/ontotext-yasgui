@@ -1,0 +1,151 @@
+Subject: [PATCH] Refactoring the hide row number functionality.
+GDB-9449: Sparql results checkboxes do not persist on browser refresh
+---
+Index: Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision bd13a0fd832876f392d2ae9666e5d4bc1e36376b)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision a65d3afa85271e5fe96b7c9d88c4c05e05df7b91)
+@@ -2,6 +2,7 @@
+ import Parser from "../../parsers";
+ import Yasr from "@triply/yasr";
+ import Yasqe from "@triply/yasqe";
++import { addClass, removeClass } from "@triply/yasgui-utils";
+ 
+ export class ExtendedTable extends Table {
+   public label = "Extended_Table";
+@@ -46,7 +47,6 @@
+         searchable: false,
+         width: `${this.getSizeFirstColumn()}px`,
+         orderable: false,
+-        visible: this.persistentConfig.compact !== true,
+         render: (data: number, type: any) =>
+           type === "filter" || type === "sort" || !type ? data : `<div class="rowNumber">${data}</div>`,
+       }, //prepend with row numbers column
+@@ -81,11 +81,52 @@
+       return;
+     }
+     const table = this.dataTable;
+-    table.on( 'draw.dt', function () {
++    table.on("draw.dt", function () {
+       const PageInfo = table.page.info();
+-      table.column(0, { page: 'current' }).nodes().each( function (cell, i) {
+-        cell.innerHTML = `<span>${i + 1 + PageInfo.start}</span>`;
+-      });
++      table
++        .column(0, { page: "current" })
++        .nodes()
++        .each(function (cell, i) {
++          cell.innerHTML = `<span>${i + 1 + PageInfo.start}</span>`;
++        });
+     });
+   }
++
++  drawControls() {
++    super.drawControls();
++    this.updateTableRowNumberClasses();
++  }
++
++  protected handleSetEllipsisToggle = (event: Event) => {
++    // Store in persistentConfig
++    this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
++    // Update the table
++    this.draw(this.persistentConfig);
++    this.yasr.storePluginConfig("extended_table", this.persistentConfig);
++  };
++
++  protected handleSetCompactToggle = (event: Event) => {
++    // Store in persistentConfig
++    this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
++    this.updateTableRowNumberClasses();
++    this.yasr.storePluginConfig("extended_table", this.persistentConfig);
++  };
++
++  protected handleTableSizeSelect = (event: Event) => {
++    const pageLength = parseInt((event.target as HTMLSelectElement).value);
++    // Set page length
++    this.dataTable?.page.len(pageLength).draw("page");
++    // Store in persistentConfig
++    this.persistentConfig.pageSize = pageLength;
++    this.yasr.storePluginConfig("extended_table", this.persistentConfig);
++  };
++
++  private updateTableRowNumberClasses() {
++    const tableElement = this.getTableElement();
++    if (this.persistentConfig.compact) {
++      removeClass(tableElement, "withRowNumber");
++    } else {
++      addClass(tableElement, "withRowNumber");
++    }
++  }
+ }
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision bd13a0fd832876f392d2ae9666e5d4bc1e36376b)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 431b89eccc45a7bff653c176ae1851ea8cb7992c)
+@@ -186,6 +186,10 @@
+     return numResults.toString().length * 8;
+   }
+ 
++  getTableElement() {
++    return this.tableEl;
++  }
++
+   public draw(persistentConfig: PersistentConfig) {
+     this.persistentConfig = { ...this.persistentConfig, ...persistentConfig };
+     this.tableEl = document.createElement("table");
+@@ -320,7 +324,7 @@
+   private handleTableSearch = (event: KeyboardEvent) => {
+     this.dataTable?.search((event.target as HTMLInputElement).value).draw("page");
+   };
+-  private handleTableSizeSelect = (event: Event) => {
++  protected handleTableSizeSelect = (event: Event) => {
+     const pageLength = parseInt((event.target as HTMLSelectElement).value);
+     // Set page length
+     this.dataTable?.page.len(pageLength).draw("page");
+@@ -328,14 +332,14 @@
+     this.persistentConfig.pageSize = pageLength;
+     this.yasr.storePluginConfig("table", this.persistentConfig);
+   };
+-  private handleSetCompactToggle = (event: Event) => {
++  protected handleSetCompactToggle = (event: Event) => {
+     // Store in persistentConfig
+     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
+     // Update the table
+     this.draw(this.persistentConfig);
+     this.yasr.storePluginConfig("table", this.persistentConfig);
+   };
+-  private handleSetEllipsisToggle = (event: Event) => {
++  protected handleSetEllipsisToggle = (event: Event) => {
+     // Store in persistentConfig
+     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
+     // Update the table
+Index: Yasgui/packages/yasr/src/plugins/table/index.scss
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.scss b/Yasgui/packages/yasr/src/plugins/table/index.scss
+--- a/Yasgui/packages/yasr/src/plugins/table/index.scss	(revision 431b89eccc45a7bff653c176ae1851ea8cb7992c)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.scss	(revision a65d3afa85271e5fe96b7c9d88c4c05e05df7b91)
+@@ -64,6 +64,13 @@
+       padding-right: 5px !important;
+     }
+     .dataTable {
++      &:not(.withRowNumber) {
++        tr td:first-child,
++        tr th:first-child {
++          display: none;
++        }
++      }
++
+       min-width: 100%;
+       box-sizing: border-box;
+       // Override border-bottom datatables styling
