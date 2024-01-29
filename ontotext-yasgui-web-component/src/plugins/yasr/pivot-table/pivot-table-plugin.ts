@@ -60,7 +60,7 @@ export class PivotTablePlugin implements YasrPlugin {
       this.drawPivotTable(persistentConfig);
     } else {
       // @ts-ignore
-      google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
+      google.charts.load('current', {packages: ['corechart', 'charteditor']});
       // If the render is a Google chart we have to wait the module to be loaded.
       if (persistentConfig && this.isGoogleChartRender(persistentConfig.rendererName)) {
         // @ts-ignore
