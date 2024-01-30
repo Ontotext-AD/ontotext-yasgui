@@ -53,6 +53,16 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
+### `abortAllCountQuery() => Promise<any>`
+
+Aborts the all running count queries if any.
+
+#### Returns
+
+Type: `Promise<any>`
+
+
+
 ### `abortQuery() => Promise<any>`
 
 Aborts the running query if any.
