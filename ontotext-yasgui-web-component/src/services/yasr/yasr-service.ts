@@ -74,7 +74,8 @@ export class YasrService {
     if (!context.hasElement(uri)) {
       const content = `<div class="uri-cell" lang="${this.getLang(binding, 'xx')}">` +
         `<a title="${uri}" class="uri-link" href="${this.getHref(uri, context)}">${YasrService.addWordBreakToIRIs(context.getShortUri(uri))}</a>` +
-        `<copy-resource-link-button class="resource-copy-link" uri="${uri}"></copy-resource-link-button></div>`;
+        `<copy-resource-link-button class="resource-copy-link" uri="${uri}"></copy-resource-link-button>` +
+        '<span class="spacer"></span></div>';
       context.setElement(uri, content);
     }
     return context.getElement(uri);
