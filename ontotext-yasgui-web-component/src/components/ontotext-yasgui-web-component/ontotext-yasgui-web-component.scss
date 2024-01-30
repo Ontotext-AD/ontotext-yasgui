@@ -450,9 +450,20 @@
       .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
       .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link {
         display: inline;
-        padding-left: 4px;
-        padding-right: 10px;
-        position: absolute;
+      }
+
+      .dataTable tbody td div.uri-cell:hover,
+      .dataTable tbody td div.triple-cell ul.triple-list li:hover,
+      .dataTable td div.triple-cell div.triple-close:hover {
+        .spacer {
+          display: none;
+        }
+      }
+
+      .dataTable td div {
+        .spacer {
+          min-width: 1em;
+        }
       }
 
       .dataTable tbody td div.triple-cell ul.triple-list li {
@@ -462,6 +473,20 @@
       .dataTable td div.triple-cell .triple-link {
         color: #770088;
         text-decoration: none;
+      }
+
+      .dataTable tr td div {
+        display: flex;
+        justify-items: end;
+        align-items: center;
+      }
+
+      .dataTable.ellipseTable tr td div:not(.expanded) {
+        width: 100%;
+        .uri-link {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
       }
 
       .uri-link:hover {
