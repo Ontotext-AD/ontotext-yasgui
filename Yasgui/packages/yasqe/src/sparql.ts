@@ -244,7 +244,7 @@ export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void 
       // This will be taken into account when generating information message about the results.
       console.log(error);
     }
-  );
+  ).finally(() => yasqe.emit("countQueryFinished"));
 }
 
 export type RequestArgs = { [argName: string]: string | string[] };

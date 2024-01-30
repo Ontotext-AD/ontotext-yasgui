@@ -28,6 +28,10 @@ import CodeMirror from "./CodeMirror";
 export interface Yasqe {
   on(eventName: "query", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
   off(eventName: "query", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
+  on(eventName: "countQuery", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
+  off(eventName: "countQuery", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
+  on(eventName: "countQueryFinished", handler: (instance: Yasqe) => void): void;
+  off(eventName: "countQueryFinished", handler: (instance: Yasqe) => void): void;
   on(eventName: "queryAbort", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
   off(eventName: "queryAbort", handler: (instance: Yasqe, req: superagent.SuperAgentRequest) => void): void;
   on(
@@ -83,6 +87,7 @@ export class Yasqe extends CodeMirror {
   public queryValid = true;
   public lastQueryDuration: number | undefined;
   private req: superagent.SuperAgentRequest | undefined;
+  private countReq: superagent.SuperAgentRequest | undefined;
   private queryStatus: "valid" | "error" | undefined;
   private queryBtn: HTMLButtonElement | undefined;
   private resizeWrapper?: HTMLDivElement;
@@ -231,6 +236,12 @@ export class Yasqe extends CodeMirror {
     this.updateQueryButton();
     this.queryStateChanged(true, false);
   }
+  private handleCountQuery(_yasqe: Yasqe, countReq: any) {
+    this.countReq = countReq;
+  }
+  private handleCountQueryFinished(_yasqe: Yasqe) {
+    this.countReq = undefined;
+  }
   private handleQueryResponse(_yasqe: Yasqe, _response: superagent.SuperAgentRequest, duration: number) {
     this.lastQueryDuration = duration;
     this.req = undefined;
@@ -303,6 +314,8 @@ export class Yasqe extends CodeMirror {
     this.on("cursorActivity", this.handleCursorActivity);
 
     this.on("query", this.handleQuery);
+    this.on("countQuery", this.handleCountQuery);
+    this.on("countQueryFinished", this.handleCountQueryFinished);
     this.on("queryResponse", this.handleQueryResponse);
     this.on("queryAbort", this.handleQueryAbort);
   }
@@ -314,6 +327,8 @@ export class Yasqe extends CodeMirror {
     this.off("cursorActivity" as any, this.handleCursorActivity);
 
     this.off("query", this.handleQuery);
+    this.off("countQuery", this.handleCountQuery);
+    this.off("countQueryFinished", this.handleCountQueryFinished);
     this.off("queryResponse", this.handleQueryResponse);
     this.off("queryAbort", this.handleQueryAbort);
   }
@@ -1189,6 +1204,16 @@ export class Yasqe extends CodeMirror {
       this.req.abort();
       this.emit("queryAbort", this, this.req);
       this.updateAbortQueryButton();
+    }
+
+    this.abortCountQuery();
+  }
+
+  public abortCountQuery(): void {
+    if (this.countReq) {
+      this.countReq.abort();
+      this.eventService.emitEvent(this.rootEl, "internalCountQueryAbortedEvent", { request: this.countReq });
+      this.emit("countQueryFinished");
     }
   }
   public expandEditor() {
