@@ -69,6 +69,15 @@ export class OntotextYasgui {
     this.yasgui.getTab().getYasqe().abortQuery();
   }
 
+  abortAllCountQuery(): void {
+    Object.values(this.yasgui._tabs).forEach((tab: any) => {
+      const yasqe = tab.getYasqe();
+      if (yasqe) {
+        yasqe.abortCountQuery();
+      }
+    });
+  }
+
   /**
    * Removes the sparql results from the in-memory persistence json object. Then it emits a tab change event to apply
    * the changes in the storage.

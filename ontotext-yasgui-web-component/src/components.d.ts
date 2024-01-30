@@ -132,6 +132,10 @@ export namespace Components {
      */
     interface OntotextYasgui {
         /**
+          * Aborts the all running count queries if any.
+         */
+        "abortAllCountQuery": () => Promise<any>;
+        /**
           * Aborts the running query if any.
          */
         "abortQuery": () => Promise<any>;

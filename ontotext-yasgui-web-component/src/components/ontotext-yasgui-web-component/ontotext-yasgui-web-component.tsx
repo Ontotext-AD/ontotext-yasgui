@@ -30,6 +30,7 @@ import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugi
 import {ChartsPlugin} from "../../plugins/yasr/charts/charts-plugin";
 import {Tab} from '../../models/yasgui/tab';
 import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
+import {InternalCountQueryAbortedEvent} from '../../models/internal-events/internal-count-query-aborted-event';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -377,6 +378,17 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Aborts the all running count queries if any.
+   */
+  @Method()
+  abortAllCountQuery(): Promise<any> {
+    return this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.abortAllCountQuery();
+      });
+  }
+
+  /**
    * Clears the results of the query.
    * @param refreshYasr - if true, the YASR component will be refreshed.
    */
@@ -632,6 +644,11 @@ export class OntotextYasguiWebComponent {
 
   @Listen('internalCountQueryResponseEvent')
   onCountQueryResponse(event: CustomEvent<InternalCountQueryResponseEvent>) {
+    this.output.emit(toOutputEvent(event));
+  }
+
+  @Listen('internalCountQueryAbortedEvent')
+  onCountQueryAborted(event: CustomEvent<InternalCountQueryAbortedEvent>) {
     this.output.emit(toOutputEvent(event));
   }
 
