@@ -124,6 +124,7 @@
   "yasr.plugin_control.plugin.name.charts": "Graphique Google",
   "yasr.plugin_control.plugin.charts.config.button": "Configuration du graphique",
   "yasr.plugin_control.shows_view.btn.aria_label": "Affiche la vue {{name}}",
+  "yasr.plugin_control.table.empty_result.label": "Aucune donnée disponible dans le tableau",
   "yasr.plugin_control.response_chip.timestamp.minutes_ago": "minutes",
   "yasr.plugin_control.response_chip.timestamp.moments_ago": "il y a quelques instants",
   "yasr.plugin_control.response_chip.timestamp.on_at": "au {{year}}-{{month}}-{{date}} à {{hours}}:{{minutes}}",
