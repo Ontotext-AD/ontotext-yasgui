@@ -233,12 +233,6 @@ export class Yasr extends EventEmitter {
     }
     this.updatePluginSelectorNames();
     const compatiblePlugins = this.getCompatiblePlugins();
-    if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
-      while (this.pluginControls.firstChild) {
-        this.pluginControls.firstChild.remove();
-      }
-      this.plugins[this.drawnPlugin].destroy?.();
-    }
     let pluginToDraw: string | undefined;
     if (this.getSelectedPlugin() && this.getSelectedPlugin()?.canHandleResults()) {
       pluginToDraw = this.getSelectedPluginName();
@@ -252,6 +246,17 @@ export class Yasr extends EventEmitter {
       // Signal to create the plugin+
       this.fillFallbackBox(pluginToDraw);
     }
+
+    if (!pluginToDraw || (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin)) {
+      // we change the rendered plugin, so we have to remove all plugin controls if any.
+      while (this.pluginControls.firstChild) {
+        this.pluginControls.firstChild.remove();
+      }
+      if (this.drawnPlugin) {
+        this.plugins[this.drawnPlugin].destroy?.();
+      }
+    }
+
     if (pluginToDraw) {
       this.drawnPlugin = pluginToDraw;
 
