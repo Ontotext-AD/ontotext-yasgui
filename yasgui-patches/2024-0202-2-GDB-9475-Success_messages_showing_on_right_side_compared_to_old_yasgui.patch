@@ -1,0 +1,67 @@
+Subject: [PATCH] GDB-9475: Success messages showing on right side compared to old yasgui
+GDB-9475: Incorrect Control Plugins
+---
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 3b2ea81d27f9a778568ab216f2f97f3ce8fa308b)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 590a3df15099b93e023dd8ab365b5e8ab559b1a4)
+@@ -233,12 +233,6 @@
+     }
+     this.updatePluginSelectorNames();
+     const compatiblePlugins = this.getCompatiblePlugins();
+-    if (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin) {
+-      while (this.pluginControls.firstChild) {
+-        this.pluginControls.firstChild.remove();
+-      }
+-      this.plugins[this.drawnPlugin].destroy?.();
+-    }
+     let pluginToDraw: string | undefined;
+     if (this.getSelectedPlugin() && this.getSelectedPlugin()?.canHandleResults()) {
+       pluginToDraw = this.getSelectedPluginName();
+@@ -252,7 +246,19 @@
+       // Signal to create the plugin+
+       this.fillFallbackBox(pluginToDraw);
+     }
++
++    if (!pluginToDraw || (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin)) {
++      // we change the rendered plugin, so we have to remove all plugin controls if any.
++      while (this.pluginControls.firstChild) {
++        this.pluginControls.firstChild.remove();
++      }
++      if (this.drawnPlugin) {
++        this.plugins[this.drawnPlugin].destroy?.();
++      }
++    }
++
+     if (pluginToDraw) {
++      this.updatePluginControlVisibility(true);
+       this.drawnPlugin = pluginToDraw;
+ 
+       this.emit("draw", this, this.plugins[pluginToDraw]);
+@@ -277,12 +283,22 @@
+         )
+         .finally(() => this.hideLoader());
+     } else {
++      this.updatePluginControlVisibility(false);
+       this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
+       this.updateExportHeaders();
+       this.updatePluginSelectors(compatiblePlugins);
+       this.hideLoader();
+     }
+   }
++  private updatePluginControlVisibility(visible: boolean) {
++    const spacerElement: HTMLDivElement | null | undefined = this.pluginControls.parentElement?.querySelector(
++      ".space_element"
++    );
++    if (spacerElement) {
++      spacerElement.style.display = visible ? "" : "none";
++    }
++  }
++
+   //just an alias for `draw`. That way, we've got a consistent api with yasqe
+   public refresh() {
+     this.draw();
