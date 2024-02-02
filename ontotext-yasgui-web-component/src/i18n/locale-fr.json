@@ -214,7 +214,7 @@
   "yasqe.actions.expand_results_same_as.true.button.tooltip": "Développer les résultats sur owl:sameAs: AU",
   "yasqe.actions.expand_results_same_as.false.button.tooltip": "Développer les résultats sur owl:sameAs: DÉSACTIVÉ",
   "yasqe.actions.expand_results_same_as.disable.button.tooltip": "Nécessite 'Inclure les données inférées' !",
-  "yasqe.footer_buttons.abort_query.button.label": "Annuler la requête",
+  "yasqe.footer_buttons.abort_query.button.label": "Abandon de la requête",
   "yasqe.footer_buttons.abort_query.button.title": "Cliquez pour annuler la requête",
   "yasqe.footer_buttons.abort_query_requested.button.label": "L'arrêt a été demandé",
   "yasqe.footer_buttons.abort_query_requested.button.title": "Il a été demandé d'interrompre la requête et celle-ci sera interrompue lors de la première opération d'E/S.",

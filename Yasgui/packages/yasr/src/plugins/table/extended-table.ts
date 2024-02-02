@@ -31,7 +31,7 @@ export class ExtendedTable extends Table {
   public draw(persistentConfig: PersistentConfig) {
     super.draw(persistentConfig);
     this.setupIndexColumn();
-    const explainPlanQueryElement = document.getElementById("explainPlanQuery");
+    const explainPlanQueryElement = this.yasr.rootEl.querySelector("#explainPlanQuery") as HTMLElement | null;
     if (!explainPlanQueryElement) {
       return;
     }
