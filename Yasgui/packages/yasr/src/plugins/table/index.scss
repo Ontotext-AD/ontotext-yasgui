@@ -65,7 +65,7 @@ Delimiters used by datatables
     }
     .dataTable {
       &:not(.withRowNumber) {
-        tr td:first-child,
+        tr td:first-child:not(.dataTables_empty),
         tr th:first-child {
           display: none;
         }
