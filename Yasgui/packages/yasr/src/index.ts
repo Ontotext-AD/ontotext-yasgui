@@ -258,6 +258,7 @@ export class Yasr extends EventEmitter {
     }
 
     if (pluginToDraw) {
+      this.updatePluginControlVisibility(true);
       this.drawnPlugin = pluginToDraw;
 
       this.emit("draw", this, this.plugins[pluginToDraw]);
@@ -282,12 +283,22 @@ export class Yasr extends EventEmitter {
         )
         .finally(() => this.hideLoader());
     } else {
+      this.updatePluginControlVisibility(false);
       this.resultsEl.textContent = this.translationService.translate("yasr.plugin.no_compatible.message");
       this.updateExportHeaders();
       this.updatePluginSelectors(compatiblePlugins);
       this.hideLoader();
     }
   }
+  private updatePluginControlVisibility(visible: boolean) {
+    const spacerElement: HTMLDivElement | null | undefined = this.pluginControls.parentElement?.querySelector(
+      ".space_element"
+    );
+    if (spacerElement) {
+      spacerElement.style.display = visible ? "" : "none";
+    }
+  }
+
   //just an alias for `draw`. That way, we've got a consistent api with yasqe
   public refresh() {
     this.draw();
