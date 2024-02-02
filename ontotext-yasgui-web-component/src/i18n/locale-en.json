@@ -124,6 +124,7 @@
   "yasr.plugin_control.plugin.name.charts": "Google Chart",
   "yasr.plugin_control.plugin.charts.config.button": "Chart Config",
   "yasr.plugin_control.shows_view.btn.aria_label": "Shows {{name}} view",
+  "yasr.plugin_control.table.empty_result.label": "No data available in table",
   "yasr.plugin_control.response_chip.timestamp.minutes_ago": "minutes ago",
   "yasr.plugin_control.response_chip.timestamp.moments_ago": "moments ago",
   "yasr.plugin_control.response_chip.timestamp.on_at": "on {{year}}-{{month}}-{{date}} at {{hours}}:{{minutes}}",

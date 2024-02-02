@@ -406,6 +406,10 @@
         background-image: none;
         border: 1px solid rgba(0, 0, 0, .15);
         border-radius: 0;
+
+        &.tableFilter:disabled {
+          cursor: not-allowed;
+        }
       }
 
       .tableFilter::placeholder {
