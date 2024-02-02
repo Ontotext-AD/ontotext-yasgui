@@ -224,6 +224,7 @@ export default class Table implements Plugin<PluginConfig> {
       // Our cells are calculated dynamically, and with this configuration on, rendering the datatable results becomes very slow.
       autoWidth: false,
       language: {
+        zeroRecords: this.translationService.translate("yasr.plugin_control.table.empty_result.label"),
         info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
         paginate: {
           first: this.translationService.translate("yasr.plugin.table.data_tables.paginate.first"),
@@ -297,7 +298,30 @@ export default class Table implements Plugin<PluginConfig> {
       addClass(this.tableEl, "ellipseTable");
       this.setEllipsisHandlers();
     }
+
+    if (!rows || rows.length < 1) {
+      this.updateEmptyTable(this.persistentConfig);
+    }
+
     // if (this.tableEl.clientWidth > width) this.tableEl.parentElement?.style.setProperty("overflow", "hidden");
+  }
+
+  protected updateEmptyTable(persistentConfig: PersistentConfig): void {
+    const element: HTMLTableCellElement | null | undefined = this.tableEl?.querySelector("td.dataTables_empty");
+    if (element) {
+      const columns = this.dataTable?.columns().count();
+      const columnCount = columns || 0;
+      element.colSpan = persistentConfig.compact ? columnCount - 1 : columnCount;
+    }
+    if (this.tableFilterField) {
+      this.tableFilterField.disabled = true;
+    }
+    if (this.tableCompactSwitch) {
+      this.tableCompactSwitch.disabled = true;
+    }
+    if (this.tableEllipseSwitch) {
+      this.tableEllipseSwitch.disabled = true;
+    }
   }
 
   private setEllipsisHandlers = () => {
