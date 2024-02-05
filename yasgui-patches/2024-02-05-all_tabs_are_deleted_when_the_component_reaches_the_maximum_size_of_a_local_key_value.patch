@@ -1,0 +1,120 @@
+Subject: [PATCH] All tabs are deleted when the component reaches the maximum size of a local key value.
+GDB-9462: Unable to Close the Tab When Numerous Saved Results Exist in Local Storage
+---
+Index: Yasgui/packages/utils/src/Storage.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/Storage.ts b/Yasgui/packages/utils/src/Storage.ts
+--- a/Yasgui/packages/utils/src/Storage.ts	(revision 698b905aeb88196159afc8190204497ec1259cfe)
++++ b/Yasgui/packages/utils/src/Storage.ts	(revision af8a01056d77f441eeab4b61b78af81e978bec06)
+@@ -58,7 +58,9 @@
+   }
+   removeNamespace() {
+     store.each((value: ItemWrapper<any>, key: string) => {
+-      if (value.namespace && value.namespace === this.namespace) this.remove(key);
++      if (value && value.namespace && value.namespace === this.namespace) {
++        this.remove(key);
++      }
+     });
+   }
+   get<V>(key?: string): V | undefined {
+Index: Yasgui/packages/yasgui/src/PersistentConfig.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/PersistentConfig.ts b/Yasgui/packages/yasgui/src/PersistentConfig.ts
+--- a/Yasgui/packages/yasgui/src/PersistentConfig.ts	(revision af8a01056d77f441eeab4b61b78af81e978bec06)
++++ b/Yasgui/packages/yasgui/src/PersistentConfig.ts	(revision ce32462b2d3e064deb7303fd073805dcfaf09bc5)
+@@ -87,13 +87,11 @@
+     });
+   }
+ 
+-  private toStorage() {
+-    this.storage.set(
+-      this.storageId,
+-      this.persistedJson,
+-      this.yasgui.config.persistencyExpire,
+-      this.handleLocalStorageQuotaFull
+-    );
++  public toStorage() {
++    const onQuotaExceeded = this.yasgui.getHandleLocalStorageQuotaFull
++      ? this.yasgui.getHandleLocalStorageQuotaFull()
++      : this.handleLocalStorageQuotaFull;
++    this.storage.set(this.storageId, this.persistedJson, this.yasgui.config.persistencyExpire, onQuotaExceeded);
+   }
+   private fromStorage(): PersistedJson {
+     this.persistedJson = this.storage.get<PersistedJson>(this.storageId) || getDefaults();
+@@ -134,6 +132,10 @@
+   public currentId() {
+     return this.persistedJson.active;
+   }
++
++  public getTabConfig() {
++    return this.persistedJson.tabConfig;
++  }
+   public static clear() {
+     const storage = new YStorage(storageNamespace);
+     storage.removeNamespace();
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision af8a01056d77f441eeab4b61b78af81e978bec06)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision ce32462b2d3e064deb7303fd073805dcfaf09bc5)
+@@ -438,6 +438,15 @@
+     this.yasqe = undefined;
+   }
+ 
++  reInitYasr() {
++    if (this.yasr) {
++      this.yasqe?.abortQuery();
++      this.yasr.destroy();
++      this.yasr = undefined;
++      this.initYasr();
++    }
++  }
++
+   handleOpenNewTab = () => {
+     this.emit("openNewTab", this);
+   };
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision af8a01056d77f441eeab4b61b78af81e978bec06)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision ce32462b2d3e064deb7303fd073805dcfaf09bc5)
+@@ -191,6 +191,27 @@
+       }
+     }
+   }
++
++  public getHandleLocalStorageQuotaFull(): (e: any) => void {
++    return () => {
++      this.resetResults();
++    };
++  }
++
++  public resetResults(resetCurrentTab = false) {
++    const currentId = this.persistentConfig.currentId();
++    Object.values(this.persistentConfig.getTabConfig()).forEach((tab: any) => {
++      if (resetCurrentTab || currentId !== tab.id) {
++        tab.yasr.response = null;
++      }
++    });
++    Object.values(this._tabs).forEach((tab: Tab) => {
++      if (resetCurrentTab || currentId !== tab.getId()) {
++        this.emitTabChange(tab);
++        tab.reInitYasr();
++      }
++    });
++  }
+   public hasFullscreen(fullscreen: boolean) {
+     if (fullscreen) {
+       this.emit("fullscreen-enter", this);
