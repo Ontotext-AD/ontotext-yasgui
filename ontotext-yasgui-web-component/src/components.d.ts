@@ -199,9 +199,9 @@ export namespace Components {
         "query": (renderingMode?: RenderingMode) => Promise<any>;
         /**
           * Clears the results of the query.
-          * @param refreshYasr - if true, the YASR component will be refreshed.
+          * @param resetCurrentTab - controls if the current tab has to be reset. If true, the results of the current tab will be reset as well. Default si true.
          */
-        "resetResults": (refreshYasr: boolean) => Promise<any>;
+        "resetResults": (resetCurrentTab: boolean) => Promise<any>;
         /**
           * A configuration model related with all the saved queries actions.
          */
