@@ -438,6 +438,15 @@ export class Tab extends EventEmitter {
     this.yasqe = undefined;
   }
 
+  reInitYasr() {
+    if (this.yasr) {
+      this.yasqe?.abortQuery();
+      this.yasr.destroy();
+      this.yasr = undefined;
+      this.initYasr();
+    }
+  }
+
   handleOpenNewTab = () => {
     this.emit("openNewTab", this);
   };
