@@ -58,7 +58,9 @@ export default class Storage {
   }
   removeNamespace() {
     store.each((value: ItemWrapper<any>, key: string) => {
-      if (value.namespace && value.namespace === this.namespace) this.remove(key);
+      if (value && value.namespace && value.namespace === this.namespace) {
+        this.remove(key);
+      }
     });
   }
   get<V>(key?: string): V | undefined {
