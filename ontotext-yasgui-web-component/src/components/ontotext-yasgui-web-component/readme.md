@@ -191,7 +191,7 @@ Type: `Promise<any>`
 
 
 
-### `resetResults(refreshYasr: boolean) => Promise<any>`
+### `resetResults(resetCurrentTab: boolean) => Promise<any>`
 
 Clears the results of the query.
 

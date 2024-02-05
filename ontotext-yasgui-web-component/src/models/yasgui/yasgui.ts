@@ -11,4 +11,5 @@ export class Yasgui {
   destroy: () => void;
   on: (event, handler) => void;
   emitTabChange: (tab: Tab) => void;
+  resetResults: (resetCurrentTab: boolean) => void;
 }
