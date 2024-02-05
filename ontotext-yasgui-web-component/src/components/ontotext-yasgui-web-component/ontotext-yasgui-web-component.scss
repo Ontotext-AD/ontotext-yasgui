@@ -431,12 +431,14 @@
         // overrides yasr value of word-break property
         // import is needed because yasr selector has bigger weight ".dataTable:not(.ellipseTable) div:not(.expanded)"
         word-break: break-word !important;
-        overflow-wrap: break-word;
+        // break-word doesn't work in flex container as expected in our case
+        overflow-wrap: anywhere;
       }
 
       .literal-cell {
         word-break: normal !important;
-        overflow-wrap: break-word;
+        // break-word doesn't work in flex container as expected in our case
+        overflow-wrap: anywhere;
         -webkit-hyphens: auto;
         -moz-hyphens: auto;
         hyphens: auto;
@@ -447,6 +449,10 @@
       .dataTable tbody td div.triple-cell,
       .dataTable td div.triple-cell {
         padding-right: 10px;
+      }
+
+      .dataTable tbody td div.triple-cell ul.triple-list {
+        margin-bottom: 0;
       }
 
       /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
@@ -483,6 +489,12 @@
         display: flex;
         justify-items: end;
         align-items: center;
+      }
+
+      .dataTable tr td div.triple-cell {
+        // Override the default we set above for the triple-cell to allow rdf star triples to be displayed properly on separate lines
+        flex-direction: column;
+        align-items: start;
       }
 
       .dataTable.ellipseTable tr td div:not(.expanded) {
