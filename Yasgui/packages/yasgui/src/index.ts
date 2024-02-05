@@ -191,6 +191,27 @@ export class Yasgui extends EventEmitter {
       }
     }
   }
+
+  public getHandleLocalStorageQuotaFull(): (e: any) => void {
+    return () => {
+      this.resetResults();
+    };
+  }
+
+  public resetResults(resetCurrentTab = false) {
+    const currentId = this.persistentConfig.currentId();
+    Object.values(this.persistentConfig.getTabConfig()).forEach((tab: any) => {
+      if (resetCurrentTab || currentId !== tab.id) {
+        tab.yasr.response = null;
+      }
+    });
+    Object.values(this._tabs).forEach((tab: Tab) => {
+      if (resetCurrentTab || currentId !== tab.getId()) {
+        this.emitTabChange(tab);
+        tab.reInitYasr();
+      }
+    });
+  }
   public hasFullscreen(fullscreen: boolean) {
     if (fullscreen) {
       this.emit("fullscreen-enter", this);

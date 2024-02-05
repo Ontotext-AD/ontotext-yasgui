@@ -87,13 +87,11 @@ export default class PersistentConfig {
     });
   }
 
-  private toStorage() {
-    this.storage.set(
-      this.storageId,
-      this.persistedJson,
-      this.yasgui.config.persistencyExpire,
-      this.handleLocalStorageQuotaFull
-    );
+  public toStorage() {
+    const onQuotaExceeded = this.yasgui.getHandleLocalStorageQuotaFull
+      ? this.yasgui.getHandleLocalStorageQuotaFull()
+      : this.handleLocalStorageQuotaFull;
+    this.storage.set(this.storageId, this.persistedJson, this.yasgui.config.persistencyExpire, onQuotaExceeded);
   }
   private fromStorage(): PersistedJson {
     this.persistedJson = this.storage.get<PersistedJson>(this.storageId) || getDefaults();
@@ -133,6 +131,10 @@ export default class PersistentConfig {
   }
   public currentId() {
     return this.persistedJson.active;
+  }
+
+  public getTabConfig() {
+    return this.persistedJson.tabConfig;
   }
   public static clear() {
     const storage = new YStorage(storageNamespace);
