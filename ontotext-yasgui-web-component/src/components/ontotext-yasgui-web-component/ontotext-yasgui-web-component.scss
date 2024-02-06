@@ -485,7 +485,7 @@
         text-decoration: none;
       }
 
-      .dataTable tr td div {
+      .dataTable tr td > div {
         display: flex;
         justify-items: end;
         align-items: center;
