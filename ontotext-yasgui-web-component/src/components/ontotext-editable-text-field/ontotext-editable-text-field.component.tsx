@@ -102,6 +102,7 @@ export class OntotextEditableTextField {
   componentDidUpdate() {
     if (this.edit && this.inputElement) {
       this.inputElement.focus();
+      this.inputElement.select();
     }
   }
 
