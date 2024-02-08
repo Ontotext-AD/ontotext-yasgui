@@ -391,10 +391,10 @@ export class OntotextYasguiWebComponent {
   /**
    * Clears the results of the query.
    * @param resetCurrentTab - controls if the current tab has to be reset. If true, the results of the current tab will be reset as well.
-   * Default si true.
+   * Default is true.
    */
   @Method()
-  resetResults(resetCurrentTab: boolean): Promise<any> {
+  resetResults(resetCurrentTab  = true): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.resetResults(resetCurrentTab);
