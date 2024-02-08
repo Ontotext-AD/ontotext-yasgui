@@ -82,7 +82,7 @@ export class OntotextYasgui {
    * Removes the sparql results from the in-memory persistence json object. Then it emits a tab change event to apply
    * the changes in the storage.
    * @param resetCurrentTab - controls if the current tab has to be reset. If true, the results of the current tab will be reset as well.
-   * Default si true.
+   * Default is true.
    */
   resetResults(resetCurrentTab = true): void {
     this.yasgui.resetResults(resetCurrentTab);
