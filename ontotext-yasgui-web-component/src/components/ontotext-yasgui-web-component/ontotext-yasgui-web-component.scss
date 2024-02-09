@@ -427,28 +427,35 @@
         display: none;
       }
 
-      .uri-cell {
-        // overrides yasr value of word-break property
-        // import is needed because yasr selector has bigger weight ".dataTable:not(.ellipseTable) div:not(.expanded)"
-        word-break: break-word !important;
-        // break-word doesn't work in flex container as expected in our case
-        overflow-wrap: anywhere;
+      .dataTable:not(.extendedTableEllipseTable) {
+        .uri-cell {
+          word-break: break-word;
+          // break-word doesn't work in flex container as expected in our case
+          overflow-wrap: anywhere;
+        }
+
+        .literal-cell .nonUri {
+          word-break: normal !important;
+          // break-word doesn't work in flex container as expected in our case
+          overflow-wrap: anywhere;
+          -webkit-hyphens: auto;
+          -moz-hyphens: auto;
+          -ms-hyphens: auto;
+          hyphens: auto;
+        }
       }
 
-      .literal-cell {
-        word-break: normal !important;
-        // break-word doesn't work in flex container as expected in our case
-        overflow-wrap: anywhere;
-        -webkit-hyphens: auto;
-        -moz-hyphens: auto;
-        hyphens: auto;
+      .dataTable.extendedTableEllipseTable {
+        div:not(.expanded) {
+          // overrides yasr value of word-break property
+          word-break: normal;
+        }
       }
 
-      /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
-      .dataTable tbody td div.uri-cell,
-      .dataTable tbody td div.triple-cell,
-      .dataTable td div.triple-cell {
-        padding-right: 10px;
+      .dataTable.extendedTableEllipseTable .uri-cell .uri-link,
+      .dataTable.extendedTableEllipseTable .literal-cell .nonUri {
+          overflow: hidden;
+          text-overflow: ellipsis;
       }
 
       .dataTable tbody td div.triple-cell ul.triple-list {
@@ -495,14 +502,6 @@
         // Override the default we set above for the triple-cell to allow rdf star triples to be displayed properly on separate lines
         flex-direction: column;
         align-items: start;
-      }
-
-      .dataTable.ellipseTable tr td div:not(.expanded) {
-        width: 100%;
-        .uri-link {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
       }
 
       .uri-link:hover {
