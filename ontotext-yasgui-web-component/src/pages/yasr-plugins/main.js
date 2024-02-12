@@ -1,6 +1,6 @@
 const ontoElement = getOntotextYasgui('yasr-plugins');
 
-setQueryListener(ontoElement);
+setOutputEventListener(ontoElement);
 
 function attachMessageHandler() {
   ontoElement.addEventListener('output', (event) => {

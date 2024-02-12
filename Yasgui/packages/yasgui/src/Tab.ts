@@ -150,6 +150,11 @@ export class Tab extends EventEmitter {
     this.yasgui.selectTabId(this.persistentJson.id);
   }
   public close(confirm = true) {
+    if (this.yasgui.persistentConfig.getTabs().length === 1) {
+      this.yasgui.config.notificationMessageService.error('close_last_tab_warning',
+        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message"));
+      return;
+    }
     const closeTab = () => {
       if (this.yasqe) this.yasqe.abortQuery();
       if (this.yasgui.getTab() === this) {

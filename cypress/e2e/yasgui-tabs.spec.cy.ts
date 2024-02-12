@@ -123,6 +123,16 @@ describe('Yasgui tabs', () => {
     YasguiSteps.getTabs().should('have.length', 1);
     YasguiSteps.getCurrentTabTitle().should('have.text', 'Unnamed 2');
   });
+
+  it('Should prevent closing the last yasgui tab', () => {
+    // Given I have opened yasgui with a single opened tab
+    YasguiSteps.getTabs().should('have.length', 1);
+    // When I try closing the tab
+    YasguiSteps.closeTab(0);
+    // Then I expect the tab to remain opened
+    YasguiSteps.getTabs().should('have.length', 1);
+    DefaultViewPageSteps.getOutputField().should('have.value', 'Last tab must remain open.');
+  });
 });
 
 function openNewTab(tabIndex: number, expectedTabsCount: number) {
