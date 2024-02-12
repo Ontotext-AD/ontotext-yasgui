@@ -590,24 +590,40 @@ export class Yasqe extends CodeMirror {
     }
 
     removeClass(this.abortQueryButton, "hidden");
-
-    let buttonLabel;
-
-    let buttonTooltip;
     if (this.isQueryAborted) {
-      buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.label");
-      buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.title");
       addClass(this.abortQueryButton, "disabled");
     } else {
       removeClass(this.abortQueryButton, "disabled");
+    }
+
+    this.subscriptions.push(
+      this.translationService.subscribeForLanguageChange({
+        name: "AbortButtonLanguageChangeObserver",
+        notify: this.updateAbortQueryLabels,
+      })
+    );
+
+    this.updateAbortQueryLabels();
+  }
+
+  private updateAbortQueryLabels(): void {
+    let buttonLabel, buttonTooltip;
+    if (this.isQueryAborted) {
+      buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.label");
+      buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.title");
+    } else {
       buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query.button.label");
       buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query.button.title");
     }
 
-    this.abortQueryButton.innerText = buttonLabel;
+    if (this.abortQueryButton) {
+      this.abortQueryButton.innerText = buttonLabel;
+    }
 
-    const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
-    abortQueryButtonTooltip.dataTooltip = buttonTooltip;
+    if (this.abortQueryButton) {
+      const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
+      abortQueryButtonTooltip.dataTooltip = buttonTooltip;
+    }
   }
 
   private initDrag() {
