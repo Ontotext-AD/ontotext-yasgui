@@ -59,6 +59,10 @@ export function getAsValue<E, A>(valueOrFn: E | ((arg: A) => E), arg: A): E {
 }
 
 type TranslationCallback = (translation: string) => void;
+type LanguageChangeObserver = {
+  name: string;
+  notify: (language: string) => void;
+};
 
 export class TranslationService {
   private static _INSTANCE: TranslationService;
@@ -81,6 +85,10 @@ export class TranslationService {
   ) {
     translationCallback(messageLabelKey);
     return () => {};
+  }
+
+  subscribeForLanguageChange(_observer: LanguageChangeObserver): () => void {
+    return () => undefined;
   }
 }
 
