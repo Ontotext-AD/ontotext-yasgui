@@ -25,6 +25,7 @@
   "yasgui.tab_list.close_tab.confirmation.title": "Confirmer",
   "yasgui.tab_list.close_tab.confirmation.message": "Êtes-vous sûr de vouloir fermer cet onglet de requête?",
   "yasgui.tab_list.close_other_tabs.confirmation.message": "Are you sure you want to close all other query tabs?",
+  "yasgui.tab_list.close_last_tab.warning.message": "Le dernier onglet doit rester ouvert.",
   "yasgui.tab_list.tab.default.name": "Anonyme",
   "yasgui.tab_list.menu.close_other_tabs.btn.label": "Fermer les autres onglets",
   "yasgui.tab_list.menu.close_tab.btn.label": "Fermer l'onglet",

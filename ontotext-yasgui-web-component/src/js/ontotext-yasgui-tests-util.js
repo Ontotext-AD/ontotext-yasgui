@@ -35,7 +35,7 @@ function getPrefixes() {
   }
 }
 
-function setQueryListener(ontoElement) {
+function setOutputEventListener(ontoElement) {
   ontoElement.addEventListener('output', (event) => {
     if ('countQuery' === event.detail.TYPE) {
       const request = event.detail.payload.request;
@@ -47,6 +47,8 @@ function setQueryListener(ontoElement) {
       event.detail.payload.response.body.totalElements = getCount(event.detail.payload.response);
     } else if ('query' === event.detail.TYPE) {
       onQuery(event);
+    } else if ('notificationMessage' === event.detail.TYPE) {
+      document.querySelector('#output').value = event.detail.payload.message;
     }
   });
 

@@ -1,5 +1,5 @@
 let ontoElement = getOntotextYasgui();
-setQueryListener(ontoElement);
+setOutputEventListener(ontoElement);
 
 let textAreaElement = document.createElement('textarea');
 textAreaElement.id = 'output';

@@ -22,7 +22,7 @@ function changeLanguage(lang) {
   ontoElement.language = lang;
 }
 
-setQueryListener(ontoElement);
+setOutputEventListener(ontoElement);
 
 let textAreaElement = document.createElement('textarea');
 textAreaElement.id = 'saveQueryPayload';
