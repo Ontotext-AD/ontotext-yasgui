@@ -1,0 +1,20 @@
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 9b3f7990335f0e9434ebe477849cc168599432af)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 7a01b5213d11719d1a442564b97d5d40533cae5a)
+@@ -150,6 +150,11 @@
+     this.yasgui.selectTabId(this.persistentJson.id);
+   }
+   public close(confirm = true) {
++    if (this.yasgui.persistentConfig.getTabs().length === 1) {
++      this.yasgui.config.notificationMessageService.error('close_last_tab_warning',
++        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message"));
++      return;
++    }
+     const closeTab = () => {
+       if (this.yasqe) this.yasqe.abortQuery();
+       if (this.yasgui.getTab() === this) {
