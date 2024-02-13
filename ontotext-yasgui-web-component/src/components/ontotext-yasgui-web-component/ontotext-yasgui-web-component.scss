@@ -423,113 +423,105 @@
     }
 
     .yasr_results {
-      .resource-copy-link {
-        display: none;
-      }
-
-      .dataTable:not(.extendedTableEllipseTable) {
-        .uri-cell {
-          word-break: break-word;
-          // break-word doesn't work in flex container as expected in our case
-          overflow-wrap: anywhere;
-        }
-
-        .literal-cell .nonUri {
-          word-break: normal !important;
-          // break-word doesn't work in flex container as expected in our case
-          overflow-wrap: anywhere;
-          -webkit-hyphens: auto;
-          -moz-hyphens: auto;
-          -ms-hyphens: auto;
-          hyphens: auto;
-        }
-      }
-
-      .dataTable.extendedTableEllipseTable {
-        div:not(.expanded) {
-          // overrides yasr value of word-break property
-          word-break: normal;
-        }
-      }
-
-      .dataTable.extendedTableEllipseTable .uri-cell .uri-link,
-      .dataTable.extendedTableEllipseTable .literal-cell .nonUri {
-          overflow: hidden;
-          text-overflow: ellipsis;
-      }
-
-      /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
-      .dataTable tbody td div.uri-cell:hover .resource-copy-link {
-        display: inline;
-      }
-
-      .dataTable tbody td div.uri-cell:hover {
-        .spacer {
+      .dataTable {
+        .resource-copy-link {
           display: none;
         }
-      }
 
-      .dataTable tbody tr td .triple-cell {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
+        &:not(.extendedTableEllipseTable) {
+          .uri-cell {
+            word-break: break-word;
+            // break-word doesn't work in flex container as expected in our case
+            overflow-wrap: anywhere;
+          }
 
-        .triple-link {
-          color: #770088;
+          .literal-cell .nonUri {
+            word-break: normal !important;
+            // break-word doesn't work in flex container as expected in our case
+            overflow-wrap: anywhere;
+            -webkit-hyphens: auto;
+            -moz-hyphens: auto;
+            -ms-hyphens: auto;
+            hyphens: auto;
+          }
+        }
+
+        &.extendedTableEllipseTable {
+          div:not(.expanded) {
+            // overrides yasr value of word-break property
+            word-break: normal;
+          }
+
+          .uri-cell .uri-link,
+          .literal-cell .nonUri {
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        .uri-cell .spacer {
+          min-width: 1em;
+        }
+
+        .uri-cell:hover,
+        .triple-close-link:hover,
+        .triple-open-link:hover {
+          .resource-copy-link {
+            /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
+            display: inline;
+          }
+
+          .spacer {
+            display: none;
+          }
+        }
+
+        .triple-cell {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+
+          .triple-link {
+            color: #770088;
+            text-decoration: none;
+          }
+
+          .triple-list {
+            display: flex;
+            flex-direction: column;
+
+            .uri-link {
+              padding-left: 20px;
+            }
+          }
+
+          .triple-close-link,
+          .triple-open-link {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+          }
+        }
+
+        tr td > div,
+        .uri-cell {
+          display: flex;
+          justify-items: end;
+          align-items: center;
+        }
+
+        .uri-link:hover {
           text-decoration: none;
         }
 
-        .triple-list {
-          display: flex;
-          flex-direction: column;
-
-          .uri-link {
-            padding-left: 20px;
-          }
+        .nonUri {
+          color: #003663;
+          border: none;
+          background-color: transparent;
+          padding: 0;
+          margin: 0;
+          white-space: pre-wrap;
         }
-      }
-
-      .dataTable tbody tr td div.triple-cell div.triple-close-link,
-      .dataTable tbody tr td div.triple-cell div.triple-open-link {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .dataTable tbody tr td div.triple-cell div.triple-close-link:hover,
-      .dataTable tbody tr td div.triple-cell div.triple-open-link:hover {
-        .resource-copy-link {
-          display: inline;
-        }
-
-        .spacer {
-          display: none;
-        }
-      }
-
-      .dataTable td div {
-        .spacer {
-          min-width: 1em;
-        }
-      }
-
-      .dataTable tr td > div, .dataTable tbody tr td .uri-cell {
-        display: flex;
-        justify-items: end;
-        align-items: center;
-      }
-
-      .uri-link:hover {
-        text-decoration: none;
-      }
-
-      .nonUri {
-        color: #003663;
-        border: none;
-        background-color: transparent;
-        padding: 0;
-        margin: 0;
-        white-space: pre-wrap;
       }
 
       .error-response-plugin {
