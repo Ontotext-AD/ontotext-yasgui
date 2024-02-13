@@ -47,7 +47,7 @@ export class YasrSteps {
   }
 
   static getTriple(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
-    return this.getResultCell(rowNumber, 1, yasrIndex).find('.triple-list').find('li').eq(tripleNumber);
+    return this.getResultCell(rowNumber, 1, yasrIndex).find('.triple-list').find('.uri-cell').eq(tripleNumber);
   }
 
   static hoverTripleResource(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
