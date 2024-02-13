@@ -458,20 +458,50 @@
           text-overflow: ellipsis;
       }
 
-      .dataTable tbody td div.triple-cell ul.triple-list {
-        margin-bottom: 0;
-      }
-
       /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
-      .dataTable tbody td div.uri-cell:hover .resource-copy-link,
-      .dataTable tbody td div.triple-cell ul.triple-list li:hover .resource-copy-link,
-      .dataTable td div.triple-cell div.triple-close:hover .resource-copy-link {
+      .dataTable tbody td div.uri-cell:hover .resource-copy-link {
         display: inline;
       }
 
-      .dataTable tbody td div.uri-cell:hover,
-      .dataTable tbody td div.triple-cell ul.triple-list li:hover,
-      .dataTable td div.triple-cell div.triple-close:hover {
+      .dataTable tbody td div.uri-cell:hover {
+        .spacer {
+          display: none;
+        }
+      }
+
+      .dataTable tbody tr td .triple-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        .triple-link {
+          color: #770088;
+          text-decoration: none;
+        }
+
+        .triple-list {
+          display: flex;
+          flex-direction: column;
+
+          .uri-link {
+            padding-left: 20px;
+          }
+        }
+      }
+
+      .dataTable tbody tr td div.triple-cell div.triple-close-link,
+      .dataTable tbody tr td div.triple-cell div.triple-open-link {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .dataTable tbody tr td div.triple-cell div.triple-close-link:hover,
+      .dataTable tbody tr td div.triple-cell div.triple-open-link:hover {
+        .resource-copy-link {
+          display: inline;
+        }
+
         .spacer {
           display: none;
         }
@@ -483,25 +513,10 @@
         }
       }
 
-      .dataTable tbody td div.triple-cell ul.triple-list li {
-        list-style-type: none;
-      }
-
-      .dataTable td div.triple-cell .triple-link {
-        color: #770088;
-        text-decoration: none;
-      }
-
-      .dataTable tr td > div {
+      .dataTable tr td > div, .dataTable tbody tr td .uri-cell {
         display: flex;
         justify-items: end;
         align-items: center;
-      }
-
-      .dataTable tr td div.triple-cell {
-        // Override the default we set above for the triple-cell to allow rdf star triples to be displayed properly on separate lines
-        flex-direction: column;
-        align-items: start;
       }
 
       .uri-link:hover {
@@ -515,13 +530,6 @@
         padding: 0;
         margin: 0;
         white-space: pre-wrap;
-      }
-
-      .dataTable td div.triple-cell .triple-close:hover .resource-copy-link {
-        display: inline;
-        padding-left: 4px;
-        padding-right: 10px;
-        position: absolute;
       }
 
       .error-response-plugin {
