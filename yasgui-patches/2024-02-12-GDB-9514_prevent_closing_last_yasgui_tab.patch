@@ -1,0 +1,24 @@
+Subject: [PATCH] GDB-9514 prevent closing last yasgui tab
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 8ddad4d335a39853e75be30aab262e6425858e68)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 7ab9ef6809989f169de2eb60e95b9fca3602e776)
+@@ -150,6 +150,13 @@
+     this.yasgui.selectTabId(this.persistentJson.id);
+   }
+   public close(confirm = true) {
++    if (this.yasgui.persistentConfig.getTabs().length === 1) {
++      this.yasgui.config.notificationMessageService.error(
++        "close_last_tab_warning",
++        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message")
++      );
++      return;
++    }
+     const closeTab = () => {
+       if (this.yasqe) this.yasqe.abortQuery();
+       if (this.yasgui.getTab() === this) {
