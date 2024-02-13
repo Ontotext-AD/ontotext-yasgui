@@ -6,8 +6,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
---- a/Yasgui/packages/utils/src/index.ts	(revision 9b3f7990335f0e9434ebe477849cc168599432af)
-+++ b/Yasgui/packages/utils/src/index.ts	(revision 8625db9d495acba5d0d8408ede4b83f9b3505198)
+--- a/Yasgui/packages/utils/src/index.ts	(revision 6623469111e11ec954bc88ff6172163c2b398067)
++++ b/Yasgui/packages/utils/src/index.ts	(revision d0ed79a9d0f4a5c260e2ddd7e5a98ea2321e3365)
 @@ -59,6 +59,10 @@
  }
  
@@ -36,8 +36,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
 diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
---- a/Yasgui/packages/yasqe/src/index.ts	(revision 9b3f7990335f0e9434ebe477849cc168599432af)
-+++ b/Yasgui/packages/yasqe/src/index.ts	(revision 8625db9d495acba5d0d8408ede4b83f9b3505198)
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 6623469111e11ec954bc88ff6172163c2b398067)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision d0ed79a9d0f4a5c260e2ddd7e5a98ea2321e3365)
 @@ -590,24 +590,40 @@
      }
  
