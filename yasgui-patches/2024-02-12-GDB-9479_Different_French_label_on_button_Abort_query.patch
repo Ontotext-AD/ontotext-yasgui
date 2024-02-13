@@ -1,0 +1,90 @@
+Subject: [PATCH] GDB-9479: Different French label on button Abort query
+---
+Index: Yasgui/packages/utils/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/index.ts b/Yasgui/packages/utils/src/index.ts
+--- a/Yasgui/packages/utils/src/index.ts	(revision 8b409baa6a98a854c180c9ecfeb646d220804e70)
++++ b/Yasgui/packages/utils/src/index.ts	(revision b9a34eb860c5072594daf041914bc24e4f64c438)
+@@ -59,6 +59,10 @@
+ }
+ 
+ type TranslationCallback = (translation: string) => void;
++type LanguageChangeObserver = {
++  name: string;
++  notify: (language: string) => void;
++};
+ 
+ export class TranslationService {
+   private static _INSTANCE: TranslationService;
+@@ -82,6 +86,10 @@
+     translationCallback(messageLabelKey);
+     return () => {};
+   }
++
++  subscribeForLanguageChange(_observer: LanguageChangeObserver): () => void {
++    return () => undefined;
++  }
+ }
+ 
+ export class TimeFormattingService {
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 8b409baa6a98a854c180c9ecfeb646d220804e70)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision b9a34eb860c5072594daf041914bc24e4f64c438)
+@@ -590,24 +590,40 @@
+     }
+ 
+     removeClass(this.abortQueryButton, "hidden");
+-
+-    let buttonLabel;
+-
+-    let buttonTooltip;
+     if (this.isQueryAborted) {
+-      buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.label");
+-      buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.title");
+       addClass(this.abortQueryButton, "disabled");
+     } else {
+       removeClass(this.abortQueryButton, "disabled");
++    }
++
++    this.subscriptions.push(
++      this.translationService.subscribeForLanguageChange({
++        name: "AbortButtonLanguageChangeObserver",
++        notify: this.updateAbortQueryLabels,
++      })
++    );
++
++    this.updateAbortQueryLabels();
++  }
++
++  private updateAbortQueryLabels(): void {
++    let buttonLabel, buttonTooltip;
++    if (this.isQueryAborted) {
++      buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.label");
++      buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query_requested.button.title");
++    } else {
+       buttonLabel = this.translationService.translate("yasqe.footer_buttons.abort_query.button.label");
+       buttonTooltip = this.translationService.translate("yasqe.footer_buttons.abort_query.button.title");
+     }
+ 
+-    this.abortQueryButton.innerText = buttonLabel;
++    if (this.abortQueryButton) {
++      this.abortQueryButton.innerText = buttonLabel;
++    }
+ 
+-    const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
+-    abortQueryButtonTooltip.dataTooltip = buttonTooltip;
++    if (this.abortQueryButton) {
++      const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
++      abortQueryButtonTooltip.dataTooltip = buttonTooltip;
++    }
+   }
+ 
+   private initDrag() {
