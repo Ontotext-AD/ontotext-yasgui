@@ -1,5 +1,5 @@
 let ontoElement = getOntotextYasgui();
-setQueryListener(ontoElement);
+setOutputEventListener(ontoElement);
 
 ontoElement.config = {
   endpoint: () => "/repositories/multicolumn-results-repo",

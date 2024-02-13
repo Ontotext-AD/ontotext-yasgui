@@ -1,6 +1,6 @@
 let ontoElement = getOntotextYasgui();
 
-setQueryListener(ontoElement);
+setOutputEventListener(ontoElement);
 
 function changeComponentId(componentId) {
   ontoElement.config =  {...ontoElement.config, componentId};
