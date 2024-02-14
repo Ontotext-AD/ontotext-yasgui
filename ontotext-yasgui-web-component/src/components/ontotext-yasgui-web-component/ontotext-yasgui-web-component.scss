@@ -428,7 +428,7 @@
           display: none;
         }
 
-        &:not(.extendedTableEllipseTable) {
+        &:not(.ellipseTable) {
           .uri-cell {
             word-break: break-word;
             // break-word doesn't work in flex container as expected in our case
@@ -446,7 +446,10 @@
           }
         }
 
-        &.extendedTableEllipseTable {
+        &.ellipseTable {
+          wbr {
+            display: none;
+          }
           div:not(.expanded) {
             // overrides yasr value of word-break property
             word-break: normal;
@@ -456,6 +459,7 @@
           .literal-cell .nonUri {
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
 
