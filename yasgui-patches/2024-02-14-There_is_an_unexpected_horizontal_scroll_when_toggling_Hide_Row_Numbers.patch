@@ -1,0 +1,21 @@
+Subject: [PATCH] There is an unexpected horizontal scroll when toggling "Hide Row Numbers"
+---
+Index: Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision d2dc2cbb396c0b93a1431ba0d71d1a85e96fe952)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision b48c0fe6bb722f23a8258483ef72414982bf1140)
+@@ -259,7 +259,9 @@
+       // the resizer is refreshed because it has to recalculate the position fo the column resizer elements.
+       this.disableTableResizer();
+       this.updateTableRowNumberClasses();
+-      this.enableTableResizer();
++      // Set another timeout to ensure that all styles are applied before enabling the table resizer.
++      // This helps avoid any visual glitches or delays in responsiveness.
++      setTimeout(() => this.enableTableResizer());
+     });
+     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+   };
