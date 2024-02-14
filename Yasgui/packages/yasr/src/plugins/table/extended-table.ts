@@ -259,7 +259,9 @@ export class ExtendedTable extends Table {
       // the resizer is refreshed because it has to recalculate the position fo the column resizer elements.
       this.disableTableResizer();
       this.updateTableRowNumberClasses();
-      this.enableTableResizer();
+      // Set another timeout to ensure that all styles are applied before enabling the table resizer.
+      // This helps avoid any visual glitches or delays in responsiveness.
+      setTimeout(() => this.enableTableResizer());
     });
     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
   };
