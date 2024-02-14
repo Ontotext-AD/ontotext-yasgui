@@ -14,9 +14,9 @@ describe('YASR columns resizable functionality', () => {
     // I expect columns to be resizable,
     YasrSteps.getResultTableHeaderResizableElement().should('have.length.greaterThan', 0);
     // regardless if row number column is visible.
-    YasrSteps.toggleCompactView()
+    YasrSteps.toggleHideRowNumbers()
     YasrSteps.getResultTableHeaderResizableElement().should('have.length.greaterThan', 0);
-    YasrSteps.toggleCompactView();
+    YasrSteps.toggleHideRowNumbers();
 
     // When I configure the component not to be resizable when the number of result columns is less than the specified configuration value,
     YasrPluginPageSteps.configureSmallResizableColumns();
@@ -26,7 +26,7 @@ describe('YASR columns resizable functionality', () => {
     // Then I expect the columns not be resizable.
     YasrSteps.getResultTableHeaderResizableElement().should('have.length', 0);
     // regardless if row number is visible.
-    YasrSteps.toggleCompactView();
+    YasrSteps.toggleHideRowNumbers();
     YasrSteps.getResultTableHeaderResizableElement().should('have.length', 0);
   });
 });

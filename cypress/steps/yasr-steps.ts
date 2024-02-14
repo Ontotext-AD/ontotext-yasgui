@@ -229,7 +229,7 @@ export class YasrSteps {
     return YasrSteps.getYasr(0).find('.row-number-switch');
   }
 
-  static toggleCompactView() {
+  static toggleHideRowNumbers() {
     YasrSteps.getHideRowNumbersCheckbox().click();
   }
 
