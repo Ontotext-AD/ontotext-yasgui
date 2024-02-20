@@ -18,7 +18,7 @@ import { DeepReadonly } from "ts-essentials";
 import { cloneDeep } from "lodash-es";
 
 const ColumnResizer = require("column-resizer");
-const DEFAULT_PAGE_SIZE = 50;
+export const DEFAULT_PAGE_SIZE = 50;
 
 export interface PluginConfig {
   openIriInNewWindow: boolean;
@@ -40,17 +40,17 @@ function expand(this: HTMLDivElement, event: MouseEvent) {
 }
 
 export default class Table implements Plugin<PluginConfig> {
-  private config: DeepReadonly<PluginConfig>;
+  protected config: DeepReadonly<PluginConfig>;
   protected persistentConfig: PersistentConfig = {};
   protected yasr: Yasr;
   private tableControls: Element | undefined;
-  private tableEl: HTMLTableElement | undefined;
+  protected tableEl: HTMLTableElement | undefined;
   protected dataTable: DataTables.Api | undefined;
   private tableFilterField: HTMLInputElement | undefined;
   private tableSizeField: HTMLSelectElement | undefined;
   private tableCompactSwitch: HTMLInputElement | undefined;
   private tableEllipseSwitch: HTMLInputElement | undefined;
-  private tableResizer:
+  protected tableResizer:
     | {
         reset: (options: {
           disable: boolean;
@@ -65,7 +65,7 @@ export default class Table implements Plugin<PluginConfig> {
   public helpReference = "https://triply.cc/docs/yasgui#table";
   public label = "Table";
   public priority = 10;
-  private readonly translationService: TranslationService;
+  protected readonly translationService: TranslationService;
   public getIcon() {
     return drawSvgStringAsElement(drawFontAwesomeIconAsSvg(faTableIcon));
   }
@@ -97,7 +97,7 @@ export default class Table implements Plugin<PluginConfig> {
       },
     },
   };
-  private getRows(): DataRow[] {
+  protected getRows(): DataRow[] {
     if (!this.yasr.results) return [];
     const bindings = this.yasr.results.getBindings();
     if (!bindings) return [];
@@ -479,7 +479,7 @@ export default class Table implements Plugin<PluginConfig> {
     while (this.tableControls?.firstChild) this.tableControls.firstChild.remove();
     this.tableControls?.remove();
   }
-  private destroyResizer() {
+  protected destroyResizer() {
     if (this.tableResizer) {
       this.tableResizer.reset({ disable: true });
       window.removeEventListener("resize", this.tableResizer.onResize);
