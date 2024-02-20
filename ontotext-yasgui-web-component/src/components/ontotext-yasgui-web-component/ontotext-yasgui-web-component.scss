@@ -428,7 +428,7 @@
           display: none;
         }
 
-        &:not(.ellipseTable) {
+        &:not(.extendedTableEllipseTable) {
           .uri-cell {
             word-break: break-word;
             // break-word doesn't work in flex container as expected in our case
@@ -446,7 +446,7 @@
           }
         }
 
-        &.ellipseTable {
+        &.extendedTableEllipseTable {
           wbr {
             display: none;
           }
