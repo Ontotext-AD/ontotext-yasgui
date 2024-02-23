@@ -17,12 +17,13 @@ export class VisualisationUtils {
    * @param orientation
    */
   static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation): void {
+    const selectActiveEditor = () => document.querySelector('.yasgui .tabPanel.active .CodeMirror');
     if (mode === RenderingMode.YASQE || orientation === Orientation.HORIZONTAL) {
       setTimeout(() => {
-        const codemirrorEl = document.querySelector('.CodeMirror') as HTMLElement;
+        const codemirrorEl = selectActiveEditor() as HTMLElement;
         if (codemirrorEl) {
           const visibleWindowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
-          let newHeight = visibleWindowHeight - (document.querySelector('.CodeMirror').getBoundingClientRect().top);
+          let newHeight = visibleWindowHeight - (selectActiveEditor().getBoundingClientRect().top);
           // TODO: this 40px which are contracted by the height are taken from the workbench and
           // probably are related with the workbench footer height.
           newHeight -= 40;
@@ -31,7 +32,7 @@ export class VisualisationUtils {
       });
     } else {
       setTimeout(() => {
-        const codemirrorEl = document.querySelector('.CodeMirror') as HTMLElement;
+        const codemirrorEl = selectActiveEditor() as HTMLElement;
         if (codemirrorEl) {
           codemirrorEl.style.removeProperty('height');
         }
