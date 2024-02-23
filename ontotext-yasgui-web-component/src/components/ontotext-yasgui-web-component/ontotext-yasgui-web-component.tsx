@@ -799,6 +799,13 @@ export class OntotextYasguiWebComponent {
   registerEventHandlers():void {
     const hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
 
+    this.ontotextYasgui.getInstance().on('tabAdd', (_yasgui, _tab) => {
+      VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation);
+    });
+    this.ontotextYasgui.getInstance().on('tabSelect', (_yasgui, _tab) => {
+      VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation);
+    });
+
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
       hint.parentNode && hint.parentNode.removeChild(hint);
       const codemirrorHints: any = document.querySelector('.CodeMirror-hints');
