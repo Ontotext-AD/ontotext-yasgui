@@ -130,6 +130,8 @@ export interface YasguiConfiguration {
 
       showQueryButton?: boolean;
 
+      resizeable?: boolean;
+
       prefixes: string[];
 
       /**
@@ -313,6 +315,7 @@ export const defaultYasqeConfig: Record<string, any> = {
   },
   isVirtualRepository: false,
   showQueryButton: true,
+  resizeable: true,
   readOnly: false
 }
 
