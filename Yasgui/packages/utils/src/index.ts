@@ -159,3 +159,8 @@ export enum EXPLAIN_PLAN_TYPE {
   EXPLAIN = "explain",
   CHAT_GPT_EXPLAIN = "gpt",
 }
+
+export interface OngoingRequestsInfo {
+  queriesCount: number;
+  updatesCount: number;
+}

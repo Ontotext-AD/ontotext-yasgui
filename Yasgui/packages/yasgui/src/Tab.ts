@@ -175,10 +175,20 @@ export class Tab extends EventEmitter {
       delete this.yasgui._tabs[this.persistentJson.id];
     };
     if (confirm) {
+      let closeTabWarningMessage = "";
+      if (this.yasqe?.hasOngoingRequest()) {
+        if ("update" === this.yasqe?.getQueryMode().toLowerCase()) {
+          closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.not_query_update.message");
+        } else {
+          closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.query_non_updates.message");
+        }
+      } else {
+        closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.not_queries_non_updates.message");
+      }
       new CloseTabConfirmation(
         this.yasgui.config.translationService,
         this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.title"),
-        this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.message"),
+        closeTabWarningMessage,
         closeTab
       ).open();
     } else {

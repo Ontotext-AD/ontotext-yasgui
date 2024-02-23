@@ -1218,20 +1218,29 @@ export class Yasqe extends CodeMirror {
   public abortQuery() {
     if (this.req) {
       this.req.abort();
+      this.eventService.emitEvent(this.rootEl, "internalRequestAbortedEvent", {
+        request: this.req,
+        queryMode: this.getQueryMode()?.toLowerCase(),
+      });
       this.emit("queryAbort", this, this.req);
       this.updateAbortQueryButton();
     }
 
-    this.abortCountQuery();
+    this.abortCountRequests();
   }
 
-  public abortCountQuery(): void {
+  public abortCountRequests(): void {
     if (this.countReq) {
       this.countReq.abort();
-      this.eventService.emitEvent(this.rootEl, "internalCountQueryAbortedEvent", { request: this.countReq });
+      this.eventService.emitEvent(this.rootEl, "internalRequestAbortedEvent", { request: this.countReq });
       this.emit("countQueryFinished");
     }
   }
+
+  public hasOngoingRequest(): boolean {
+    return !!this.req;
+  }
+
   public expandEditor() {
     this.setSize(null, "100%");
   }

@@ -13,8 +13,10 @@ import {
   addClass,
   EventService,
   NotificationMessageService,
+  OngoingRequestsInfo,
   removeClass,
   TimeFormattingService,
+  TranslationParameter,
 } from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
 import { CloseTabConfirmation } from "./closeTabConfirmation";
@@ -292,10 +294,10 @@ export class Yasgui extends EventEmitter {
     }
     return tab;
   }
-  public closeOtherTabs(currentTabId: string): void {
+  public closeOtherTabs(skipTabId: string): void {
     const closeOtherTabs = () => {
       for (const tabId of Object.keys(this._tabs)) {
-        if (tabId !== currentTabId) {
+        if (tabId !== skipTabId) {
           this.getTab(tabId)?.close(false);
         }
       }
@@ -303,10 +305,61 @@ export class Yasgui extends EventEmitter {
     new CloseTabConfirmation(
       this.translationService,
       this.translationService.translate("yasgui.tab_list.close_tab.confirmation.title"),
-      this.translationService.translate("yasgui.tab_list.close_other_tabs.confirmation.message"),
+      this.getCloseTabsWarningMessage(this.getOngoingRequestsInfo(skipTabId)),
       closeOtherTabs
     ).open();
   }
+
+  private getCloseTabsWarningMessage(ongoingRequestsInfo: OngoingRequestsInfo): string {
+    let closeTabsWarningMessageLabelKey = "yasgui.tab_list.close_other_tabs.confirmation.";
+
+    if (!ongoingRequestsInfo || ongoingRequestsInfo.queriesCount < 1) {
+      closeTabsWarningMessageLabelKey += "none_queries_";
+    } else if (ongoingRequestsInfo.queriesCount === 1) {
+      closeTabsWarningMessageLabelKey += "one_query_";
+    } else {
+      closeTabsWarningMessageLabelKey += "queries_";
+    }
+
+    if (!ongoingRequestsInfo.updatesCount || ongoingRequestsInfo.updatesCount === 0) {
+      closeTabsWarningMessageLabelKey += "non_updates";
+    } else if (ongoingRequestsInfo.updatesCount === 1) {
+      closeTabsWarningMessageLabelKey += "one_update";
+    } else {
+      closeTabsWarningMessageLabelKey += "updates";
+    }
+
+    closeTabsWarningMessageLabelKey += ".message";
+    const params: TranslationParameter[] = [
+      {
+        key: "queriesCount",
+        value: `${ongoingRequestsInfo.queriesCount}`,
+      },
+      {
+        key: "updatesCount",
+        value: `${ongoingRequestsInfo.updatesCount}`,
+      },
+    ];
+    return this.translationService.translate(closeTabsWarningMessageLabelKey, params);
+  }
+  public getOngoingRequestsInfo(skipTabId?: string): OngoingRequestsInfo {
+    return Object.values(this._tabs).reduce(
+      (counts, tab) => {
+        if (!!skipTabId && skipTabId === tab.getId()) {
+          return counts;
+        }
+
+        const yasqe = tab.getYasqe();
+        if (yasqe && yasqe.hasOngoingRequest()) {
+          const queryMode = yasqe.getQueryMode();
+          counts[queryMode === "query" ? "queriesCount" : "updatesCount"] += 1;
+        }
+        return counts;
+      },
+      { queriesCount: 0, updatesCount: 0 }
+    );
+  }
+
   /**
    * Checks if two persistent tab configuration are the same based.
    * It isnt a strict equality, as falsy values (e.g. a header that isnt set in one tabjson) isnt taken into consideration
