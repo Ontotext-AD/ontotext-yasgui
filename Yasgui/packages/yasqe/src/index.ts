@@ -524,7 +524,8 @@ export class Yasqe extends CodeMirror {
     addClass(chip, "resizeChip");
     this.resizeWrapper.appendChild(chip);
     this.resizeWrapper.addEventListener("mousedown", this.initDrag, false);
-    this.resizeWrapper.addEventListener("dblclick", this.expandEditor);
+    // We don't want this behavior, when the component is used with other components in a view, this behavior can make the view look strange.
+    // this.resizeWrapper.addEventListener("dblclick", this.expandEditor);
     this.rootEl.appendChild(this.resizeWrapper);
   }
   private drawKeyboardShortcutsButton() {
@@ -1242,7 +1243,7 @@ export class Yasqe extends CodeMirror {
     this.abortQuery();
     this.unregisterEventListeners();
     this.resizeWrapper?.removeEventListener("mousedown", this.initDrag, false);
-    this.resizeWrapper?.removeEventListener("dblclick", this.expandEditor);
+    // this.resizeWrapper?.removeEventListener("dblclick", this.expandEditor);
     for (const autocompleter in this.autocompleters) {
       this.disableCompleter(autocompleter);
     }
