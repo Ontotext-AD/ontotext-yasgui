@@ -1,4 +1,5 @@
 import {Tab} from './tab';
+import {OngoingRequestsInfo} from '../ongoing-requests-info';
 
 export class Yasgui {
   persistentConfig: any;
@@ -11,5 +12,6 @@ export class Yasgui {
   destroy: () => void;
   on: (event, handler) => void;
   emitTabChange: (tab: Tab) => void;
+  getOngoingRequestsInfo: (skipTabId?: string) => OngoingRequestsInfo;
   resetResults: (resetCurrentTab: boolean) => void;
 }

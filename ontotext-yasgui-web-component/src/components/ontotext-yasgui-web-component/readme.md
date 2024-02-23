@@ -53,9 +53,9 @@ yasgui can be tweaked using the values from the configuration.
 
 ## Methods
 
-### `abortAllCountQuery() => Promise<any>`
+### `abortAllRequests() => Promise<any>`
 
-Aborts the all running count queries if any.
+Aborts all running requests.
 
 #### Returns
 
@@ -100,6 +100,16 @@ Fetches the query result and return it as JSON.
 #### Returns
 
 Type: `Promise<unknown>`
+
+
+
+### `getOngoingRequestsInfo() => Promise<OngoingRequestsInfo>`
+
+Fetches info about ongoing requests.
+
+#### Returns
+
+Type: `Promise<OngoingRequestsInfo>`
 
 
 

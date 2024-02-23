@@ -9,7 +9,7 @@ import {InternalQueryExecuted} from '../models/internal-events/internal-query-ex
 import {InternalQueryEvent} from '../models/internal-events/internal-query-event';
 import {InternalCountQueryEvent} from '../models/internal-events/internal-count-query-event';
 import {InternalCountQueryResponseEvent} from '../models/internal-events/internal-count-query-response-event';
-import {InternalCountQueryAbortedEvent} from '../models/internal-events/internal-count-query-aborted-event';
+import {InternalRequestAbortedEvent} from '../models/internal-events/internal-request-aborted-event';
 
 /**
  * The purpose of this service is to mitigate the issue where the stencil builtin Event decorator
@@ -81,8 +81,8 @@ export class EventService implements EventEmitter {
         return new InternalCountQueryEvent(payload.request, payload.query, payload.queryMode, payload.queryType, payload.pageSize);
       case InternalEventType.INTERNAL_COUNT_QUERY_RESPONSE_EVENT:
         return new InternalCountQueryResponseEvent(payload.response);
-      case InternalEventType.INTERNAL_COUNT_QUERY_ABORTED_EVENT:
-        return new InternalCountQueryAbortedEvent(payload.request)
+      case InternalEventType.INTERNAL_REQUEST_ABORTED_EVENT:
+        return new InternalRequestAbortedEvent(payload.request, payload.queryMode)
       default:
         throw Error('Can\'t find internal event definition for type: ' + type);
     }

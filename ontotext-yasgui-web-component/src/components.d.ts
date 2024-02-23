@@ -23,6 +23,7 @@ import { OutputEvent } from "./models/output-events/output-event";
 import { RenderingMode } from "./models/yasgui-configuration";
 import { Tab } from "./models/yasgui/tab";
 import { YasqeButtonType } from "./models/yasqe-button-name";
+import { OngoingRequestsInfo } from "./models/ongoing-requests-info";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     /**
@@ -132,9 +133,9 @@ export namespace Components {
      */
     interface OntotextYasgui {
         /**
-          * Aborts the all running count queries if any.
+          * Aborts all running requests.
          */
-        "abortAllCountQuery": () => Promise<any>;
+        "abortAllRequests": () => Promise<any>;
         /**
           * Aborts the running query if any.
          */
@@ -156,6 +157,10 @@ export namespace Components {
           * Fetches the query result and return it as JSON.
          */
         "getEmbeddedResultAsJson": () => Promise<unknown>;
+        /**
+          * Fetches info about ongoing requests.
+         */
+        "getOngoingRequestsInfo": () => Promise<OngoingRequestsInfo>;
         /**
           * Fetches the query from YASQE editor.
          */

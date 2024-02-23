@@ -133,6 +133,47 @@ describe('Yasgui tabs', () => {
     YasguiSteps.getTabs().should('have.length', 1);
     DefaultViewPageSteps.getOutputField().should('have.value', 'Last tab must remain open.');
   });
+
+  it('Should display information about ongoing queries if try to close a tab with ongoing  query', () => {
+    // When I execute a long-running query,
+    QueryStubs.stubLongRunningQuery();
+    YasguiSteps.openANewTab();
+    YasqeSteps.executeQueryWithoutWaitResult(1);
+    // and try to close the tab
+    YasguiSteps.closeTab(1);
+
+    // Then I expect to see confirm dialog that explain me about the ongoing query.
+    ConfirmationDialogSteps.getConfirmation().should('be.visible');
+    ConfirmationDialogSteps.getConfirmation().contains('You have running 1 query, that will be aborted.');
+  });
+
+  it('Should not display information about ongoing queries if try to close other tabs without ongoing queries in current one', () => {
+    // When I execute a long-running query in a tab (other tabs have not ongoing queries),
+    QueryStubs.stubLongRunningQuery();
+    YasguiSteps.openANewTab();
+    YasqeSteps.executeQueryWithoutWaitResult(1);
+    // and try to close other tabs.
+    YasguiSteps.openTabContextMenu(1).should('be.visible');
+    TabContextMenu.closeOtherTabs();
+
+    // Then I expect to see confirmation dialog,
+    ConfirmationDialogSteps.getConfirmation().should('contain.text', 'Are you sure you want to close all other query tabs?');
+    // without explanation that there are ongoing queries.
+    ConfirmationDialogSteps.getConfirmation().should('not.contain.text', 'You have running queries in your tabs, and they will be aborted when you close the tabs.');
+  });
+
+  it('Should display information about ongoing queries if try to close other tabs wit ongoing queries', () => {
+    // When I execute a long-running query in a tab,
+    QueryStubs.stubLongRunningQuery();
+    YasguiSteps.openANewTab();
+    YasqeSteps.executeQueryWithoutWaitResult(1);
+    // and try to close other tabs from different tab (from tab that haven't ongoing query).
+    YasguiSteps.openTabContextMenu(0).should('be.visible');
+    TabContextMenu.closeOtherTabs();
+
+    // Then I expect to see confirm message that explain me about the ongoing queries.
+    ConfirmationDialogSteps.getConfirmation().should('contain.text', 'You have running 1 query, that will be aborted.');
+  });
 });
 
 function openNewTab(tabIndex: number, expectedTabsCount: number) {
