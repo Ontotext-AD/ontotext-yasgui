@@ -88,7 +88,7 @@ export class ConfirmationDialog {
               <button class="close-button icon-close"
                       onClick={(evt) => this.onClose(evt)}></button>
             </div>
-            <div class="dialog-body">{this.config.message}</div>
+            <div class="dialog-body" innerHTML={this.config.message}/>
             <div class="dialog-footer">
               <button class="cancel-button"
                       onClick={(evt) => this.onClose(evt)}

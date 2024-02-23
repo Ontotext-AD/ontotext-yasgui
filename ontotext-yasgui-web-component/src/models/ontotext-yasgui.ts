@@ -3,6 +3,7 @@ import {YasguiConfiguration} from './yasgui-configuration';
 import {TabQueryModel} from "./external-yasgui-configuration";
 import {Yasgui} from './yasgui/yasgui';
 import {Tab} from './yasgui/tab';
+import {OngoingRequestsInfo} from './ongoing-requests-info';
 
 /**
  * An adapter around the actual yasgui instance.
@@ -65,15 +66,19 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().query();
   }
 
+  getOngoingRequestsInfo(): OngoingRequestsInfo {
+    return this.getInstance().getOngoingRequestsInfo();
+  }
+
   abortQuery(): void {
     this.yasgui.getTab().getYasqe().abortQuery();
   }
 
-  abortAllCountQuery(): void {
+  abortAllRequests(): void {
     Object.values(this.yasgui._tabs).forEach((tab: any) => {
       const yasqe = tab.getYasqe();
       if (yasqe) {
-        yasqe.abortCountQuery();
+        yasqe.abortQuery();
       }
     });
   }

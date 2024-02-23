@@ -30,7 +30,8 @@ import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugi
 import {ChartsPlugin} from "../../plugins/yasr/charts/charts-plugin";
 import {Tab} from '../../models/yasgui/tab';
 import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
-import {InternalCountQueryAbortedEvent} from '../../models/internal-events/internal-count-query-aborted-event';
+import {InternalRequestAbortedEvent} from '../../models/internal-events/internal-request-aborted-event';
+import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -367,6 +368,17 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Fetches info about ongoing requests.
+   */
+  @Method()
+  getOngoingRequestsInfo(): Promise<OngoingRequestsInfo> {
+    return this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        return ontotextYasgui.getOngoingRequestsInfo();
+      });
+  }
+
+  /**
    * Aborts the running query if any.
    */
   @Method()
@@ -378,13 +390,13 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
-   * Aborts the all running count queries if any.
+   * Aborts all running requests.
    */
   @Method()
-  abortAllCountQuery(): Promise<any> {
+  abortAllRequests(): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
-        ontotextYasgui.abortAllCountQuery();
+        ontotextYasgui.abortAllRequests();
       });
   }
 
@@ -648,8 +660,8 @@ export class OntotextYasguiWebComponent {
     this.output.emit(toOutputEvent(event));
   }
 
-  @Listen('internalCountQueryAbortedEvent')
-  onCountQueryAborted(event: CustomEvent<InternalCountQueryAbortedEvent>) {
+  @Listen('internalRequestAbortedEvent')
+  onQueryAborted(event: CustomEvent<InternalRequestAbortedEvent>) {
     this.output.emit(toOutputEvent(event));
   }
 
