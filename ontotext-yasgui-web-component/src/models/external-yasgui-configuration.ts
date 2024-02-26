@@ -53,6 +53,11 @@ export interface ExternalYasguiConfiguration {
   showQueryButton?: boolean;
 
   /**
+   * Flag that controls whether the YASQE editor is resizable. The default value is true.
+   */
+  showYasqeResizer: boolean;
+
+  /**
    * Flag that controls displaying the loader during the run query process.
    */
   showQueryLoader?: boolean;

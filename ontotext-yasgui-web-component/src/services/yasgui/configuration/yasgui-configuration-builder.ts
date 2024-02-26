@@ -140,6 +140,7 @@ export class YasguiConfigurationBuilder {
     }
 
     config.yasguiConfig.yasqe.showQueryButton = externalConfiguration.showQueryButton !== undefined ? externalConfiguration.showQueryButton : defaultYasqeConfig.showQueryButton;
+    config.yasguiConfig.yasqe.resizeable = externalConfiguration.showYasqeResizer !== undefined ? externalConfiguration.showYasqeResizer : defaultYasqeConfig.resizeable;
 
     config.yasguiConfig.yasqe.yasqeActionButtons =
       externalConfiguration.yasqeActionButtons !== undefined && externalConfiguration.yasqeActionButtons.length ?
