@@ -727,6 +727,10 @@
 
     .yasgui {
 
+      .tabsList {
+        display: none;
+      }
+
       .tabPanel > div > div:nth-of-type(2) {
         width: 100%;
       }
