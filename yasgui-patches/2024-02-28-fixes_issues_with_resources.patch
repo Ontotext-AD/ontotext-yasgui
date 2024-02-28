@@ -1,0 +1,55 @@
+Subject: [PATCH] fixes issues with resources
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision e2f5a5070bc0aee5f9d88a55637eb424f57ab6a1)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision c299f46784ce404e6af93d4e222dbbc0a973c782)
+@@ -175,6 +175,8 @@
+       this.emit("close", this);
+       this.yasgui.tabElements.get(this.persistentJson.id).delete();
+       delete this.yasgui._tabs[this.persistentJson.id];
++      // Calls the yasqe destroy method to unsubscribe all resources.
++      this.yasqe?.destroy();
+     };
+     if (confirm) {
+       new CloseTabConfirmation(
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision e2f5a5070bc0aee5f9d88a55637eb424f57ab6a1)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision c299f46784ce404e6af93d4e222dbbc0a973c782)
+@@ -575,6 +575,13 @@
+ 
+     yasqeFooterButtons.appendChild(abortButtonTooltip);
+     this.rootEl.appendChild(yasqeFooterButtons);
++    this.subscriptions.push(
++      this.translationService.subscribeForLanguageChange({
++        name: "AbortButtonLanguageChangeObserver",
++        notify: this.updateAbortQueryLabels,
++      })
++    );
++
+     this.updateAbortQueryButton();
+   }
+ 
+@@ -597,13 +604,6 @@
+       removeClass(this.abortQueryButton, "disabled");
+     }
+ 
+-    this.subscriptions.push(
+-      this.translationService.subscribeForLanguageChange({
+-        name: "AbortButtonLanguageChangeObserver",
+-        notify: this.updateAbortQueryLabels,
+-      })
+-    );
+-
+     this.updateAbortQueryLabels();
+   }
+ 
