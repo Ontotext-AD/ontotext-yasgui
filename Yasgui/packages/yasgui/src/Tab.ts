@@ -175,6 +175,8 @@ export class Tab extends EventEmitter {
       this.emit("close", this);
       this.yasgui.tabElements.get(this.persistentJson.id).delete();
       delete this.yasgui._tabs[this.persistentJson.id];
+      // Calls the yasqe destroy method to unsubscribe all resources.
+      this.yasqe?.destroy();
     };
     if (confirm) {
       new CloseTabConfirmation(
