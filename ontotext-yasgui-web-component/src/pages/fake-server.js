@@ -9,6 +9,10 @@ module.exports = function (req, res, next) {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(multicolumnResults));
+  } else if (req.url === '/repositories/rdf-star') {
+    // custom response overriding the dev server
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(rdfStarResponse));
   } else if (req.url === '/repositories/chart-data') {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
@@ -4353,6 +4357,37 @@ const multicolumnResults = {
     ]
   }
 }
+
+const rdfStarResponse = {
+  "head" : {
+    "vars" : [
+      "a"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "a" : {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "urn:test"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/2000/01/rdf-schema#label"
+            },
+            "o" : {
+              "type" : "literal",
+              "value" : "test"
+            }
+          }
+        }
+      }
+    ]
+  }
+};
 
 const queryResponse = {
   "head": {

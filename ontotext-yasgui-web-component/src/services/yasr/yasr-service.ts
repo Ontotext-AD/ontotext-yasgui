@@ -100,15 +100,14 @@ export class YasrService {
 
   // @ts-ignore
   private static getTripleCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
-
     const tripleAsString = this.getValueAsString(binding, false);
     const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}`;
-    const tripleLinkTitle = HtmlUtil.escapeHTMLEntities(tripleAsString);
+    const escapedTriple = HtmlUtil.escapeHTMLEntities(tripleAsString);
 
     return `<div class="triple-cell">` +
               `<div class="triple-open-link">` +
-                `<a title="${tripleLinkTitle}" class="triple-link" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</a>` +
-                `<copy-resource-link-button title="${tripleLinkTitle}" class="resource-copy-link" uri="${HtmlUtil.escapeHTMLEntities(tripleAsString)}"></copy-resource-link-button>` +
+                `<a title="${escapedTriple}" class="triple-link" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</a>` +
+                `<copy-resource-link-button title="${escapedTriple}" class="resource-copy-link" uri="${escapedTriple}"></copy-resource-link-button>` +
                 `<span class="spacer"></span>` +
               `</div>` +
               `<div class="triple-list">` +
@@ -117,8 +116,8 @@ export class YasrService {
                 `<div>${this.toCellContent(binding.value['o'], context)}</div>` +
               `</div>` +
               `<div class="triple-close-link">` +
-                `<a title="${tripleLinkTitle}" class="triple-link triple-link-end" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</a>` +
-                `<copy-resource-link-button title="${tripleLinkTitle}" class="resource-copy-link" uri="${HtmlUtil.escapeHTMLEntities(tripleAsString)}"></copy-resource-link-button>` +
+                `<a title="${escapedTriple}" class="triple-link triple-link-end" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</a>` +
+                `<copy-resource-link-button title="${escapedTriple}" class="resource-copy-link" uri="${escapedTriple}"></copy-resource-link-button>` +
                 `<span class="spacer"></span>` +
               `</div>` +
             `</div>`;

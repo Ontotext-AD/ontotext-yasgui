@@ -75,6 +75,13 @@ export class YasrSteps {
       .find('.resource-copy-link a');
   }
 
+  static clickOnCopyTripleLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    return this.getResultCell(rowNumber, cellNumber, yasrIndex)
+      .find('.triple-open-link').eq(0)
+      .realHover()
+      .find('.resource-copy-link a').realClick();
+  }
+
   static clickOnCopyResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
     this.showSharedResourceLink(rowNumber, cellNumber, yasrIndex).realClick();
   }
