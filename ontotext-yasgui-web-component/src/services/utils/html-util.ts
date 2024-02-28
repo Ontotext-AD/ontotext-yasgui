@@ -3,8 +3,14 @@ const INTERACTIVE_ELEMENTS_SELECTOR = 'button, [href], input:not([type="hidden"]
 export class HtmlUtil {
 
   static escapeHTMLEntities(text: string): string {
-    //taken from http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
-    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    // Escape the text parameter to prevent XSS attacks.
+    // The text parameter can be like "<<<urn:test> <http://www.w3.org/2000/01/rdf-schema#label> "test">>".
+    // The result should be "&lt;&lt;&lt;urn:test&gt; &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; &quot;test&quot;&gt;&gt;&gt;".
+    let escapedText = text;
+    if (text) {
+      escapedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    return escapedText;
   }
 
   static decodeHTMLEntities(text: string): string {
