@@ -101,17 +101,6 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkInput().should('have.value', 'http://ontotext-yasgui/generated-yri#page_1-row_2-column_2');
     });
 
-    it('Should see the copied triple link in the copy link dialog', () => {
-      // When I execute a query which returns results of type is uri.
-      const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(2);
-      QueryStubs.stubQueryResults(queryDescription);
-      YasqeSteps.executeQuery();
-      // And copy resource link dialog is open
-      openCopyResourceLinkDialog(1);
-      // Then I expect the input of dialog to have value.
-      YasrSteps.getCopyResourceLinkInput().should('have.value', 'http://ontotext-yasgui/generated-yri#page_1-row_2-column_2');
-    });
-
     it('Should put the link in the clipboard on copy link button click', () => {
       // When I execute a query which returns results of type is uri.
       const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
