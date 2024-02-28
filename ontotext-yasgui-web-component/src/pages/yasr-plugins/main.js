@@ -2,6 +2,10 @@ const ontoElement = getOntotextYasgui('yasr-plugins');
 
 setOutputEventListener(ontoElement);
 
+let textAreaElement = document.createElement('textarea');
+textAreaElement.id = 'output';
+document.body.appendChild(textAreaElement);
+
 function attachMessageHandler() {
   ontoElement.addEventListener('output', (event) => {
     if ('notificationMessage' === event.detail.TYPE) {
