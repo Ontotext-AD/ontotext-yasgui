@@ -15,7 +15,7 @@ export default class ExtendedError extends Error {
 
   private createErrorElement(error: Parser.ErrorSummary): HTMLDivElement {
     const errorResponseElement = document.createElement("div");
-    errorResponseElement.classList.add("error-response-plugin");
+    errorResponseElement.classList.add("error-response-plugin", "alert");
     errorResponseElement.appendChild(this.getErrorStatusElement(error));
     this.errorMessageElement = this.createErrorMessageElement();
     const isErrorMessageBig = error?.text?.length > COUNT_OF_ERROR_CHARACTERS_TO_BE_SHOWN;
