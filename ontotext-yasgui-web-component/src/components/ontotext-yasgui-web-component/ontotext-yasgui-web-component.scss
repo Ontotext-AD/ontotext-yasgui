@@ -494,7 +494,8 @@
             display: flex;
             flex-direction: column;
 
-            .uri-link {
+            .uri-link,
+            .nonUri {
               padding-left: 20px;
             }
           }
@@ -508,7 +509,8 @@
         }
 
         tr td > div,
-        .uri-cell {
+        .uri-cell,
+        .literal-cell {
           display: flex;
           justify-items: end;
           align-items: center;
