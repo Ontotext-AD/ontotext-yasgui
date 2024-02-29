@@ -151,8 +151,10 @@ export class Tab extends EventEmitter {
   }
   public close(confirm = true) {
     if (this.yasgui.persistentConfig.getTabs().length === 1) {
-      this.yasgui.config.notificationMessageService.error('close_last_tab_warning',
-        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message"));
+      this.yasgui.config.notificationMessageService.error(
+        "close_last_tab_warning",
+        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message")
+      );
       return;
     }
     const closeTab = () => {
@@ -173,17 +175,25 @@ export class Tab extends EventEmitter {
       this.emit("close", this);
       this.yasgui.tabElements.get(this.persistentJson.id).delete();
       delete this.yasgui._tabs[this.persistentJson.id];
+      // Calls the yasqe destroy method to unsubscribe all resources.
+      this.yasqe?.destroy();
     };
     if (confirm) {
       let closeTabWarningMessage = "";
       if (this.yasqe?.hasOngoingRequest()) {
         if ("update" === this.yasqe?.getQueryMode().toLowerCase()) {
-          closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.not_query_update.message");
+          closeTabWarningMessage = this.yasgui.config.translationService.translate(
+            "yasgui.tab_list.close_tab.confirmation.not_query_update.message"
+          );
         } else {
-          closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.query_non_updates.message");
+          closeTabWarningMessage = this.yasgui.config.translationService.translate(
+            "yasgui.tab_list.close_tab.confirmation.query_non_updates.message"
+          );
         }
       } else {
-        closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.not_queries_non_updates.message");
+        closeTabWarningMessage = this.yasgui.config.translationService.translate(
+          "yasgui.tab_list.close_tab.confirmation.not_queries_non_updates.message"
+        );
       }
       new CloseTabConfirmation(
         this.yasgui.config.translationService,

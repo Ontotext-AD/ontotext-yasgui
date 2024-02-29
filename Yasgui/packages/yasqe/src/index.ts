@@ -575,6 +575,13 @@ export class Yasqe extends CodeMirror {
 
     yasqeFooterButtons.appendChild(abortButtonTooltip);
     this.rootEl.appendChild(yasqeFooterButtons);
+    this.subscriptions.push(
+      this.translationService.subscribeForLanguageChange({
+        name: "AbortButtonLanguageChangeObserver",
+        notify: this.updateAbortQueryLabels,
+      })
+    );
+
     this.updateAbortQueryButton();
   }
 
@@ -596,13 +603,6 @@ export class Yasqe extends CodeMirror {
     } else {
       removeClass(this.abortQueryButton, "disabled");
     }
-
-    this.subscriptions.push(
-      this.translationService.subscribeForLanguageChange({
-        name: "AbortButtonLanguageChangeObserver",
-        notify: this.updateAbortQueryLabels,
-      })
-    );
 
     this.updateAbortQueryLabels();
   }
