@@ -28,7 +28,7 @@ export class TranslationService {
 
   private bundle = {en, fr}
 
-  private languageChangeObservers: LanguageChangeObserver[] = [];
+  private languageChangeObservers: Record<string, LanguageChangeObserver[]> = {};
   private translationChangedObservers: Record<string, TranslationObserver[]> = {};
 
   /**
@@ -90,9 +90,11 @@ export class TranslationService {
    * itself.
    */
   subscribeForLanguageChange(observer: LanguageChangeObserver): () => void {
-    const existingObserverIndex = this.languageChangeObservers.findIndex((subscription) => subscription.name === observer.name);
-    if (existingObserverIndex === -1) {
-      this.languageChangeObservers.push(observer);
+    const languageChangeObservers = this.languageChangeObservers[observer.name];
+    if (languageChangeObservers) {
+      languageChangeObservers.push(observer);
+    } else {
+      this.languageChangeObservers[observer.name] = [observer];
     }
     return () => this.unsubscribeFromLanguageChange(observer);
   }
@@ -102,14 +104,19 @@ export class TranslationService {
    * @param observer The observer to be unsubscribed.
    */
   unsubscribeFromLanguageChange(observer: LanguageChangeObserver): void {
-    const existingObserverIndex = this.languageChangeObservers.findIndex((subscription) => subscription.name === observer.name);
-    if (existingObserverIndex !== -1) {
-      this.languageChangeObservers.splice(existingObserverIndex, 1);
+    const languageChangeObservers = this.languageChangeObservers[observer.name];
+    if (languageChangeObservers) {
+      const index = languageChangeObservers.indexOf(observer);
+      if (index !== -1) {
+        languageChangeObservers.splice(index, 1);
+      }
     }
   }
 
   private notifyLanguageChangeObservers(currentLang: string) {
-    this.languageChangeObservers.forEach((observer) => observer.notify(currentLang));
+    Object.values(this.languageChangeObservers).forEach((observers) => {
+      observers.forEach((observer) => observer.notify(currentLang))
+    });
   }
 
   /**
