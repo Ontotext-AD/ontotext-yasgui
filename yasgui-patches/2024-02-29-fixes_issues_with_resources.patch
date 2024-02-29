@@ -1,0 +1,88 @@
+Subject: [PATCH] fixes issues with resources
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 6f37e95a8a44f97b7bb5cd3d22e0f49c73121cf5)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision e303c2160259a900d859ace3d886fc8db4ee5237)
+@@ -151,8 +151,10 @@
+   }
+   public close(confirm = true) {
+     if (this.yasgui.persistentConfig.getTabs().length === 1) {
+-      this.yasgui.config.notificationMessageService.error('close_last_tab_warning',
+-        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message"));
++      this.yasgui.config.notificationMessageService.error(
++        "close_last_tab_warning",
++        this.yasgui.config.translationService.translate("yasgui.tab_list.close_last_tab.warning.message")
++      );
+       return;
+     }
+     const closeTab = () => {
+@@ -173,17 +175,25 @@
+       this.emit("close", this);
+       this.yasgui.tabElements.get(this.persistentJson.id).delete();
+       delete this.yasgui._tabs[this.persistentJson.id];
++      // Calls the yasqe destroy method to unsubscribe all resources.
++      this.yasqe?.destroy();
+     };
+     if (confirm) {
+       let closeTabWarningMessage = "";
+       if (this.yasqe?.hasOngoingRequest()) {
+         if ("update" === this.yasqe?.getQueryMode().toLowerCase()) {
+-          closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.not_query_update.message");
++          closeTabWarningMessage = this.yasgui.config.translationService.translate(
++            "yasgui.tab_list.close_tab.confirmation.not_query_update.message"
++          );
+         } else {
+-          closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.query_non_updates.message");
++          closeTabWarningMessage = this.yasgui.config.translationService.translate(
++            "yasgui.tab_list.close_tab.confirmation.query_non_updates.message"
++          );
+         }
+       } else {
+-        closeTabWarningMessage = this.yasgui.config.translationService.translate("yasgui.tab_list.close_tab.confirmation.not_queries_non_updates.message");
++        closeTabWarningMessage = this.yasgui.config.translationService.translate(
++          "yasgui.tab_list.close_tab.confirmation.not_queries_non_updates.message"
++        );
+       }
+       new CloseTabConfirmation(
+         this.yasgui.config.translationService,
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 6f37e95a8a44f97b7bb5cd3d22e0f49c73121cf5)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision e303c2160259a900d859ace3d886fc8db4ee5237)
+@@ -575,6 +575,13 @@
+ 
+     yasqeFooterButtons.appendChild(abortButtonTooltip);
+     this.rootEl.appendChild(yasqeFooterButtons);
++    this.subscriptions.push(
++      this.translationService.subscribeForLanguageChange({
++        name: "AbortButtonLanguageChangeObserver",
++        notify: this.updateAbortQueryLabels,
++      })
++    );
++
+     this.updateAbortQueryButton();
+   }
+ 
+@@ -597,13 +604,6 @@
+       removeClass(this.abortQueryButton, "disabled");
+     }
+ 
+-    this.subscriptions.push(
+-      this.translationService.subscribeForLanguageChange({
+-        name: "AbortButtonLanguageChangeObserver",
+-        notify: this.updateAbortQueryLabels,
+-      })
+-    );
+-
+     this.updateAbortQueryLabels();
+   }
+ 
