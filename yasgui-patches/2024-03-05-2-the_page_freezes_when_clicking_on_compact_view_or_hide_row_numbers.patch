@@ -1,0 +1,180 @@
+Subject: [PATCH] The page freezes when clicking on 'Compact view' or 'Hide row numbers'.
+---
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision a744e31b86b4a57264b07a63f96fb7bdfbc874f4)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision ece8874631b795977087cdf3f5e72caf8942a535)
+@@ -70,9 +70,6 @@
+     this.translationService = this.config.translationService;
+     this.storage = new YStorage(Yasr.storageNamespace);
+     this.getConfigFromStorage();
+-    if (this.config.showQueryLoader) {
+-      this.createLoader();
+-    }
+     this.headerEl = document.createElement("div");
+     this.headerEl.className = "yasr_header";
+     this.rootEl.appendChild(this.headerEl);
+@@ -82,9 +79,11 @@
+     this.resultsEl = document.createElement("div");
+     this.resultsEl.className = "yasr_results";
+     this.resultsEl.id = uniqueId("resultsId");
++    if (this.config.showQueryLoader) {
++      this.createLoader();
++    }
+     this.rootEl.appendChild(this.resultsEl);
+     this.initializePlugins();
+-    this.drawHeader();
+ 
+     const resp = data || this.getResponseFromStorage();
+     if (resp) {
+@@ -93,6 +92,7 @@
+       const draw = false;
+       this.setResponse(resp, undefined, undefined, undefined, undefined, undefined, draw);
+     }
++    this.drawHeader();
+   }
+ 
+   public showWarning(message: string, type: "warning" | "error" | "success" = "warning", noButton = false) {
+@@ -231,6 +231,9 @@
+       this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
+       return;
+     }
++    removeClass(this.headerEl, "hidden");
++    removeClass(this.resultsEl, "hidden");
++    removeClass(this.fallbackInfoEl, "hidden");
+     this.updatePluginSelectorNames();
+     const compatiblePlugins = this.getCompatiblePlugins();
+     let pluginToDraw: string | undefined;
+@@ -356,7 +359,7 @@
+     this.rootEl.appendChild(this.loader);
+   }
+ 
+-  showLoader(message: string, showQueryProgress = false) {
++  showLoader(message: string, showQueryProgress = false, hideHeaderEl = true) {
+     if (!this.loader) {
+       return;
+     }
+@@ -366,9 +369,13 @@
+     this.loader.showQueryProgress = showQueryProgress;
+     // @ts-ignore
+     this.loader.hidden = false;
+-    addClass(this.headerEl, "hidden");
+-    addClass(this.resultsEl, "hidden");
+-    addClass(this.fallbackInfoEl, "hidden");
++    if (hideHeaderEl) {
++      addClass(this.headerEl, "rendering_result");
++    } else {
++      removeClass(this.headerEl, "rendering_result");
++    }
++    addClass(this.resultsEl, "rendering_result");
++    addClass(this.fallbackInfoEl, "rendering_result");
+   }
+ 
+   hideLoader() {
+@@ -376,10 +383,9 @@
+     if (!this.loader || this.yasqe.isQueryRunning()) {
+       return;
+     }
+-    removeClass(this.headerEl, "hidden");
+-    removeClass(this.resultsEl, "hidden");
+-    removeClass(this.fallbackInfoEl, "hidden");
+-    // @ts-ignore
++    removeClass(this.headerEl, "rendering_result");
++    removeClass(this.resultsEl, "rendering_result");
++    removeClass(this.fallbackInfoEl, "rendering_result");
+     this.loader.hidden = true;
+   }
+ 
+Index: Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision a744e31b86b4a57264b07a63f96fb7bdfbc874f4)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision ece8874631b795977087cdf3f5e72caf8942a535)
+@@ -11,6 +11,7 @@
+ export class ExtendedTable extends Table {
+   public label = "Extended_Table";
+   public priority = 11;
++  private tableRenderingHandlerId: number | undefined;
+ 
+   private readonly getCellContentCustom?: (
+     binding: Parser.BindingValue,
+@@ -244,24 +245,28 @@
+   protected handleSetEllipsisToggle = (event: Event) => {
+     // Store in persistentConfig
+     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
++    this.showLoader(true);
+     // Set in a timeout because if there are many columns to be displayed, the checkbox is updated after the table is refreshed.
+     // This looks like nothing happened from the user's point of view.
+-    setTimeout(() => this.updateTableEllipseClasses());
++    setTimeout(() => {
++      this.updateTableEllipseClasses();
++      this.showLoader(false);
++    });
+     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+   };
+ 
+   protected handleSetCompactToggle = (event: Event) => {
+     // Store in persistentConfig
+     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
++    // the resizer is refreshed because it has to recalculate the position fo the column resizer elements.
++    this.disableTableResizer();
++    this.showLoader(true);
+     // Set in a timeout because if there are many columns to be displayed, the checkbox is updated after the table is refreshed.
+     // This looks like nothing happened from the user's point of view.
+     setTimeout(() => {
+-      // the resizer is refreshed because it has to recalculate the position fo the column resizer elements.
+-      this.disableTableResizer();
+       this.updateTableRowNumberClasses();
+-      // Set another timeout to ensure that all styles are applied before enabling the table resizer.
+-      // This helps avoid any visual glitches or delays in responsiveness.
+-      setTimeout(() => this.enableTableResizer());
++      this.enableTableResizer();
++      this.showLoader(false);
+     });
+     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+   };
+@@ -275,6 +280,27 @@
+     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
+   };
+ 
++  private showLoader(rendering: boolean): void {
++    this.cancelTableRenderingHandler();
++    if (typeof window.requestAnimationFrame === "function") {
++      if (rendering) {
++        const message = this.translationService.translate("loader.message.query.editor.render.results");
++        this.yasr.showLoader(message, false, false);
++      } else {
++        requestAnimationFrame(() => {
++          this.tableRenderingHandlerId = undefined;
++          this.yasr.hideLoader();
++        });
++      }
++    }
++  }
++
++  private cancelTableRenderingHandler() {
++    if (this.tableRenderingHandlerId !== undefined && typeof window.requestAnimationFrame === "function") {
++      window.cancelAnimationFrame(this.tableRenderingHandlerId);
++    }
++  }
++
+   private updateTableEllipseClasses() {
+     if (this.persistentConfig.isEllipsed === true) {
+       addClass(this.getTableElement(), "extendedTableEllipseTable");
+@@ -291,4 +317,9 @@
+       addClass(tableElement, "withRowNumber");
+     }
+   }
++
++  destroy() {
++    super.destroy();
++    this.cancelTableRenderingHandler();
++  }
+ }
