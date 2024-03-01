@@ -70,9 +70,6 @@ export class Yasr extends EventEmitter {
     this.translationService = this.config.translationService;
     this.storage = new YStorage(Yasr.storageNamespace);
     this.getConfigFromStorage();
-    if (this.config.showQueryLoader) {
-      this.createLoader();
-    }
     this.headerEl = document.createElement("div");
     this.headerEl.className = "yasr_header";
     this.rootEl.appendChild(this.headerEl);
@@ -82,9 +79,11 @@ export class Yasr extends EventEmitter {
     this.resultsEl = document.createElement("div");
     this.resultsEl.className = "yasr_results";
     this.resultsEl.id = uniqueId("resultsId");
+    if (this.config.showQueryLoader) {
+      this.createLoader();
+    }
     this.rootEl.appendChild(this.resultsEl);
     this.initializePlugins();
-    this.drawHeader();
 
     const resp = data || this.getResponseFromStorage();
     if (resp) {
@@ -93,6 +92,7 @@ export class Yasr extends EventEmitter {
       const draw = false;
       this.setResponse(resp, undefined, undefined, undefined, undefined, undefined, draw);
     }
+    this.drawHeader();
   }
 
   public showWarning(message: string, type: "warning" | "error" | "success" = "warning", noButton = false) {
@@ -231,6 +231,9 @@ export class Yasr extends EventEmitter {
       this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
       return;
     }
+    removeClass(this.headerEl, "hidden");
+    removeClass(this.resultsEl, "hidden");
+    removeClass(this.fallbackInfoEl, "hidden");
     this.updatePluginSelectorNames();
     const compatiblePlugins = this.getCompatiblePlugins();
     let pluginToDraw: string | undefined;
@@ -356,7 +359,7 @@ export class Yasr extends EventEmitter {
     this.rootEl.appendChild(this.loader);
   }
 
-  showLoader(message: string, showQueryProgress = false) {
+  showLoader(message: string, showQueryProgress = false, hideHeaderEl = true) {
     if (!this.loader) {
       return;
     }
@@ -366,9 +369,13 @@ export class Yasr extends EventEmitter {
     this.loader.showQueryProgress = showQueryProgress;
     // @ts-ignore
     this.loader.hidden = false;
-    addClass(this.headerEl, "hidden");
-    addClass(this.resultsEl, "hidden");
-    addClass(this.fallbackInfoEl, "hidden");
+    if (hideHeaderEl) {
+      addClass(this.headerEl, "rendering_result");
+    } else {
+      removeClass(this.headerEl, "rendering_result");
+    }
+    addClass(this.resultsEl, "rendering_result");
+    addClass(this.fallbackInfoEl, "rendering_result");
   }
 
   hideLoader() {
@@ -376,10 +383,9 @@ export class Yasr extends EventEmitter {
     if (!this.loader || this.yasqe.isQueryRunning()) {
       return;
     }
-    removeClass(this.headerEl, "hidden");
-    removeClass(this.resultsEl, "hidden");
-    removeClass(this.fallbackInfoEl, "hidden");
-    // @ts-ignore
+    removeClass(this.headerEl, "rendering_result");
+    removeClass(this.resultsEl, "rendering_result");
+    removeClass(this.fallbackInfoEl, "rendering_result");
     this.loader.hidden = true;
   }
 
