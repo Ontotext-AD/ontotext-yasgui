@@ -11,6 +11,7 @@ const ColumnResizer = require("column-resizer");
 export class ExtendedTable extends Table {
   public label = "Extended_Table";
   public priority = 11;
+  private tableRenderingHandlerId: number | undefined;
 
   private readonly getCellContentCustom?: (
     binding: Parser.BindingValue,
@@ -244,24 +245,28 @@ export class ExtendedTable extends Table {
   protected handleSetEllipsisToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
+    this.showLoader(true);
     // Set in a timeout because if there are many columns to be displayed, the checkbox is updated after the table is refreshed.
     // This looks like nothing happened from the user's point of view.
-    setTimeout(() => this.updateTableEllipseClasses());
+    setTimeout(() => {
+      this.updateTableEllipseClasses();
+      this.showLoader(false);
+    });
     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
   };
 
   protected handleSetCompactToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
+    // the resizer is refreshed because it has to recalculate the position fo the column resizer elements.
+    this.disableTableResizer();
+    this.showLoader(true);
     // Set in a timeout because if there are many columns to be displayed, the checkbox is updated after the table is refreshed.
     // This looks like nothing happened from the user's point of view.
     setTimeout(() => {
-      // the resizer is refreshed because it has to recalculate the position fo the column resizer elements.
-      this.disableTableResizer();
       this.updateTableRowNumberClasses();
-      // Set another timeout to ensure that all styles are applied before enabling the table resizer.
-      // This helps avoid any visual glitches or delays in responsiveness.
-      setTimeout(() => this.enableTableResizer());
+      this.enableTableResizer();
+      this.showLoader(false);
     });
     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
   };
@@ -274,6 +279,27 @@ export class ExtendedTable extends Table {
     this.persistentConfig.pageSize = pageLength;
     this.yasr.storePluginConfig("extended_table", this.persistentConfig);
   };
+
+  private showLoader(rendering: boolean): void {
+    this.cancelTableRenderingHandler();
+    if (typeof window.requestAnimationFrame === "function") {
+      if (rendering) {
+        const message = this.translationService.translate("loader.message.query.editor.render.results");
+        this.yasr.showLoader(message, false, false);
+      } else {
+        requestAnimationFrame(() => {
+          this.tableRenderingHandlerId = undefined;
+          this.yasr.hideLoader();
+        });
+      }
+    }
+  }
+
+  private cancelTableRenderingHandler() {
+    if (this.tableRenderingHandlerId !== undefined && typeof window.requestAnimationFrame === "function") {
+      window.cancelAnimationFrame(this.tableRenderingHandlerId);
+    }
+  }
 
   private updateTableEllipseClasses() {
     if (this.persistentConfig.isEllipsed === true) {
@@ -290,5 +316,10 @@ export class ExtendedTable extends Table {
     } else {
       addClass(tableElement, "withRowNumber");
     }
+  }
+
+  destroy() {
+    super.destroy();
+    this.cancelTableRenderingHandler();
   }
 }
