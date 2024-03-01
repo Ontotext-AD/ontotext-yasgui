@@ -1,0 +1,24 @@
+Subject: [PATCH] Skip aborting the query if the "onQueryAborted" function is passed to the configuration
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 747013a8bec1deec33245bf366fe0a10150fa486)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 6e3585bedb4e1b95524a4b891b207592828993c9)
+@@ -562,9 +562,12 @@
+       }
+       this.isQueryAborted = true;
+       const req = this.req;
+-      this.abortQuery();
++
+       if (this.config.onQueryAborted instanceof Function) {
++        this.queryStateChanged(true, true);
+         this.config.onQueryAborted(req).finally(() => this.queryStateChanged(false, false));
++      } else {
++        this.abortQuery();
+       }
+     };
+ 
