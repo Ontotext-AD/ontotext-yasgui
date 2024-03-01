@@ -562,9 +562,12 @@ export class Yasqe extends CodeMirror {
       }
       this.isQueryAborted = true;
       const req = this.req;
-      this.abortQuery();
+
       if (this.config.onQueryAborted instanceof Function) {
+        this.queryStateChanged(true, true);
         this.config.onQueryAborted(req).finally(() => this.queryStateChanged(false, false));
+      } else {
+        this.abortQuery();
       }
     };
 
