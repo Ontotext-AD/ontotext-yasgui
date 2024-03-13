@@ -52,10 +52,6 @@
 }
 
 .yasgui-host-element {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
   .yasgui {
 
     .CodeMirror {
@@ -635,7 +631,7 @@
         display: none !important;
       }
 
-      .tabContextButton {
+      .controlbar {
         display: none;
       }
     }
@@ -679,53 +675,22 @@
     }
   }
 
-  /* On horizontal orientation we make yasqe and yasr to have 50% width and make them float left
-   in order to make them appear next to each other.*/
-  &.orientation-horizontal {
+  /* On horizontal orientation we make yasqe and yasr to have 50% width in order to make them appear next to each other.*/
+  &.orientation-horizontal.mode-yasgui .yasgui {
 
-    .yasgui {
-      display: grid;
-      position: relative;
+    .tabsList {
+      width: calc(50% - 10px);
+    }
 
-      /* Contract the tabs list because we move the yasr container up to the yasgui top border in
-      order to have the yasqe and yasr tabs be aligned properly.*/
-      .tabsList {
-        width: 50%;
-      }
-
-      .tabPanel {
-        /* unset the position in order to allow yasr container which is absolute positioned to be
-        top aligned to the closest relative positioned parent which must be the yasgui */
-        position: unset;
-      }
-
-      .tabPanel > div:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-
-      .tabPanel .yasqe {
-        padding-right: 15px;
-      }
-
-      // this targets the yasqe container
-      .tabPanel > div > div:nth-of-type(2) {
-        float: left;
-        width: 50%;
-        /* make it absolute in order to allow proper resizing when there is a query with long lines
-        inside the editor*/
-        position: absolute;
-      }
-
-      // this targets the yasr container
-      .tabPanel > div > div:nth-of-type(3) {
-        float: left;
-        width: 50%;
-        /* move yasr container up to the yasgui top border in order to align the tabs of the yasqe and yasr */
-        position: absolute;
-        top: 0;
-        right: 0;
+    .tabPanel.active {
+      &> div {
+        display: flex;
+        gap: 10px;
+        &> div:nth-of-type(2),
+        &> div:nth-of-type(3) {
+          display: inline-block;
+          width: 50%;
+        }
       }
     }
   }
