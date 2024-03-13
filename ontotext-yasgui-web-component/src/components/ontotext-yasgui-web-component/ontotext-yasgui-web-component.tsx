@@ -67,6 +67,8 @@ export class OntotextYasguiWebComponent {
   private readonly ontotextYasguiService: OntotextYasguiService;
   private readonly notificationMessageService: NotificationMessageService;
   private defaultViewMode = RenderingMode.YASGUI;
+  private tabsListHeight: number;
+  private tabsListResizeObserver: ResizeObserver;
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -80,6 +82,10 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
     this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
+    this.tabsListResizeObserver = new ResizeObserver((entries) => {
+      this.tabsListHeight = entries[0].contentRect.height;
+      this.updateYasrTopMargin();
+    });
   }
 
   /**
@@ -810,6 +816,15 @@ export class OntotextYasguiWebComponent {
   }
 
   registerEventHandlers():void {
+    const tabsListElement = this.hostElement.querySelector('.yasgui .tabsList');
+    if (tabsListElement) {
+      this.tabsListResizeObserver.observe(tabsListElement);
+    }
+
+    this.ontotextYasgui.getInstance().on('yasqeReady', () => {
+      this.updateYasrTopMargin()
+    });
+
     const hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
 
     this.ontotextYasgui.getInstance().on('tabAdd', (_yasgui, _tab) => {
@@ -840,7 +855,18 @@ export class OntotextYasguiWebComponent {
     });
   }
 
+  private updateYasrTopMargin(): void {
+    const yasrElement: HTMLDivElement = this.hostElement.querySelector('.tabPanel.active .yasr');
+    if (yasrElement) {
+      yasrElement.parentElement.style.marginTop = this.isVerticalOrientation ? '10px' : `-${this.tabsListHeight}px`;
+    }
+  }
+
   private destroy(): void {
+    if (this.tabsListResizeObserver) {
+      this.tabsListResizeObserver.disconnect();
+    }
+
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
       const yasgui = HtmlElementsUtil.getOntotextYasgui(this.hostElement);
