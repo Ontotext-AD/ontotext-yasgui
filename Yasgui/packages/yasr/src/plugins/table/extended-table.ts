@@ -134,7 +134,7 @@ export class ExtendedTable extends Table {
       this.disableTableResizer();
       removeClass(this.tableEl, "extendedTableEllipseTable");
       this.tableEl?.style.removeProperty("width");
-      this.tableEl?.style.setProperty("width", this.tableEl.clientWidth + "px");
+      this.tableEl?.style.setProperty("width", this.tableEl?.clientWidth + "px");
       return true; // Indicate it should re-render
     }
   }
@@ -174,7 +174,56 @@ export class ExtendedTable extends Table {
     }
   }
 
+  /**
+   * Checks if the specified <code>element</code> is truncated with ellipses.
+   *
+   * @param element The element to be checked for truncation.
+   * @return <code>true</code> if the element is truncated with ellipses, <code>false</code> otherwise.
+   */
+  private isTextEllipsized(element: HTMLElement) {
+    // If the scroll width is greater than the client width, content is likely truncated with an ellipsis
+    return element.scrollWidth > element.clientWidth;
+  }
+
+  private dataTableClickHandler(event) {
+    if (this.isCompactViewActive()) {
+      let literalElement = event.target.closest('.literal-cell p');
+      if (literalElement && this.isTextEllipsized(literalElement)) {
+        // Adding the "expanded-literal" class will prevent the value from being truncated with ellipses.
+        literalElement.classList.add('expanded-literal');
+        // Removing the "expandable-literal" class will remove the cursor styling when a literal cell is hovered.
+        literalElement.classList.remove('expandable-literal');
+      }
+    }
+  }
+
+  private isCompactViewActive(): boolean {
+    return !!this.persistentConfig.isEllipsed;
+  }
+
+  private tableMouseoverHandler(event): void {
+    if (this.isCompactViewActive()) {
+      let literalElement = event.target.closest('.literal-cell p');
+      if (literalElement && this.isTextEllipsized(literalElement)) {
+        // Adding the 'expandable-literal' class will change cursor to point when literal is hovered.
+        literalElement.classList.add('expandable-literal');
+      }
+    }
+  }
+
+  private tableMouseoutHandler(event): void {
+    if (this.isCompactViewActive() && event.target.matches('.expandable-literal')) {
+      // Remove pointer cursor when mouse leaves the cell
+      event.target.classList.remove('expandable-literal');
+    }
+  }
+
   private afterDraw() {
+    if (this.tableEl) {
+      this.tableEl.addEventListener('click', this.dataTableClickHandler.bind(this));
+      this.tableEl.addEventListener('mouseover', this.tableMouseoverHandler.bind(this));
+      this.tableEl.addEventListener('mouseout', this.tableMouseoutHandler.bind(this));
+    }
     this.setupIndexColumn();
     const explainPlanQueryElement = this.yasr.rootEl.querySelector("#explainPlanQuery") as HTMLElement | null;
     if (!explainPlanQueryElement) {
@@ -302,10 +351,18 @@ export class ExtendedTable extends Table {
   }
 
   private updateTableEllipseClasses() {
+    if (!this.tableEl) {
+      return;
+    }
+    // When 'Compact view' is toggled, remove the 'expanded-literal' class from all elements.
+    // This will reset the literal cells.
+    this.tableEl?.querySelectorAll('.expanded-literal').forEach((element) => {
+      element.classList.remove('expanded-literal');
+    });
     if (this.persistentConfig.isEllipsed === true) {
-      addClass(this.getTableElement(), "extendedTableEllipseTable");
+      addClass(this.tableEl, "extendedTableEllipseTable");
     } else {
-      removeClass(this.getTableElement(), "extendedTableEllipseTable");
+      removeClass(this.tableEl, "extendedTableEllipseTable");
     }
   }
 
@@ -319,7 +376,12 @@ export class ExtendedTable extends Table {
   }
 
   destroy() {
-    super.destroy();
+    if (this.tableEl) {
+      this.tableEl.removeEventListener('click', this.dataTableClickHandler.bind(this));
+      this.tableEl.removeEventListener('mouseover', this.tableMouseoverHandler.bind(this));
+      this.tableEl.removeEventListener('mouseout', this.tableMouseoutHandler.bind(this));
+    }
     this.cancelTableRenderingHandler();
+    super.destroy();
   }
 }
