@@ -425,6 +425,10 @@
 
     .yasr_results {
       .dataTable {
+
+        & .expandable-literal {
+          cursor: pointer;
+        }
         .resource-copy-link {
           display: none;
         }
@@ -457,7 +461,7 @@
           }
 
           .uri-cell .uri-link,
-          .literal-cell .nonUri {
+          .literal-cell .nonUri:not(.expanded-literal) {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
