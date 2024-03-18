@@ -32,6 +32,7 @@ import {Tab} from '../../models/yasgui/tab';
 import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
 import {InternalRequestAbortedEvent} from '../../models/internal-events/internal-request-aborted-event';
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
+import {TimeUtils} from "../../services/utils/time-utils";
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -82,10 +83,6 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
     this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
-    this.tabsListResizeObserver = new ResizeObserver((entries) => {
-      this.tabsListHeight = entries[0].contentRect.height;
-      this.updateYasrTopMargin();
-    });
   }
 
   /**
@@ -194,6 +191,15 @@ export class OntotextYasguiWebComponent {
    * If the yasgui layout is oriented vertically or not.
    */
   @State() isVerticalOrientation = true;
+  @Watch('isVerticalOrientation')
+  onOrientationChanged() {
+    if (this.isVerticalOrientation) {
+      this.unregisterTabsListResizeObserver();
+      this.updateYasrTopMargin();
+    } else {
+      this.registerTabsListResizeObserver();
+    }
+  }
 
   /**
    * Holds the rendering mode currently applied to the yasgui component.
@@ -816,15 +822,6 @@ export class OntotextYasguiWebComponent {
   }
 
   registerEventHandlers():void {
-    const tabsListElement = this.hostElement.querySelector('.yasgui .tabsList');
-    if (tabsListElement) {
-      this.tabsListResizeObserver.observe(tabsListElement);
-    }
-
-    this.ontotextYasgui.getInstance().on('yasqeReady', () => {
-      this.updateYasrTopMargin()
-    });
-
     const hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
 
     this.ontotextYasgui.getInstance().on('tabAdd', (_yasgui, _tab) => {
@@ -862,10 +859,30 @@ export class OntotextYasguiWebComponent {
     }
   }
 
-  private destroy(): void {
+  private registerTabsListResizeObserver(): void {
+    this.unregisterTabsListResizeObserver();
+    const debouncedResizeHandler  = TimeUtils.createDebouncedFunction((entries) => {
+      this.tabsListHeight = entries[0].contentRect.height;
+      this.updateYasrTopMargin();
+    }, 10)
+    this.tabsListResizeObserver = new ResizeObserver((entries) => {
+      debouncedResizeHandler(entries);
+    });
+    const tabsListElement = this.hostElement.querySelector('.yasgui .tabsList');
+    if (tabsListElement) {
+      this.tabsListResizeObserver.observe(tabsListElement);
+    }
+  }
+
+  private unregisterTabsListResizeObserver(): void {
     if (this.tabsListResizeObserver) {
       this.tabsListResizeObserver.disconnect();
+      this.tabsListResizeObserver = undefined;
     }
+  }
+
+  private destroy(): void {
+    this.unregisterTabsListResizeObserver();
 
     if (this.ontotextYasgui) {
       this.ontotextYasgui.destroy();
