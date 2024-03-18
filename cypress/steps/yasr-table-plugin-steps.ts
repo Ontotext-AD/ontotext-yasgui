@@ -11,4 +11,8 @@ export class YasrTablePluginSteps {
    static getResults() {
       return cy.get('.dataTable tbody tr');
    }
+
+   static getCompactViewCheckbox() {
+     return cy.get('.tableControls .switch').contains('Compact view');
+   }
 }

@@ -1,0 +1,85 @@
+{
+  "head": {
+    "vars": [
+      "s",
+      "p",
+      "o",
+      "s1",
+      "p1",
+      "o1",
+      "s2",
+      "p2",
+      "o2",
+      "s3",
+      "p3",
+      "o3"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "s": {
+          "type": "literal",
+          "value": "s column literal"
+        },
+        "p": {
+          "type" : "literal",
+          "value" : "p column literal"
+        },
+        "o": {
+          "type" : "uri",
+          "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#uri-with-long-value"
+        },
+        "s1": {
+          "type": "literal",
+          "value": "http://url-in-literal/1999/02/22-rdf-syntax-ns#url-in-literal"
+        },
+        "p1": {
+          "type": "literal",
+          "value": "p1 column literal"
+        },
+        "o1": {
+          "type": "literal",
+          "value": "o1 column literal"
+        },
+        "s2": {
+          "type": "literal",
+          "value": "s2 column literal"
+        },
+        "p2": {
+          "type": "literal",
+          "value": "p2 column literal"
+        },
+        "o2": {
+          "type": "literal",
+          "value": "o2 column literal"
+        },
+        "s3": {
+          "type": "literal",
+          "value": "s3 column literal"
+        },
+        "p3": {
+          "type": "literal",
+          "value": "p3 column literal"
+        },
+        "o3": {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

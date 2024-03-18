@@ -466,6 +466,10 @@
             text-overflow: ellipsis;
             white-space: nowrap;
           }
+
+          .literal-cell .nonUri.expanded-literal {
+            word-break: break-word;
+          }
         }
 
         .uri-cell .spacer {
