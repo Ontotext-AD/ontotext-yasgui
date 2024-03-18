@@ -42,6 +42,10 @@ export class QueryStubs {
     QueryStubs.stubQueryResponse('/queries/single-literal-with-data-type-response.json', 'single-iri-result', withDelay);
   }
 
+  static stubManyColumnResult(withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/many-column-response.json', 'many-column-result', withDelay);
+  }
+
   static stubQueryResponse(fixture: string, alias: string, withDelay: number = 0) {
     cy.intercept('/repositories/test-repo', {fixture, delay: withDelay}).as(alias);
   }

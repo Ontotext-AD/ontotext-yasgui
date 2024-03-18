@@ -40,3 +40,15 @@ Cypress.Commands.add('assertClipboardValue', value => {
         })
     })
 })
+
+Cypress.Commands.add('assertEllipsisActive', (element) => {
+  const offsetWidth = element.offsetWidth;
+  const scrollWidth = element.scrollWidth;
+  expect(offsetWidth, 'Expected element to be truncated with ellipses').to.be.lessThan(scrollWidth);
+});
+
+Cypress.Commands.add('assertEllipsisNotActive', (element) => {
+  const offsetWidth = element.offsetWidth;
+  const scrollWidth = element.scrollWidth;
+  expect(offsetWidth, 'Expected element to not be truncated').to.be.at.least(scrollWidth);
+});

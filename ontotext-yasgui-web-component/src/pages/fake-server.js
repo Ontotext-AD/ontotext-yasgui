@@ -29,6 +29,10 @@ module.exports = function (req, res, next) {
   } else if (req.url === 'https://lov.linkeddata.es/dataset/lov/api/v2/autocomplete/terms?q=rdf&page_size=50&type=property') {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(localNamesResponse));
+  } else if (req.url === '/repositories/compact-view') {
+    // custom response overriding the dev server
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(compactViewResponse));
   } else {
     // pass request on to the default dev server
     next();
@@ -5466,3 +5470,91 @@ const queryResponse = {
     ]
   }
 };
+
+
+const compactViewResponse = {
+  "head": {
+    "vars": [
+      "s",
+      "p",
+      "o",
+      "s1",
+      "p1",
+      "o1",
+      "s2",
+      "p2",
+      "o2",
+      "s3",
+      "p3",
+      "o3"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "s": {
+          "type": "literal",
+          "value": "s column literal"
+        },
+        "p": {
+          "type" : "literal",
+          "value" : "p column literal"
+        },
+        "o": {
+          "type" : "uri",
+          "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#uri-with-long-value"
+        },
+        "s1": {
+          "type": "literal",
+          "value": "http://url-in-literal/1999/02/22-rdf-syntax-ns#url-in-literal"
+        },
+        "p1": {
+          "type": "literal",
+          "value": "p1 column literal"
+        },
+        "o1": {
+          "type": "literal",
+          "value": "o1 column literal"
+        },
+        "s2": {
+          "type": "literal",
+          "value": "s2 column literal"
+        },
+        "p2": {
+          "type": "literal",
+          "value": "p2 column literal"
+        },
+        "o2": {
+          "type": "literal",
+          "value": "o2 column literal"
+        },
+        "s3": {
+          "type": "literal",
+          "value": "s3 column literal"
+        },
+        "p3": {
+          "type": "literal",
+          "value": "p3 column literal"
+        },
+        "o3": {
+          "type" : "triple",
+          "value" : {
+            "s" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "p" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            },
+            "o" : {
+              "type" : "uri",
+              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+

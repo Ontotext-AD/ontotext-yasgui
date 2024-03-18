@@ -21,5 +21,19 @@ declare namespace Cypress {
        * @param value - to be checked.
        */
       assertClipboardValue(value);
+
+     /**
+      * Checks if the <code>element</code> is truncated with ellipsis.
+      *
+      * @param element - the HTML element to be checked for truncation with ellipses.
+      */
+     assertEllipsisActive(element: HTMLElement);
+
+     /**
+      * Checks if the <code>element</code> is not truncated with ellipsis.
+      *
+      * @param element - the HTML element to be checked for the absence of truncation with ellipses.
+      */
+     assertEllipsisNotActive(element: HTMLElement);
    }
 }
