@@ -32,7 +32,7 @@ import {Tab} from '../../models/yasgui/tab';
 import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
 import {InternalRequestAbortedEvent} from '../../models/internal-events/internal-request-aborted-event';
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
-import {TimeUtils} from "../../services/utils/time-utils";
+import {Debounce} from "../../services/utils/debounce";
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -861,7 +861,7 @@ export class OntotextYasguiWebComponent {
 
   private registerTabsListResizeObserver(): void {
     this.unregisterTabsListResizeObserver();
-    const debouncedResizeHandler  = TimeUtils.createDebouncedFunction((entries) => {
+    const debouncedResizeHandler  = Debounce.createDebouncedFunction((entries) => {
       this.tabsListHeight = entries[0].contentRect.height;
       this.updateYasrTopMargin();
     }, 10)
