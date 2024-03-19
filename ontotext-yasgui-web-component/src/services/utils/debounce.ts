@@ -1,4 +1,4 @@
-export class TimeUtils {
+export class Debounce {
   static createDebouncedFunction(func, timeout = 300) {
     let timer;
     return (...args) => {
