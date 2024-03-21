@@ -504,12 +504,8 @@ export class Yasqe extends CodeMirror {
 
       this.queryBtn.onclick = () => {
         if (this.config.queryingDisabled) return; // Don't do anything
-        if (this.req) {
-          this.abortQuery();
-        } else {
           this.pageNumber = 1;
           this.query().catch(() => {}); //catch this to avoid unhandled rejection
-        }
       };
 
       buttons.appendChild(runButtonTooltip);

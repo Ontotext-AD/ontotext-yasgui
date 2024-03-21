@@ -228,7 +228,12 @@ export class Yasr extends EventEmitter {
       addClass(this.headerEl, "hidden");
       addClass(this.resultsEl, "hidden");
       addClass(this.fallbackInfoEl, "hidden");
-      this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
+      if (!this.yasqe.isQueryRunning()) {
+        // This message appears when there are no results and an ongoing query.
+        // It prevents a scenario where the user clicks the run button, switches to another tab, and returns to the previous tab.
+        // In such cases, the message should not be displayed if the query is not finished.
+        this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
+      }
       return;
     }
     removeClass(this.headerEl, "hidden");
