@@ -536,7 +536,15 @@ export class Tab extends EventEmitter {
     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
     if (this.hasPersistenceJsonBeenChanged(yasqe)) {
       this.updatePersistJson(yasqe);
-      this.emit("change", this, this.persistentJson);
+    }
+    // When a new query is run, we can clear the persistence. This will free up some space in the browser's local storage.
+    this.persistentJson.yasr.response = undefined;
+    this.emit("change", this, this.persistentJson);
+    if (this.yasr) {
+      // clean in-memory stored data of previous response.
+      this.yasr.results = undefined;
+      // The refresh will synchronize the DOM with the YASR instance (in case of clearing of result the YASR will be hidden);
+      this.yasr.refresh();
     }
     this.emit("query", this);
     if (this.rootEl) {
