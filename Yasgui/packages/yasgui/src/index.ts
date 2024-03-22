@@ -275,6 +275,10 @@ export class Yasgui extends EventEmitter {
     //draw tab content
     if (!this._tabs[tabId]) {
       this._tabs[tabId] = new Tab(this, Tab.getDefaults(this));
+    } else {
+      // loads the response from storage.
+      let response = this.persistentConfig.getTab(tabId).yasr.response;
+      this._tabs[tabId].getYasr()?.setResponse(response, undefined, undefined, undefined, undefined, undefined,false);
     }
     this._tabs[tabId].show();
     this.emit("yasqeReady", this._tabs[tabId], this._tabs[tabId].getYasqe());
@@ -291,6 +295,9 @@ export class Yasgui extends EventEmitter {
         this.emit("tabSelect", this, tabId);
         this.persistentConfig.setActive(tabId);
       }
+      // Removes data from memory, it will be loaded if the tab is selected again.
+      // @ts-ignore
+      tab.getYasr()?.results?.response = null;
     }
     return tab;
   }
