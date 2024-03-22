@@ -1,0 +1,70 @@
+Subject: [PATCH] GDB-9964: Clear data for old ran query after new query is executed
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision e30e1a17f9ab8f4ad1ed4a9da8e0d1a32686f3c1)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 7f15e7da85d9e30b1a2cf74877ac4bcf403b909a)
+@@ -536,7 +536,15 @@
+     //the blur event might not have fired (e.g. when pressing ctrl-enter). So, we'd like to persist the query as well if needed
+     if (this.hasPersistenceJsonBeenChanged(yasqe)) {
+       this.updatePersistJson(yasqe);
+-      this.emit("change", this, this.persistentJson);
++    }
++    // When a new query is run, we can clear the persistence. This will free up some space in the browser's local storage.
++    this.persistentJson.yasr.response = undefined;
++    this.emit("change", this, this.persistentJson);
++    if (this.yasr) {
++      // clean in-memory stored data of previous response.
++      this.yasr.results = undefined;
++      // The refresh will synchronize the DOM with the YASR instance (in case of clearing of result the YASR will be hidden);
++      this.yasr.refresh();
+     }
+     this.emit("query", this);
+     if (this.rootEl) {
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision e30e1a17f9ab8f4ad1ed4a9da8e0d1a32686f3c1)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 7f15e7da85d9e30b1a2cf74877ac4bcf403b909a)
+@@ -504,12 +504,8 @@
+ 
+       this.queryBtn.onclick = () => {
+         if (this.config.queryingDisabled) return; // Don't do anything
+-        if (this.req) {
+-          this.abortQuery();
+-        } else {
+           this.pageNumber = 1;
+           this.query().catch(() => {}); //catch this to avoid unhandled rejection
+-        }
+       };
+ 
+       buttons.appendChild(runButtonTooltip);
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision e30e1a17f9ab8f4ad1ed4a9da8e0d1a32686f3c1)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 7f15e7da85d9e30b1a2cf74877ac4bcf403b909a)
+@@ -228,7 +228,12 @@
+       addClass(this.headerEl, "hidden");
+       addClass(this.resultsEl, "hidden");
+       addClass(this.fallbackInfoEl, "hidden");
+-      this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
++      if (!this.yasqe.isQueryRunning()) {
++        // This message appears when there are no results and an ongoing query.
++        // It prevents a scenario where the user clicks the run button, switches to another tab, and returns to the previous tab.
++        // In such cases, the message should not be displayed if the query is not finished.
++        this.showWarning(this.translationService.translate("yasr.noresults.box.info"), "success", true);
++      }
+       return;
+     }
+     removeClass(this.headerEl, "hidden");
