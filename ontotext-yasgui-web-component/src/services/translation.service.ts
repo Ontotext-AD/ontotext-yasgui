@@ -82,6 +82,10 @@ export class TranslationService {
     this.notifyTranslationsChanged();
   }
 
+  getLanguage(): string {
+    return this.currentLang;
+  }
+
   /**
    * Subscribes the observer for further language change events.
    *
@@ -158,7 +162,11 @@ export class TranslationService {
    * @param parameters Optional parameters which to be applied during the translation.
    */
   translate(key: string, parameters?: TranslationParameter[]): string {
-    let translation = this.bundle[this.currentLang][key];
+    return this.translateInLocale(key, this.currentLang, parameters);
+  }
+
+  translateInLocale(key: string, locale: string, parameters?: TranslationParameter[]): string {
+    let translation = this.bundle[locale][key];
     if (!translation) {
       // Fallback to the default language
       translation = this.bundle[DEFAULT_LANG][key];
