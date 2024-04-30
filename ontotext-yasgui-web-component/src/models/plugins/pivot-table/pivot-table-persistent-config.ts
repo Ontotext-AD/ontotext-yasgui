@@ -1,4 +1,5 @@
 import {RowOrColumnOrder} from './row-or-column-order';
+import {PivotTableAggregatorType} from './pivot-table-aggregator-type';
 
 export interface PivotTablePersistentConfig {
   /**
@@ -36,17 +37,18 @@ export interface PivotTablePersistentConfig {
   inclusionsInfo: Record<string, string[]>[],
 
   /**
-   * Stores the name of chosen aggregator.
+   * Stores the type of chosen aggregator. The value must be one of {@link PivotTableAggregatorType}.
    */
-  aggregatorName: string,
+  aggregatorType: string,
 
   /**
-   * Stores the name of chosen render.
+   * Stores the type of chosen render. The value must be one of {@link PivotTableRendererType}.
    */
-  rendererName: string,
+  rendererType: string,
 }
 
 export interface PivotTableConfig extends PivotTablePersistentConfig {
-  renderers?: any;
   onRefresh?: (pivotUIOptions: PivotTablePersistentConfig) => void;
+  rendererName?: string;
+  aggregatorName?: string;
 }

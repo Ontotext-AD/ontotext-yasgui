@@ -4,9 +4,27 @@ import {SvgUtil} from '../../../services/utils/svg-util';
 import {SparqlUtils} from '../../../services/utils/sparql-utils';
 import {HtmlUtil} from '../../../services/utils/html-util';
 import {PivotTableDownloadUtil} from './pivot-table-download-util';
-import {PivotTableConfig, PivotTablePersistentConfig} from '../../../models/plugins/pivot-table/pivot-table-persistent-config';
-import {PivotTableRendererName} from '../../../models/plugins/pivot-table/pivot-table-renderer-name';
+import {
+  PivotTableConfig,
+  PivotTablePersistentConfig
+} from '../../../models/plugins/pivot-table/pivot-table-persistent-config';
 import {D3_7_8_5_RENDER} from './d3_7_8_5_renders';
+import {PivotTableService} from '../../../services/plugins/pivot-table-service';
+import {PivotTableRenderer} from '../../../models/plugins/pivot-table/pivot-table-renderer';
+import {ObjectUtil} from '../../../services/utils/object-util';
+import {PivotTableRendererType} from '../../../models/plugins/pivot-table/pivot-table-renderer-type';
+
+const NOT_TRANSLATED_RENDERERS_TYPES: string[] = [
+  PivotTableRendererType.TREEMAP,
+  PivotTableRendererType.LINE_CHART,
+  PivotTableRendererType.BAR_CHART,
+  PivotTableRendererType.STACKED_BAR_CHART,
+  PivotTableRendererType.AREA_CHART,
+  PivotTableRendererType.SCATTER_CHART,
+  PivotTableRendererType.TSV_EXPORT
+]
+
+const PIVOT_TABLE_SUPPORTED_LANGUAGES = ['cs', 'da', 'de', 'es', 'fr', 'jp', 'nl', 'pl', 'pt', 'ru', 'sq', 'tr', 'zh'];
 
 export class PivotTablePlugin implements YasrPlugin {
 
@@ -17,8 +35,9 @@ export class PivotTablePlugin implements YasrPlugin {
 
   // @ts-ignore
   private yasr: Yasr;
-  // @ts-ignore
+  private pivotTableService: PivotTableService;
   private translationService: TranslationService;
+  private readonly currentLanguage: string;
 
   helpReference: string;
   public label = PivotTablePlugin.PLUGIN_NAME;
@@ -30,6 +49,8 @@ export class PivotTablePlugin implements YasrPlugin {
     if (yasr) {
       this.yasr = yasr;
       this.translationService = this.yasr.config.translationService;
+      this.currentLanguage = this.translationService.getLanguage();
+      this.pivotTableService = new PivotTableService(this.translationService);
     }
   }
 
@@ -41,9 +62,14 @@ export class PivotTablePlugin implements YasrPlugin {
       HtmlUtil.loadJavaScript('https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js');
       HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js');
       HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/pivot.js');
+      if (PIVOT_TABLE_SUPPORTED_LANGUAGES.includes(this.currentLanguage)) {
+        HtmlUtil.loadJavaScript(`https://pivottable.js.org/dist/pivot.${this.currentLanguage}.js`);
+      }
       HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/export_renderers.js');
       HtmlUtil.loadJavaScript('https://pivottable.js.org/dist/gchart_renderers.js', () => {
         D3_7_8_5_RENDER.register();
+        this.setupRenderers();
+        this.setupAggregators();
         resolve();
       });
     });
@@ -62,7 +88,7 @@ export class PivotTablePlugin implements YasrPlugin {
       // @ts-ignore
       google.charts.load('current', {packages: ['corechart', 'charteditor']});
       // If the render is a Google chart we have to wait the module to be loaded.
-      if (persistentConfig && this.isGoogleChartRender(persistentConfig.rendererName)) {
+      if (persistentConfig && persistentConfig.rendererType && this.isGoogleChartRender(this.pivotTableService.getPivotRendererByType(persistentConfig.rendererType))) {
         // @ts-ignore
         google.setOnLoadCallback(() => {
           this.drawPivotTable(persistentConfig);
@@ -75,9 +101,10 @@ export class PivotTablePlugin implements YasrPlugin {
   }
 
   private drawPivotTable(persistentConfig: PivotTablePersistentConfig) {
-    const config: PivotTableConfig = { ...persistentConfig}
-    config.renderers = this.getRenders()
+    const config: PivotTableConfig = {...persistentConfig}
     config.onRefresh = this.onRefresh();
+    config.rendererName = config.rendererType ? this.pivotTableService.getPivotRendererByType(config.rendererType).name : undefined;
+    config.aggregatorName = config.aggregatorType ? this.pivotTableService.getPivotTableAggregatorByType(config.aggregatorType).name : undefined;
     this.showPlugin(config);
     this.addUnusedVariableHeader();
     this.addColumnsHeader();
@@ -86,13 +113,16 @@ export class PivotTablePlugin implements YasrPlugin {
     this.updateVariablesElement();
   }
 
-  private isGoogleChartRender(renderName: string) {
-    switch (renderName) {
-      case PivotTableRendererName.BAR_CHART:
-      case PivotTableRendererName.LINE_CHART:
-      case PivotTableRendererName.STACKED_BAR_CHART:
-      case PivotTableRendererName.AREA_CHART:
-      case PivotTableRendererName.SCATTER_CHART:
+  private isGoogleChartRender(renderer: PivotTableRenderer) {
+    if (!renderer) {
+      return false;
+    }
+    switch (renderer.type) {
+      case PivotTableRendererType.BAR_CHART:
+      case PivotTableRendererType.LINE_CHART:
+      case PivotTableRendererType.STACKED_BAR_CHART:
+      case PivotTableRendererType.AREA_CHART:
+      case PivotTableRendererType.SCATTER_CHART:
         return true;
     }
     return false;
@@ -114,29 +144,91 @@ export class PivotTablePlugin implements YasrPlugin {
     // @ts-ignore
     const options = $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`)).data('pivotUIOptions');
     if (options) {
-      switch (options.rendererName) {
-        case PivotTableRendererName.TSV_EXPORT:
+      switch (this.pivotTableService.getPivotRendererByName(options.rendererName).type) {
+        case PivotTableRendererType.TSV_EXPORT:
           return PivotTableDownloadUtil.getTSVDownloadInfo(this.yasr);
-        case PivotTableRendererName.TABLE:
-        case PivotTableRendererName.TABLE_BARCHART:
-        case PivotTableRendererName.HEATMAP:
-        case PivotTableRendererName.ROW_HEATMAP:
-        case PivotTableRendererName.COL_HEATMAP:
+        case PivotTableRendererType.TABLE:
+        case PivotTableRendererType.TABLE_BARCHART:
+        case PivotTableRendererType.HEATMAP:
+        case PivotTableRendererType.ROW_HEATMAP:
+        case PivotTableRendererType.COL_HEATMAP:
           return PivotTableDownloadUtil.getCSVDownloadInfo(this.yasr);
-        case PivotTableRendererName.BAR_CHART:
-        case PivotTableRendererName.LINE_CHART:
-        case PivotTableRendererName.STACKED_BAR_CHART:
-        case PivotTableRendererName.AREA_CHART:
-        case PivotTableRendererName.SCATTER_CHART:
+        case PivotTableRendererType.BAR_CHART:
+        case PivotTableRendererType.LINE_CHART:
+        case PivotTableRendererType.STACKED_BAR_CHART:
+        case PivotTableRendererType.AREA_CHART:
+        case PivotTableRendererType.SCATTER_CHART:
           return PivotTableDownloadUtil.getSvgDownloadInfo(this.yasr);
       }
     }
     return;
   }
 
-  private getRenders(): any {
+  private setupRenderers(): void {
+    this.translateRenders();
+    this.sortRenderers();
+  }
+
+  /**
+   * Pivot table has support for translation of renderers that are loaded by default. For additional renderers, we have to translate them ourselves.
+   */
+  private translateRenders(): void {
     // @ts-ignore
-    return $.extend(true, $.pivotUtilities.renderers, $.pivotUtilities[D3_7_8_5_RENDER.RENDER_NAME], $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
+    const renderers = $.extend(true, $.pivotUtilities[D3_7_8_5_RENDER.RENDER_NAME], $.pivotUtilities.gchart_renderers, $.pivotUtilities.export_renderers);
+    NOT_TRANSLATED_RENDERERS_TYPES.forEach((rendererType: string) => {
+      const renderer = this.pivotTableService.getPivotRendererByType(rendererType);
+      const rendererEnName = this.pivotTableService.getPivotTableRenderName(rendererType, 'en');
+      if (renderer) {
+        // @ts-ignore
+        $.pivotUtilities.locales[this.currentLanguage].renderers[renderer.name] = renderers[rendererEnName];
+      } else {
+        console.log(`Missing translation for renderer: [${rendererType}] The default will be used!`);
+        // @ts-ignore
+        $.pivotUtilities.locales[this.currentLanguage].renderers[renderer] = renderers[rendererEnName];
+      }
+    });
+  }
+
+  /**
+   * Sorts renderers.
+   */
+  private sortRenderers(): void {
+    // @ts-ignore
+    $.pivotUtilities.locales[this.currentLanguage].renderers = ObjectUtil.orderObjectByKey($.pivotUtilities.locales[this.currentLanguage].renderers, this.pivotTableService.getPivotTableRenderersCompareByNameFunction());
+  }
+
+  private setupAggregators() {
+    if ('fr' === this.currentLanguage) {
+      this.addMissedFrenchAggregators();
+    }
+    this.sortAggregators();
+  }
+
+  /**
+   * Sorts aggregators.
+   */
+  private sortAggregators(): void {
+    // @ts-ignore
+    $.pivotUtilities.locales[this.currentLanguage].aggregators = ObjectUtil.orderObjectByKey($.pivotUtilities.locales[this.currentLanguage].aggregators, this.pivotTableService.getPivotTableAggregatorsCompareByNameFunction());
+  }
+
+  /**
+   * The French pivot table is missing the 'Median', 'Sample Variance', and 'Sample Standard Deviation' aggregators.
+   * This function adds these aggregators to the French locale object.
+   */
+  private addMissedFrenchAggregators() {
+    // @ts-ignore
+    const frFmt = $.pivotUtilities.numberFormat({
+      thousandsSep: " ",
+      decimalSep: ","
+    });
+
+    // @ts-ignore
+    $.pivotUtilities.locales[this.currentLanguage].aggregators[this.translationService.translate(PivotTableService.AGGREGATOR_NAME_PREFIX + 'MEDIAN')] = $.pivotUtilities.aggregatorTemplates.median(frFmt);
+    // @ts-ignore
+    $.pivotUtilities.locales[this.currentLanguage].aggregators[this.translationService.translate(PivotTableService.AGGREGATOR_NAME_PREFIX + 'SAMPLE_VARIANCE')] = $.pivotUtilities.aggregatorTemplates["var"](1, frFmt);
+    // @ts-ignore
+    $.pivotUtilities.locales[this.currentLanguage].aggregators[this.translationService.translate(PivotTableService.AGGREGATOR_NAME_PREFIX + 'SAMPLE_STANDARD_DEVIATION')] = $.pivotUtilities.aggregatorTemplates.stdev(1, frFmt);
   }
 
   private showPlugin(config: PivotTableConfig) {
@@ -145,7 +237,7 @@ export class PivotTablePlugin implements YasrPlugin {
     this.yasr.resultsEl.appendChild(this.pluginElement);
     // @ts-ignore
     $(this.yasr.rootEl.querySelector(`.${PivotTablePlugin.PLUGIN_NAME}`))
-      .pivotUI((callback) => this.getResults(callback), config);
+      .pivotUI((callback) => this.getResults(callback), config, false, this.currentLanguage);
   }
 
   /**
@@ -247,15 +339,15 @@ export class PivotTablePlugin implements YasrPlugin {
     variableElement.insertBefore(icon, dropdownElement);
   }
 
-  private onRefresh(): (pivotUIOptions) => void  {
+  private onRefresh(): (pivotUIOptions) => void {
     return (pivotUIOptions) => {
       if (pivotUIOptions) {
-        switch (pivotUIOptions.rendererName) {
-          case PivotTableRendererName.BAR_CHART:
-          case PivotTableRendererName.LINE_CHART:
-          case PivotTableRendererName.STACKED_BAR_CHART:
-          case PivotTableRendererName.AREA_CHART:
-          case PivotTableRendererName.SCATTER_CHART:
+        switch (this.pivotTableService.getPivotRendererByName(pivotUIOptions.rendererName).type) {
+          case PivotTableRendererType.BAR_CHART:
+          case PivotTableRendererType.LINE_CHART:
+          case PivotTableRendererType.STACKED_BAR_CHART:
+          case PivotTableRendererType.AREA_CHART:
+          case PivotTableRendererType.SCATTER_CHART:
             this.addChartConfigButton();
             break;
           default:
@@ -305,8 +397,8 @@ export class PivotTablePlugin implements YasrPlugin {
       exclusions: pivotUIOptions.exclusions,
       inclusions: pivotUIOptions.inclusions,
       inclusionsInfo: pivotUIOptions.inclusionsInfo,
-      aggregatorName: pivotUIOptions.aggregatorName,
-      rendererName: pivotUIOptions.rendererName,
+      aggregatorType: this.pivotTableService.getPivotTableAggregatorByName(pivotUIOptions.aggregatorName).type,
+      rendererType: this.pivotTableService.getPivotRendererByName(pivotUIOptions.rendererName).type
     };
   }
 }
