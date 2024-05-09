@@ -5,7 +5,7 @@ export class LanguagesSteps {
    }
 
    static switchToEn() {
-      cy.get('#locale_en').click();
+      cy.get('#locale_en').click({force: true});
    }
 
    static switchToFr() {
