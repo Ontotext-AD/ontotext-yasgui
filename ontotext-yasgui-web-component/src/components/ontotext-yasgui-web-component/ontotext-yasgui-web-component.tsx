@@ -10,7 +10,12 @@ import {ExternalYasguiConfiguration, TabQueryModel} from "../../models/external-
 import {TranslationService} from '../../services/translation.service';
 import {ServiceFactory} from '../../services/service-factory';
 import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/yasgui-configuration-builder';
-import {SavedQueriesData, SavedQueryConfig, SaveQueryData, UpdateQueryData} from "../../models/saved-query-configuration";
+import {
+  SavedQueriesData,
+  SavedQueryConfig,
+  SaveQueryData,
+  UpdateQueryData
+} from "../../models/saved-query-configuration";
 import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
@@ -18,8 +23,13 @@ import {InternalDownloadAsEvent} from '../../models/internal-events/internal-dow
 import {InternalCountQueryEvent} from '../../models/internal-events/internal-count-query-event';
 import {InternalQueryEvent} from '../../models/internal-events/internal-query-event';
 import {NotificationMessageService} from '../../services/notification-message-service';
-import {InternalNotificationMessageEvent, MessageCode} from '../../models/internal-events/internal-notification-message-event';
-import {InternalShowResourceCopyLinkDialogEvent} from '../../models/internal-events/internal-show-resource-copy-link-dialog-event';
+import {
+  InternalNotificationMessageEvent,
+  MessageCode
+} from '../../models/internal-events/internal-notification-message-event';
+import {
+  InternalShowResourceCopyLinkDialogEvent
+} from '../../models/internal-events/internal-show-resource-copy-link-dialog-event';
 import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
 import {InternalQueryExecuted} from '../../models/internal-events/internal-query-executed';
 import {InternalCountQueryResponseEvent} from '../../models/internal-events/internal-count-query-response-event';
@@ -70,6 +80,7 @@ export class OntotextYasguiWebComponent {
   private defaultViewMode = RenderingMode.YASGUI;
   private tabsListHeight: number;
   private tabsListResizeObserver: ResizeObserver;
+  private subscriptions = [];
 
   /**
    * The instance of our adapter around the actual yasgui instance.
@@ -83,6 +94,7 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
     this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
+    this.initComponentTranslationHandlers();
   }
 
   /**
@@ -94,6 +106,7 @@ export class OntotextYasguiWebComponent {
    * An input object property containing the yasgui configuration.
    */
   @Prop() config: ExternalYasguiConfiguration;
+
   @Watch('config')
   configurationChanged(newConfig: ExternalYasguiConfiguration) {
     this.init(newConfig);
@@ -103,6 +116,7 @@ export class OntotextYasguiWebComponent {
    * An input property containing the chosen translation language.
    */
   @Prop() language: string
+
   @Watch('language')
   languageChanged(newLang: string) {
     this.translationService.setLanguage(newLang);
@@ -116,6 +130,7 @@ export class OntotextYasguiWebComponent {
    * A configuration model related with all the saved queries actions.
    */
   @Prop() savedQueryConfig?: SavedQueryConfig;
+
   @Watch('savedQueryConfig')
   savedQueryConfigChanged() {
     this.shouldShowSaveQueryDialog();
@@ -191,6 +206,7 @@ export class OntotextYasguiWebComponent {
    * If the yasgui layout is oriented vertically or not.
    */
   @State() isVerticalOrientation = true;
+
   @Watch('isVerticalOrientation')
   onOrientationChanged() {
     if (this.isVerticalOrientation) {
@@ -229,6 +245,10 @@ export class OntotextYasguiWebComponent {
   @State() loaderMessage: string;
 
   @State() additionalLoaderMessage: string;
+
+  @State() yasqeBtnLabel: string;
+  @State() yasguiBtnLabel: string;
+  @State() yasrBtnLabel: string;
 
   /**
    * Changes rendering mode of component.
@@ -418,7 +438,7 @@ export class OntotextYasguiWebComponent {
    * Default is true.
    */
   @Method()
-  resetResults(resetCurrentTab  = true): Promise<any> {
+  resetResults(resetCurrentTab = true): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.resetResults(resetCurrentTab);
@@ -821,8 +841,8 @@ export class OntotextYasguiWebComponent {
     this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
   }
 
-  registerEventHandlers():void {
-    const hint =  HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
+  registerEventHandlers(): void {
+    const hint = HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
 
     this.ontotextYasgui.getInstance().on('tabAdd', (_yasgui, _tab) => {
       VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation);
@@ -861,7 +881,7 @@ export class OntotextYasguiWebComponent {
 
   private registerTabsListResizeObserver(): void {
     this.unregisterTabsListResizeObserver();
-    const debouncedResizeHandler  = Debounce.createDebouncedFunction((entries) => {
+    const debouncedResizeHandler = Debounce.createDebouncedFunction((entries) => {
       this.tabsListHeight = entries[0].contentRect.height;
       this.updateYasrTopMargin();
     }, 10)
@@ -891,6 +911,20 @@ export class OntotextYasguiWebComponent {
         yasgui.firstChild.remove();
       }
     }
+  }
+
+  private initComponentTranslationHandlers(): void {
+    this.subscriptions.push(this.translationService.onTranslate('yasgui.toolbar.mode_yasqe.btn.label', (yasqeBtnLabel) => {
+      this.yasqeBtnLabel = yasqeBtnLabel
+    }));
+
+    this.subscriptions.push(this.translationService.onTranslate('yasgui.toolbar.mode_yasgui.btn.label', (yasguiBtnLabel) => {
+      this.yasguiBtnLabel = yasguiBtnLabel
+    }));
+
+    this.subscriptions.push(this.translationService.onTranslate('yasgui.toolbar.mode_yasr.btn.label', (yasrBtnLabel) => {
+      this.yasrBtnLabel = yasrBtnLabel
+    }));
   }
 
   private init(externalConfiguration: ExternalYasguiConfiguration): void {
@@ -930,6 +964,10 @@ export class OntotextYasguiWebComponent {
   }
 
   disconnectedCallback(): void {
+    if (this.subscriptions) {
+      this.subscriptions.forEach((subscription) => subscription());
+      this.subscriptions = [];
+    }
     this.destroy();
   }
 
@@ -940,15 +978,15 @@ export class OntotextYasguiWebComponent {
         <div class="yasgui-toolbar hidden">
           <button class="yasgui-btn btn-mode-yasqe"
                   onClick={() => this.changeRenderingMode(RenderingMode.YASQE)}>
-            {this.translationService.translate('yasgui.toolbar.mode_yasqe.btn.label')}
+            {this.yasqeBtnLabel}
           </button>
           <button class="yasgui-btn btn-mode-yasgui"
                   onClick={() => this.changeRenderingMode(RenderingMode.YASGUI)}>
-            {this.translationService.translate('yasgui.toolbar.mode_yasgui.btn.label')}
+            {this.yasguiBtnLabel}
           </button>
           <button class="yasgui-btn btn-mode-yasr"
                   onClick={() => this.changeRenderingMode(RenderingMode.YASR)}>
-            {this.translationService.translate('yasgui.toolbar.mode_yasr.btn.label')}
+            {this.yasrBtnLabel}
           </button>
           <yasgui-tooltip
             data-tooltip={this.resolveOrientationButtonTooltip()}

@@ -2,6 +2,7 @@ const ontoElement = document.querySelector("ontotext-yasgui");
 ontoElement.config = {
   endpoint: "/repositories/test-repo",
   showToolbar: true,
+  language: 'fr',
   prefixes: {
     "gn": "http://www.geonames.org/ontology#",
     "path": "http://www.ontotext.com/path#",
@@ -17,7 +18,10 @@ ontoElement.config = {
 };
 
 function changeLanguage(lang) {
-  ontoElement.language = lang;
+  ontoElement.config = {
+    ...ontoElement.config,
+    language: lang
+  }
 }
 
 function setTranslation() {
