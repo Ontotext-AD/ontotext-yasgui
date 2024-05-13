@@ -57,6 +57,10 @@ export class ChartsPlugin implements YasrPlugin {
   }
 
   draw(_persistentConfig: any, _runtimeConfig?: any): Promise<void> | void {
+    if (_persistentConfig) {
+      // Override default width of 600px
+      _persistentConfig.chartOptions.width = '100%';
+    }
     this.persistentConfig = { ...this.persistentConfig, ..._persistentConfig };
     this.initEditor();
     this.drawChart();
@@ -208,6 +212,8 @@ export class ChartsPlugin implements YasrPlugin {
 
   private redrawChart() {
     const chartWrapper = this.chartEditor.getChartWrapper();
+    // Override default width of 600px
+    chartWrapper.getOptions().width = '100%';
     chartWrapper.draw(document.getElementById(this.getContainerId()));
     this.persistentConfig.chartOptions = chartWrapper.getOptions();
     this.persistentConfig.chartState = chartWrapper.toJSON();
