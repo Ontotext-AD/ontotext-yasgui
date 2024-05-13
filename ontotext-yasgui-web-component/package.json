@@ -1,6 +1,6 @@
 {
   "name": "ontotext-yasgui-web-component",
-  "version": "1.3.9",
+  "version": "1.3.10",
   "description": "Ontotext customized yasgui",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
