@@ -18,8 +18,25 @@ export class YasrSteps {
   static getResultsTable(yasrIndex = 0) {
     return YasrSteps.getYasr(yasrIndex).find('.yasr_results tbody');
   }
+
   static getResultsTableHeaders(yasrIndex = 0) {
     return YasrSteps.getYasr(yasrIndex).find('.yasr_results thead');
+  }
+
+  static getResultsTableColumns(yasrIndex = 0) {
+    return YasrSteps.getResultsTableHeaders(yasrIndex).find('th');
+  }
+
+  static verifyColumnHeaders(columnHeaders: string[]) {
+    columnHeaders.forEach((header, index) => {
+      YasrSteps.getResultsTableColumns().eq(index).should('have.text', header);
+    });
+  }
+
+  static verifyTableColumnOrder(columnIndex: number, expectedOrder: string[]) {
+    YasrSteps.getResultsTable().find('tr').each((row, index) => {
+      cy.wrap(row).find('td').eq(columnIndex).should('have.text', expectedOrder[index]);
+    });
   }
 
   static getHeaderCell(columnNumber = 0, yasrIndex = 0) {

@@ -5,16 +5,17 @@ module.exports = function (req, res, next) {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(queryResponse));
-  } else if (req.url === '/repositories/multicolumn-results-repo') {
+  } else if (req.url === '/repositories/multiple-types') {
     // custom response overriding the dev server
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(multipleTypesResult));
+  } else if (req.url === '/repositories/multicolumn-results-repo') {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(multicolumnResults));
   } else if (req.url === '/repositories/rdf-star') {
-    // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(rdfStarResponse));
   } else if (req.url === '/repositories/chart-data') {
-    // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(chartDataResponse));
   } else if (req.url === '/repositories/chart-data-small-set') {
@@ -30,12 +31,107 @@ module.exports = function (req, res, next) {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(localNamesResponse));
   } else if (req.url === '/repositories/compact-view') {
-    // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(compactViewResponse));
   } else {
     // pass request on to the default dev server
     next();
+  }
+};
+
+const multipleTypesResult = {
+  "head" : {
+    "vars" : [
+      "string",
+      "integer",
+      "date",
+      "literal"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "string" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+          "type" : "literal",
+          "value" : "a"
+        },
+        "integer" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "10"
+        },
+        "date" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#date",
+          "type" : "literal",
+          "value" : "1981-05-07"
+        },
+        "literal" : {
+          "type" : "literal",
+          "value" : "10"
+        },
+      }, {
+        "string" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+          "type" : "literal",
+          "value" : "d"
+        },
+        "integer" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2"
+        },
+        "date" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#date",
+          "type" : "literal",
+          "value" : "1999-05-10"
+        },
+        "literal" : {
+          "type" : "literal",
+          "value" : "2"
+        },
+      }, {
+        "string" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+          "type" : "literal",
+          "value" : "b"
+        },
+        "integer" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "100"
+        },
+        "date" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#date",
+          "type" : "literal",
+          "value" : "2011-01-07"
+        },
+        "literal" : {
+          "type" : "literal",
+          "value" : "100"
+        },
+      }, {
+        "string" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#string",
+          "type" : "literal",
+          "value" : "w"
+        },
+        "integer" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "11"
+        },
+        "date" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#date",
+          "type" : "literal",
+          "value" : "2000-11-01"
+        },
+        "literal" : {
+          "type" : "literal",
+          "value" : "11"
+        },
+      }
+    ]
   }
 };
 
