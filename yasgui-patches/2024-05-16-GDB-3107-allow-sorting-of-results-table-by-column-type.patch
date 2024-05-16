@@ -1,0 +1,183 @@
+Index: Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision 9d26f38c0eec25d3398d5b6606793e79637df601)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision 3536dfe5667e581c2bbcced5b8cd2189dba0e6d5)
+@@ -38,7 +38,8 @@
+     this.tableEl = document.createElement("table");
+     const rows = this.getRows();
+     const columns = this.getColumns();
+-
++    const types = this.resolveTypes();
++    const columnDefinitions = this.getColumnDefinitions(types);
+     if (rows.length <= (persistentConfig?.pageSize || DEFAULT_PAGE_SIZE)) {
+       this.yasr.pluginControls;
+       addClass(this.yasr.rootEl, "isSinglePage");
+@@ -59,6 +60,7 @@
+       pageLength: -1,
+       data: rows,
+       columns: columns,
++      columnDefs: columnDefinitions,
+       // DataTables will only render the rows that are initially visible on the page.
+       deferRender: true,
+       // // Switch off the pagination.
+@@ -77,6 +79,7 @@
+         },
+       },
+     };
++
+     this.dataTable = $(this.tableEl).DataTable(dtConfig);
+     this.tableEl.style.removeProperty("width");
+     this.tableEl.style.width = this.tableEl.clientWidth + "px";
+@@ -112,6 +115,108 @@
+     }
+   }
+ 
++  /**
++   * Resolves the type of binding in the sparql result using its datatype if present. If the datatype is not present,
++   * null is returned. The types which this function can resolve are 'num', 'date' and 'str' and they are used to
++   * bind the DataTables column type with the custom ordering functions where the name of the functions are based on
++   * the type suffixed with '-pre'. For example
++   * <code>$.fn.dataTable.ext.type.order['num-pre'] = function(d) {...}</code> is the custom ordering function for the
++   * 'num' type.
++   * @param binding The binding to resolve the type for.
++   * @return The type of the binding or null if the binding is null.
++   */
++  private resolveValueType(binding: any){
++      if (!binding) {
++          return null;
++      }
++      if (binding.type != null && (binding.type === 'typed-literal' || binding.type === 'literal')) {
++          const xsdType = binding.datatype;
++          switch (xsdType) {
++              case "http://www.w3.org/2001/XMLSchema#float":
++              case "http://www.w3.org/2001/XMLSchema#double":
++              case "http://www.w3.org/2001/XMLSchema#byte":
++              case "http://www.w3.org/2001/XMLSchema#short":
++              case "http://www.w3.org/2001/XMLSchema#int":
++              case "http://www.w3.org/2001/XMLSchema#integer":
++              case "http://www.w3.org/2001/XMLSchema#long":
++              case "http://www.w3.org/2001/XMLSchema#decimal":
++              case "http://www.w3.org/2001/XMLSchema#unsignedByte":
++              case "http://www.w3.org/2001/XMLSchema#unsignedInt":
++              case "http://www.w3.org/2001/XMLSchema#unsignedLong":
++              case "http://www.w3.org/2001/XMLSchema#unsignedShort":
++              case "http://www.w3.org/2001/XMLSchema#negativeInteger":
++              case "http://www.w3.org/2001/XMLSchema#nonNegativeInteger":
++              case "http://www.w3.org/2001/XMLSchema#positiveInteger":
++              case "http://www.w3.org/2001/XMLSchema#nonPositiveInteger":
++              case "http://www.w3.org/2001/XMLSchema#gDay":
++              case "http://www.w3.org/2001/XMLSchema#gMonth":
++              case "http://www.w3.org/2001/XMLSchema#gMonthDay":
++              case "http://www.w3.org/2001/XMLSchema#gYear":
++              case "http://www.w3.org/2001/XMLSchema#gYearMonth":
++                  return "num";
++              case "http://www.w3.org/2001/XMLSchema#date":
++              case "http://www.w3.org/2001/XMLSchema#dateTime":
++              case "http://www.w3.org/2001/XMLSchema#time":
++                  return "date";
++              default:
++                  return "str";
++          }
++      }
++  }
++
++  /**
++   * Resolves the types of the bindings in the sparql result.
++   * For each variable in the result, this function counts the number of different types of the bindings for that
++   * variable. If the type can be resolved unambiguously, the type is returned. If no type is found, 'str' is returned.
++   * If multiple types are found, then an error is registered and logged because this renderer cannot allow sorting by
++   * multiple types in a single column.
++   * @return A record with the variable names as keys and the types as values.
++   */
++  private resolveTypes() {
++    if (!this.yasr.results) return {};
++    const variables = this.yasr.results?.getVariables();
++    const bindings = this.yasr.results?.getBindings();
++    const bindingTypes: Record<string, string> = {};
++    variables.forEach((variable) => {
++      const types: Record<string, number> = {};
++      let typeCount = 0;
++      bindings?.forEach((binding) => {
++        const valueType = this.resolveValueType(binding[variable]);
++        if (valueType != null) {
++          if (!(valueType in types)) {
++            types[valueType] = 0;
++            typeCount++;
++          }
++          types[valueType]++;
++        }
++      });
++      if (typeCount == 0) {
++        bindingTypes[variable] = 'str';
++      } else if (typeCount == 1) {
++        bindingTypes[variable] = Object.keys(types)[0];
++      } else {
++        console.log('Mapping bindings to types failed. Multiple types for a variable found', types, variable);
++      }
++    });
++    return bindingTypes;
++  }
++
++  /**
++   * Builds a list with column definitions for the DataTables plugin. This is needed in order to allow sorting of the
++   * columns based on their type.
++   * @param types The types of the bindings in the sparql result.
++   * @return A list with column definitions.
++   */
++  private getColumnDefinitions(types: Record<string, string>): DataTables.ColumnDefsSettings[] {
++    const columnDefinitions = Object.keys(types).map((variable, index) => {
++      return {targets: index + 1, type: types[variable]};
++    });
++    if (this.persistentConfig.compact) {
++      columnDefinitions.unshift({targets: 0, type: 'num'});
++    }
++    return columnDefinitions;
++  }
++
+   private registerDataTableEventHandlers(dataTable: DataTables.Api) {
+     // Both handlers are called only on sort column.
+     dataTable.on("preDraw", this.preDrawTableHandler.bind(this));
+@@ -235,7 +340,6 @@
+   protected getColumns(): DataTables.ColumnSettings[] {
+     if (!this.yasr.results) return [];
+     const prefixes = this.yasr.getPrefixes();
+-
+     return [
+       {
+         searchable: false,
+@@ -256,6 +360,13 @@
+             if (!type) {
+               return data.value;
+             }
++            // The render function is called with different type property based on the operation currently performed,
++            // e.g. filter, display, sort. We need to hook to sort operation to convert the value to the correct type
++            // in order to allow DataTables to sort the column correctly.
++            if (type === "sort") {
++                const valueType = this.resolveValueType(data) || 'str'
++                return this.convertValue(data, valueType);
++            }
+             return this.getCellContent(data, prefixes);
+           },
+         };
+@@ -263,6 +374,17 @@
+     ];
+   }
+ 
++  private convertValue(data: any, valueType: string) {
++    switch (valueType) {
++        case "num":
++            return parseFloat(data.value);
++        case "date":
++            return new Date(data.value);
++        default:
++            return data.value;
++    }
++  }
++
+   /**
+    * Set-ups first column to be index column.
+    * 1. Listen for the event 'draw.dt'
