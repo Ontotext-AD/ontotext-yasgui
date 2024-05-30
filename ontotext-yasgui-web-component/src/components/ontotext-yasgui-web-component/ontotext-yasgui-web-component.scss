@@ -746,3 +746,6 @@
 .jfk-tooltip-arrowdown .jfk-tooltip-arrowimplafter, .jfk-tooltip-arrowup .jfk-tooltip-arrowimplafter {
   border-color: #003663 transparent !important;
 }
+
+// Fixes Google visualization tooltip flickering. More info can be found at https://github.com/google/google-visualization-issues/issues/2162.
+svg > g > g.google-visualization-tooltip { pointer-events: none }
