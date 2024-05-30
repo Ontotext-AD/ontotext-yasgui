@@ -735,3 +735,14 @@
     white-space: pre-wrap;
   }
 }
+
+// Styling for the Google Chart Editor tooltip.
+.jfk-tooltip {
+  // For some reason, the tooltip was under the chart editor dialog and was not visible; adding a z-index will set it on top.
+  z-index: 12;
+  background-color: #003663 !important;
+}
+
+.jfk-tooltip-arrowdown .jfk-tooltip-arrowimplafter, .jfk-tooltip-arrowup .jfk-tooltip-arrowimplafter {
+  border-color: #003663 transparent !important;
+}

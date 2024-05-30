@@ -56,6 +56,20 @@ export class OntotextTooltipWebComponent {
       trigger: 'manual',
       placement: this.placement as Placement,
       allowHTML: true,
+      triggerTarget: this.el,
+      /**
+       * The tippy library has some conflict with the Google Chart Editor. The editor adds a div element with the "jfk-tooltip" class.
+       * When the mouse hovers over a chart editor element, this div is positioned accordingly.
+       * When the mouse leaves the element, a "jfk-tooltip-hidden" class is added, and the div tag is hidden.
+       * For some reason, when a 'ontotext-tooltip-web-component' is open, the "jfk-tooltip-hidden" class is removed, and the Google Chart tooltip is displayed along with
+       * 'ontotext-tooltip-web-component' (maybe Google uses an old version of tippy or popover and there is a conflict in implementations).
+       * When 'ontotext-tooltip-web-component' is open, we add the class 'hidden' to the Google Chart tooltip to hide it.
+       */
+      onShow: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.add('hidden')),
+      /**
+       * When 'ontotext-tooltip-web-component' is closed, we remove the 'hidden' class to allow the Google Chart tooltip to work properly.
+       */
+      onHide: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.remove('hidden'))
     };
     this.tooltip = tippy(this.el, options);
 
