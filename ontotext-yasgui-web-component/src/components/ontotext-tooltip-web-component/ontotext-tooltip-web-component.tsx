@@ -56,6 +56,9 @@ export class OntotextTooltipWebComponent {
       trigger: 'manual',
       placement: this.placement as Placement,
       allowHTML: true,
+      triggerTarget: this.el,
+      onShow: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.add('hidden')),
+      onHide: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.remove('hidden'))
     };
     this.tooltip = tippy(this.el, options);
 

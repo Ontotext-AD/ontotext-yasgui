@@ -8,3 +8,13 @@
 .tippy-arrow {
   color: $color-onto-blue;
 }
+
+
+.jfk-tooltip {
+  z-index: 12;
+  background-color: #003663 !important;
+}
+
+.jfk-tooltip-arrowdown .jfk-tooltip-arrowimplafter, .jfk-tooltip-arrowup .jfk-tooltip-arrowimplafter {
+  border-color: #003663 transparent !important;
+}
