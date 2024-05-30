@@ -425,7 +425,18 @@
 
     .yasr_results {
       .dataTable {
-
+        &.withRowNumber {
+          tr td:first-child {
+            position: sticky;
+            left: 0;
+          }
+          tr.odd > td:first-child {
+            background-color: #f9f9f9;
+          }
+          tr.even > td:first-child {
+            background-color: $color-onto-white;
+          }
+        }
         & .expandable-literal {
           cursor: pointer;
         }
