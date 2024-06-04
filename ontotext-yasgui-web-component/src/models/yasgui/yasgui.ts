@@ -1,5 +1,7 @@
 import {Tab} from './tab';
 import {OngoingRequestsInfo} from '../ongoing-requests-info';
+import {YasguiResetFlags} from "./yasgui-reset-flags";
+import {YasguiConfiguration} from "../yasgui-configuration";
 
 export class Yasgui {
   persistentConfig: any;
@@ -13,5 +15,5 @@ export class Yasgui {
   on: (event, handler) => void;
   emitTabChange: (tab: Tab) => void;
   getOngoingRequestsInfo: (skipTabId?: string) => OngoingRequestsInfo;
-  resetResults: (resetCurrentTab: boolean) => void;
+  reInitYasgui: (resetFlagsModel: YasguiResetFlags, configuration: YasguiConfiguration) => void;
 }

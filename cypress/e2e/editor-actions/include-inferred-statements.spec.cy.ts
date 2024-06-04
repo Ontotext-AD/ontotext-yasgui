@@ -2,6 +2,7 @@ import {YasqeSteps} from "../../steps/yasqe-steps";
 import {QueryStubDescription, QueryStubs} from "../../stubs/query-stubs";
 import ActionsPageSteps from "../../steps/pages/actions-page-steps";
 import {YasguiSteps} from '../../steps/yasgui-steps';
+import {YasrSteps} from "../../steps/yasr-steps";
 
 describe('Include inferred action', () => {
   beforeEach(() => {
@@ -105,6 +106,33 @@ describe('Include inferred action', () => {
       YasguiSteps.openTab(0);
 
       // Then I expect "infer" to be enabled.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+    });
+
+    it('should reset "infer" state when resetting results.', () => {
+      // When I visit a page with "ontotext-yasgui-web-component" in it,
+      // and "infer" configuration is not setup.
+      // Then I expect that inferred element to be enabled by default
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
+
+      // When I change configure "infer" to false
+      YasqeSteps.includeInferredStatements();
+      // Then I expect that the infer element to be disabled.
+      YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: OFF');
+      YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-off');
+
+      // And I execute the query
+      YasqeSteps.executeQuery(0);
+      // Then I should see the results table
+      YasrSteps.getTableResults().should('be.visible');
+      // When I reset the results
+      ActionsPageSteps.resetResults();
+      // Then I should see no results table
+      YasrSteps.getRawResults().should('not.be.visible');
+
+      // And I expect "infer" to be enabled.
       YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
       YasqeSteps.getActionButton(3).should('have.class', 'icon-inferred-on');
     });

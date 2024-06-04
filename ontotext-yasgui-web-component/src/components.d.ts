@@ -24,6 +24,7 @@ import { RenderingMode } from "./models/yasgui-configuration";
 import { Tab } from "./models/yasgui/tab";
 import { YasqeButtonType } from "./models/yasqe-button-name";
 import { OngoingRequestsInfo } from "./models/ongoing-requests-info";
+import { YasguiResetFlags } from "./models/yasgui/yasgui-reset-flags";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     /**
@@ -203,10 +204,10 @@ export namespace Components {
          */
         "query": (renderingMode?: RenderingMode) => Promise<any>;
         /**
-          * Clears the results of the query.
-          * @param resetCurrentTab - controls if the current tab has to be reset. If true, the results of the current tab will be reset as well. Default is true.
+          * Reinitializes the Yasgui component by resetting the defined flags to those in the configuration. Clears the results of the query.
+          * @param resetFlags - object defining the flags for what to reset
          */
-        "resetResults": (resetCurrentTab?: boolean) => Promise<any>;
+        "reInitYasgui": (resetFlags: YasguiResetFlags) => Promise<any>;
         /**
           * A configuration model related with all the saved queries actions.
          */

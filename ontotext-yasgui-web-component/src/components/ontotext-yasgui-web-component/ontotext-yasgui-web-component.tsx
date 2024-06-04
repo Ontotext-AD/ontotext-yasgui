@@ -43,6 +43,7 @@ import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
 import {InternalRequestAbortedEvent} from '../../models/internal-events/internal-request-aborted-event';
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 import {Debounce} from "../../services/utils/debounce";
+import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -433,15 +434,15 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Reinitializes the Yasgui component by resetting the defined flags to those in the configuration.
    * Clears the results of the query.
-   * @param resetCurrentTab - controls if the current tab has to be reset. If true, the results of the current tab will be reset as well.
-   * Default is true.
+   * @param resetFlags - object defining the flags for what to reset
    */
   @Method()
-  resetResults(resetCurrentTab = true): Promise<any> {
+  reInitYasgui(resetFlags: YasguiResetFlags): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
-        ontotextYasgui.resetResults(resetCurrentTab);
+        ontotextYasgui.reInitYasgui(resetFlags);
       });
   }
 
