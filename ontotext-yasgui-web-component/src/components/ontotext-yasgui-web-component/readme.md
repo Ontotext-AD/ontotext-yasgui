@@ -201,8 +201,9 @@ Type: `Promise<any>`
 
 
 
-### `resetResults(resetCurrentTab?: boolean) => Promise<any>`
+### `reInitYasgui(resetFlags: YasguiResetFlags) => Promise<any>`
 
+Reinitializes the Yasgui component by resetting the defined flags to those in the configuration.
 Clears the results of the query.
 
 #### Returns

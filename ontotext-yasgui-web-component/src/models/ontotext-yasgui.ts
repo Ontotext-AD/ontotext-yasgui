@@ -4,6 +4,7 @@ import {TabQueryModel} from "./external-yasgui-configuration";
 import {Yasgui} from './yasgui/yasgui';
 import {Tab} from './yasgui/tab';
 import {OngoingRequestsInfo} from './ongoing-requests-info';
+import {YasguiResetFlags} from "./yasgui/yasgui-reset-flags";
 
 /**
  * An adapter around the actual yasgui instance.
@@ -84,13 +85,12 @@ export class OntotextYasgui {
   }
 
   /**
-   * Removes the sparql results from the in-memory persistence json object. Then it emits a tab change event to apply
-   * the changes in the storage.
-   * @param resetCurrentTab - controls if the current tab has to be reset. If true, the results of the current tab will be reset as well.
-   * Default is true.
+   * Reinitializes the Yasgui component by resetting the defined flags to those in the configuration.
+   * Clears the results of the query.
+   * @param resetFlags - the flags object used when resetting the Yasgui component
    */
-  resetResults(resetCurrentTab = true): void {
-    this.yasgui.resetResults(resetCurrentTab);
+  reInitYasgui(resetFlags: YasguiResetFlags): void {
+    this.yasgui.reInitYasgui(resetFlags, this.config);
   }
 
   getQuery(): string {

@@ -94,4 +94,8 @@ export default class ActionsPageSteps {
   static configureSameAsImmutable() {
     cy.get('#setSameAsImmutable').click();
   }
+
+  static resetResults() {
+    cy.get('#resetResultsAction').click();
+  }
 }

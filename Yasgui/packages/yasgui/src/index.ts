@@ -20,6 +20,8 @@ import {
 } from "@triply/yasgui-utils";
 import { TranslationService } from "@triply/yasgui-utils";
 import { CloseTabConfirmation } from "./closeTabConfirmation";
+import { YasguiConfiguration } from "../../utils/src/yasgui-configuration"
+import {YasguiResetFlags} from "../../utils/src/yasgui-reset-flags";
 require("./index.scss");
 require("@triply/yasr/src/scss/global.scss");
 if (window) {
@@ -189,31 +191,50 @@ export class Yasgui extends EventEmitter {
         if (executeIdAfterInit && executeIdAfterInit === activeTabId) {
           (this.getTab(activeTabId) as Tab).query().catch(() => {});
         }
-        // }
       }
     }
   }
 
   public getHandleLocalStorageQuotaFull(): (e: any) => void {
     return () => {
-      this.resetResults();
+      this.reInitYasgui({resetCurrentTab: false, resetInferResults: false, resetSameAs: false, resetYasr: true});
     };
   }
 
-  public resetResults(resetCurrentTab = false) {
+    /**
+     * Reinitializes the YASGUI component with default values from the config.
+     * @param {YasguiResetFlags} resetFlags object defining the flags for what to reset
+     * @param {YasguiConfiguration} config the YasguiConfiguration used to get the default values
+     */
+  public reInitYasgui(resetFlags: YasguiResetFlags, config: YasguiConfiguration = {}) {
     const currentId = this.persistentConfig.currentId();
+    const refreshYasqe = this.hasFlagsForRefreshYasqe(resetFlags.resetInferResults, config?.yasguiConfig?.infer);
     Object.values(this.persistentConfig.getTabConfig()).forEach((tab: any) => {
-      if (resetCurrentTab || currentId !== tab.id) {
-        tab.yasr.response = null;
+      if (resetFlags.resetCurrentTab || currentId !== tab.id) {
+        if (resetFlags.resetYasr) {
+          tab.yasr.response = null;
+        }
+      }
+      if (refreshYasqe) {
+          tab.yasqe.infer = config.yasguiConfig?.infer;
+          tab.yasqe.sameAs = config.yasguiConfig?.sameAs || config.yasguiConfig?.infer;
       }
     });
     Object.values(this._tabs).forEach((tab: Tab) => {
-      if (resetCurrentTab || currentId !== tab.getId()) {
+      if (resetFlags.resetCurrentTab || currentId !== tab.getId()) {
         this.emitTabChange(tab);
         tab.reInitYasr();
       }
+      if (refreshYasqe) {
+        tab.getYasqe()?.refresh();
+      }
     });
   }
+
+  private hasFlagsForRefreshYasqe(resetInfer: boolean | undefined, configInfer: boolean | undefined) {
+      return resetInfer && configInfer !== undefined;
+  }
+
   public hasFullscreen(fullscreen: boolean) {
     if (fullscreen) {
       this.emit("fullscreen-enter", this);

@@ -1,0 +1,108 @@
+Subject: [PATCH] GDB-10301 - add model for configuration and refresh flags. Change YASR refresh logic
+---
+Index: Yasgui/packages/utils/src/yasgui-configuration.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/yasgui-configuration.ts b/Yasgui/packages/utils/src/yasgui-configuration.ts
+new file mode 100644
+--- /dev/null	(revision dd63324aaace68acebdb4d576872f311250135d4)
++++ b/Yasgui/packages/utils/src/yasgui-configuration.ts	(revision dd63324aaace68acebdb4d576872f311250135d4)
+@@ -0,0 +1,6 @@
++export interface YasguiConfiguration {
++  yasguiConfig?: {
++    infer: boolean;
++    sameAs: boolean;
++  }
++}
+Index: Yasgui/packages/utils/src/yasgui-reset-flags.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/utils/src/yasgui-reset-flags.ts b/Yasgui/packages/utils/src/yasgui-reset-flags.ts
+new file mode 100644
+--- /dev/null	(revision dd63324aaace68acebdb4d576872f311250135d4)
++++ b/Yasgui/packages/utils/src/yasgui-reset-flags.ts	(revision dd63324aaace68acebdb4d576872f311250135d4)
+@@ -0,0 +1,6 @@
++export interface YasguiResetFlags {
++    resetCurrentTab: boolean;
++    resetInferResults: boolean;
++    resetSameAs: boolean;
++    resetYasr: boolean;
++}
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision 56265cc8d14f27b0c44e5567209d0dbdf4dc52da)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision dd63324aaace68acebdb4d576872f311250135d4)
+@@ -20,6 +20,8 @@
+ } from "@triply/yasgui-utils";
+ import { TranslationService } from "@triply/yasgui-utils";
+ import { CloseTabConfirmation } from "./closeTabConfirmation";
++import { YasguiConfiguration } from "../../utils/src/yasgui-configuration"
++import {YasguiResetFlags} from "../../utils/src/yasgui-reset-flags";
+ require("./index.scss");
+ require("@triply/yasr/src/scss/global.scss");
+ if (window) {
+@@ -189,31 +191,50 @@
+         if (executeIdAfterInit && executeIdAfterInit === activeTabId) {
+           (this.getTab(activeTabId) as Tab).query().catch(() => {});
+         }
+-        // }
+       }
+     }
+   }
+ 
+   public getHandleLocalStorageQuotaFull(): (e: any) => void {
+     return () => {
+-      this.resetResults();
++      this.reInitYasgui({resetCurrentTab: false, resetInferResults: false, resetSameAs: false, resetYasr: true});
+     };
+   }
+ 
+-  public resetResults(resetCurrentTab = false) {
++    /**
++     * Reinitializes the YASGUI component with default values from the config.
++     * @param {YasguiResetFlags} resetFlags object defining the flags for what to reset
++     * @param {YasguiConfiguration} config the YasguiConfiguration used to get the default values
++     */
++  public reInitYasgui(resetFlags: YasguiResetFlags, config: YasguiConfiguration = {}) {
+     const currentId = this.persistentConfig.currentId();
++    const refreshYasqe = this.hasFlagsForRefreshYasqe(resetFlags.resetInferResults, config?.yasguiConfig?.infer);
+     Object.values(this.persistentConfig.getTabConfig()).forEach((tab: any) => {
+-      if (resetCurrentTab || currentId !== tab.id) {
+-        tab.yasr.response = null;
++      if (resetFlags.resetCurrentTab || currentId !== tab.id) {
++        if (resetFlags.resetYasr) {
++          tab.yasr.response = null;
++        }
+       }
++      if (refreshYasqe) {
++          tab.yasqe.infer = config.yasguiConfig?.infer;
++          tab.yasqe.sameAs = config.yasguiConfig?.sameAs || config.yasguiConfig?.infer;
++      }
+     });
+     Object.values(this._tabs).forEach((tab: Tab) => {
+-      if (resetCurrentTab || currentId !== tab.getId()) {
++      if (resetFlags.resetCurrentTab || currentId !== tab.getId()) {
+         this.emitTabChange(tab);
+         tab.reInitYasr();
+       }
++      if (refreshYasqe) {
++        tab.getYasqe()?.refresh();
++      }
+     });
+   }
++
++  private hasFlagsForRefreshYasqe(resetInfer: boolean | undefined, configInfer: boolean | undefined) {
++      return resetInfer && configInfer !== undefined;
++  }
++
+   public hasFullscreen(fullscreen: boolean) {
+     if (fullscreen) {
+       this.emit("fullscreen-enter", this);

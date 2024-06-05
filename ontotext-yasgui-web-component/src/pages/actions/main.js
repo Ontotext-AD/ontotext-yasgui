@@ -367,3 +367,7 @@ function configureInfer(infer) {
 function configureSameAs(sameAs) {
   ontoElement.config = {...ontoElement.config, sameAs};
 }
+
+function resetResults() {
+  getOntotextYasgui().reInitYasgui({resetCurrentTab: true, resetInferResults: true, resetSameAs: true, resetYasr: true});
+}
