@@ -21,6 +21,7 @@ export class ChartsPlugin implements YasrPlugin {
   private yasr: Yasr;
   // @ts-ignore
   private translationService: TranslationService;
+  private readonly currentLanguage: string;
   private chartEditor = null;
   private wrapper = null;
   private chartEditorOkHandler = undefined;
@@ -39,6 +40,7 @@ export class ChartsPlugin implements YasrPlugin {
     if (yasr) {
       this.yasr = yasr;
       this.translationService = this.yasr.config.translationService;
+      this.currentLanguage = this.translationService.getLanguage();
     }
     this.config = ChartsPlugin.defaults;
   }
@@ -51,7 +53,7 @@ export class ChartsPlugin implements YasrPlugin {
     return new Promise<void>((resolve) => {
       HtmlUtil.loadJavaScript('https://www.gstatic.com/charts/loader.js', () => {
         // @ts-ignore
-        google.charts.load('current', {packages: ['charteditor']}).then(resolve);
+        google.charts.load('current', {packages: ['charteditor'], language: this.currentLanguage}).then(resolve);
       });
     });
   }
