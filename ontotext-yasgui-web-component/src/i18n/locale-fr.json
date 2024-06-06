@@ -208,7 +208,7 @@
   "yasr.plugin_control.download_as.tri-g.label": "TriG",
   "yasr.plugin_control.download_as.tri-g_star.label": "TriG*",
   "yasr.plugin_control.download_as.n_quads.label": "N-Quads",
-  "yasr.plugin_control.download_as.x_binary_rdf_results_table.label": "Résultats RDF binaires",
+  "yasr.plugin_control.download_as.x_binary_rdf_results_table.label": "RDF binaire",
   "yasr.plugin_control.download_as.binary.label": "RDF binaire",
   "yasr.plugin.error.cors_enabled.link.label": "Activé CORS",
   "yasr.plugin.error.endpoint_down.error.label": "Le point d'accès est hors service",
