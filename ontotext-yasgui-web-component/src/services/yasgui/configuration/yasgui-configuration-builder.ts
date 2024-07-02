@@ -70,6 +70,7 @@ export class YasguiConfigurationBuilder {
       immutableInfer: externalConfiguration.immutableInfer !== undefined ? externalConfiguration.immutableInfer : defaultYasqeConfig.immutableInfer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
       immutableSameAs: externalConfiguration.immutableSameAs !== undefined ? externalConfiguration.immutableSameAs : defaultYasqeConfig.immutableSameAs,
+      clearState: externalConfiguration.clearState !== undefined ? externalConfiguration.clearState : false,
       requestConfig: {},
       paginationOn: externalConfiguration.paginationOn !== undefined ? externalConfiguration.paginationOn : defaultYasguiConfig.paginationOn,
       pageSize: externalConfiguration.pageSize !== undefined ? externalConfiguration.pageSize : defaultYasguiConfig.pageSize,

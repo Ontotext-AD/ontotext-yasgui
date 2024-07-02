@@ -148,7 +148,7 @@ export class YasqeService {
   //@ts-ignore
   private buildInferAndSameAsButtons(yasguiConfiguration: YasguiConfiguration, yasqe: Yasqe): HTMLElement[] {
     // When a new tab is open and infer action is configured to be visible infer and sameAs are undefined, so we have to initialized them.
-    this.initInferAndSameAsState(yasqe, yasguiConfiguration.yasguiConfig.infer, yasguiConfiguration.yasguiConfig.sameAs);
+    this.initInferAndSameAsState(yasqe, yasguiConfiguration.yasguiConfig);
     const includeInferred = yasqe.getInfer();
     const sameAs = yasqe.getSameAs();
     const sameAsElement = this.createSameAsElement(yasqe, yasguiConfiguration.yasguiConfig.immutableSameAs);
@@ -236,19 +236,26 @@ export class YasqeService {
   }
 
   /**
-   * Initializes the state of infer and same as buttons.
+   * Initializes the state of infer and same as buttons. If the yasgui clearState flag is true, the button state is
+   * taken from the configuration.
    *
    * @param yasqe - the yasqe.
-   * @param defaultInfer - default value of infer if not set in <code>yasqe</code>
-   * @param defaultSameAs - default value of sameAs if not set in <code>yasqe</code>
+   * @param yasguiConfig - the yasgui configuration
    * @private
    */
   //@ts-ignore
-  private initInferAndSameAsState(yasqe: Yasqe, defaultInfer, defaultSameAs) {
-    // When a query is executed, then yasqe has values for the "infer" and "sameAs" fields, we use these to be in synchronize with the executed query.
-    // Otherwise, default values from the configuration are used.
-    const infer = yasqe.getInfer() !== undefined ? yasqe.getInfer() : defaultInfer;
-    const sameAs = yasqe.getSameAs() !== undefined ? yasqe.getSameAs() : defaultSameAs;
+  private initInferAndSameAsState(yasqe: Yasqe, yasguiConfig) {
+    let infer: boolean;
+    let sameAs: boolean;
+    if (yasguiConfig.clearState) {
+      infer = yasguiConfig.infer;
+      sameAs = yasguiConfig.sameAs;
+    } else {
+      // When a query is executed, then yasqe has values for the "infer" and "sameAs" fields, we use these to be in synchronize with the executed query.
+      // Otherwise, default values from the configuration are used.
+      infer = yasqe.getInfer() !== undefined ? yasqe.getInfer() : yasguiConfig.infer;
+      sameAs = yasqe.getSameAs() !== undefined ? yasqe.getSameAs() : yasguiConfig.sameAs;
+    }
 
     yasqe.setInfer(infer);
     // same as can be "on" only if infer is "on".
