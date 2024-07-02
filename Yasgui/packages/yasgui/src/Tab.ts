@@ -680,6 +680,7 @@ export class Tab extends EventEmitter {
     yasrConf.downloadAsOptions = this.yasgui.config.yasr.downloadAsOptions;
     yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
     yasrConf.showQueryLoader = this.yasgui.config.yasr.showQueryLoader;
+    yasrConf.clearState = this.yasgui.config.clearState;
     yasrConf.tabId = this.getId();
 
     if (this.yasqe) {

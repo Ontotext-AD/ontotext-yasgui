@@ -29,5 +29,6 @@ export default function get(): Config {
     plugins: {},
     pluginOrder: ["table", "response"], // Default plugins, others are sorted alphabetically
     defaultPlugin: "table",
+    clearState: false
   };
 }

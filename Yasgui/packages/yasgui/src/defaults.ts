@@ -71,5 +71,6 @@ export default function initialize(): Config<CatalogueItem> {
     autoAddOnInit: true,
     requestConfig: Yasqe.defaults.requestConfig,
     contextMenuContainer: undefined,
+    clearState: false,
   };
 }

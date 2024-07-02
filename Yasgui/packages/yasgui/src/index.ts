@@ -42,6 +42,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   endpointInfo: ((tab?: Tab) => Element) | undefined;
   copyEndpointOnNewTab: boolean;
   defaultTabNameLabelKey: string;
+  clearState: boolean;
   corsProxy: string | undefined;
   endpointCatalogueOptions: EndpointSelectConfig<EndpointObject>;
   //The function allows us to modify the config before we pass it on to a tab
