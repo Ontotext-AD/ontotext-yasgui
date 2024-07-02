@@ -103,6 +103,7 @@ export interface YasguiConfiguration {
     immutableInfer: boolean;
     sameAs: boolean;
     immutableSameAs: boolean;
+    clearState: boolean;
     paginationOn: true,
     pageSize: 10,
     yasqe?: {

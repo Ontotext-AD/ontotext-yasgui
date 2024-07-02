@@ -135,6 +135,11 @@ export interface ExternalYasguiConfiguration {
   immutableSameAs: boolean;
 
   /**
+   * If set to true, the state of the Yasgui will be reset to the initial state.
+   */
+  clearState: boolean;
+
+  /**
    * If the configured endpoint should be preconfigured to any new opened editor tab.
    */
   copyEndpointOnNewTab: boolean;

@@ -840,6 +840,14 @@ export class OntotextYasguiWebComponent {
   private afterInit(): void {
     // Configure the web component
     this.ontotextYasguiService.postConstruct(this.hostElement, this.ontotextYasgui.getConfig());
+    if (this.ontotextYasgui.getConfig().yasguiConfig.clearState) {
+      this.ontotextYasgui.reInitYasgui({
+        resetSameAs: true,
+        resetCurrentTab: true,
+        resetYasr: true,
+        resetInferResults: true
+      });
+    }
   }
 
   registerEventHandlers(): void {
