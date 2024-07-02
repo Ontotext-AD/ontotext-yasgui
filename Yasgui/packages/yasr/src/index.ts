@@ -85,12 +85,17 @@ export class Yasr extends EventEmitter {
     this.rootEl.appendChild(this.resultsEl);
     this.initializePlugins();
 
-    const resp = data || this.getResponseFromStorage();
+    let resp;
+    if (!this.config.clearState) {
+        resp = data || this.getResponseFromStorage();
+    }
     if (resp) {
       // Set response without draw yasr to prevent double rendering yasr active plugin. The drawing function of the plugin that displays the response
       // will be called when it is marked as active.
       const draw = false;
       this.setResponse(resp, undefined, undefined, undefined, undefined, undefined, draw);
+    } else {
+        this.draw();
     }
     this.drawHeader();
   }
@@ -818,6 +823,7 @@ export interface Config {
    * overwrite or explicitly call previously added or default ones.
    */
   errorRenderers?: ((error: Parser.ErrorSummary) => Promise<HTMLElement | undefined>)[];
+  clearState: boolean;
 }
 
 export function registerPlugin(name: string, plugin: typeof Plugin, enable = true) {

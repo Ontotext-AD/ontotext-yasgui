@@ -120,7 +120,7 @@ export class ExtendedYasr extends Yasr {
       const bindings = this.results.getBindings() || [];
       return bindings.length > 0;
     }
-    return true;
+    return false;
   }
 
   getTabId(): string | undefined {
