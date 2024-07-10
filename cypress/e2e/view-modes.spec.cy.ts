@@ -44,9 +44,9 @@ describe('View modes', () => {
         // Then I expect that yasqe and yasr will be both visible
         YasqeSteps.getYasqe().should('be.visible');
         YasrSteps.getYasr().should('be.visible');
-        // And the height css property will be removed to allow yasqe expand only to the with not
+        // And the height css property will be reset to allow yasqe expand only to the with not
         // occupied by yasr
-        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style', '');
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style', 'min-height: 330px;');
     });
 
     it('Should switch to yasgui mode when query is executed', () => {
