@@ -173,7 +173,9 @@ export class Yasqe extends CodeMirror {
     if (this.persistentConfig && this.persistentConfig.editorHeight) {
       this.getWrapperElement().style.height = this.persistentConfig.editorHeight;
     } else if (this.config.editorHeight) {
-      this.getWrapperElement().style.height = this.config.editorHeight;
+      this.getWrapperElement().style.minHeight = this.config.editorHeight;
+      // As per the docs, it's a good idea to refresh after resizing
+      this.refresh();
     }
 
     if (this.config.resizeable) this.drawResizer();
@@ -643,6 +645,7 @@ export class Yasqe extends CodeMirror {
     return event.clientY - parentOffset - this.rootEl.offsetTop + scrollOffset;
   }
   private doDrag(event: MouseEvent) {
+    this.getWrapperElement().style.minHeight = "";
     this.getWrapperElement().style.height = this.calculateDragOffset(event, this.rootEl) + "px";
   }
   private stopDrag() {

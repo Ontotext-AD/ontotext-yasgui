@@ -77,6 +77,7 @@ export class Tab extends EventEmitter {
   private endpointSelect: EndpointSelect | undefined;
   private tabPanel?: TabPanel;
   private readonly eventService: EventService;
+  private readonly minYasqeHeight = "330px";
   constructor(yasgui: Yasgui, conf: PersistedJson) {
     super();
     this.eventService = yasgui.eventService;
@@ -137,7 +138,7 @@ export class Tab extends EventEmitter {
     addClass(this.rootEl, "active");
     this.yasgui.tabElements.selectTab(this.persistentJson.id);
     if (this.yasqe) {
-      this.yasqe.refresh();
+      this.setEditorHeight();
       if (this.yasgui.config.autofocus) this.yasqe.focus();
     }
     if (this.yasr) {
@@ -565,6 +566,7 @@ export class Tab extends EventEmitter {
   handleYasqeResize = (_yasqe: Yasqe, newSize: string) => {
     this.persistentJson.yasqe.editorHeight = newSize;
     this.emit("change", this, this.persistentJson);
+    this.setEditorHeight();
   };
   handleAutocompletionShown = (_yasqe: Yasqe, widget: string) => {
     this.emit("autocompletionShown", this, widget);
@@ -593,6 +595,8 @@ export class Tab extends EventEmitter {
       customResultMessage
     );
     if (!this.yasr.results) return;
+    this.setEditorHeight();
+
     const responseAsStoreObject = this.yasr.results.getAsStoreObject(this.yasgui.config.yasr.maxPersistentResponseSize);
     if (!this.yasr.results.hasError()) {
       this.persistentJson.yasr.response = responseAsStoreObject;
@@ -605,6 +609,20 @@ export class Tab extends EventEmitter {
     this.emit("change", this, this.persistentJson);
     this.yasgui.emitInternalEvent("internalQueryExecuted", { duration, tabId: this.getId() });
   };
+
+  private setEditorHeight() {
+    if (this.yasqe) {
+      // If the tab is new, there will be no editorHeight set. The minHeight should be set in order to make all action buttons visible.
+      if (this.persistentJson.yasqe.editorHeight === undefined) {
+        this.yasqe.getWrapperElement().style.minHeight = this.minYasqeHeight;
+      } else {
+        this.yasqe.getWrapperElement().style.minHeight = <string>this.persistentJson.yasqe.editorHeight;
+        this.yasqe.getWrapperElement().style.height = <string>this.persistentJson.yasqe.editorHeight;
+      }
+      // As per the docs, it's a good idea to refresh after resizing
+      this.yasqe.refresh();
+    }
+  }
 
   handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {
     if (this.yasr?.results) {
