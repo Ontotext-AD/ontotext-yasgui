@@ -1,0 +1,92 @@
+Subject: [PATCH] GDB-10399 - sets the persisted height of the editor on init. Remembers height after query is run.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision b3f058fc1110e5eac8bd6b3418f626a32bf04e29)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision c17fa0aca7ba52f31eceb351f7c39afc71a60e39)
+@@ -77,6 +77,7 @@
+   private endpointSelect: EndpointSelect | undefined;
+   private tabPanel?: TabPanel;
+   private readonly eventService: EventService;
++  private readonly minYasqeHeight = "330px";
+   constructor(yasgui: Yasgui, conf: PersistedJson) {
+     super();
+     this.eventService = yasgui.eventService;
+@@ -137,7 +138,7 @@
+     addClass(this.rootEl, "active");
+     this.yasgui.tabElements.selectTab(this.persistentJson.id);
+     if (this.yasqe) {
+-      this.yasqe.refresh();
++      this.setEditorHeight();
+       if (this.yasgui.config.autofocus) this.yasqe.focus();
+     }
+     if (this.yasr) {
+@@ -565,6 +566,7 @@
+   handleYasqeResize = (_yasqe: Yasqe, newSize: string) => {
+     this.persistentJson.yasqe.editorHeight = newSize;
+     this.emit("change", this, this.persistentJson);
++    this.setEditorHeight();
+   };
+   handleAutocompletionShown = (_yasqe: Yasqe, widget: string) => {
+     this.emit("autocompletionShown", this, widget);
+@@ -593,6 +595,8 @@
+       customResultMessage
+     );
+     if (!this.yasr.results) return;
++    this.setEditorHeight();
++
+     const responseAsStoreObject = this.yasr.results.getAsStoreObject(this.yasgui.config.yasr.maxPersistentResponseSize);
+     if (!this.yasr.results.hasError()) {
+       this.persistentJson.yasr.response = responseAsStoreObject;
+@@ -606,6 +610,20 @@
+     this.yasgui.emitInternalEvent("internalQueryExecuted", { duration, tabId: this.getId() });
+   };
+ 
++  private setEditorHeight() {
++    if (this.yasqe) {
++      // If the tab is new, there will be no editorHeight set. The minHeight should be set in order to make all action buttons visible.
++      if (this.persistentJson.yasqe.editorHeight === undefined) {
++        this.yasqe.getWrapperElement().style.minHeight = this.minYasqeHeight;
++      } else {
++        this.yasqe.getWrapperElement().style.minHeight = <string>this.persistentJson.yasqe.editorHeight;
++        this.yasqe.getWrapperElement().style.height = <string>this.persistentJson.yasqe.editorHeight;
++      }
++      // As per the docs, it's a good idea to refresh after resizing
++      this.yasqe.refresh();
++    }
++  }
++
+   handleTotalElementsChanged = (_yasqe: Yasqe, totalElements = -1) => {
+     if (this.yasr?.results) {
+       this.yasr.results.setTotalElements(totalElements);
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision b3f058fc1110e5eac8bd6b3418f626a32bf04e29)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision c17fa0aca7ba52f31eceb351f7c39afc71a60e39)
+@@ -173,7 +173,9 @@
+     if (this.persistentConfig && this.persistentConfig.editorHeight) {
+       this.getWrapperElement().style.height = this.persistentConfig.editorHeight;
+     } else if (this.config.editorHeight) {
+-      this.getWrapperElement().style.height = this.config.editorHeight;
++      this.getWrapperElement().style.minHeight = this.config.editorHeight;
++      // As per the docs, it's a good idea to refresh after resizing
++      this.refresh();
+     }
+ 
+     if (this.config.resizeable) this.drawResizer();
+@@ -643,6 +645,7 @@
+     return event.clientY - parentOffset - this.rootEl.offsetTop + scrollOffset;
+   }
+   private doDrag(event: MouseEvent) {
++    this.getWrapperElement().style.minHeight = "";
+     this.getWrapperElement().style.height = this.calculateDragOffset(event, this.rootEl) + "px";
+   }
+   private stopDrag() {
