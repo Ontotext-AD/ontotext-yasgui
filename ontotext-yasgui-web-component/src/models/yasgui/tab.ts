@@ -15,4 +15,13 @@ export class Tab {
   getName: () => string;
   getQuery: () => string;
   setQuery: (query: string) => void;
+  persistentJson: PersistedJson;
+}
+
+export interface PersistedJson {
+  name: string;
+  id: string;
+  yasqe: {
+    editorHeight?: string;
+  };
 }

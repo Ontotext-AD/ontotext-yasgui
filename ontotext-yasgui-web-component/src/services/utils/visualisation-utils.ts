@@ -15,8 +15,9 @@ export class VisualisationUtils {
    * actually rendered before trying out to find it.
    * @param mode
    * @param orientation
+   * @param editorHeight if the mode is YASGUI, this height will be set for the yasqe. Default is 300px.
    */
-  static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation): void {
+  static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation, editorHeight = "300px"): void {
     const selectActiveEditor = () => document.querySelector('.yasgui .tabPanel.active .CodeMirror');
     if (mode === RenderingMode.YASQE || orientation === Orientation.HORIZONTAL) {
       setTimeout(() => {
@@ -34,7 +35,7 @@ export class VisualisationUtils {
       setTimeout(() => {
         const codemirrorEl = selectActiveEditor() as HTMLElement;
         if (codemirrorEl) {
-          codemirrorEl.style.removeProperty('height');
+          codemirrorEl.style.setProperty('height', editorHeight);
         }
       });
     }
@@ -45,8 +46,9 @@ export class VisualisationUtils {
    * @param hostElement
    * @param newMode
    * @param isVerticalOrientation
+   * @param editorHeight
    */
-  static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode, isVerticalOrientation: boolean): void {
+  static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode, isVerticalOrientation: boolean, editorHeight?: string): void {
     VisualisationUtils.unselectAllToolbarButtons(hostElement);
     const button = HtmlElementsUtil.getRenderModeButton(hostElement, newMode);
 
@@ -58,7 +60,7 @@ export class VisualisationUtils {
     const modes: string[] = Object.values(RenderingMode);
     hostElement.classList.remove(...modes);
     hostElement.classList.add(newMode);
-    this.setYasqeFullHeight(newMode, this.resolveOrientation(isVerticalOrientation));
+    this.setYasqeFullHeight(newMode, this.resolveOrientation(isVerticalOrientation), editorHeight);
   }
 
   static toggleLayoutOrientationButton(hostElement: HTMLElement, newOrientation: Orientation): void {
@@ -70,12 +72,12 @@ export class VisualisationUtils {
     }
   }
 
-  static toggleLayoutOrientation(hostElement: HTMLElement, isVerticalOrientation: boolean, mode: RenderingMode): void {
+  static toggleLayoutOrientation(hostElement: HTMLElement, isVerticalOrientation: boolean, mode: RenderingMode, editorHeight?: string): void {
     const newOrientation = this.resolveOrientation(isVerticalOrientation);
     const orientations: string[] = Object.values(Orientation);
     hostElement.classList.remove(...orientations);
     hostElement.classList.add(newOrientation);
-    this.setYasqeFullHeight(mode, newOrientation);
+    this.setYasqeFullHeight(mode, newOrientation, editorHeight);
     VisualisationUtils.toggleLayoutOrientationButton(hostElement, newOrientation);
   }
 

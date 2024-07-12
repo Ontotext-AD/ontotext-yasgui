@@ -1,5 +1,5 @@
 import {Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
-import {defaultOntotextYasguiConfig, Orientation, RenderingMode} from '../../models/yasgui-configuration';
+import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -255,12 +255,13 @@ export class OntotextYasguiWebComponent {
    * Changes rendering mode of component.
    *
    * @param newRenderMode - then new render mode of component.
+   * @param editorHeight - the height for yasqe.
    */
   @Method()
-  changeRenderMode(newRenderMode: RenderingMode): Promise<void> {
+  changeRenderMode(newRenderMode: RenderingMode, editorHeight?: string): Promise<void> {
     return this.getOntotextYasgui()
       .then(() => {
-        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.getOrientationMode() === Orientation.VERTICAL);
+        VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.isVerticalOrientation, editorHeight);
       });
   }
 
@@ -287,7 +288,7 @@ export class OntotextYasguiWebComponent {
   query(renderingMode: RenderingMode = RenderingMode.YASGUI): Promise<any> {
     return this.getOntotextYasgui()
       .then((ontotextYasgui) => {
-        this.defaultViewMode = renderingMode;
+        this.renderingMode = renderingMode;
         return ontotextYasgui.query();
       });
   }
@@ -464,7 +465,8 @@ export class OntotextYasguiWebComponent {
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.refresh();
-        VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation));
+        const editorHeight = ontotextYasgui.getTab(ontotextYasgui.getTabId()).persistentJson.yasqe.editorHeight;
+        VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation), editorHeight);
       });
   }
 
@@ -667,13 +669,14 @@ export class OntotextYasguiWebComponent {
 
   @Listen('internalQueryEvent')
   onQuery(event: CustomEvent<InternalQueryEvent>): void {
-    this.changeRenderMode(this.defaultViewMode);
-    this.defaultViewMode = RenderingMode.YASGUI;
-    this.output.emit(toOutputEvent(event));
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.leaveFullScreen();
-        VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation));
+        const editorHeight = ontotextYasgui.getTab(ontotextYasgui.getTabId()).persistentJson.yasqe.editorHeight;
+        this.changeRenderMode(this.defaultViewMode, editorHeight);
+        this.renderingMode = RenderingMode.YASGUI;
+        this.output.emit(toOutputEvent(event));
+        ontotextYasgui.refresh();
       });
   }
 
@@ -706,9 +709,10 @@ export class OntotextYasguiWebComponent {
 
   private changeOrientation() {
     this.isVerticalOrientation = !this.isVerticalOrientation;
-    VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation, this.renderingMode);
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
+        const editorHeight = ontotextYasgui.getTab(ontotextYasgui.getTabId()).persistentJson.yasqe.editorHeight;
+        VisualisationUtils.toggleLayoutOrientation(this.hostElement, this.isVerticalOrientation, this.renderingMode, editorHeight);
         ontotextYasgui.refresh();
       });
   }
@@ -830,7 +834,9 @@ export class OntotextYasguiWebComponent {
 
   private changeRenderingMode(mode: RenderingMode): void {
     this.renderingMode = mode;
-    VisualisationUtils.changeRenderMode(this.hostElement, mode, this.isVerticalOrientation);
+    const currentTabId = this.ontotextYasgui.getTabId();
+    const editorHeight = this.ontotextYasgui.getTab(currentTabId).persistentJson.yasqe.editorHeight;
+    VisualisationUtils.changeRenderMode(this.hostElement, mode, this.isVerticalOrientation, editorHeight);
   }
 
   private isOntotextYasguiInitialiazed(): boolean {
@@ -857,7 +863,8 @@ export class OntotextYasguiWebComponent {
       VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation);
     });
     this.ontotextYasgui.getInstance().on('tabSelect', (_yasgui, _tab) => {
-      VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation);
+      const editorHeight = this.ontotextYasgui.getTab(_tab).persistentJson.yasqe.editorHeight;
+      VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation, editorHeight);
     });
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
@@ -952,6 +959,8 @@ export class OntotextYasguiWebComponent {
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.registerEventHandlers();
       this.afterInit();
+      const editorHeight = this.ontotextYasgui.getTab(this.ontotextYasgui.getTabId()).persistentJson.yasqe.editorHeight;
+      VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation), editorHeight);
     }
   }
 
