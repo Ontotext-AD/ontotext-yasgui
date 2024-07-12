@@ -669,13 +669,13 @@ export class OntotextYasguiWebComponent {
 
   @Listen('internalQueryEvent')
   onQuery(event: CustomEvent<InternalQueryEvent>): void {
+    this.output.emit(toOutputEvent(event));
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
         ontotextYasgui.leaveFullScreen();
         const editorHeight = ontotextYasgui.getTab(ontotextYasgui.getTabId()).persistentJson.yasqe.editorHeight;
         this.changeRenderMode(this.defaultViewMode, editorHeight);
         this.renderingMode = RenderingMode.YASGUI;
-        this.output.emit(toOutputEvent(event));
         ontotextYasgui.refresh();
       });
   }
