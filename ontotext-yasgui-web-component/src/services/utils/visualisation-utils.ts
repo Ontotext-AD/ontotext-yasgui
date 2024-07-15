@@ -17,7 +17,7 @@ export class VisualisationUtils {
    * @param orientation
    * @param editorHeight if the mode is YASGUI, this height will be set for the yasqe. Default is 300px.
    */
-  static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation, editorHeight = "300px"): void {
+  static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation, editorHeight = 300): void {
     const selectActiveEditor = () => document.querySelector('.yasgui .tabPanel.active .CodeMirror');
     if (mode === RenderingMode.YASQE || orientation === Orientation.HORIZONTAL) {
       setTimeout(() => {
@@ -35,7 +35,7 @@ export class VisualisationUtils {
       setTimeout(() => {
         const codemirrorEl = selectActiveEditor() as HTMLElement;
         if (codemirrorEl) {
-          codemirrorEl.style.setProperty('height', editorHeight);
+          codemirrorEl.style.setProperty('height', editorHeight + 'px');
         }
       });
     }
@@ -48,7 +48,7 @@ export class VisualisationUtils {
    * @param isVerticalOrientation
    * @param editorHeight
    */
-  static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode, isVerticalOrientation: boolean, editorHeight?: string): void {
+  static changeRenderMode(hostElement: HTMLElement, newMode: RenderingMode, isVerticalOrientation: boolean, editorHeight?: number): void {
     VisualisationUtils.unselectAllToolbarButtons(hostElement);
     const button = HtmlElementsUtil.getRenderModeButton(hostElement, newMode);
 
@@ -72,7 +72,7 @@ export class VisualisationUtils {
     }
   }
 
-  static toggleLayoutOrientation(hostElement: HTMLElement, isVerticalOrientation: boolean, mode: RenderingMode, editorHeight?: string): void {
+  static toggleLayoutOrientation(hostElement: HTMLElement, isVerticalOrientation: boolean, mode: RenderingMode, editorHeight?: number): void {
     const newOrientation = this.resolveOrientation(isVerticalOrientation);
     const orientations: string[] = Object.values(Orientation);
     hostElement.classList.remove(...orientations);

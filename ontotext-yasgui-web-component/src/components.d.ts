@@ -146,7 +146,7 @@ export namespace Components {
           * @param newRenderMode - then new render mode of component.
           * @param editorHeight - the height for yasqe.
          */
-        "changeRenderMode": (newRenderMode: RenderingMode, editorHeight?: string) => Promise<void>;
+        "changeRenderMode": (newRenderMode: RenderingMode, editorHeight?: number) => Promise<void>;
         /**
           * An input object property containing the yasgui configuration.
          */
