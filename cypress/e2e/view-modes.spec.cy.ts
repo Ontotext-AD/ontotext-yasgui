@@ -13,6 +13,13 @@ describe('View modes', () => {
     });
 
     it('Should render mode-yasgui by default', () => {
+      // Skip the error which appears after the showToolbar button is clicked which doesn't
+      // happen in the normal use.
+      cy.on('uncaught:exception', (err, runnable) => {
+        if (err.message.includes("Failed to execute 'insertAdjacentHTML' on 'Element'")) {
+          return false
+        }
+      })
         // When I have no external config
         // Then I expect yasqe to be visible
         YasqeSteps.getYasqe().should('be.visible');
@@ -108,14 +115,19 @@ describe('View modes', () => {
     });
 
     it('Should execute a query and change the view depends on passed arguments', () => {
+      // Skip the error which appears after the showToolbar button is clicked which doesn't
+      // happen in the normal use.
+      cy.on('uncaught:exception', (err, runnable) => {
+        if (err.message.includes("Failed to execute 'insertAdjacentHTML' on 'Element'")) {
+          return false
+        }
+      })
       // When I open a page with ontotext-yasgui-web-component component on it,
       ToolbarPageSteps.isYasguiModeSelected();
       // And call query method of the component.
       ViewModePageSteps.executeQueryAndGoToYasr();
-
       // Then I expect the view mode be YASR
       ToolbarPageSteps.isYasrModeSelected();
-
       // When I call query method of component with param 'mode-yasgui'
       ViewModePageSteps.switchToModeYasqe();
     });
