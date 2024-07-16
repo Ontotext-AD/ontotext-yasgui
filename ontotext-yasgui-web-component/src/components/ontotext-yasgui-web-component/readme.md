@@ -73,7 +73,7 @@ Type: `Promise<any>`
 
 
 
-### `changeRenderMode(newRenderMode: RenderingMode) => Promise<void>`
+### `changeRenderMode(newRenderMode: RenderingMode, editorHeight?: number) => Promise<void>`
 
 Changes rendering mode of component.
 

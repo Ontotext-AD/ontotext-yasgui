@@ -22,7 +22,7 @@ describe('View modes', () => {
         // And I expect yasgui tabs to be visible
         YasguiSteps.getTabs().should('have.length', 1);
         // And I expect that render yasgui in the toolbar to be selected
-        ToolbarPageSteps.showToolbar();
+        ToolbarPageSteps.getShowToolbarButton().should('exist').then((el) => ViewModePageSteps.clickButton(el[0]));
         ToolbarPageSteps.isYasguiModeSelected();
     });
 
@@ -44,9 +44,8 @@ describe('View modes', () => {
         // Then I expect that yasqe and yasr will be both visible
         YasqeSteps.getYasqe().should('be.visible');
         YasrSteps.getYasr().should('be.visible');
-        // And the height css property will be removed to allow yasqe expand only to the with not
-        // occupied by yasr
-        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style', '');
+        // And the height css property will be set as per the persisted data. Yasqe will expand to the width not occupied by yasr
+        YasqeSteps.getCodeMirrorEl().should('have.attr', 'style').and('match', new RegExp('height:\\s*\\d+(\\.\\d+)?px'));
     });
 
     it('Should switch to yasgui mode when query is executed', () => {
@@ -113,13 +112,9 @@ describe('View modes', () => {
       ToolbarPageSteps.isYasguiModeSelected();
       // And call query method of the component.
       ViewModePageSteps.executeQueryAndGoToYasr();
-
       // Then I expect the view mode be YASR
       ToolbarPageSteps.isYasrModeSelected();
-
       // When I call query method of component with param 'mode-yasgui'
-      ViewModePageSteps.switchToModeYasqe();
-
-
+      ViewModePageSteps.getYasqeButton().should('exist').then((el) => ViewModePageSteps.clickButton(el[0]));
     });
 })

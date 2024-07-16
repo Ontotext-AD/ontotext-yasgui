@@ -178,6 +178,20 @@ export class OntotextYasgui {
     return tabInstance;
   }
 
+  /**
+   * Searches the local store for the given tab ID and returns the height for the yasqe editor. If no height can be found,
+   * the default 300 is returned.
+   * @param tabId
+   */
+  getEditorHeight(tabId: string): number {
+    const heightString = this.getInstance().getTab(tabId).persistentJson.yasqe.editorHeight;
+    if (heightString) {
+      return parseInt(heightString.replace("px", ""), 10);
+    } else {
+      return 300;
+    }
+  }
+
   destroy() {
     if (this.yasgui) {
       this.yasgui.destroy();

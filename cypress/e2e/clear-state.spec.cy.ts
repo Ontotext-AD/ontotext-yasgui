@@ -14,7 +14,8 @@ describe('Clear state configuration', () => {
     // I should see the results
     YasrTablePluginSteps.getQueryResultInfo().should('exist');
     // When I change the configuration by clearing the state
-    ClearStateConfigPageSteps.clearYasguiState();
+    ClearStateConfigPageSteps.getClearStateButton().should('exist')
+      .then((el) => ClearStateConfigPageSteps.clickButton(el[0]));
     // Then I should see that the results are not visible
     YasrTablePluginSteps.getResults().should('not.exist');
     // Then I expect the plugins buttons to not be visible
