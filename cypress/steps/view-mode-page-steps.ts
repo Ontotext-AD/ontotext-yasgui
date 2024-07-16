@@ -15,6 +15,14 @@ export class ViewModePageSteps {
         cy.get('#renderModeYasr').click();
     }
 
+    static getYasqeButton() {
+      return cy.get('#renderModeYasqe');
+    }
+
+    static clickButton(button: HTMLElement) {
+      button.click();
+    }
+
     static switchToHorizontalOrientation() {
         cy.get('#renderHorizontal').click();
     }

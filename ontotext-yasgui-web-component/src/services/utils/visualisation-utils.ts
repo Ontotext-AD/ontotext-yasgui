@@ -15,9 +15,9 @@ export class VisualisationUtils {
    * actually rendered before trying out to find it.
    * @param mode
    * @param orientation
-   * @param editorHeight if the mode is YASGUI, this height will be set for the yasqe. Default is 300px.
+   * @param editorHeight if the mode is YASGUI, this height will be set for the yasqe.
    */
-  static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation, editorHeight = 300): void {
+  static setYasqeFullHeight(mode: RenderingMode, orientation: Orientation, editorHeight: number): void {
     const selectActiveEditor = () => document.querySelector('.yasgui .tabPanel.active .CodeMirror');
     if (mode === RenderingMode.YASQE || orientation === Orientation.HORIZONTAL) {
       setTimeout(() => {

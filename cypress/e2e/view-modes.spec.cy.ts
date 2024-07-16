@@ -13,13 +13,6 @@ describe('View modes', () => {
     });
 
     it('Should render mode-yasgui by default', () => {
-      // Skip the error which appears after the showToolbar button is clicked which doesn't
-      // happen in the normal use.
-      cy.on('uncaught:exception', (err, runnable) => {
-        if (err.message.includes("Failed to execute 'insertAdjacentHTML' on 'Element'")) {
-          return false
-        }
-      })
         // When I have no external config
         // Then I expect yasqe to be visible
         YasqeSteps.getYasqe().should('be.visible');
@@ -29,7 +22,7 @@ describe('View modes', () => {
         // And I expect yasgui tabs to be visible
         YasguiSteps.getTabs().should('have.length', 1);
         // And I expect that render yasgui in the toolbar to be selected
-        ToolbarPageSteps.showToolbar();
+        ToolbarPageSteps.getShowToolbarButton().should('exist').then((el) => ViewModePageSteps.clickButton(el[0]));
         ToolbarPageSteps.isYasguiModeSelected();
     });
 
@@ -115,13 +108,6 @@ describe('View modes', () => {
     });
 
     it('Should execute a query and change the view depends on passed arguments', () => {
-      // Skip the error which appears after the showToolbar button is clicked which doesn't
-      // happen in the normal use.
-      cy.on('uncaught:exception', (err, runnable) => {
-        if (err.message.includes("Failed to execute 'insertAdjacentHTML' on 'Element'")) {
-          return false
-        }
-      })
       // When I open a page with ontotext-yasgui-web-component component on it,
       ToolbarPageSteps.isYasguiModeSelected();
       // And call query method of the component.
@@ -129,6 +115,6 @@ describe('View modes', () => {
       // Then I expect the view mode be YASR
       ToolbarPageSteps.isYasrModeSelected();
       // When I call query method of component with param 'mode-yasgui'
-      ViewModePageSteps.switchToModeYasqe();
+      ViewModePageSteps.getYasqeButton().should('exist').then((el) => ViewModePageSteps.clickButton(el[0]));
     });
 })

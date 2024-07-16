@@ -4,6 +4,14 @@ export class ClearStateConfigPageSteps {
   }
 
   static clearYasguiState() {
-    cy.get('#clearYasguiState').click();
+    this.getClearStateButton().click();
+  }
+
+  static getClearStateButton() {
+    return cy.get('#clearYasguiState');
+  }
+
+  static clickButton(button: HTMLElement) {
+    button.click();
   }
 }
