@@ -62,6 +62,12 @@ export interface Yasqe {
   getCursor: () => Cursor;
 
   setCursor: (cursor: Cursor) => void;
+
+  getScrollInfo(): {left:  number, top: number, width: number, height: number, clientWidth: number, clientHeight: number};
+
+  scrollIntoView(what: {line: number, ch: number}|{left: number, top: number, right: number, bottom: number}|{from: number, to: number}|null, margin?: number): void;
+
+  lineAtHeight(number: number, window: string): number;
 }
 
 export class Doc {
