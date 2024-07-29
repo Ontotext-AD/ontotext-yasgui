@@ -58,9 +58,12 @@ export class OntotextYasgui {
    * @param query The query value to be set.
    */
   setQuery(query: string): void {
-    const cursor = this.yasgui.getTab().getYasqe().getDoc().getCursor();
-    this.yasgui.getTab().getYasqe().setValue(query);
-    this.yasgui.getTab().getYasqe().getDoc().setCursor(cursor);
+    const yasqe = this.yasgui.getTab().getYasqe();
+    const cursor = yasqe.getDoc().getCursor();
+    const lastLine = yasqe.getDoc().lastLine();
+    const lastLineLength = yasqe.getDoc().getLine(lastLine).length;
+    yasqe.getDoc().replaceRange(query, {line: 0, ch: 0}, {line: lastLine, ch: lastLineLength});
+    yasqe.getDoc().setCursor(cursor);
   }
 
   query(): Promise<any> {
