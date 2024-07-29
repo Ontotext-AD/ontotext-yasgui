@@ -54,17 +54,16 @@ export class OntotextYasgui {
   }
 
   /**
-   * Sets a query value in the editor by preserving the cursor position and calculating the new scroll location.
+   * Sets a query value in the editor by preserving the cursor position.
    * @param query The query value to be set.
    */
   setQuery(query: string): void {
     const yasqe = this.yasgui.getTab().getYasqe();
-    const scrollInfo = yasqe.getScrollInfo();
-    const lastVisibleLine = yasqe.lineAtHeight(scrollInfo.top + scrollInfo.clientHeight, 'window');
     const cursor = yasqe.getDoc().getCursor();
-    yasqe.setValue(query);
+    const lastLine = yasqe.getDoc().lastLine();
+    const lastLineLength = yasqe.getDoc().getLine(lastLine).length;
+    yasqe.getDoc().replaceRange(query, {line: 0, ch: 0}, {line: lastLine, ch: lastLineLength});
     yasqe.getDoc().setCursor(cursor);
-    yasqe.scrollIntoView({line: lastVisibleLine - 1, ch: 0});
   }
 
   query(): Promise<any> {
