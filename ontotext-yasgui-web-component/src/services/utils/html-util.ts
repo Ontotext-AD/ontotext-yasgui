@@ -8,8 +8,9 @@ export class HtmlUtil {
     // The result should be "&lt;&lt;&lt;urn:test&gt; &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; &quot;test&quot;&gt;&gt;&gt;".
     let escapedText = text;
     if (text) {
-      escapedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
+    console.log(escapedText);
     return escapedText;
   }
 
