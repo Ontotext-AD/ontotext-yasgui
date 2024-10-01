@@ -10,7 +10,6 @@ export class HtmlUtil {
     if (text) {
       escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-    console.log(escapedText);
     return escapedText;
   }
 
