@@ -49,7 +49,7 @@ describe('YASR toolbar', () => {
 
     // Then I expect pivot download button to be visible download
     YasrCustomElementSteps.getYasrToolbarElement(0).should('have.class', 'hidden');
-    YasrCustomElementSteps.getYasrToolbarElement(1).contains('Get HTML snippet to embed results on a web page');
+    YasrCustomElementSteps.getYasrToolbarElement(1).contains('Download result');
     // hidden chart download button
     YasrCustomElementSteps.getYasrToolbarElement(2).should('have.class', 'hidden');
     YasrCustomElementSteps.getYasrToolbarElement(3).contains('Second described Element that have to be first');
