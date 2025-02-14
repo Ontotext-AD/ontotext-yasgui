@@ -33,4 +33,14 @@ describe('Edit saved query action', () => {
         YasqeSteps.getSavedQueriesPopup().should('not.exist');
         ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"q2-new","query":"select *","isPublic":true}');
     });
+    
+    it('Should not allow editing a saved query if it is read-only', () => {
+        // When: I open the saved queries popup
+        YasqeSteps.showSavedQueries();
+        YasqeSteps.getSavedQueriesPopup().should('be.visible');
+        YasqeSteps.getSavedQueries().should('have.length', 12);
+        
+        // Then: The edit button should not exist if the saved query is marked as read-only
+        YasqeSteps.getEditQueryButton(0).should('not.exist');
+    });
 });

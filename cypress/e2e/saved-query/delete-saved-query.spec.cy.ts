@@ -48,4 +48,14 @@ describe('Delete saved query action', () => {
         YasqeSteps.getSavedQueries().should('have.length', 12)
             .and('contain.text', 'q2');
     });
+    
+    it('Should not allow deleting a saved query if it is readonly', () => {
+        // When: I have opened the saved queries popup
+        YasqeSteps.showSavedQueries();
+        YasqeSteps.getSavedQueriesPopup().should('be.visible');
+        YasqeSteps.getSavedQueries().should('have.length', 12);
+        
+        // Then: The delete button should not exist if the saved query is marked as readonly
+        YasqeSteps.getDeleteQueryButton(0).should('not.exist');
+    });
 });

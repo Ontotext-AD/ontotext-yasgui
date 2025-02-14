@@ -191,17 +191,28 @@ export class YasqeSteps {
       return (el[tabIndex] as any).CodeMirror.setValue(query);
     });
   }
-
+  
+  static getEditQueryButton(index: number) {
+    return this.getSavedQueries().eq(index).realHover().find('.edit-saved-query');
+  }
+  
   static editQuery(index: number) {
-    this.getSavedQueries().eq(index).realHover().find('.edit-saved-query').click();
+    this.getEditQueryButton(index).click();
+  }
+  
+  static getDeleteQueryButton(index: number) {
+    return this.getSavedQueries().eq(index).realHover().find('.delete-saved-query');
   }
 
   static deleteQuery(index: number) {
-    this.getSavedQueries().eq(index).realHover().find('.delete-saved-query').click();
+    this.getDeleteQueryButton(index).click();
   }
 
+  static getShareSavedQueryButton(index: number) {
+    return this.getSavedQueries().eq(index).realHover().find('.share-saved-query');
+  }
   static shareSavedQuery(index: number) {
-    this.getSavedQueries().eq(index).realHover().find('.share-saved-query').click();
+    this.getShareSavedQueryButton(index).click();
   }
 
   static getShareSavedQueryDialog() {
