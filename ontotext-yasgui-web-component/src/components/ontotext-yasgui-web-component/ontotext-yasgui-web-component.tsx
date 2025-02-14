@@ -767,7 +767,8 @@ export class OntotextYasguiWebComponent {
           queryName: savedQuery.queryName,
           query: savedQuery.query,
           isPublic: savedQuery.isPublic,
-          owner: savedQuery.owner
+          owner: savedQuery.owner,
+          readonly: savedQuery.readonly !== undefined ? savedQuery.readonly : false
         }
       });
 

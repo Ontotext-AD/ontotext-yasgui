@@ -54,4 +54,14 @@ describe('Share saved query action', () => {
         YasguiSteps.getCurrentTab().should('contain', 'Clear graph');
         YasqeSteps.getTabQuery(1).should('equal', 'CLEAR GRAPH <http://example>');
     });
+    
+    it('Should allow sharing of a saved query regardless it is read-only', () => {
+        // When: I open the saved queries popup
+        YasqeSteps.showSavedQueries();
+        YasqeSteps.getSavedQueriesPopup().should('be.visible');
+        YasqeSteps.getSavedQueries().should('have.length', 12);
+        
+        // Then: The share saved query button exist regardless the query is marked as read-only
+        YasqeSteps.getShareSavedQueryButton(0).should('be.visible');
+    });
 });

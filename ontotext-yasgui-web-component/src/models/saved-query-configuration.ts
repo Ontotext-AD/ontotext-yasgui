@@ -31,6 +31,7 @@ export interface SavedQueryInput {
   query: string;
   isPublic: boolean;
   owner: string;
+  readonly: boolean
 }
 
 // TODO: rename to be like internal model
@@ -39,6 +40,7 @@ export class SaveQueryData {
               public query: string,
               public isPublic: boolean,
               public isNew?: boolean,
+              public readonly?: boolean,
               public owner?: string,
               public messages?: string[]) {
   }
