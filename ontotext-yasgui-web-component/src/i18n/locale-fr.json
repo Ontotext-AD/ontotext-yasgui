@@ -185,7 +185,7 @@
   "yasr.plugin_control.response_chip.message.result_info.total_results": " pour un total de {{totalResults}}",
   "yasr.plugin_control.response_chip.message.result_info.at_least_results": " d'au moins {{atLeastResults}}",
   "yasr.plugin_control.response_chip.message.seconds": "{{seconds}}s",
-  "yasr.plugin_control.download_as.extended_table.dropdown.label": "Télécharger les résultats SPARQL au format JSON",
+  "yasr.plugin_control.download_as.extended_table.dropdown.label": "Téléchargement",
   "yasr.plugin_control.download_as.raw_response.dropdown.label": "Téléchargement",
   "yasr.plugin_control.download_as.pivot_table.dropdown.label": "Télécharger le résultat",
   "yasr.plugin_control.download_as.charts.dropdown.label": "Télécharger le résultat",
