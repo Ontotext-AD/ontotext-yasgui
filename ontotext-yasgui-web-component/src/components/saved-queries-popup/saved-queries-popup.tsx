@@ -83,7 +83,7 @@ export class SavedQueriesPopup {
 
   onEdit(evt: MouseEvent, selectedQuery: SaveQueryData): void {
     evt.stopPropagation();
-    this.internalEditSavedQueryEvent.emit(new UpdateQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic, false));
+    this.internalEditSavedQueryEvent.emit(new UpdateQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic, selectedQuery.originalQueryName, false));
   }
 
   onDelete(evt: MouseEvent, selectedQuery: SaveQueryData): void {

@@ -30,6 +30,7 @@ export interface SavedQueryInput {
   queryName: string;
   query: string;
   isPublic: boolean;
+  originalQueryName: string;
   owner: string;
   readonly: boolean
 }
@@ -39,6 +40,7 @@ export class SaveQueryData {
   constructor(public queryName: string,
               public query: string,
               public isPublic: boolean,
+              public originalQueryName?: string,
               public isNew?: boolean,
               public readonly?: boolean,
               public owner?: string,

@@ -31,15 +31,15 @@ describe('Edit saved query action', () => {
         // Then I expect that the query is saved
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         YasqeSteps.getSavedQueriesPopup().should('not.exist');
-        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"q2-new","query":"select *","isPublic":true}');
+        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"q2-new","query":"select *","isPublic":true,"originalQueryName":"q2"}');
     });
-    
+
     it('Should not allow editing a saved query if it is read-only', () => {
         // When: I open the saved queries popup
         YasqeSteps.showSavedQueries();
         YasqeSteps.getSavedQueriesPopup().should('be.visible');
         YasqeSteps.getSavedQueries().should('have.length', 12);
-        
+
         // Then: The edit button should not exist if the saved query is marked as read-only
         YasqeSteps.getEditQueryButton(0).should('not.exist');
     });

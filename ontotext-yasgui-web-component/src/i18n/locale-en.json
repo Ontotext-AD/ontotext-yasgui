@@ -249,6 +249,8 @@
   "yasqe.actions.save_query.dialog.cancel.button": "Cancel",
   "yasqe.actions.show_saved_queries.button.tooltip": "Show saved queries",
   "yasqe.actions.edit_saved_query.button.tooltip": "Edit",
+  "yasqe.actions.edit_query.dialog.title": "Edit Saved Query",
+  "yasqe.actions.save_query.dialog.save.button": "Save",
   "yasqe.actions.delete_saved_query.button.tooltip": "Delete",
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirm",
   "yasqe.actions.delete_saved_query.confirm.dialog.message": "Are you sure you want to delete the saved query '{{query}}'?",

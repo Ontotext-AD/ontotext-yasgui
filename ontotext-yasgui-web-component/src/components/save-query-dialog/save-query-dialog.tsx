@@ -35,6 +35,10 @@ export class SaveQueryDialog {
   @Prop() data: SaveQueryData;
 
   @State() queryName = '';
+  /**
+   * Represents the name of the original query, before any modifications, transformations, or updates are applied.
+   */
+  @State() originalQueryName = '';
 
   @State() query = '';
 
@@ -80,6 +84,7 @@ export class SaveQueryDialog {
     this.translationService = this.serviceFactory.get(TranslationService);
     if (this.data) {
       this.queryName = this.data.queryName || this.queryName;
+      this.originalQueryName = this.data.queryName || this.queryName;
       this.query = this.data.query || this.query;
       this.isPublic = this.data.isPublic !== undefined ? this.data.isPublic : this.isPublic;
       this.isNew = this.data.isNew !== undefined ? this.data.isNew : this.isNew;
@@ -116,9 +121,9 @@ export class SaveQueryDialog {
     const isPublic = this.isPublic;
 
     if (this.isNew) {
-      this.internalSaveQueryEvent.emit(new SaveQueryData(queryName, query, isPublic));
+      this.internalSaveQueryEvent.emit(new SaveQueryData(queryName, query, isPublic, this.originalQueryName));
     } else {
-      this.internalUpdateQueryEvent.emit(new UpdateQueryData(queryName, query, isPublic));
+      this.internalUpdateQueryEvent.emit(new UpdateQueryData(queryName, query, isPublic, this.originalQueryName));
     }
   }
 
@@ -181,7 +186,7 @@ export class SaveQueryDialog {
           <div class="dialog">
             <div class="dialog-header">
               <h3
-                class="dialog-title">{this.translationService.translate('yasqe.actions.save_query.dialog.title')}</h3>
+                class="dialog-title">{this.translationService.translate(this.isNew ? 'yasqe.actions.save_query.dialog.title' : 'yasqe.actions.edit_query.dialog.title')}</h3>
               <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}></button>
             </div>
             <div class="dialog-body">
@@ -222,7 +227,7 @@ export class SaveQueryDialog {
                       onClick={(evt) => this.onClose(evt)}
                       ref={(el) => (this.cancelButton = el)}>{this.translationService.translate('yasqe.actions.save_query.dialog.cancel.button')}</button>
               <button class="ok-button" disabled={!this.isSaveAllowed}
-                      onClick={(evt) => this.onCreate(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.create.button')}</button>
+                      onClick={(evt) => this.onCreate(evt)}>{this.translationService.translate(this.isNew ? 'yasqe.actions.save_query.dialog.create.button' : 'yasqe.actions.save_query.dialog.save.button')}</button>
             </div>
           </div>
         </div>

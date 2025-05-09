@@ -249,6 +249,8 @@
   "yasqe.actions.save_query.dialog.cancel.button": "Annuler",
   "yasqe.actions.show_saved_queries.button.tooltip": "Afficher les requêtes enregistrées",
   "yasqe.actions.edit_saved_query.button.tooltip": "Modifier",
+  "yasqe.actions.edit_query.dialog.title": "Modifier la requête enregistrée",
+  "yasqe.actions.save_query.dialog.save.button": "Enregistrer",
   "yasqe.actions.delete_saved_query.button.tooltip": "Supprimer",
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirmer",
   "yasqe.actions.delete_saved_query.confirm.dialog.message": "Êtes-vous sûr de vouloir supprimer la requête enregistrée '{{query}}' ?",
