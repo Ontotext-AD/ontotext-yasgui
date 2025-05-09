@@ -494,6 +494,7 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalSaveQueryEvent')
   createSavedQueryHandler(event: CustomEvent<SaveQueryData>) {
+    this.savedQueryData = undefined;
     this.createSavedQuery.emit(event.detail);
   }
 
@@ -502,6 +503,7 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalUpdateQueryEvent')
   updateSavedQueryHandler(event: CustomEvent<UpdateQueryData>) {
+    this.savedQueryData = undefined;
     this.updateSavedQuery.emit(event.detail);
   }
 
@@ -511,6 +513,8 @@ export class OntotextYasguiWebComponent {
   @Listen('internalSaveQueryDialogClosedEvent')
   closeSaveDialogHandler() {
     this.showSaveQueryDialog = false;
+    this.savedQueryData = undefined;
+    this.saveQueryData = undefined;
   }
 
   /**
@@ -765,6 +769,7 @@ export class OntotextYasguiWebComponent {
       data.savedQueriesList = this.savedQueryConfig.savedQueries.map((savedQuery) => {
         return {
           queryName: savedQuery.queryName,
+          originalQueryName: savedQuery.queryName,
           query: savedQuery.query,
           isPublic: savedQuery.isPublic,
           owner: savedQuery.owner,

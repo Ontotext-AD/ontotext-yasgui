@@ -162,7 +162,7 @@ describe('Save query action', () => {
         // Then the dialog is closed
         YasqeSteps.getSaveQueryDialog().should('not.exist');
         // And query is saved
-        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"new query","query":"select *","isPublic":true}');
+        ActionsPageSteps.getSaveQueryPayload().should('contain.value', '{"queryName":"new query","query":"select *","isPublic":true,"originalQueryName":"Query"}');
     });
 
     it('Should show error message in dialog when save fails', () => {
