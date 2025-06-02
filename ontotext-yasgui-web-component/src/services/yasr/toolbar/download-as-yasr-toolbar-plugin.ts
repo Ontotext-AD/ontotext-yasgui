@@ -167,7 +167,7 @@ class ExtendedTableDownloadAsConfiguration extends DownloadAsPluginConfiguration
     switch (yasr.yasqe.getQueryType()) {
       case 'SELECT':
         return [{
-          labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
+          labelKey: "yasr.plugin_control.download_as.sparql_results_json.select.label",
           value: "application/sparql-results+json",
         }, {
           labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
@@ -194,7 +194,7 @@ class ExtendedTableDownloadAsConfiguration extends DownloadAsPluginConfiguration
       case 'CONSTRUCT':
       case 'DESCRIBE':
         return [{
-          labelKey: "yasr.plugin_control.download_as.sparql_results_json.label",
+          labelKey: "yasr.plugin_control.download_as.sparql_results_json.describe.construct.label",
           value: "application/rdf+json",
         }, {
           labelKey: "yasr.plugin_control.download_as.sparql_results_json_ld.label",
