@@ -986,6 +986,10 @@ export class OntotextYasguiWebComponent {
     // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
     this.init(this.config);
   }
+  
+  connectedCallback(): void {
+       this.init(this.config);
+  }
 
   disconnectedCallback(): void {
     if (this.subscriptions) {
