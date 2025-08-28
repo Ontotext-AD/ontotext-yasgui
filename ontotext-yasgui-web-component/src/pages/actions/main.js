@@ -149,6 +149,30 @@ function showShareQueryAction() {
   };
 }
 
+function hideExplainQueryAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'aiExplain',
+        visible: false
+      }
+    ]
+  };
+}
+
+function showExplainQueryAction() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasqeActionButtons: [
+      {
+        name: 'aiExplain',
+        visible: true
+      }
+    ]
+  };
+}
+
 function showIncludeInferredAction() {
   ontoElement.config = {
     ...ontoElement.config,
