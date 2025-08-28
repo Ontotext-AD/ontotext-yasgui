@@ -261,6 +261,7 @@
   "yasqe.actions.delete_saved_query.confirm.dialog.label": "Confirmer",
   "yasqe.actions.delete_saved_query.confirm.dialog.message": "Êtes-vous sûr de vouloir supprimer la requête enregistrée '{{query}}' ?",
   "yasqe.actions.share_query.button.tooltip": "Obtenir l'URL de la requête en cours",
+  "yasqe.actions.explain_query.button.tooltip": "Expliquer la requête avec le modèle LLM",
   "yasqe.actions.include_inferred.true.button.tooltip": "Inclure les données déduites dans les résultats: AU",
   "yasqe.actions.include_inferred.false.button.tooltip": "Inclure les données déduites dans les résultats: DÉSACTIVÉ",
   "yasqe.actions.expand_results_same_as.true.button.tooltip": "Développer les résultats sur owl:sameAs: AU",

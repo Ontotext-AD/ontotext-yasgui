@@ -5,6 +5,7 @@ import {Yasgui} from './yasgui/yasgui';
 import {Tab} from './yasgui/tab';
 import {OngoingRequestsInfo} from './ongoing-requests-info';
 import {YasguiResetFlags} from "./yasgui/yasgui-reset-flags";
+import {EXPLAIN_PLAN_TYPE} from './keyboard-shortcut-description';
 
 /**
  * An adapter around the actual yasgui instance.
@@ -66,8 +67,8 @@ export class OntotextYasgui {
     yasqe.getDoc().setCursor(cursor);
   }
 
-  query(): Promise<any> {
-    return this.yasgui.getTab().getYasqe().query();
+  query(config?: any, explainType?: EXPLAIN_PLAN_TYPE | undefined): Promise<any> {
+    return this.yasgui.getTab().getYasqe().query(config, explainType);
   }
 
   getOngoingRequestsInfo(): OngoingRequestsInfo {
