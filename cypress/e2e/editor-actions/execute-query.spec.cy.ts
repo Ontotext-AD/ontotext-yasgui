@@ -27,6 +27,14 @@ describe('Execute query action', () => {
     YasqeSteps.getTabWithProgressBar().should('exist');
   });
 
+  it('Should be able to execute AI explain query', () => {
+    ActionsPageSteps.visit();
+    YasqeSteps.getExplainQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Explain query with LLM model');
+    YasqeSteps.getAiExplainQueryButton().should('be.visible');
+    YasqeSteps.explainWithAI();
+    YasrSteps.getTableResults().should('have.length', 6);
+  });
+
   it('Should emit queryExecuted event on each editor tab', {
     retries: {
       runMode: 1,
