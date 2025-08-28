@@ -57,6 +57,14 @@ export class YasqeSteps {
     return YasqeSteps.getRunQueryButton().eq(index);
   }
 
+  static getAiExplainQueryButton() {
+    return cy.get('.yasqe_aiExplainButton');
+  }
+
+  static explainWithAI() {
+    YasqeSteps.getAiExplainQueryButton().click();
+  }
+
   static executeQuery(index = 0) {
     this.getExecuteQueryButton(index).click();
     LoaderSteps.getLoader(index).should('not.be.visible');
@@ -79,6 +87,10 @@ export class YasqeSteps {
 
   static getExecuteQueryButtonTooltip() {
     return this.getExecuteQueryButton().parent();
+  }
+
+  static getExplainQueryButtonTooltip() {
+    return this.getAiExplainQueryButton().parent();
   }
 
   static getCreateSavedQueryButton() {
@@ -191,15 +203,15 @@ export class YasqeSteps {
       return (el[tabIndex] as any).CodeMirror.setValue(query);
     });
   }
-  
+
   static getEditQueryButton(index: number) {
     return this.getSavedQueries().eq(index).realHover().find('.edit-saved-query');
   }
-  
+
   static editQuery(index: number) {
     this.getEditQueryButton(index).click();
   }
-  
+
   static getDeleteQueryButton(index: number) {
     return this.getSavedQueries().eq(index).realHover().find('.delete-saved-query');
   }

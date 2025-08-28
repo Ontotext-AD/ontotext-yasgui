@@ -586,6 +586,10 @@ declare namespace LocalJSX {
          */
         "onDeleteSavedQuery"?: (event: OntotextYasguiCustomEvent<SaveQueryData>) => void;
         /**
+          * Event emitted when explain query button is pressed.
+         */
+        "onExplainQuery"?: (event: OntotextYasguiCustomEvent<TabQueryModel>) => void;
+        /**
           * Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.
          */
         "onLoadSavedQueries"?: (event: OntotextYasguiCustomEvent<boolean>) => void;

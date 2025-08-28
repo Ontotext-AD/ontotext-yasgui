@@ -8,6 +8,7 @@ import {InternalShowSavedQueriesEvent} from '../../models/internal-events/intern
 import {YasqeButtonName, YasqeButtonType} from '../../models/yasqe-button-name';
 import {InternalCreateSavedQueryEvent} from '../../models/internal-events/internal-create-saved-query-event';
 import {YasguiBuilder} from "../yasgui/yasgui-builder";
+import {InternalExplainQueryEvent} from '../../models/internal-events/internal-explain-query-event';
 
 export class YasqeService {
 
@@ -32,21 +33,26 @@ export class YasqeService {
     this.buttonBuilders.set(YasqeButtonName.CREATE_SAVED_QUERY, () => this.buildCreateSaveQueryButton());
     this.buttonBuilders.set(YasqeButtonName.SHOW_SAVED_QUERIES, () => this.buildShowSavedQueriesButton());
     this.buttonBuilders.set(YasqeButtonName.SHARE_QUERY, () => this.buildShareQueryButton());
+    this.buttonBuilders.set(YasqeButtonName.AI_EXPLAIN, () => this.buildAiExplainButton());
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration, yasqe) => this.buildInferAndSameAsButtons(externalConfiguration, yasqe));
   }
 
   private onLanguageChange(_currentLang: string) {
     let button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)}`) as HTMLElement;
     let tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip)
+    TooltipService.updateTooltip(button, tooltip);
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)}`) as HTMLElement;
     tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip)
+    TooltipService.updateTooltip(button, tooltip);
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
     tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip)
+    TooltipService.updateTooltip(button, tooltip);
+
+    button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.AI_EXPLAIN)}`) as HTMLElement;
+    tooltip = this.translationService.translate('yasqe.actions.explain_query.button.tooltip');
+    TooltipService.updateTooltip(button, tooltip);
 
     const ontotextYasgui = this.yasguiBuilder.getInstance();
     const yasqe = ontotextYasgui?.getYasqe();
@@ -69,6 +75,7 @@ export class YasqeService {
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.CREATE_SAVED_QUERY, `yasqe_${YasqeButtonName.CREATE_SAVED_QUERY}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHOW_SAVED_QUERIES, `yasqe_${YasqeButtonName.SHOW_SAVED_QUERIES}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHARE_QUERY, `yasqe_${YasqeButtonName.SHARE_QUERY}Button`);
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.AI_EXPLAIN, `yasqe_${YasqeButtonName.AI_EXPLAIN}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.EXPANDS_RESULTS, `yasqe_${YasqeButtonName.EXPANDS_RESULTS}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.INFER_STATEMENTS, `yasqe_${YasqeButtonName.INFER_STATEMENTS}Button`);
 
@@ -142,6 +149,16 @@ export class YasqeService {
       () => this.eventService.emit(new InternalShareQueryEvent()));
 
     const tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
+    return TooltipService.addTooltip(buttonElement, tooltip);
+  }
+
+  private buildAiExplainButton(): HTMLElement {
+    const buttonElement = document.createElement("button");
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.AI_EXPLAIN)} custom-button icon-info-alt`;
+    buttonElement.addEventListener("click",
+      () => this.eventService.emit(new InternalExplainQueryEvent()));
+
+    const tooltip = this.translationService.translate('yasqe.actions.explain_query.button.tooltip');
     return TooltipService.addTooltip(buttonElement, tooltip);
   }
 

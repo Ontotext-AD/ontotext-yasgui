@@ -44,6 +44,7 @@ import {InternalRequestAbortedEvent} from '../../models/internal-events/internal
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 import {Debounce} from "../../services/utils/debounce";
 import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
+import {EXPLAIN_PLAN_TYPE} from '../../models/keyboard-shortcut-description';
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
@@ -186,6 +187,11 @@ export class OntotextYasguiWebComponent {
    * Event emitted when saved query share link has to be build by the client.
    */
   @Event() shareQuery: EventEmitter<TabQueryModel>;
+
+  /**
+   * Event emitted when explain query button is pressed.
+   */
+  @Event() explainQuery: EventEmitter<TabQueryModel>;
 
   /**
    * Event emitter used to send message to the clients of component.
@@ -618,6 +624,20 @@ export class OntotextYasguiWebComponent {
       owner: ''
     });
     this.showShareQueryDialog = true;
+  }
+
+  /**
+   * Handler for the event fired when the AI explain query button in the editor is triggered.
+   */
+  @Listen('internalExplainQueryEvent')
+  explainQueryHandler() {
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+          // catch this to avoid unhandled rejection
+        });
+      });
+    this.showShareQueryDialog = false;
   }
 
   /**
