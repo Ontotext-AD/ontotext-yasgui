@@ -10,6 +10,7 @@ import { TranslationService } from "./services/translation.service";
 import { ConfirmationDialogConfig } from "./components/confirmation-dialog/confirmation-dialog";
 import { CopyLinkDialogConfig, CopyLinkObserver } from "./components/copy-link-dialog/copy-link-dialog";
 import { ServiceFactory } from "./services/service-factory";
+import { KeyboardShortcutItem } from "./models/keyboard-shortcut-description";
 import { TimeFormattingService } from "./services/utils/time-formatting-service";
 import { DialogConfig } from "./components/ontotext-dialog-web-component/ontotext-dialog-web-component";
 import { DropdownOption } from "./models/dropdown-option";
@@ -67,7 +68,8 @@ export namespace Components {
         "serviceFactory": ServiceFactory;
     }
     interface KeyboardShortcutsDialog {
-        "items": string[];
+        "items": KeyboardShortcutItem[];
+        "open": boolean;
         "translationService": TranslationService;
     }
     interface LoaderComponent {
@@ -252,6 +254,10 @@ export interface ConfirmationDialogCustomEvent<T> extends CustomEvent<T> {
 export interface CopyResourceLinkDialogCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLCopyResourceLinkDialogElement;
+}
+export interface KeyboardShortcutsDialogCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLKeyboardShortcutsDialogElement;
 }
 export interface OntotextDownloadAsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -484,7 +490,9 @@ declare namespace LocalJSX {
         "serviceFactory"?: ServiceFactory;
     }
     interface KeyboardShortcutsDialog {
-        "items"?: string[];
+        "items"?: KeyboardShortcutItem[];
+        "onShortcutsOpen"?: (event: KeyboardShortcutsDialogCustomEvent<boolean>) => void;
+        "open"?: boolean;
         "translationService"?: TranslationService;
     }
     interface LoaderComponent {

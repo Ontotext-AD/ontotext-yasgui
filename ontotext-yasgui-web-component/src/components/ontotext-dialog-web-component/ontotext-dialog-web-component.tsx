@@ -4,6 +4,8 @@ import {HtmlUtil} from '../../services/utils/html-util';
 export type DialogConfig = {
   dialogTitle: string;
   onClose: (evt: MouseEvent | KeyboardEvent) => void;
+  position?: string,
+  isModal?: boolean
 }
 
 @Component({
@@ -32,14 +34,18 @@ export class OntotextDialogWebComponent {
   }
 
   componentDidLoad(): void {
-    this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
+    if (!this.config.isModal) {
+      this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
+    }
     this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
     this.closeButton.focus();
   }
 
   disconnectedCallback() {
     this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
-    HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
+    if (!this.config.isModal && this.documentOverflow) {
+      HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
+    }
   }
 
   private preventLeavingDialog(ev: KeyboardEvent) {
@@ -47,12 +53,35 @@ export class OntotextDialogWebComponent {
   }
 
   render() {
+    // Non-modal dialog (without overlay)
+    if (this.config.isModal) {
+      return (
+        <Host tabindex='-1'>
+          <div class={`dialog ${this.config.position === 'bottom' ? 'bottom-position' : ''}`}>
+            <div class="dialog-header">
+              <h4 class="dialog-title">{this.config.dialogTitle}</h4>
+              <button class="close-button icon-close"
+                      onClick={(evt) => this.config.onClose(evt)}
+                      ref={(el) => (this.closeButton = el)}></button>
+            </div>
+            <div class="dialog-body">
+              <slot name="body" />
+            </div>
+            <div class="dialog-footer">
+              <slot name="footer" />
+            </div>
+          </div>
+        </Host>
+      );
+    }
+
+    // Modal dialog (with overlay)
     return (
       <Host tabindex='-1'>
         <div class="dialog-overlay" onClick={(evt) => this.config.onClose(evt)}>
-          <div class="dialog">
+          <div class={`dialog ${this.config.position === 'bottom' ? 'bottom-position' : ''}`}>
             <div class="dialog-header">
-              <h3 class="dialog-title">{this.config.dialogTitle}</h3>
+              <h4 class="dialog-title">{this.config.dialogTitle}</h4>
               <button class="close-button icon-close"
                       onClick={(evt) => this.config.onClose(evt)}
                       ref={(el) => (this.closeButton = el)}></button>
