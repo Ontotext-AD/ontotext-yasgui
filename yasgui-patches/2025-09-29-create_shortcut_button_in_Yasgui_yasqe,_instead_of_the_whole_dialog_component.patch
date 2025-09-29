@@ -1,0 +1,62 @@
+Subject: [PATCH] GDB-12994 - create shortcut button in Yasgui yasqe, instead of the whole dialog component
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 594470e0747115b99eb83808359847ce5f977adf)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision f68f958fcc190775cf4ce503b2e47f49be322f7c)
+@@ -206,7 +206,6 @@
+     this.checkSyntax();
+     this.updateQueryButton();
+     this.updateButtonsLabels();
+-    this.updateKeyboardShortcuts();
+   }
+ 
+   public toggleFullScreen(): void {
+@@ -524,22 +523,26 @@
+     // this.resizeWrapper.addEventListener("dblclick", this.expandEditor);
+     this.rootEl.appendChild(this.resizeWrapper);
+   }
++
++  private handleKeyboardShortcutsOpen = () => {
++    this.eventService.emitEvent(this.rootEl, "internalKeyboardShortcutsClickedEvent");
++  };
++
+   private drawKeyboardShortcutsButton() {
+     if (this.config.keyboardShortcutDescriptions) {
+-      this.keyboardShortcutsButton = document.createElement("keyboard-shortcuts-dialog");
++      this.keyboardShortcutsButton = document.createElement("button");
++      this.keyboardShortcutsButton.className = "keyboard-shortcuts-dialog-button";
++      this.keyboardShortcutsButton.innerText = this.translationService.translate("yasqe.keyboard_shortcuts.btn.label");
+       if (this.config.resizeable) {
+         addClass(this.keyboardShortcutsButton, "resizeable-on");
++        addClass(this.keyboardShortcutsButton, "sparql-editor-positioning");
+       }
+       (this.keyboardShortcutsButton as any).translationService = this.translationService;
+-      this.updateKeyboardShortcuts();
++
++      this.keyboardShortcutsButton.addEventListener("click", this.handleKeyboardShortcutsOpen);
+       this.rootEl.appendChild(this.keyboardShortcutsButton);
+     }
+   }
+-  updateKeyboardShortcuts() {
+-    if (this.config.keyboardShortcutDescriptions) {
+-      (this.keyboardShortcutsButton as any).items = [...this.config.keyboardShortcutDescriptions];
+-    }
+-  }
+ 
+   private drawAbortQueryButton() {
+     if (!(this.config.onQueryAborted instanceof Function)) {
+@@ -1250,6 +1253,9 @@
+     //  Abort running query;
+     this.abortQuery();
+     this.unregisterEventListeners();
++    if (this.keyboardShortcutsButton) {
++      this.keyboardShortcutsButton.removeEventListener("click", this.handleKeyboardShortcutsOpen);
++    }
+     this.resizeWrapper?.removeEventListener("mousedown", this.initDrag, false);
+     // this.resizeWrapper?.removeEventListener("dblclick", this.expandEditor);
+     for (const autocompleter in this.autocompleters) {
