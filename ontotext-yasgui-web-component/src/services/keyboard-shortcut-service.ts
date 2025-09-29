@@ -1,6 +1,7 @@
 import {
   CreateKeyboardShortcutFunction,
   EXPLAIN_PLAN_TYPE,
+  KEYBOARD_SHORTCUT_SECTIONS,
   KeyboardShortcutDescription,
   KeyboardShortcutName
 } from '../models/keyboard-shortcut-description';
@@ -29,6 +30,7 @@ export class KeyboardShortcutService {
   private static createTriggerAutocomplete(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.TRIGGER_AUTOCOMPLETION;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TRIGGER_AUTOCOMPLETE;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Space');
     keyboardShortcut.keyboardShortcuts.push('Alt-Enter');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Space');
@@ -41,6 +43,7 @@ export class KeyboardShortcutService {
   private static createDeleteCurrentLine(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.DELETE_CURRENT_LINE;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-D');
     keyboardShortcut.keyboardShortcuts.push('Ctrl-K');
     keyboardShortcut.keyboardShortcuts.push('Cmd-D');
@@ -58,6 +61,7 @@ export class KeyboardShortcutService {
   private static createCommentCurrentLine(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.COMMENT_SELECTED_LINE;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-/');
     keyboardShortcut.keyboardShortcuts.push('Cmd-/');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -69,6 +73,7 @@ export class KeyboardShortcutService {
   private static createCopyLineDown(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.COPY_LINE_DOWN;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Down');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Down');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -87,6 +92,7 @@ export class KeyboardShortcutService {
   private static createCopyLineUp(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.COPY_LINE_UP;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Up');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Up');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -120,6 +126,7 @@ export class KeyboardShortcutService {
   private static createAutoFormat(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.AUTO_FORMAT_SELECTED_LINE;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-F');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -131,6 +138,7 @@ export class KeyboardShortcutService {
   private static createIndentMore(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.INDENT_CURRENT_LINE_MORE;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-]');
     keyboardShortcut.keyboardShortcuts.push('Cmd-]');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -142,6 +150,7 @@ export class KeyboardShortcutService {
   private static createIndentLess(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.INDENT_CURRENT_LINE_LESS;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.LINES_FORMATTING;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-[');
     keyboardShortcut.keyboardShortcuts.push('Cmd-[');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -153,6 +162,7 @@ export class KeyboardShortcutService {
   private static createExecuteQuery(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.EXECUTE_QUERY_OR_UPDATE;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.QUERY_ACTIONS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Enter');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -166,6 +176,7 @@ export class KeyboardShortcutService {
   private static createExecuteExplainPlanForQuery(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.EXECUTE_EXPLAIN_PLAN_FOR_QUERY;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.QUERY_ACTIONS;
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-Enter');
     keyboardShortcut.keyboardShortcuts.push('Shift-Cmd-Enter');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -179,6 +190,7 @@ export class KeyboardShortcutService {
   private static createExecuteChatGPTExplainPlanForQuery(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.EXECUTE_CHAT_GPT_EXPLAIN_PLAN_FOR_QUERY;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.QUERY_ACTIONS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Enter');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Enter');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -192,6 +204,7 @@ export class KeyboardShortcutService {
   private static createCreateTab(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.CREATE_TAB;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-T');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-T');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -203,6 +216,7 @@ export class KeyboardShortcutService {
   private static createSavedQuery(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.CREATE_SAVE_QUERY;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.QUERY_ACTIONS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-S');
     keyboardShortcut.keyboardShortcuts.push('Cmd-S');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -218,6 +232,7 @@ export class KeyboardShortcutService {
   private static createSwitchToNextTab(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.SWITCH_NEXT_TAB;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Right');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Right');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -229,6 +244,7 @@ export class KeyboardShortcutService {
   private static createSwitchToPreviousTab(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.SWITCH_PREVIOUS_TAB;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Left');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Left');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -240,6 +256,7 @@ export class KeyboardShortcutService {
   private static createCloseOtherTabs(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_OTHER_TABS;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.keyboardShortcuts.push('Shift-Ctrl-F4');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Ctrl-F4');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -251,6 +268,7 @@ export class KeyboardShortcutService {
   private static createCloseOtherTabsByMouseClick(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.CLOSES_OTHER_TABS_BY_MOUSE_CLICK;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.executeFunction = () => {
       // Nothing to do the description is added just to explain the functionality, that closes all other tabs.
       // This functionality is triggered by clicking on the close tab button while holding down the Shift key.
@@ -261,6 +279,7 @@ export class KeyboardShortcutService {
   private static createFullScreen(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.FULL_SCREEN;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-F');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-F');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
@@ -272,6 +291,7 @@ export class KeyboardShortcutService {
   private static createEscape(): KeyboardShortcutDescription {
     const keyboardShortcut = new KeyboardShortcutDescription()
     keyboardShortcut.NAME = KeyboardShortcutName.ESC;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
     keyboardShortcut.keyboardShortcuts.push('Esc');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
       yasqe.leaveFullScreen();

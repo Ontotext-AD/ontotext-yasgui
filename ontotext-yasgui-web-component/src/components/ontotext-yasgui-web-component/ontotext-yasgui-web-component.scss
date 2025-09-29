@@ -18,8 +18,8 @@
   list-style: none;
   margin: 0;
   padding: 2px;
-  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
-  border: 1px solid silver;
+  box-shadow: 2px 3px 5px $color-onto-black-transparent;
+  border: 1px solid $color-onto-silver-border;
   background: $color-onto-white;
   max-height: 20em;
   overflow-y: auto;
@@ -34,17 +34,17 @@
 }
 
 .CodeMirror-hint b {
-  color: #ED4F2F;
+  color: $color-onto-highlight-accent;
   font-weight: bold;
 }
 
 .CodeMirror-hint-active {
-  background: #3385ff;
+  background: $color-onto-active-blue;
   color: $color-onto-white;
 }
 
 .CodeMirror-hint-active b {
-  color: #FFAD33;
+  color: $color-onto-active-highlight;
 }
 
 .CodeMirror-hint {
@@ -55,7 +55,7 @@
   .yasgui {
 
     .CodeMirror {
-      border-color: #eeeeee;
+      border-color: $color-onto-border;
     }
 
     /* prevent overlapping of the query text with the yasqe action buttons on the right side of the editor */
@@ -71,6 +71,20 @@
       bottom: 0;
       height: auto !important;
       z-index: 1015;
+    }
+
+    .yasqe-fullscreen .keyboard-shortcuts-dialog-button {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      padding: 2px 8px;
+      margin-top: 0;
+      background-color: $color-onto-background-lightest;
+      outline: none;
+      border: 0.5px solid $color-onto-border;
+      cursor: pointer;
+      z-index: 1015;
+      line-height: 14px;
     }
 
     .yasqe {
@@ -98,7 +112,7 @@
           height: unset;
           padding: 8px 16px;
           margin-top: 1rem;
-          color: #fff;
+          color: $color-onto-white;
           background-color: $color-ontotext-orange;
           outline: none;
           font-size: 1rem;
@@ -110,7 +124,7 @@
 
         .custom-button {
           border: none;
-          background-color: #fff;
+          background-color: $color-onto-white;
           color: $color-ontotext-orange;
           outline: none;
           font-size: 2.5em;
@@ -124,7 +138,7 @@
         }
 
         .custom-button:disabled:hover, .custom-button:disabled:focus {
-          color: #818a91;
+          color: $color-onto-button-disabled;
           text-decoration: none;
           cursor: not-allowed;
           opacity: .65;
@@ -137,6 +151,21 @@
       }
     }
 
+    .yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button {
+      background-color: $color-onto-background-lightest;
+      outline: none;
+      border: 0.5px solid $color-onto-border;
+      cursor: pointer;
+      position: relative;
+      float: right;
+      top: -22px;
+      z-index: 1015;
+      line-height: 18px;
+    }
+
+    .yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning {
+      top: -32px;
+    }
     .yasqe-footer-buttons {
       display: flex;
       justify-content: end;
@@ -162,7 +191,7 @@
     }
 
     .tabsList .tab:not(.active) {
-      background-color: #eeeeee;
+      background-color: $color-onto-border;
     }
 
     .tabsList .tab.active {
@@ -175,13 +204,13 @@
     .tabsList {
       .tab {
         display: flex;
-        border: 1px solid #eeeeee;
+        border: 1px solid $color-onto-border;
         margin-right: 0.2em;
         margin-top: 0.2em;
         padding: 8px;
 
         &:hover:not(.active) {
-          border-bottom: 1px solid #dddddd;
+          border-bottom: 1px solid $color-onto-border-hover;
         }
 
         .closeTab {
@@ -219,11 +248,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #eeeeee;
+        background-color: $color-onto-border;
       }
 
       .addTab {
-        color: #000042;
+        color: $color-onto-deep-blue;
         margin: 0;
         padding: 0.5em 1em;
         transform: none;
@@ -239,15 +268,15 @@
       }
 
       .context-menu {
-        color: #003663;
-        background-color: #FFFFFF;
+        color: $color-onto-blue;
+        background-color: $color-onto-white;
 
         .context-menu-list {
           margin: 0;
         }
 
         .context-menu-item:hover {
-          background-color: #0000001a;
+          background-color: $color-onto-hover-background;
         }
       }
     }
@@ -298,7 +327,7 @@
     }
 
     .dataTable td, .dataTable thead tr th {
-      border: 1px solid #eceeef;
+      border: 1px solid $color-onto-border-medium;
     }
 
     table.dataTable thead th:hover {
@@ -306,7 +335,7 @@
     }
 
     .dataTable tr.odd {
-      background-color: #f9f9f9;
+      background-color: $color-onto-background-light;
     }
 
     .dataTable tr.even {
@@ -341,9 +370,9 @@
       }
 
       #openChartConfigBtn, #openPivotTableChartConfigBtn {
-        color: #333;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        color: $color-onto-dark-grey;
+        background-color: $color-onto-white;
+        border: 1px solid $color-onto-button-border;
         text-align: center;
         vertical-align: middle;
         cursor: pointer;
@@ -352,8 +381,8 @@
       }
 
       #openChartConfigBtn:hover, #openPivotTableChartConfigBtn {
-        background-color: #ebebeb;
-        border-color: #adadad;
+        background-color: $color-onto-border;
+        border-color: $color-onto-button-border-hover;
       }
 
       .yasr_external_ref_btn, .yasr_downloadIcon {
@@ -374,12 +403,12 @@
       }
 
       .pageSizeWrapper, .switch {
-        color: #000000A8;
+        color: rgba($color-onto-black, 0.66);
       }
 
       .tableControls .tableFilter, .tableControls .tableSizer {
-        border-color: #00000026;
-        background-color: #ffffff;
+        border-color: rgba($color-onto-black, 0.15);
+        background-color: $color-onto-white;
       }
 
       .tableControls {
@@ -393,7 +422,7 @@
         }
 
         .tableFilter:focus, .tableSizer:focus {
-          border-color: #00366380 !important;
+          border-color: $color-onto-input-focus !important;
           outline: none !important;
         }
       }
@@ -402,10 +431,10 @@
         padding: .5rem .75rem;
         font-size: 1rem;
         line-height: 1.25;
-        color: #55595c;
-        background-color: #fff;
+        color: $color-onto-input-text;
+        background-color: $color-onto-white;
         background-image: none;
-        border: 1px solid rgba(0, 0, 0, .15);
+        border: 1px solid $color-onto-input-border;
         border-radius: 0;
 
         &.tableFilter:disabled {
@@ -414,13 +443,13 @@
       }
 
       .tableFilter::placeholder {
-        opacity: 54;
+        opacity: $color-onto-input-placeholder;
       }
     }
 
     .dataTables_empty {
-      color: #999;
-      background-color: #f9f9f9;
+      color: $color-onto-text-muted;
+      background-color: $color-onto-background-light;
     }
 
     .yasr_results {
@@ -431,7 +460,7 @@
             left: 0;
           }
           tr.odd > td:first-child {
-            background-color: #f9f9f9;
+            background-color: $color-onto-background-light;
           }
           tr.even > td:first-child {
             background-color: $color-onto-white;
@@ -506,7 +535,7 @@
           align-items: stretch;
 
           .triple-link {
-            color: #770088;
+            color: $color-onto-purple-link;
             text-decoration: none;
           }
 
@@ -541,7 +570,7 @@
         }
 
         .nonUri {
-          color: #003663;
+          color: $color-onto-blue;
           border: none;
           background-color: transparent;
           padding: 0;
@@ -612,11 +641,11 @@
       }
 
       .response-success {
-        background-color: #dff0d8;
+        background-color: $color-onto-success-background;
       }
 
       .response-error {
-        background-color: #fbdbd5;
+        background-color: $background-color-onto-error;
       }
     }
 
@@ -751,11 +780,11 @@
 .jfk-tooltip {
   // For some reason, the tooltip was under the chart editor dialog and was not visible; adding a z-index will set it on top.
   z-index: 12;
-  background-color: #003663 !important;
+  background-color: $color-onto-tooltip-background !important;
 }
 
 .jfk-tooltip-arrowdown .jfk-tooltip-arrowimplafter, .jfk-tooltip-arrowup .jfk-tooltip-arrowimplafter {
-  border-color: #003663 transparent !important;
+  border-color: $color-onto-tooltip-background transparent !important;
 }
 
 // Fixes Google visualization tooltip flickering. More info can be found at https://github.com/google/google-visualization-issues/issues/2162.

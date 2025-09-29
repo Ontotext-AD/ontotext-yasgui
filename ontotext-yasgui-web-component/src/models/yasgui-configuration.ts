@@ -157,7 +157,7 @@ export interface YasguiConfiguration {
       /**
        * Array with keyboard shortcut names {@link KeyboardShortcutName}.
        */
-      keyboardShortcutDescriptions: string[],
+      keyboardShortcutDescriptions: Array<{name: string; section: string}>;
 
       /**
        * Flag that controls update operations. If this flag is set to true, then all update operations will be disabled.

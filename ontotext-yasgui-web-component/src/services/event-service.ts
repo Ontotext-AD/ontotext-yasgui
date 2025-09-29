@@ -10,6 +10,9 @@ import {InternalQueryEvent} from '../models/internal-events/internal-query-event
 import {InternalCountQueryEvent} from '../models/internal-events/internal-count-query-event';
 import {InternalCountQueryResponseEvent} from '../models/internal-events/internal-count-query-response-event';
 import {InternalRequestAbortedEvent} from '../models/internal-events/internal-request-aborted-event';
+import {
+  InternalKeyboardShortcutsClickedEvent
+} from '../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 
 /**
  * The purpose of this service is to mitigate the issue where the stencil builtin Event decorator
@@ -83,6 +86,8 @@ export class EventService implements EventEmitter {
         return new InternalCountQueryResponseEvent(payload.response);
       case InternalEventType.INTERNAL_REQUEST_ABORTED_EVENT:
         return new InternalRequestAbortedEvent(payload.request, payload.queryMode)
+      case InternalEventType.INTERNAL_KEYBOARD_SHORTCUTS_CLICKED_EVENT:
+        return new InternalKeyboardShortcutsClickedEvent();
       default:
         throw Error('Can\'t find internal event definition for type: ' + type);
     }

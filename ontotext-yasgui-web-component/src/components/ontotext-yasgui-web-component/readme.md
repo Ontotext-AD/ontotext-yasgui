@@ -244,6 +244,7 @@ Type: `Promise<void>`
 - [confirmation-dialog](../confirmation-dialog)
 - [share-query-dialog](../share-query-dialog)
 - [copy-resource-link-dialog](../copy-resource-link-dialog)
+- [keyboard-shortcuts-dialog](../keyboard-shortcuts-dialog)
 
 ### Graph
 ```mermaid
@@ -254,10 +255,12 @@ graph TD;
   ontotext-yasgui --> confirmation-dialog
   ontotext-yasgui --> share-query-dialog
   ontotext-yasgui --> copy-resource-link-dialog
+  ontotext-yasgui --> keyboard-shortcuts-dialog
   save-query-dialog --> yasgui-tooltip
   share-query-dialog --> copy-link-dialog
   copy-link-dialog --> ontotext-dialog-web-component
   copy-resource-link-dialog --> copy-link-dialog
+  keyboard-shortcuts-dialog --> ontotext-dialog-web-component
   style ontotext-yasgui fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

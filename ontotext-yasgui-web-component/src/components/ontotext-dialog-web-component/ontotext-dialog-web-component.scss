@@ -12,10 +12,10 @@
   // Because the tooltip we use position itself on z-index: 9999
   z-index: 9998;
   margin-left: -10px;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: $color-onto-shadow-dark;
   font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 300;
-  color: #373a3c;
+  color: $color-onto-text-dark;
 }
 
 .dialog {
@@ -23,7 +23,7 @@
   max-width: 90vw;
   max-height: 90vh;
   background-color: $background-color-onto-default;
-  box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+  box-shadow: 0 5px 15px $color-onto-shadow-medium;
   font-family: inherit;
   font-weight: inherit;
   display: flex;
@@ -34,7 +34,7 @@
     display: flex;
     justify-content: space-between;
     padding: 15px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid $color-onto-border-light;
     font-size: 20px;
 
     .dialog-title {
@@ -43,7 +43,7 @@
     }
 
     .close-button {
-      background-color: #fff;
+      background-color: $color-onto-white;
       border: none;
       outline: none;
       cursor: pointer;
@@ -63,6 +63,6 @@
     display: flex;
     justify-content: flex-end;
     padding: 15px;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid $color-onto-border-light;
   }
 }

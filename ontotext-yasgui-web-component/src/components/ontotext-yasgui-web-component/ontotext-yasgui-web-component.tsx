@@ -44,6 +44,10 @@ import {InternalRequestAbortedEvent} from '../../models/internal-events/internal
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 import {Debounce} from "../../services/utils/debounce";
 import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
+import {
+  InternalKeyboardShortcutsClickedEvent
+} from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
+import {KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -250,6 +254,7 @@ export class OntotextYasguiWebComponent {
   @State() yasqeBtnLabel: string;
   @State() yasguiBtnLabel: string;
   @State() yasrBtnLabel: string;
+  @State() showKeyboardShortcutsDialog = false;
 
   /**
    * Changes rendering mode of component.
@@ -705,6 +710,19 @@ export class OntotextYasguiWebComponent {
     this.output.emit(toOutputEvent(event));
   }
 
+  @Listen('internalKeyboardShortcutsClickedEvent')
+  onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
+    this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
+  }
+
+  private getKeyboardShortcutsItems(): KeyboardShortcutItem[] {
+    return this.ontotextYasgui?.getConfig()?.yasguiConfig.yasqe.keyboardShortcutDescriptions;
+  }
+
+  private handleShortcutsOpen = (ev: CustomEvent<boolean>) => {
+    this.showKeyboardShortcutsDialog = ev.detail;
+  };
+
   private resolveOrientationButtonTooltip(): string {
     return this.isVerticalOrientation ?
       this.translationService.translate('yasgui.toolbar.orientation.btn.tooltip.switch_orientation_horizontal') :
@@ -986,7 +1004,7 @@ export class OntotextYasguiWebComponent {
     // loaded. More info https://github.com/TriplyDB/Yasgui/issues/143
     this.init(this.config);
   }
-  
+
   connectedCallback(): void {
        this.init(this.config);
   }
@@ -1045,6 +1063,14 @@ export class OntotextYasguiWebComponent {
           <copy-resource-link-dialog serviceFactory={this.serviceFactory}
                                      resourceLink={this.copiedResourceLink}>
           </copy-resource-link-dialog>}
+
+        {this.showKeyboardShortcutsDialog &&
+          <keyboard-shortcuts-dialog
+            open={this.showKeyboardShortcutsDialog}
+            items={this.getKeyboardShortcutsItems()}
+            translationService={this.translationService}
+            onShortcutsOpen={this.handleShortcutsOpen}>
+          </keyboard-shortcuts-dialog>}
       </Host>
     );
   }

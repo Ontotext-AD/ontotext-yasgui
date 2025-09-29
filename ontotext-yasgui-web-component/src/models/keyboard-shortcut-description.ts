@@ -6,6 +6,7 @@ export class KeyboardShortcutDescription {
 
   NAME: KeyboardShortcutName;
   keyboardShortcuts: string[] = [];
+  section: KEYBOARD_SHORTCUT_SECTIONS;
   executeFunction: (yasqe: Yasqe) => void
 }
 
@@ -31,9 +32,21 @@ export enum KeyboardShortcutName {
   ESC = 'esc'
 }
 
+export enum KEYBOARD_SHORTCUT_SECTIONS {
+  LINES_FORMATTING = 'lines_formatting',
+  QUERY_ACTIONS = 'query_actions',
+  TRIGGER_AUTOCOMPLETE = 'trigger_autocomplete',
+  TABS = 'tabs',
+}
+
 export enum EXPLAIN_PLAN_TYPE {
   EXPLAIN= 'explain',
   CHAT_GPT_EXPLAIN = 'gpt'
+}
+
+export interface KeyboardShortcutItem {
+  name: string;
+  section?: string;
 }
 
 export type CreateKeyboardShortcutFunction = () => KeyboardShortcutDescription;

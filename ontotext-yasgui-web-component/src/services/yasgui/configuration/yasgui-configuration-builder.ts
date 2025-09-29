@@ -183,7 +183,10 @@ export class YasguiConfigurationBuilder {
         return result;
       }, {});
 
-    config.yasguiConfig.yasqe.keyboardShortcutDescriptions = keyboardShortcutDescriptions.map(keyboardShortcutDescription => keyboardShortcutDescription.NAME.toString());
+    config.yasguiConfig.yasqe.keyboardShortcutDescriptions = keyboardShortcutDescriptions.map(shortcut => ({
+      name: shortcut.NAME.toString(),
+      section: shortcut.section
+    }));
   }
 
   // @ts-ignore
