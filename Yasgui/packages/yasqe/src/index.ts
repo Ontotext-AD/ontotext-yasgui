@@ -206,7 +206,6 @@ export class Yasqe extends CodeMirror {
     this.checkSyntax();
     this.updateQueryButton();
     this.updateButtonsLabels();
-    this.updateKeyboardShortcuts();
   }
 
   public toggleFullScreen(): void {
@@ -524,20 +523,24 @@ export class Yasqe extends CodeMirror {
     // this.resizeWrapper.addEventListener("dblclick", this.expandEditor);
     this.rootEl.appendChild(this.resizeWrapper);
   }
+
+  private handleKeyboardShortcutsOpen = () => {
+    this.eventService.emitEvent(this.rootEl, "internalKeyboardShortcutsClickedEvent");
+  };
+
   private drawKeyboardShortcutsButton() {
     if (this.config.keyboardShortcutDescriptions) {
-      this.keyboardShortcutsButton = document.createElement("keyboard-shortcuts-dialog");
+      this.keyboardShortcutsButton = document.createElement("button");
+      this.keyboardShortcutsButton.className = "keyboard-shortcuts-dialog-button";
+      this.keyboardShortcutsButton.innerText = this.translationService.translate("yasqe.keyboard_shortcuts.btn.label");
       if (this.config.resizeable) {
         addClass(this.keyboardShortcutsButton, "resizeable-on");
+        addClass(this.keyboardShortcutsButton, "sparql-editor-positioning");
       }
       (this.keyboardShortcutsButton as any).translationService = this.translationService;
-      this.updateKeyboardShortcuts();
+
+      this.keyboardShortcutsButton.addEventListener("click", this.handleKeyboardShortcutsOpen);
       this.rootEl.appendChild(this.keyboardShortcutsButton);
-    }
-  }
-  updateKeyboardShortcuts() {
-    if (this.config.keyboardShortcutDescriptions) {
-      (this.keyboardShortcutsButton as any).items = [...this.config.keyboardShortcutDescriptions];
     }
   }
 
@@ -1250,6 +1253,9 @@ export class Yasqe extends CodeMirror {
     //  Abort running query;
     this.abortQuery();
     this.unregisterEventListeners();
+    if (this.keyboardShortcutsButton) {
+      this.keyboardShortcutsButton.removeEventListener("click", this.handleKeyboardShortcutsOpen);
+    }
     this.resizeWrapper?.removeEventListener("mousedown", this.initDrag, false);
     // this.resizeWrapper?.removeEventListener("dblclick", this.expandEditor);
     for (const autocompleter in this.autocompleters) {
