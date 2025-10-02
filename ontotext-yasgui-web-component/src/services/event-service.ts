@@ -13,6 +13,8 @@ import {InternalRequestAbortedEvent} from '../models/internal-events/internal-re
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../models/internal-events/internal-keyboard-shortcuts-clicked-event';
+import {InternalShowYasqeDropdownEvent} from '../models/internal-events/InternalShowYasqeDropdownEvent';
+import {InternalExplainQueryEvent} from '../models/internal-events/internal-explain-query-event';
 
 /**
  * The purpose of this service is to mitigate the issue where the stencil builtin Event decorator
@@ -88,6 +90,12 @@ export class EventService implements EventEmitter {
         return new InternalRequestAbortedEvent(payload.request, payload.queryMode)
       case InternalEventType.INTERNAL_KEYBOARD_SHORTCUTS_CLICKED_EVENT:
         return new InternalKeyboardShortcutsClickedEvent();
+      case InternalEventType.INTERNAL_SHOW_YASQE_DROPDOWN_EVENT:
+        return new InternalShowYasqeDropdownEvent(payload.buttonInstance, payload.tabId, payload.open);
+      case InternalEventType.INTERNAL_YASQE_DROPDOWN_ACTION_SELECTED_EVENT:
+        return new InternalDropdownValueSelectedEvent(payload.value);
+      case InternalEventType.INTERNAL_EXPLAIN_QUERY_EVENT:
+        return new InternalExplainQueryEvent();
       default:
         throw Error('Can\'t find internal event definition for type: ' + type);
     }

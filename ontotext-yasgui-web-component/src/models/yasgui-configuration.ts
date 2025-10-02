@@ -309,7 +309,6 @@ export const defaultYasqeConfig: Record<string, any> = {
     {name: 'createSavedQuery', visible: true},
     {name: 'showSavedQueries', visible: true},
     {name: 'shareQuery', visible: true},
-    {name: 'aiExplain', visible: true},
     {name: 'includeInferredStatements', visible: true}
   ],
   prefixes: {

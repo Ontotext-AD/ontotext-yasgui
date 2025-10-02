@@ -8,7 +8,6 @@ import {InternalShowSavedQueriesEvent} from '../../models/internal-events/intern
 import {YasqeButtonName, YasqeButtonType} from '../../models/yasqe-button-name';
 import {InternalCreateSavedQueryEvent} from '../../models/internal-events/internal-create-saved-query-event';
 import {YasguiBuilder} from "../yasgui/yasgui-builder";
-import {InternalExplainQueryEvent} from '../../models/internal-events/internal-explain-query-event';
 
 export class YasqeService {
 
@@ -33,7 +32,6 @@ export class YasqeService {
     this.buttonBuilders.set(YasqeButtonName.CREATE_SAVED_QUERY, () => this.buildCreateSaveQueryButton());
     this.buttonBuilders.set(YasqeButtonName.SHOW_SAVED_QUERIES, () => this.buildShowSavedQueriesButton());
     this.buttonBuilders.set(YasqeButtonName.SHARE_QUERY, () => this.buildShareQueryButton());
-    this.buttonBuilders.set(YasqeButtonName.AI_EXPLAIN, () => this.buildAiExplainButton());
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration, yasqe) => this.buildInferAndSameAsButtons(externalConfiguration, yasqe));
   }
 
@@ -48,10 +46,6 @@ export class YasqeService {
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
     tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip);
-
-    button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.AI_EXPLAIN)}`) as HTMLElement;
-    tooltip = this.translationService.translate('yasqe.actions.explain_query.button.tooltip');
     TooltipService.updateTooltip(button, tooltip);
 
     const ontotextYasgui = this.yasguiBuilder.getInstance();
@@ -75,7 +69,6 @@ export class YasqeService {
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.CREATE_SAVED_QUERY, `yasqe_${YasqeButtonName.CREATE_SAVED_QUERY}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHOW_SAVED_QUERIES, `yasqe_${YasqeButtonName.SHOW_SAVED_QUERIES}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHARE_QUERY, `yasqe_${YasqeButtonName.SHARE_QUERY}Button`);
-    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.AI_EXPLAIN, `yasqe_${YasqeButtonName.AI_EXPLAIN}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.EXPANDS_RESULTS, `yasqe_${YasqeButtonName.EXPANDS_RESULTS}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.INFER_STATEMENTS, `yasqe_${YasqeButtonName.INFER_STATEMENTS}Button`);
 
@@ -152,14 +145,75 @@ export class YasqeService {
     return TooltipService.addTooltip(buttonElement, tooltip);
   }
 
-  private buildAiExplainButton(): HTMLElement {
-    const buttonElement = document.createElement("button");
-    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.AI_EXPLAIN)} custom-button icon-info-alt`;
-    buttonElement.addEventListener("click",
-      () => this.eventService.emit(new InternalExplainQueryEvent()));
+  private static activeDropdownHost?: HTMLElement;
+  private static outsideClickHandler: (e: MouseEvent) => void;
+  private static escHandler: (e: KeyboardEvent) => void;
 
-    const tooltip = this.translationService.translate('yasqe.actions.explain_query.button.tooltip');
-    return TooltipService.addTooltip(buttonElement, tooltip);
+  static showDropdown(triggerBtn: HTMLElement, isOpen: boolean, translationService: any): void {
+    console.log(triggerBtn);
+    if (!isOpen) {
+      this.hideDropdown();
+      return;
+    }
+    this.hideDropdown();
+
+    const items = [
+      { labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan' },
+      { labelKey: 'yasqe.dropdown.run_query.option.llm_explain_all', value: 'explain_all' },
+      { labelKey: 'yasqe.dropdown.run_query.option.llm_explain_query', value: 'explain_query' },
+      { labelKey: 'yasqe.dropdown.run_query.option.llm_explain_results', value: 'explain_results' }
+    ];
+
+    const dropdownContainer = document.createElement('div');
+    dropdownContainer.className = 'yasqe-inline-dropdown ontotext-run-dropdown open';
+
+    //const rect = triggerBtn.getBoundingClientRect();
+    /*dropdownContainer.style.top = `${rect.bottom + window.scrollY + 4}px`;
+    dropdownContainer.style.left = `${rect.left + window.scrollX}px`;*/
+
+    const menu = document.createElement('div');
+    menu.className = 'ontotext-run-dropdown-menu open';
+
+    items.forEach(item => {
+      const elementDiv = document.createElement('div');
+
+      elementDiv.className = 'ontotext-run-dropdown-menu-item';
+      elementDiv.textContent = translationService.translate(item.labelKey);
+      elementDiv.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        triggerBtn.dispatchEvent(new CustomEvent('internalYasqeDropdownActionSelected', {
+          bubbles: true,
+          detail: { action: item.value }
+        }));
+        YasqeService.hideDropdown();
+      });
+      menu.appendChild(elementDiv);
+    });
+
+    dropdownContainer.appendChild(menu);
+    triggerBtn.appendChild(dropdownContainer);
+    this.activeDropdownHost = dropdownContainer;
+
+    this.outsideClickHandler = (e: MouseEvent) => {
+      if (dropdownContainer && !dropdownContainer.contains(e.target as Node) && e.target !== triggerBtn) {
+        this.hideDropdown();
+      }
+    };
+    setTimeout(() => document.addEventListener('click', this.outsideClickHandler, { once: true }));
+
+    this.escHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.hideDropdown();
+      }
+    };
+    document.addEventListener('keydown', this.escHandler, { once: true });
+  }
+
+  static hideDropdown(): void {
+    if (this.activeDropdownHost) {
+      this.activeDropdownHost.remove();
+      this.activeDropdownHost = undefined;
+    }
   }
 
   //@ts-ignore
