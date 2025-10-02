@@ -89,6 +89,37 @@
 
     .yasqe {
 
+      .yasqe-inline-dropdown {
+        position: relative;
+        margin-top: -99px;
+        margin-left: 1356px;
+        width: max-content;
+        z-index: 10000;
+      }
+
+      .yasqe-inline-dropdown .ontotext-run-dropdown-menu {
+        background-color: $color-onto-white;
+        box-shadow: 0 2px 6px rgba(0,0,0,.15);
+        padding: 4px 0;
+        border-radius: 4px;
+        min-width: 140px;
+        font-size: 13px;
+      }
+      .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item {
+        display: block;
+        background-color: $color-onto-white;
+        padding: 6px 12px;
+        text-decoration: none;
+        text-align: left;
+        color: #000000;
+        cursor: pointer;
+      }
+      .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item:hover {
+        background: $color-onto-grey;
+        color: #000000;
+        text-decoration: none;
+      }
+
       .yasqe_buttons {
         display: flex;
         flex-direction: column;
@@ -121,6 +152,92 @@
             background-color: $color-ontotext-orange-dark;
           }
         }
+
+        .yasqe_querySplitToggle {
+          background-color: var(--primary-color) !important;
+          color: $color-onto-white;
+          font-weight: 400;
+          height: 38px !important;
+          margin-top: 16px;
+          margin-left: 1px;
+          border: none;
+          z-index: 9998;
+
+          &:hover {
+            background-color: $color-ontotext-orange-dark;
+          }
+        }
+
+        .yasqe_querySplitToggle > .yasqe-inline-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 4px;
+          min-width: 140px;
+          width: max-content;
+          z-index: 10000;
+          display: block;
+        }
+
+        .yasqe-inline-dropdown .ontotext-run-dropdown-menu {
+          background-color: $color-onto-white;
+          box-shadow: 0 2px 6px rgba(0,0,0,.15);
+          padding: 4px 0;
+          border-radius: 4px;
+          min-width: 140px;
+          font-size: 13px;
+        }
+        .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item {
+          display: block;
+          background-color: $color-onto-white;
+          padding: 6px 12px;
+          text-decoration: none;
+          text-align: left;
+          color: #000000;
+          cursor: pointer;
+        }
+        .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item a:hover {
+          background: $color-onto-grey;
+          color: #000000;
+          text-decoration: none;
+        }
+
+        .ontotext-run-dropdown {
+          position: relative;
+          display: inline-block;
+        }
+
+        .ontotext-dropdown-button {
+          position: relative;
+          z-index: 2;
+        }
+
+        .ontotext-run-dropdown-menu {
+         /* position: absolute;
+          top: 100%;
+          margin-top: 4px;
+          z-index: 3000;
+          max-height: 260px;
+          overflow-y: auto;
+          min-width: 100%;
+          width: max-content;*/
+        }
+
+        .ontotext-run-dropdown-menu.closed {
+          display: none;
+        }
+
+        .ontotext-run-dropdown-menu.open {
+          display: block;
+        }
+
+        /*.yasqe-inline-dropdown .ontotext-run-dropdown {
+          position: relative;
+        }*/
+
+        /*.yasqe-inline-dropdown .ontotext-run-dropdown-menu {
+          right: 0;
+        }*/
 
         .custom-button {
           border: none;
