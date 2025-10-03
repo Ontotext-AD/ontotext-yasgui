@@ -44,10 +44,12 @@ import {InternalRequestAbortedEvent} from '../../models/internal-events/internal
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 import {Debounce} from "../../services/utils/debounce";
 import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
+import {EXPLAIN_PLAN_TYPE} from '../../models/keyboard-shortcut-description';
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 import {KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
+import {InternalShowYasqeDropdownEvent} from '../../models/internal-events/InternalShowYasqeDropdownEvent';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -186,6 +188,11 @@ export class OntotextYasguiWebComponent {
    * Event emitted when saved query share link has to be build by the client.
    */
   @Event() shareQuery: EventEmitter<TabQueryModel>;
+
+  /**
+   * Event emitted when explain query button is pressed.
+   */
+  @Event() explainQuery: EventEmitter<TabQueryModel>;
 
   /**
    * Event emitter used to send message to the clients of component.
@@ -618,6 +625,56 @@ export class OntotextYasguiWebComponent {
       owner: ''
     });
     this.showShareQueryDialog = true;
+  }
+
+  /**
+   * Handler for the event fired when the AI explain query button in the editor is triggered.
+   */
+  @Listen('internalExplainQueryEvent')
+  explainQueryHandler() {
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+          // catch this to avoid unhandled rejection
+        });
+      });
+    this.showShareQueryDialog = false;
+  }
+
+  @Listen('internalShowYasqeDropdownEvent')
+  onShowYasqeDropdown(ev: CustomEvent<InternalShowYasqeDropdownEvent>) {
+    console.log(ev);
+    const { buttonInstance, open } = ev.detail;
+    if (open) {
+      YasqeService.showDropdown(buttonInstance, open, this.translationService);
+    } else {
+      YasqeService.hideDropdown();
+    }
+  }
+
+  @Listen('internalYasqeDropdownActionSelected')
+  onYasqeDropdownActionSelected(ev: CustomEvent<{ action: string }>) {
+    const action = ev.detail.action;
+    this.getOntotextYasgui().then(ontotextYasgui => {
+      switch (action) {
+        case 'explain_plan':
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
+          break;
+        case 'explan_all':
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
+          break;
+        case 'explain_query':
+          console.log(ontotextYasgui.getQuery());
+          break;
+        case 'explain_results':
+          console.log(ontotextYasgui.getQuery());
+          break;
+      }
+    });
   }
 
   /**

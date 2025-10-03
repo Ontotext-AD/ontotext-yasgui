@@ -113,6 +113,15 @@ export class Yasqe extends CodeMirror {
   private readonly isVirtualRepository: boolean;
   private readonly tabId: string;
   private subscriptions: any[] = [];
+  private querySplitToggleBtn?: HTMLButtonElement;
+  private splitWrapper: HTMLDivElement;
+  private querySplitOpen = false;
+  private onWindowClickForSplit = (e: MouseEvent) => {
+    if (!this.querySplitToggleBtn) return;
+    if (!this.querySplitToggleBtn.contains(e.target as Node)) {
+      if (this.querySplitOpen) this.closeQuerySplitMenu();
+    }
+  };
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -503,14 +512,63 @@ export class Yasqe extends CodeMirror {
 
       this.queryBtn.onclick = () => {
         if (this.config.queryingDisabled) return; // Don't do anything
-          this.pageNumber = 1;
-          this.query().catch(() => {}); //catch this to avoid unhandled rejection
+        this.pageNumber = 1;
+        this.query().catch(() => {}); //catch this to avoid unhandled rejection
       };
 
-      buttons.appendChild(runButtonTooltip);
+      this.splitWrapper = document.createElement("div");
+      addClass(this.splitWrapper, "yasqe_querySplitWrapper");
+      this.splitWrapper.appendChild(runButtonTooltip);
+
+      this.querySplitToggleBtn = document.createElement("button");
+      addClass(this.querySplitToggleBtn, "yasqe_querySplitToggle", "icon-caret-down-after");
+      this.querySplitToggleBtn.type = "button";
+      this.querySplitToggleBtn.setAttribute(
+        "aria-label",
+        this.translationService.translate("yasqe.action.run_query.split.toggle.aria")
+      );
+      this.querySplitToggleBtn.onclick = () => this.toggleQuerySplitMenu();
+      this.splitWrapper.appendChild(this.querySplitToggleBtn);
+
+      buttons.appendChild(this.splitWrapper);
       this.updateQueryButton();
     }
   }
+
+  private toggleQuerySplitMenu() {
+    if (this.querySplitOpen) {
+      this.closeQuerySplitMenu();
+    } else {
+      this.openQuerySplitMenu();
+    }
+  }
+
+  private openQuerySplitMenu() {
+    if (!this.querySplitToggleBtn) return;
+    this.querySplitOpen = true;
+    removeClass(this.querySplitToggleBtn, "icon-caret-down-after");
+    addClass(this.querySplitToggleBtn, "icon-caret-up-after");
+    window.addEventListener("click", this.onWindowClickForSplit, { capture: true });
+    this.eventService.emitEvent(this.rootEl, "internalShowYasqeDropdownEvent", {
+      buttonInstance: this.rootEl,
+      tabId: this.getTabId(),
+      open: true,
+    });
+  }
+
+  private closeQuerySplitMenu() {
+    if (!this.querySplitToggleBtn) return;
+    this.querySplitOpen = false;
+    removeClass(this.querySplitToggleBtn, "icon-caret-up-after");
+    addClass(this.querySplitToggleBtn, "icon-caret-down-after");
+    window.removeEventListener("click", this.onWindowClickForSplit, { capture: true });
+    this.eventService.emitEvent(this.rootEl, "internalShowYasqeDropdownEvent", {
+      buttonInstance: this.rootEl,
+      tabId: this.getTabId(),
+      open: false,
+    });
+  }
+
   private drawResizer() {
     if (this.resizeWrapper) return;
     this.resizeWrapper = document.createElement("div");
@@ -630,6 +688,7 @@ export class Yasqe extends CodeMirror {
   }
 
   private initDrag() {
+    this.closeQuerySplitMenu();
     document.documentElement.addEventListener("mousemove", this.doDrag, false);
     document.documentElement.addEventListener("mouseup", this.stopDrag, false);
   }
@@ -1252,6 +1311,7 @@ export class Yasqe extends CodeMirror {
     this.subscriptions.forEach((subscription) => subscription());
     //  Abort running query;
     this.abortQuery();
+    this.closeQuerySplitMenu();
     this.unregisterEventListeners();
     if (this.keyboardShortcutsButton) {
       this.keyboardShortcutsButton.removeEventListener("click", this.handleKeyboardShortcutsOpen);
