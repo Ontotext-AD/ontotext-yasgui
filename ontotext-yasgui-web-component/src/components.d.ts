@@ -26,6 +26,7 @@ import { Tab } from "./models/yasgui/tab";
 import { YasqeButtonType } from "./models/yasqe-button-name";
 import { OngoingRequestsInfo } from "./models/ongoing-requests-info";
 import { YasguiResetFlags } from "./models/yasgui/yasgui-reset-flags";
+import { EventService } from "./services/event-service";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
     /**
@@ -226,6 +227,11 @@ export namespace Components {
          */
         "showYasqeActionButton": (yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>;
     }
+    interface QuerySplitButton {
+        "eventService": EventService;
+        "translationService": TranslationService;
+        "yasqe": any;
+    }
     interface SaveQueryDialog {
         /**
           * Input holding the saved query data if available. This data is used to initialize the form.
@@ -389,6 +395,12 @@ declare global {
         prototype: HTMLOntotextYasguiElement;
         new (): HTMLOntotextYasguiElement;
     };
+    interface HTMLQuerySplitButtonElement extends Components.QuerySplitButton, HTMLStencilElement {
+    }
+    var HTMLQuerySplitButtonElement: {
+        prototype: HTMLQuerySplitButtonElement;
+        new (): HTMLQuerySplitButtonElement;
+    };
     interface HTMLSaveQueryDialogElement extends Components.SaveQueryDialog, HTMLStencilElement {
     }
     var HTMLSaveQueryDialogElement: {
@@ -427,6 +439,7 @@ declare global {
         "ontotext-editable-text-field": HTMLOntotextEditableTextFieldElement;
         "ontotext-pagination": HTMLOntotextPaginationElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
+        "query-split-button": HTMLQuerySplitButtonElement;
         "save-query-dialog": HTMLSaveQueryDialogElement;
         "saved-queries-popup": HTMLSavedQueriesPopupElement;
         "share-query-dialog": HTMLShareQueryDialogElement;
@@ -622,6 +635,11 @@ declare namespace LocalJSX {
          */
         "savedQueryConfig"?: SavedQueryConfig;
     }
+    interface QuerySplitButton {
+        "eventService"?: EventService;
+        "translationService"?: TranslationService;
+        "yasqe"?: any;
+    }
     interface SaveQueryDialog {
         /**
           * Input holding the saved query data if available. This data is used to initialize the form.
@@ -696,6 +714,7 @@ declare namespace LocalJSX {
         "ontotext-editable-text-field": OntotextEditableTextField;
         "ontotext-pagination": OntotextPagination;
         "ontotext-yasgui": OntotextYasgui;
+        "query-split-button": QuerySplitButton;
         "save-query-dialog": SaveQueryDialog;
         "saved-queries-popup": SavedQueriesPopup;
         "share-query-dialog": ShareQueryDialog;
@@ -738,6 +757,7 @@ declare module "@stencil/core" {
              * yasgui can be tweaked using the values from the configuration.
              */
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
+            "query-split-button": LocalJSX.QuerySplitButton & JSXBase.HTMLAttributes<HTMLQuerySplitButtonElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;
             "saved-queries-popup": LocalJSX.SavedQueriesPopup & JSXBase.HTMLAttributes<HTMLSavedQueriesPopupElement>;
             "share-query-dialog": LocalJSX.ShareQueryDialog & JSXBase.HTMLAttributes<HTMLShareQueryDialogElement>;
