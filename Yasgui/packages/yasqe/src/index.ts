@@ -113,15 +113,8 @@ export class Yasqe extends CodeMirror {
   private readonly isVirtualRepository: boolean;
   private readonly tabId: string;
   private subscriptions: any[] = [];
-  private querySplitToggleBtn?: HTMLButtonElement;
-  private splitWrapper: HTMLDivElement;
-  private querySplitOpen = false;
-  private onWindowClickForSplit = (e: MouseEvent) => {
-    if (!this.querySplitToggleBtn) return;
-    if (!this.querySplitToggleBtn.contains(e.target as Node)) {
-      if (this.querySplitOpen) this.closeQuerySplitMenu();
-    }
-  };
+  private querySplitButton?: any;
+
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -516,57 +509,18 @@ export class Yasqe extends CodeMirror {
         this.query().catch(() => {}); //catch this to avoid unhandled rejection
       };
 
-      this.splitWrapper = document.createElement("div");
-      addClass(this.splitWrapper, "yasqe_querySplitWrapper");
-      this.splitWrapper.appendChild(runButtonTooltip);
+      const querySplitButtonEl = document.createElement("query-split-button");
+      querySplitButtonEl.setAttribute("id", "query-split-button");
+      runButtonTooltip.appendChild(querySplitButtonEl);
 
-      this.querySplitToggleBtn = document.createElement("button");
-      addClass(this.querySplitToggleBtn, "yasqe_querySplitToggle", "icon-caret-down-after");
-      this.querySplitToggleBtn.type = "button";
-      this.querySplitToggleBtn.setAttribute(
-        "aria-label",
-        this.translationService.translate("yasqe.action.run_query.split.toggle.aria")
-      );
-      this.querySplitToggleBtn.onclick = () => this.toggleQuerySplitMenu();
-      this.splitWrapper.appendChild(this.querySplitToggleBtn);
+      this.querySplitButton = querySplitButtonEl as any;
+      this.querySplitButton.yasqe = this;
+      this.querySplitButton.translationService = this.translationService;
+      this.querySplitButton.eventService = this.eventService;
 
-      buttons.appendChild(this.splitWrapper);
+      buttons.appendChild(runButtonTooltip);
       this.updateQueryButton();
     }
-  }
-
-  private toggleQuerySplitMenu() {
-    if (this.querySplitOpen) {
-      this.closeQuerySplitMenu();
-    } else {
-      this.openQuerySplitMenu();
-    }
-  }
-
-  private openQuerySplitMenu() {
-    if (!this.querySplitToggleBtn) return;
-    this.querySplitOpen = true;
-    removeClass(this.querySplitToggleBtn, "icon-caret-down-after");
-    addClass(this.querySplitToggleBtn, "icon-caret-up-after");
-    window.addEventListener("click", this.onWindowClickForSplit, { capture: true });
-    this.eventService.emitEvent(this.rootEl, "internalShowYasqeDropdownEvent", {
-      buttonInstance: this.rootEl,
-      tabId: this.getTabId(),
-      open: true,
-    });
-  }
-
-  private closeQuerySplitMenu() {
-    if (!this.querySplitToggleBtn) return;
-    this.querySplitOpen = false;
-    removeClass(this.querySplitToggleBtn, "icon-caret-up-after");
-    addClass(this.querySplitToggleBtn, "icon-caret-down-after");
-    window.removeEventListener("click", this.onWindowClickForSplit, { capture: true });
-    this.eventService.emitEvent(this.rootEl, "internalShowYasqeDropdownEvent", {
-      buttonInstance: this.rootEl,
-      tabId: this.getTabId(),
-      open: false,
-    });
   }
 
   private drawResizer() {
@@ -688,7 +642,6 @@ export class Yasqe extends CodeMirror {
   }
 
   private initDrag() {
-    this.closeQuerySplitMenu();
     document.documentElement.addEventListener("mousemove", this.doDrag, false);
     document.documentElement.addEventListener("mouseup", this.stopDrag, false);
   }
@@ -1311,7 +1264,8 @@ export class Yasqe extends CodeMirror {
     this.subscriptions.forEach((subscription) => subscription());
     //  Abort running query;
     this.abortQuery();
-    this.closeQuerySplitMenu();
+    this.querySplitButton = undefined;
+
     this.unregisterEventListeners();
     if (this.keyboardShortcutsButton) {
       this.keyboardShortcutsButton.removeEventListener("click", this.handleKeyboardShortcutsOpen);

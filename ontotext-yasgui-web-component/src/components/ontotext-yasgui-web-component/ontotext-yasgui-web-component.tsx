@@ -49,7 +49,6 @@ import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 import {KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
-import {InternalShowYasqeDropdownEvent} from '../../models/internal-events/InternalShowYasqeDropdownEvent';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -84,6 +83,8 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
   private readonly notificationMessageService: NotificationMessageService;
+  private readonly llmResultOnlyComment = '# :gpt-result-only:';
+  private readonly llmQueryOnlyComment = '# :gpt-query-only:';
   private defaultViewMode = RenderingMode.YASGUI;
   private tabsListHeight: number;
   private tabsListResizeObserver: ResizeObserver;
@@ -641,38 +642,37 @@ export class OntotextYasguiWebComponent {
     this.showShareQueryDialog = false;
   }
 
-  @Listen('internalShowYasqeDropdownEvent')
-  onShowYasqeDropdown(ev: CustomEvent<InternalShowYasqeDropdownEvent>) {
-    console.log(ev);
-    const { buttonInstance, open } = ev.detail;
-    if (open) {
-      YasqeService.showDropdown(buttonInstance, open, this.translationService);
-    } else {
-      YasqeService.hideDropdown();
-    }
-  }
-
   @Listen('internalYasqeDropdownActionSelected')
   onYasqeDropdownActionSelected(ev: CustomEvent<{ action: string }>) {
     const action = ev.detail.action;
+    let userQuery = '';
     this.getOntotextYasgui().then(ontotextYasgui => {
       switch (action) {
         case 'explain_plan':
+          userQuery = ontotextYasgui.getQuery();
+          ontotextYasgui.setQuery(this.removeQueryLLMComments(userQuery));
           ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
           });
           break;
-        case 'explan_all':
+        case 'explain_all':
+          userQuery = ontotextYasgui.getQuery();
+          ontotextYasgui.setQuery(this.removeQueryLLMComments(userQuery));
           ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
           });
           break;
         case 'explain_query':
-          console.log(ontotextYasgui.getQuery());
+        case 'explain_results': {
+          const mode = action === 'explain_query' ? 'query' : 'results';
+          if (!this.setExplainScope(ontotextYasgui, mode)) {
+            return;
+          }
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
           break;
-        case 'explain_results':
-          console.log(ontotextYasgui.getQuery());
-          break;
+        }
       }
     });
   }
@@ -770,6 +770,27 @@ export class OntotextYasguiWebComponent {
   @Listen('internalKeyboardShortcutsClickedEvent')
   onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
     this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
+  }
+
+  private removeQueryLLMComments(userQuery: string): string {
+    userQuery = userQuery.replace(this.llmResultOnlyComment, '');
+    return userQuery.replace(this.llmQueryOnlyComment, '').trim();
+  }
+
+  private setExplainScope(editor: OntotextYasgui, mode: 'query' | 'results'): boolean {
+    const want = mode === 'query' ? this.llmQueryOnlyComment : this.llmResultOnlyComment;
+    const other = mode === 'query' ? this.llmResultOnlyComment : this.llmQueryOnlyComment;
+
+    const query = editor.getQuery();
+    if (query.startsWith(want)) {
+      return false;
+    }
+    if (query.startsWith(other)) {
+      editor.setQuery(query.replace(other, want));
+    } else {
+      editor.setQuery(`${want}\n${query}`);
+    }
+    return true;
   }
 
   private getKeyboardShortcutsItems(): KeyboardShortcutItem[] {
