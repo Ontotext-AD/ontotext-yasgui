@@ -101,13 +101,13 @@
         padding: 6px 12px;
         text-decoration: none;
         text-align: left;
-        color: #000000;
+        color: $color-onto-black;
         cursor: pointer;
       }
 
       .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item:hover {
-        background: $color-onto-grey;
-        color: #000000;
+        background-color: $color-onto-hover-gray;
+        color: $color-onto-black;
         text-decoration: none;
       }
 
@@ -126,7 +126,7 @@
         // Position the query button at the bottom right corner of the editor.
         .yasqe_tooltip_queryButton {
           display: flex;
-          //margin-top: auto;
+          margin-top: auto;
           margin-bottom: 32px;
         }
 
@@ -197,7 +197,7 @@
           padding: 6px 12px;
           text-decoration: none;
           text-align: left;
-          color: #000000;
+          color: $color-onto-black;
           cursor: pointer;
 
           .ontotext-run-dropdown-menu-item__shortcut {
@@ -206,7 +206,7 @@
         }
         .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item a:hover {
           background: $color-onto-grey;
-          color: #000000;
+          color: $color-onto-black;
           text-decoration: none;
         }
 
@@ -216,6 +216,7 @@
 
         .ontotext-run-dropdown-menu.open {
           display: block;
+          padding: 5px 0;
         }
 
         .custom-button {

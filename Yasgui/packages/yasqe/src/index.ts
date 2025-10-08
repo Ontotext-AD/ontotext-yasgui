@@ -505,8 +505,8 @@ export class Yasqe extends CodeMirror {
 
       this.queryBtn.onclick = () => {
         if (this.config.queryingDisabled) return; // Don't do anything
-        this.pageNumber = 1;
-        this.query().catch(() => {}); //catch this to avoid unhandled rejection
+          this.pageNumber = 1;
+          this.query().catch(() => {}); //catch this to avoid unhandled rejection
       };
 
       const querySplitButtonEl = document.createElement("query-split-button");
@@ -514,15 +514,13 @@ export class Yasqe extends CodeMirror {
       runButtonTooltip.appendChild(querySplitButtonEl);
 
       this.querySplitButton = querySplitButtonEl as any;
-      this.querySplitButton.yasqe = this;
+      this.querySplitButton.yasqe = this.rootEl;
       this.querySplitButton.translationService = this.translationService;
       this.querySplitButton.eventService = this.eventService;
-
       buttons.appendChild(runButtonTooltip);
       this.updateQueryButton();
     }
   }
-
   private drawResizer() {
     if (this.resizeWrapper) return;
     this.resizeWrapper = document.createElement("div");
