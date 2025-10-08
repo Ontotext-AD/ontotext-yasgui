@@ -1,210 +1,170 @@
-import { Component, Element, Listen, Prop, State } from '@stencil/core';
-import { TranslationService } from '../../services/translation.service';
-import { EventService } from '../../services/event-service';
-import {InternalEventType} from '../../models/internal-events/internal-event-types';
+import {Component, Element, Listen, Prop, State, h} from '@stencil/core';
+import {TranslationService} from '../../services/translation.service';
+import {EventService} from '../../services/event-service';
+import {
+    InternalRunDropdownValueSelectedEvent
+} from '../../models/internal-events/internal-run-dropdown-value-selected-event';
 
 interface RunAction {
-  labelKey: string;
-  value: string;
-  shortcut?: string;
+    labelKey: string;
+    value: string;
+    shortcut?: string;
 }
 
 @Component({
-  tag: 'query-split-button',
-  styleUrl: 'query-split-button.scss',
-  shadow: false,
+    tag: 'query-split-button',
+    styleUrl: 'query-split-button.scss',
+    shadow: false,
 })
 export class QuerySplitButton {
-  @Element() hostElement: HTMLElement;
+    @Element() hostElement: HTMLElement;
 
-  @Prop() yasqe: any;
-  @Prop() translationService: TranslationService;
-  @Prop() eventService: EventService;
+    @Prop() yasqe: any;
+    @Prop() translationService: TranslationService;
+    @Prop() eventService: EventService;
 
-  @State() querySplitOpen = false;
+    @State() querySplitOpen = false;
 
-  private querySplitToggleBtn: HTMLButtonElement;
-  private splitWrapper: HTMLDivElement;
-  private activeDropdownHost?: HTMLElement;
-
-  /**
-   * Handles clicks outside the dropdown to close it
-   */
-  @Listen('click', { target: 'window', capture: true })
-  onWindowClick(e: MouseEvent) {
-    if (this.querySplitOpen && this.querySplitToggleBtn && !this.querySplitToggleBtn.contains(e.target as Node)) {
-      this.closeQuerySplitMenu();
-    }
-  }
-
-  /**
-   * Handles scroll events to close the dropdown
-   */
-  @Listen('scroll', { target: 'window', capture: true, passive: true })
-  onWindowScroll() {
-    if (this.querySplitOpen) {
-      this.closeQuerySplitMenu();
-    }
-  }
-
-  /**
-   * Handles the Escape key to close the dropdown
-   */
-  @Listen('keydown', { target: 'window' })
-  onKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Escape' && this.querySplitOpen) {
-      this.closeQuerySplitMenu();
-    }
-  }
-
-  componentDidLoad() {
-    console.log(this.hostElement.tagName);
-    this.createSplitButton();
-    this.attachEventListeners();
-  }
-
-  disconnectedCallback() {
-    this.destroyComponent();
-  }
-
-  private createSplitButton(): void {
-    this.splitWrapper = document.createElement("div");
-    this.addClass(this.splitWrapper, "yasqe_querySplitWrapper");
-
-    this.querySplitToggleBtn = document.createElement("button");
-    this.addClass(this.querySplitToggleBtn, "yasqe_querySplitToggle", "icon-caret-down-after");
-    this.querySplitToggleBtn.type = "button";
-    this.querySplitToggleBtn.setAttribute(
-      "aria-label",
-      this.translationService.translate("yasqe.action.run_query.split.toggle.aria")
-    );
-
-    this.splitWrapper.appendChild(this.querySplitToggleBtn);
-    this.hostElement.appendChild(this.splitWrapper);
-  }
-
-  private attachEventListeners(): void {
-    this.querySplitToggleBtn.addEventListener('click', () => this.toggleQuerySplitMenu());
-    this.querySplitToggleBtn.addEventListener('internalYasqeDropdownActionSelected', ((event: CustomEvent) => {
-      this.handleDropdownAction(event.detail.action);
-    }) as EventListener);
-  }
-
-  private handleDropdownAction(action: string): void {
-    this.eventService.emitEvent(undefined, InternalEventType.INTERNAL_YASQE_DROPDOWN_ACTION_SELECTED_EVENT, action);
-  }
-
-  private addClass(el: Element | null | undefined, ...classNames: string[]): void {
-    if (!el) return;
-    el.classList.add(...classNames);
-  }
-
-  private removeClass(el: Element | null | undefined, className: string): void {
-    el?.classList?.remove(className);
-  }
-
-  public toggleQuerySplitMenu(): void {
-    if (this.querySplitOpen) {
-      this.closeQuerySplitMenu();
-    } else {
-      this.openQuerySplitMenu();
-    }
-  }
-
-  public openQuerySplitMenu(): void {
-    this.querySplitOpen = true;
-    this.removeClass(this.querySplitToggleBtn, "icon-caret-down-after");
-    this.addClass(this.querySplitToggleBtn, "icon-caret-up-after");
-
-    this.showDropdown(this.querySplitToggleBtn, true);
-  }
-
-  public closeQuerySplitMenu(): void {
-    this.querySplitOpen = false;
-    this.removeClass(this.querySplitToggleBtn, "icon-caret-up-after");
-    this.addClass(this.querySplitToggleBtn, "icon-caret-down-after");
-
-    this.hideDropdown();
-  }
-
-  private showDropdown(triggerBtn: HTMLElement, isOpen: boolean): void {
-    if (!isOpen) {
-      this.hideDropdown();
-      return;
-    }
-    this.hideDropdown();
-
-    const runActions: RunAction[] = [
-      { labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan', shortcut: 'yasqe.dropdown.run_query.option.explain_plan_shortcut' },
-      { labelKey: 'yasqe.dropdown.run_query.option.llm_explain_all', value: 'explain_all', shortcut: 'yasqe.dropdown.run_query.option.llm_explain_all_shortcut' },
-      { labelKey: 'yasqe.dropdown.run_query.option.llm_explain_query', value: 'explain_query' },
-      { labelKey: 'yasqe.dropdown.run_query.option.llm_explain_results', value: 'explain_results' }
-    ];
-
-    const dropdownContainer = document.createElement('div');
-    dropdownContainer.className = 'yasqe-inline-dropdown ontotext-run-dropdown open';
-
-    const menu = document.createElement('div');
-    menu.className = 'ontotext-run-dropdown-menu open';
-
-    runActions.forEach(item => {
-      const elementDiv = document.createElement('div');
-      elementDiv.className = 'ontotext-run-dropdown-menu-item';
-      elementDiv.setAttribute('role', 'menuitem');
-
-      const labelSpan = document.createElement('span');
-      labelSpan.className = 'ontotext-run-dropdown-menu-item__label';
-      labelSpan.textContent = this.translationService.translate(item.labelKey);
-
-      elementDiv.appendChild(labelSpan);
-
-      if (item.shortcut) {
-        const shortcutSpan = document.createElement('span');
-        shortcutSpan.className = 'ontotext-run-dropdown-menu-item__shortcut';
-        shortcutSpan.textContent = this.translationService.translate(item.shortcut);
-        elementDiv.appendChild(shortcutSpan);
-      }
-
-      elementDiv.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        triggerBtn.dispatchEvent(new CustomEvent('internalYasqeDropdownActionSelected', {
-          bubbles: true,
-          detail: { action: item.value }
-        }));
-        this.hideDropdown();
-      });
-
-      menu.appendChild(elementDiv);
-    });
-
-    dropdownContainer.appendChild(menu);
-    triggerBtn.appendChild(dropdownContainer);
-    this.activeDropdownHost = dropdownContainer;
-  }
-
-  private hideDropdown(): void {
-    if (this.activeDropdownHost) {
-      this.activeDropdownHost.remove();
-      this.activeDropdownHost = undefined;
-    }
-  }
-
-  private destroyComponent(): void {
-    if (this.querySplitOpen) {
-      this.hideDropdown();
+    @Listen('click', {target: 'window', capture: true})
+    onWindowClick(e: MouseEvent) {
+        if (this.querySplitOpen && this.hostElement && !this.hostElement.contains(e.target as Node)) {
+            this.closeQuerySplitMenu();
+        }
     }
 
-    if (this.querySplitToggleBtn) {
-      this.querySplitToggleBtn.remove();
+    @Listen('scroll', {target: 'window', capture: true, passive: true})
+    onWindowScroll() {
+        if (this.querySplitOpen) {
+            this.closeQuerySplitMenu();
+        }
     }
 
-    if (this.splitWrapper) {
-      this.splitWrapper.remove();
+    @Listen('keydown', {target: 'window'})
+    onKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Escape' && this.querySplitOpen) {
+            this.closeQuerySplitMenu();
+        }
     }
-  }
-  render() {
-    // This component doesn't use JSX rendering because we're appending to an existing
-    // DOM element (runButtonTooltip)
-    return null;
-  }
+
+    @Listen('resize', {target: 'window', passive: true})
+    onWindowResize() {
+        if (this.querySplitOpen) {
+            this.closeQuerySplitMenu();
+        }
+    }
+
+    // Shortcut button blocks the dropdown when it's open, so z-index adjusted and reset accordingly
+    private updateKeyboardShortcutsButtonZIndex(zIndex: string): void {
+        const shortcutsButton = document.querySelector(
+            '.yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning') as HTMLElement;
+
+        if (shortcutsButton) {
+            shortcutsButton.style.zIndex = zIndex;
+        }
+    }
+
+    private positionDropdownMenu(): void {
+        setTimeout(() => {
+            const button = this.hostElement.querySelector('.yasqe_querySplitWrapper') as HTMLElement;
+            const dropdown = this.hostElement.querySelector('.ontotext-run-dropdown-menu.open') as HTMLElement;
+
+            if (button && dropdown) {
+                const buttonRect = this.hostElement.getBoundingClientRect();
+                const isFullscreen = this.yasqe.classList.contains('yasqe-fullscreen');
+                const buttonGroup = window.getComputedStyle(document.querySelector('.yasqe_buttons'));
+                // Convert the string value (like "10 px") to a number and default to 0 if not a number
+                const buttonGroupRight = buttonGroup.right !== 'auto' ? parseFloat(buttonGroup.right) || 0 : 0;
+
+                dropdown.style.position = 'fixed';
+                dropdown.style.right = `${(parseFloat(dropdown.style.right) || 0) + buttonGroupRight + 33}px`;
+
+                const dropdownRect = dropdown.getBoundingClientRect();
+                const dropdownHeight = dropdownRect.height;
+
+                if (isFullscreen) {
+                    dropdown.style.top = `${buttonRect.top - dropdownHeight + 16}px`;
+                    dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
+                } else {
+                    dropdown.style.top = `${buttonRect.bottom + 2}px`;
+                }
+            }
+        });
+    }
+
+    private toggleQuerySplitMenu = () => {
+        this.querySplitOpen ? this.closeQuerySplitMenu() : this.openQuerySplitMenu();
+    };
+
+    private openQuerySplitMenu() {
+        this.querySplitOpen = true;
+        this.updateKeyboardShortcutsButtonZIndex('1');
+        this.positionDropdownMenu();
+    }
+
+    private closeQuerySplitMenu() {
+        this.querySplitOpen = false;
+        this.updateKeyboardShortcutsButtonZIndex('');
+    }
+
+    private handleDropdownAction(action: string): void {
+        this.eventService.emit(new InternalRunDropdownValueSelectedEvent(action));
+    }
+
+    // DEV NOTE: Leaving the shortcut implementation here for use when the new icon library is chosen.
+    private parseShortcutLabel(shortcutLabel: string): string[] {
+        return shortcutLabel
+            .split('-')
+            .map((part) => part.trim())
+            .filter((part) => part.length > 0);
+    }
+
+    render() {
+        const caretClass = this.querySplitOpen ? 'icon-caret-up-after' : 'icon-caret-down-after';
+
+        const runActions: RunAction[] = [
+            {labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan'},
+            {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_all', value: 'explain_all'},
+            {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_query', value: 'explain_query'},
+            {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_results', value: 'explain_results'},
+        ];
+
+        return (
+            <div class="yasqe_querySplitWrapper">
+                <button
+                    type="button"
+                    class={`yasqe_querySplitToggle ${caretClass}`}
+                    aria-label={this.translationService.translate('yasqe.action.run_query.split.toggle.aria')}
+                    onClick={this.toggleQuerySplitMenu}
+                />
+                {this.querySplitOpen && (
+                    <div class="yasqe-inline-dropdown ontotext-run-dropdown open">
+                        <div class="ontotext-run-dropdown-menu open" role="menu">
+                            {runActions.map((item) => (
+                                    <div
+                                        class="ontotext-run-dropdown-menu-item"
+                                        role="menuitem"
+                                        onClick={(ev) => {
+                                            ev.preventDefault();
+                                            this.handleDropdownAction(item.value);
+                                            this.closeQuerySplitMenu();
+                                        }}
+                                    >
+                  <span class="ontotext-run-dropdown-menu-item__label">
+                    {this.translationService.translate(item.labelKey)}
+                  </span>
+                                        {item.shortcut && (
+                                            <span class="ontotext-run-dropdown-menu-item__shortcut">
+                      {this.parseShortcutLabel(this.translationService.translate(item.shortcut)).map((keyPart) => (
+                          <kbd class="key">{keyPart}</kbd>
+                      ))}
+                    </span>
+                                        )}
+                                    </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
 }

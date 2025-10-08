@@ -643,8 +643,8 @@ export class OntotextYasguiWebComponent {
   }
 
   @Listen('internalYasqeDropdownActionSelected')
-  onYasqeDropdownActionSelected(ev: CustomEvent<{ action: string }>) {
-    const action = ev.detail.action;
+  onYasqeDropdownActionSelected(ev: CustomEvent<{ payload: string }>) {
+    const action = ev.detail.payload;
     let userQuery = '';
     this.getOntotextYasgui().then(ontotextYasgui => {
       switch (action) {

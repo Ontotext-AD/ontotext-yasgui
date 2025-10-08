@@ -1,8 +1,8 @@
 import {InternalEvent} from './internal-event';
 import {InternalEventType} from './internal-event-types';
 
-export class InternalDropdownValueSelectedEvent implements InternalEvent {
-    TYPE = InternalEventType.INTERNAL_DROPDOWN_VALUE_SELECTED_EVENT;
+export class InternalRunDropdownValueSelectedEvent implements InternalEvent {
+    TYPE = InternalEventType.INTERNAL_YASQE_DROPDOWN_ACTION_SELECTED_EVENT;
     payload: any;
 
     constructor(payload: any) {
