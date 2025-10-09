@@ -64,6 +64,11 @@ export class QuerySplitButton {
     }
 
     private positionDropdownMenu(): void {
+       const splitButtonTopMargin = window.getComputedStyle(document.querySelector('.yasqe_queryButton')).marginTop;
+       const splitButtonTopMarginValue = parseFloat(splitButtonTopMargin) || 0;
+       const fullscreenButtonDropdownGap = 2; // Gap between the top of the button and dropdown in fullscreen mode
+       const distanceFromEditorRightEdge = 33; // Distance from the right edge of the editor to the dropdown right edge
+        // Using setTimeout to ensure the dropdown is re-rendered after calculating its position
         setTimeout(() => {
             const button = this.hostElement.querySelector('.yasqe_querySplitWrapper') as HTMLElement;
             const dropdown = this.hostElement.querySelector('.ontotext-run-dropdown-menu.open') as HTMLElement;
@@ -76,16 +81,16 @@ export class QuerySplitButton {
                 const buttonGroupRight = buttonGroup.right !== 'auto' ? parseFloat(buttonGroup.right) || 0 : 0;
 
                 dropdown.style.position = 'fixed';
-                dropdown.style.right = `${(parseFloat(dropdown.style.right) || 0) + buttonGroupRight + 33}px`;
+                dropdown.style.right = `${(parseFloat(dropdown.style.right) || 0) + buttonGroupRight + distanceFromEditorRightEdge}px`;
 
                 const dropdownRect = dropdown.getBoundingClientRect();
                 const dropdownHeight = dropdownRect.height;
 
                 if (isFullscreen) {
-                    dropdown.style.top = `${buttonRect.top - dropdownHeight + 16}px`;
+                  dropdown.style.top = `${buttonRect.top - dropdownHeight + splitButtonTopMarginValue}px`;
                     dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
                 } else {
-                    dropdown.style.top = `${buttonRect.bottom + 2}px`;
+                    dropdown.style.top = `${buttonRect.bottom + fullscreenButtonDropdownGap}px`;
                 }
             }
         });

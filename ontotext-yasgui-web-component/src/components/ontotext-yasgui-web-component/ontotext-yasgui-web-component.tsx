@@ -642,9 +642,13 @@ export class OntotextYasguiWebComponent {
     this.showShareQueryDialog = false;
   }
 
+  /**
+   * Handler for the event fired when an action is selected from the yasqe dropdown menu.
+   * @param event The event containing the action to be performed.
+   */
   @Listen('internalYasqeDropdownActionSelected')
-  onYasqeDropdownActionSelected(ev: CustomEvent<{ payload: string }>) {
-    const action = ev.detail.payload;
+  onYasqeDropdownActionSelected(event: CustomEvent<{ payload: string }>) {
+    const action = event.detail.payload;
     let userQuery = '';
     this.getOntotextYasgui().then(ontotextYasgui => {
       switch (action) {
@@ -773,8 +777,10 @@ export class OntotextYasguiWebComponent {
   }
 
   private removeQueryLLMComments(userQuery: string): string {
-    userQuery = userQuery.replace(this.llmResultOnlyComment, '');
-    return userQuery.replace(this.llmQueryOnlyComment, '').trim();
+    return userQuery
+      .replace(this.llmResultOnlyComment, '')
+      .replace(this.llmQueryOnlyComment, '')
+      .trim();
   }
 
   private setExplainScope(editor: OntotextYasgui, mode: 'query' | 'results'): boolean {
