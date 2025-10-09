@@ -684,8 +684,8 @@ export class OntotextYasguiWebComponent {
    * @param event The event containing the action to be performed.
    */
   @Listen('internalYasqeDropdownActionSelected')
-  onYasqeDropdownActionSelected(event: CustomEvent<{ payload: string }>) {
-    const action = event.detail.payload;
+  onYasqeDropdownActionSelected(ev: CustomEvent<{ payload: string }>) {
+    const action = ev.detail.payload;
     let userQuery = '';
     this.getOntotextYasgui().then(ontotextYasgui => {
       switch (action) {
