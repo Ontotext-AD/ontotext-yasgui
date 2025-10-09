@@ -81,6 +81,10 @@ export class YasrSteps {
     this.getResultCell(rowNumber, cellNumber, yasrIndex).realHover();
   }
 
+  static mouseoverCell(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    this.getResultCell(rowNumber, cellNumber, yasrIndex).trigger('mouseover');
+  }
+
   static showSharedResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
     return this.getResultCell(rowNumber, cellNumber, yasrIndex)
       .realHover()

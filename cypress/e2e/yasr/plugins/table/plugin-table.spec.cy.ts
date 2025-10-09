@@ -251,10 +251,9 @@ describe('Plugin: Table', () => {
         YasqeSteps.executeQuery();
 
         // And I hovered the mouse over a cell of result table.
-        YasrSteps.hoverCell(1, 2);
-
+        YasrSteps.mouseoverCell(1, 2);
         // Then I expect copy url link to be visible
-        YasrSteps.getCopyResourceLink(1, 2).should('be.visible');
+        YasrSteps.showSharedResourceLink(1, 2).should('be.visible');
       });
     });
 

@@ -88,22 +88,6 @@
     }
 
     .yasqe {
-      .yasqe-inline-dropdown .ontotext-run-dropdown-menu {
-        background-color: $color-onto-white;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
-        border-radius: 4px;
-        min-width: 140px;
-        font-size: 13px;
-      }
-
-      .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item {
-        background-color: $color-onto-white;
-        padding: 6px 12px;
-        text-decoration: none;
-        text-align: left;
-        color: $color-onto-black;
-        cursor: pointer;
-      }
 
       .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item:hover {
         background-color: $color-onto-hover-gray;
@@ -143,80 +127,6 @@
           &:hover {
             background-color: $color-ontotext-orange-dark;
           }
-        }
-
-        .yasqe_querySplitToggle {
-          background-color: var(--primary-color) !important;
-          color: $color-onto-white;
-          font-weight: 400;
-          height: 38px !important;
-          margin-top: 16px;
-          margin-left: 1px;
-          border: none;
-          z-index: 9998;
-
-          &:hover {
-            background-color: $color-ontotext-orange-dark;
-          }
-        }
-
-        .yasqe_querySplitToggle > .yasqe-inline-dropdown {
-          position: absolute;
-          top: 100%;
-          margin-top: 4px;
-          min-width: 140px;
-          width: max-content;
-          z-index: 10000;
-          display: block;
-        }
-
-        .yasqe_querySplitWrapper {
-            position: relative;
-        }
-
-        .ontotext-run-dropdown {
-          width: max-content;
-          position: absolute;
-          top: 100%;
-          right: 0;
-          z-index: 1400;
-        }
-
-        .yasqe-inline-dropdown .ontotext-run-dropdown-menu {
-          background-color: $color-onto-white;
-          box-shadow: 0 2px 6px rgba(0,0,0,.15);
-          border-radius: 4px;
-          min-width: 140px;
-          font-size: 13px;
-        }
-        .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item {
-          display: flex;
-          justify-content: space-between;
-          font-family: var(--main-font);
-          gap: 5px;
-          padding: 6px 12px;
-          text-decoration: none;
-          text-align: left;
-          color: $color-onto-black;
-          cursor: pointer;
-
-          .ontotext-run-dropdown-menu-item__shortcut {
-            font-size: smaller;
-          }
-        }
-        .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item a:hover {
-          background: $color-onto-grey;
-          color: $color-onto-black;
-          text-decoration: none;
-        }
-
-        .ontotext-run-dropdown-menu.closed {
-          display: none;
-        }
-
-        .ontotext-run-dropdown-menu.open {
-          display: block;
-          padding: 5px 0;
         }
 
         .custom-button {

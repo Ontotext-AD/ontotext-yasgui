@@ -57,12 +57,25 @@ export class YasqeSteps {
     return YasqeSteps.getRunQueryButton().eq(index);
   }
 
-  static getAiExplainQueryButton() {
-    return cy.get('.yasqe_aiExplainButton');
+  static getRunSplitButton() {
+    return cy.get('.yasqe_querySplitToggle');
   }
 
-  static explainWithAI() {
-    YasqeSteps.getAiExplainQueryButton().click();
+  static openRunSplitMenu() {
+    // Force needed to open the dropdown
+    YasqeSteps.getRunSplitButton().click({ force: true });
+  }
+
+  static getRunDropdownMenu() {
+    return cy.get('.ontotext-run-dropdown-menu');
+  }
+
+  static getRunDropdownMenuOption(index: number) {
+    return this.getRunDropdownMenu().find('.ontotext-run-dropdown-menu-item').eq(index);
+  }
+
+  static selectRunDropdownMenuOption(index: number) {
+    this.getRunDropdownMenuOption(index).invoke('click');
   }
 
   static executeQuery(index = 0) {
@@ -90,7 +103,7 @@ export class YasqeSteps {
   }
 
   static getExplainQueryButtonTooltip() {
-    return this.getAiExplainQueryButton().parent();
+    return this.getRunSplitButton().parent();
   }
 
   static getCreateSavedQueryButton() {
