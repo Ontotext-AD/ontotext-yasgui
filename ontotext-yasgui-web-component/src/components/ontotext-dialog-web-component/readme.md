@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                                                                                                                                        | Default     |
-| -------- | --------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `config` | --        |             | `{ dialogTitle: string; onClose: (evt: KeyboardEvent \| MouseEvent) => void; position?: string; isModal?: boolean; hideScroll?: boolean; }` | `undefined` |
+| Property | Attribute | Description | Type                                                                                                                  | Default     |
+| -------- | --------- | ----------- | --------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `config` | --        |             | `{ dialogTitle: string; onClose: (evt: KeyboardEvent \| MouseEvent) => void; position?: string; isModal?: boolean; }` | `undefined` |
 
 
 ## Dependencies

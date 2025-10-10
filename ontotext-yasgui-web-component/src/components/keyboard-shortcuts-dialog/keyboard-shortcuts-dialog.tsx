@@ -60,8 +60,7 @@ export class KeyboardShortcutsDialog {
       dialogTitle: this.translationService.translate('yasqe.keyboard_shortcuts.dialog.title'),
       onClose: this.closeDialog.bind(this),
       position: 'bottom',
-      isModal: true,
-      hideScroll: false,
+      isModal: true
     }
   }
 
