@@ -5,7 +5,8 @@ export type DialogConfig = {
   dialogTitle: string;
   onClose: (evt: MouseEvent | KeyboardEvent) => void;
   position?: string,
-  isModal?: boolean
+  isModal?: boolean,
+  hideScroll?: boolean
 }
 
 @Component({
@@ -34,7 +35,7 @@ export class OntotextDialogWebComponent {
   }
 
   componentDidLoad(): void {
-    if (!this.config.isModal) {
+    if (this.config.hideScroll === undefined || this.config.hideScroll) {
       this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
     }
     this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
@@ -43,7 +44,7 @@ export class OntotextDialogWebComponent {
 
   disconnectedCallback() {
     this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
-    if (!this.config.isModal && this.documentOverflow) {
+    if (this.config.hideScroll === undefined || this.config.hideScroll) {
       HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
     }
   }
