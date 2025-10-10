@@ -38,15 +38,15 @@ export class YasqeService {
   private onLanguageChange(_currentLang: string) {
     let button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)}`) as HTMLElement;
     let tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip)
+    TooltipService.updateTooltip(button, tooltip);
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)}`) as HTMLElement;
     tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip)
+    TooltipService.updateTooltip(button, tooltip);
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
     tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip)
+    TooltipService.updateTooltip(button, tooltip);
 
     const ontotextYasgui = this.yasguiBuilder.getInstance();
     const yasqe = ontotextYasgui?.getYasqe();

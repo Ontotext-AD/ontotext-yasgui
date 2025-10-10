@@ -113,6 +113,8 @@ export class Yasqe extends CodeMirror {
   private readonly isVirtualRepository: boolean;
   private readonly tabId: string;
   private subscriptions: any[] = [];
+  private querySplitButton?: any;
+
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
@@ -507,6 +509,14 @@ export class Yasqe extends CodeMirror {
           this.query().catch(() => {}); //catch this to avoid unhandled rejection
       };
 
+      const querySplitButtonEl = document.createElement("query-split-button");
+      querySplitButtonEl.setAttribute("id", "query-split-button");
+      runButtonTooltip.appendChild(querySplitButtonEl);
+
+      this.querySplitButton = querySplitButtonEl as any;
+      this.querySplitButton.yasqe = this.rootEl;
+      this.querySplitButton.translationService = this.translationService;
+      this.querySplitButton.eventService = this.eventService;
       buttons.appendChild(runButtonTooltip);
       this.updateQueryButton();
     }
@@ -1252,6 +1262,8 @@ export class Yasqe extends CodeMirror {
     this.subscriptions.forEach((subscription) => subscription());
     //  Abort running query;
     this.abortQuery();
+    this.querySplitButton = undefined;
+
     this.unregisterEventListeners();
     if (this.keyboardShortcutsButton) {
       this.keyboardShortcutsButton.removeEventListener("click", this.handleKeyboardShortcutsOpen);

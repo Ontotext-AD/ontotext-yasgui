@@ -89,6 +89,12 @@
 
     .yasqe {
 
+      .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item:hover {
+        background-color: $color-onto-hover-gray;
+        color: $color-onto-black;
+        text-decoration: none;
+      }
+
       .yasqe_buttons {
         display: flex;
         flex-direction: column;
@@ -103,6 +109,7 @@
 
         // Position the query button at the bottom right corner of the editor.
         .yasqe_tooltip_queryButton {
+          display: flex;
           margin-top: auto;
           margin-bottom: 32px;
         }

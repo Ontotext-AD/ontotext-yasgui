@@ -44,6 +44,7 @@ import {InternalRequestAbortedEvent} from '../../models/internal-events/internal
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 import {Debounce} from "../../services/utils/debounce";
 import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
+import {EXPLAIN_PLAN_TYPE} from '../../models/keyboard-shortcut-description';
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
@@ -82,6 +83,8 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
   private readonly notificationMessageService: NotificationMessageService;
+  private readonly llmResultOnlyComment = '# :gpt-result-only:';
+  private readonly llmQueryOnlyComment = '# :gpt-query-only:';
   private defaultViewMode = RenderingMode.YASGUI;
   private tabsListHeight: number;
   private tabsListResizeObserver: ResizeObserver;
@@ -186,6 +189,11 @@ export class OntotextYasguiWebComponent {
    * Event emitted when saved query share link has to be build by the client.
    */
   @Event() shareQuery: EventEmitter<TabQueryModel>;
+
+  /**
+   * Event emitted when explain query button is pressed.
+   */
+  @Event() explainQuery: EventEmitter<TabQueryModel>;
 
   /**
    * Event emitter used to send message to the clients of component.
@@ -621,6 +629,59 @@ export class OntotextYasguiWebComponent {
   }
 
   /**
+   * Handler for the event fired when the AI explain query button in the editor is triggered.
+   */
+  @Listen('internalExplainQueryEvent')
+  explainQueryHandler() {
+    this.getOntotextYasgui()
+      .then((ontotextYasgui) => {
+        ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+          // catch this to avoid unhandled rejection
+        });
+      });
+    this.showShareQueryDialog = false;
+  }
+
+  /**
+   * Handler for the event fired when an action is selected from the yasqe dropdown menu.
+   * @param event The event containing the action to be performed.
+   */
+  @Listen('internalYasqeDropdownActionSelected')
+  onYasqeDropdownActionSelected(event: CustomEvent<{ payload: string }>) {
+    const action = event.detail.payload;
+    let userQuery = '';
+    this.getOntotextYasgui().then(ontotextYasgui => {
+      switch (action) {
+        case 'explain_plan':
+          userQuery = ontotextYasgui.getQuery();
+          ontotextYasgui.setQuery(this.removeQueryLLMComments(userQuery));
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
+          break;
+        case 'explain_all':
+          userQuery = ontotextYasgui.getQuery();
+          ontotextYasgui.setQuery(this.removeQueryLLMComments(userQuery));
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
+          break;
+        case 'explain_query':
+        case 'explain_results': {
+          const mode = action === 'explain_query' ? 'query' : 'results';
+          if (!this.setExplainScope(ontotextYasgui, mode)) {
+            return;
+          }
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
+          break;
+        }
+      }
+    });
+  }
+
+  /**
    * Handler for the internal event fired when a query share link is copied in the clipboard.
    */
   @Listen('internalQueryShareLinkCopiedEvent')
@@ -713,6 +774,29 @@ export class OntotextYasguiWebComponent {
   @Listen('internalKeyboardShortcutsClickedEvent')
   onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
     this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
+  }
+
+  private removeQueryLLMComments(userQuery: string): string {
+    return userQuery
+      .replace(this.llmResultOnlyComment, '')
+      .replace(this.llmQueryOnlyComment, '')
+      .trim();
+  }
+
+  private setExplainScope(editor: OntotextYasgui, mode: 'query' | 'results'): boolean {
+    const want = mode === 'query' ? this.llmQueryOnlyComment : this.llmResultOnlyComment;
+    const other = mode === 'query' ? this.llmResultOnlyComment : this.llmQueryOnlyComment;
+
+    const query = editor.getQuery();
+    if (query.startsWith(want)) {
+      return false;
+    }
+    if (query.startsWith(other)) {
+      editor.setQuery(query.replace(other, want));
+    } else {
+      editor.setQuery(`${want}\n${query}`);
+    }
+    return true;
   }
 
   private getKeyboardShortcutsItems(): KeyboardShortcutItem[] {
