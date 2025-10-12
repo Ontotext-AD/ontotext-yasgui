@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property      | Attribute       | Description | Type      | Default     |
-| ------------- | --------------- | ----------- | --------- | ----------- |
-| `dataTooltip` | `data-tooltip`  |             | `string`  | `undefined` |
-| `placement`   | `placement`     |             | `string`  | `undefined` |
-| `showOnClick` | `show-on-click` |             | `boolean` | `undefined` |
+| Property                | Attribute                 | Description | Type      | Default     |
+| ----------------------- | ------------------------- | ----------- | --------- | ----------- |
+| `dataTooltip`           | `data-tooltip`            |             | `string`  | `undefined` |
+| `placement`             | `placement`               |             | `string`  | `undefined` |
+| `showOnClick`           | `show-on-click`           |             | `boolean` | `undefined` |
+| `triggerTargetSelector` | `trigger-target-selector` |             | `string`  | `undefined` |
 
 
 ## Dependencies

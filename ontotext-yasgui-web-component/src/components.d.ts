@@ -251,6 +251,7 @@ export namespace Components {
         "dataTooltip": string;
         "placement": string;
         "showOnClick": false;
+        "triggerTargetSelector"?: string;
     }
 }
 export interface ConfirmationDialogCustomEvent<T> extends CustomEvent<T> {
@@ -699,6 +700,7 @@ declare namespace LocalJSX {
         "dataTooltip"?: string;
         "placement"?: string;
         "showOnClick"?: false;
+        "triggerTargetSelector"?: string;
     }
     interface IntrinsicElements {
         "alert-box": AlertBox;

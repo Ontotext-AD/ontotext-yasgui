@@ -93,6 +93,9 @@ export class EventService implements EventEmitter {
         return new InternalDropdownValueSelectedEvent(payload.value);
       case InternalEventType.INTERNAL_EXPLAIN_QUERY_EVENT:
         return new InternalExplainQueryEvent();
+      case InternalEventType.INTERNAL_UPDATE_KEYBOARD_SHORTCUTS_BUTTON_Z_INDEX_EVENT:
+        // Dispatch as plain CustomEvent, no InternalEvent wrapper.
+        return undefined;
       default:
         throw Error('Can\'t find internal event definition for type: ' + type);
     }

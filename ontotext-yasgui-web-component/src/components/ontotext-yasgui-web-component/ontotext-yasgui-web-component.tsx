@@ -44,11 +44,10 @@ import {InternalRequestAbortedEvent} from '../../models/internal-events/internal
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
 import {Debounce} from "../../services/utils/debounce";
 import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
-import {EXPLAIN_PLAN_TYPE} from '../../models/keyboard-shortcut-description';
+import {EXPLAIN_PLAN_TYPE, KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
-import {KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -85,6 +84,7 @@ export class OntotextYasguiWebComponent {
   private readonly notificationMessageService: NotificationMessageService;
   private readonly llmResultOnlyComment = '# :gpt-result-only:';
   private readonly llmQueryOnlyComment = '# :gpt-query-only:';
+  private readonly keyboardShortcutsBtnDefaultZIndex = '1015';
   private defaultViewMode = RenderingMode.YASGUI;
   private tabsListHeight: number;
   private tabsListResizeObserver: ResizeObserver;
@@ -774,6 +774,23 @@ export class OntotextYasguiWebComponent {
   @Listen('internalKeyboardShortcutsClickedEvent')
   onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
     this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
+  }
+
+  /**
+   * Handler for the event fired when the keyboard shortcuts button z-index should be updated.
+   */
+  @Listen('internalUpdateKeyboardShortcutsButtonZIndexEvent')
+  onUpdateKeyboardShortcutsZIndex(ev: CustomEvent<{ open?: boolean; zIndex?: string | number }>) {
+    const shortcutsButtons = this.hostElement.querySelectorAll(
+        '.yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning'
+    ) as NodeListOf<HTMLElement>;
+    // Updating the index for all shortcut buttons
+    shortcutsButtons.forEach(btn => {
+      if (btn) {
+        const zIndex = ev.detail.zIndex || (ev.detail.open ? '1' : this.keyboardShortcutsBtnDefaultZIndex);
+        btn.style.zIndex = zIndex.toString();
+      }
+    });
   }
 
   private removeQueryLLMComments(userQuery: string): string {

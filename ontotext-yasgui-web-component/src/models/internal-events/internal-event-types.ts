@@ -14,6 +14,7 @@ export enum InternalEventType {
   INTERNAL_COUNT_QUERY_RESPONSE_EVENT = 'internalCountQueryResponseEvent',
   INTERNAL_REQUEST_ABORTED_EVENT = 'internalRequestAbortedEvent',
   INTERNAL_KEYBOARD_SHORTCUTS_CLICKED_EVENT = 'internalKeyboardShortcutsClickedEvent',
+  INTERNAL_UPDATE_KEYBOARD_SHORTCUTS_BUTTON_Z_INDEX_EVENT = 'internalUpdateKeyboardShortcutsButtonZIndexEvent',
 }
 
 export type InternalEventTypes = `${InternalEventType}`;
