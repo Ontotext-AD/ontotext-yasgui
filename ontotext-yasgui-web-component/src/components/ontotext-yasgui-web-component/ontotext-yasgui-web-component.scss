@@ -178,6 +178,8 @@
       justify-content: end;
       padding-top: 10px;
       padding-bottom: 10px;
+      // Ensure full-width and avoid being affected by the floated keyboard shortcuts button
+      width: 100%;
 
       .abort-button {
         padding: 8px 16px;

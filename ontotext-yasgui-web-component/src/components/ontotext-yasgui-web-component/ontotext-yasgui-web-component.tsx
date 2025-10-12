@@ -654,31 +654,6 @@ export class OntotextYasguiWebComponent {
     }
   }
 
-  @Listen('internalYasqeDropdownActionSelected')
-  onYasqeDropdownActionSelected(ev: CustomEvent<{ action: string }>) {
-    const action = ev.detail.action;
-    this.getOntotextYasgui().then(ontotextYasgui => {
-      switch (action) {
-        case 'explain_plan':
-          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.EXPLAIN).catch(() => {
-            // catch this to avoid unhandled rejection
-          });
-          break;
-        case 'explan_all':
-          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
-            // catch this to avoid unhandled rejection
-          });
-          break;
-        case 'explain_query':
-          console.log(ontotextYasgui.getQuery());
-          break;
-        case 'explain_results':
-          console.log(ontotextYasgui.getQuery());
-          break;
-      }
-    });
-  }
-
   /**
    * Handler for the event fired when an action is selected from the yasqe dropdown menu.
    * @param event The event containing the action to be performed.
@@ -811,6 +786,23 @@ export class OntotextYasguiWebComponent {
   @Listen('internalKeyboardShortcutsClickedEvent')
   onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
     this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
+  }
+
+  /**
+   * Handler for the event fired when the keyboard shortcuts button z-index should be updated.
+   */
+  @Listen('internalUpdateKeyboardShortcutsButtonZIndexEvent')
+  onUpdateKeyboardShortcutsZIndex(ev: CustomEvent<{ open?: boolean; zIndex?: string | number }>) {
+    const shortcutsButtons = this.hostElement.querySelectorAll(
+        '.yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning'
+    ) as NodeListOf<HTMLElement>;
+    // Updating the index for all shortcut buttons
+    shortcutsButtons.forEach(btn => {
+      if (btn) {
+        const zIndex = ev.detail.zIndex || (ev.detail.open ? '1' : this.keyboardShortcutsBtnDefaultZIndex);
+        btn.style.zIndex = zIndex.toString();
+      }
+    });
   }
 
   private removeQueryLLMComments(userQuery: string): string {

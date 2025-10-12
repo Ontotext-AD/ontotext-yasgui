@@ -4,6 +4,7 @@ import {EventService} from '../../services/event-service';
 import {
     InternalRunDropdownValueSelectedEvent
 } from '../../models/internal-events/internal-run-dropdown-value-selected-event';
+import {InternalEventType} from '../../models/internal-events/internal-event-types';
 
 interface RunAction {
     labelKey: string;
@@ -53,16 +54,6 @@ export class QuerySplitButton {
         }
     }
 
-    // Shortcut button blocks the dropdown when it's open, so z-index adjusted and reset accordingly
-    private updateKeyboardShortcutsButtonZIndex(zIndex: string): void {
-        const shortcutsButton = document.querySelector(
-            '.yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning') as HTMLElement;
-
-        if (shortcutsButton) {
-            shortcutsButton.style.zIndex = zIndex;
-        }
-    }
-
     private positionDropdownMenu(): void {
        const splitButtonTopMargin = window.getComputedStyle(document.querySelector('.yasqe_queryButton')).marginTop;
        const splitButtonTopMarginValue = parseFloat(splitButtonTopMargin) || 0;
@@ -102,13 +93,21 @@ export class QuerySplitButton {
 
     private openQuerySplitMenu() {
         this.querySplitOpen = true;
-        this.updateKeyboardShortcutsButtonZIndex('1');
+        this.eventService.emitEvent(
+            this.hostElement.closest('.yasgui-host-element') as HTMLElement,
+            InternalEventType.INTERNAL_UPDATE_KEYBOARD_SHORTCUTS_BUTTON_Z_INDEX_EVENT,
+            { open: true }
+        );
         this.positionDropdownMenu();
     }
 
     private closeQuerySplitMenu() {
         this.querySplitOpen = false;
-        this.updateKeyboardShortcutsButtonZIndex('');
+        this.eventService.emitEvent(
+            this.hostElement.closest('.yasgui-host-element') as HTMLElement,
+            InternalEventType.INTERNAL_UPDATE_KEYBOARD_SHORTCUTS_BUTTON_Z_INDEX_EVENT,
+            { open: false }
+        );
     }
 
     private handleDropdownAction(action: string): void {
