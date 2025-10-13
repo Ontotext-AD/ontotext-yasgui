@@ -49,7 +49,6 @@ import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 import {KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
-import {InternalShowYasqeDropdownEvent} from '../../models/internal-events/InternalShowYasqeDropdownEvent';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -643,24 +642,13 @@ export class OntotextYasguiWebComponent {
     this.showShareQueryDialog = false;
   }
 
-  @Listen('internalShowYasqeDropdownEvent')
-  onShowYasqeDropdown(ev: CustomEvent<InternalShowYasqeDropdownEvent>) {
-    console.log(ev);
-    const { buttonInstance, open } = ev.detail;
-    if (open) {
-      YasqeService.showDropdown(buttonInstance, open, this.translationService);
-    } else {
-      YasqeService.hideDropdown();
-    }
-  }
-
   /**
    * Handler for the event fired when an action is selected from the yasqe dropdown menu.
    * @param event The event containing the action to be performed.
    */
   @Listen('internalYasqeDropdownActionSelected')
-  onYasqeDropdownActionSelected(ev: CustomEvent<{ payload: string }>) {
-    const action = ev.detail.payload;
+  onYasqeDropdownActionSelected(event: CustomEvent<{ payload: string }>) {
+    const action = event.detail.payload;
     let userQuery = '';
     this.getOntotextYasgui().then(ontotextYasgui => {
       switch (action) {
