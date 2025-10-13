@@ -97,21 +97,38 @@ export class SavedQueriesPopup {
   }
 
   private setPopupPosition(): void {
-    const panelRect = this.hostElement.getBoundingClientRect();
-    const buttonRect = this.config.popupTarget.getBoundingClientRect();
+    // The "run query split" button shifted the structure inside the Yasqe and this popup calculated slightly incorrectly where it should appear.
+    // Solution: repositioning popup relative to parent container
+    requestAnimationFrame(() => {
+      const target = this.config?.popupTarget as HTMLElement | null;
+      if (!this.hostElement || !target) return;
 
-    const isFullScreen = this.hostElement.closest('ontotext-yasgui').querySelector('.yasqe').classList.contains('yasqe-fullscreen');
+      // Using container element to stay aligned with the action button while scrolling
+      const container = (this.hostElement.offsetParent as HTMLElement) || (this.hostElement.closest('ontotext-yasgui') as HTMLElement);
+      const containerRect = container ? container.getBoundingClientRect() : null;
 
-    const arrowEl: HTMLElement = this.hostElement.querySelector('.arrow');
-    if (isFullScreen) {
-      this.hostElement.style.top = '13px';
-      this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
-      arrowEl.style.top = '40px';
-    } else {
-      this.hostElement.style.top = ((buttonRect.top + buttonRect.height / 2) - panelRect.height / 2) + 'px';
-      this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
-      arrowEl.style.top = panelRect.height / 2 - 16 + 'px';
-    }
+      const panelRect = this.hostElement.getBoundingClientRect();
+      const buttonRect = target.getBoundingClientRect();
+
+      const isFullScreen = this.hostElement.closest('ontotext-yasgui').querySelector('.yasqe').classList.contains('yasqe-fullscreen');
+
+      const offsetLeft = containerRect ? containerRect.left : 0;
+      const offsetTop = containerRect ? containerRect.top : 0;
+
+      const arrowEl: HTMLElement = this.hostElement.querySelector('.arrow');
+      const left = (buttonRect.left - offsetLeft) - panelRect.width - 10;
+
+      if (isFullScreen) {
+        this.hostElement.style.top = '13px';
+        this.hostElement.style.left = left + 'px';
+        arrowEl.style.top = '40px';
+      } else {
+        const top = (buttonRect.top - offsetTop) + buttonRect.height / 2 - panelRect.height / 2;
+        this.hostElement.style.top = top + 'px';
+        this.hostElement.style.left = left + 'px';
+        arrowEl.style.top = panelRect.height / 2 - 16 + 'px';
+      }
+    });
   }
 
   render() {

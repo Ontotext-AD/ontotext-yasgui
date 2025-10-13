@@ -3,13 +3,13 @@
 query-split-button {
   .yasqe_querySplitWrapper {
     position: relative;
+    height: 100%;
 
     .yasqe_querySplitToggle {
       background-color: $color-ontotext-orange-buttons;
       color: $color-onto-white;
       font-weight: 400;
-      height: 38px;
-      margin-top: 16px;
+      height: 100%;
       margin-left: 1px;
       border: none;
       z-index: 9998;

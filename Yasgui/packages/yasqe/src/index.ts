@@ -114,6 +114,8 @@ export class Yasqe extends CodeMirror {
   private readonly tabId: string;
   private subscriptions: any[] = [];
   private querySplitButton?: any;
+  private actionBtnsEl?: HTMLDivElement;
+  private actionBtnsBottomEl?: HTMLDivElement;
 
   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
     super();
@@ -360,16 +362,25 @@ export class Yasqe extends CodeMirror {
     const buttons = document.createElement("div");
     buttons.className = "yasqe_buttons";
     this.getWrapperElement().appendChild(buttons);
+    this.actionBtnsEl = buttons;
+
+    const topWrap = document.createElement("div");
+    topWrap.className = "yasqe_buttons-top";
+    const bottomWrap = document.createElement("div");
+    bottomWrap.className = "yasqe_buttons-bottom";
+    buttons.appendChild(topWrap);
+    buttons.appendChild(bottomWrap);
+    this.actionBtnsBottomEl = bottomWrap;
 
     if (this.config.pluginButtons) {
       const pluginButtons = this.config.pluginButtons(this);
       if (!pluginButtons) return;
       if (Array.isArray(pluginButtons)) {
         for (const button of pluginButtons) {
-          buttons.append(button);
+          topWrap.append(button);
         }
       } else {
-        buttons.appendChild(pluginButtons);
+        topWrap.appendChild(pluginButtons);
       }
     }
 
@@ -384,7 +395,7 @@ export class Yasqe extends CodeMirror {
       shareLinkWrapper.title = shareQueryLabel;
       shareLinkWrapper.setAttribute("aria-label", shareQueryLabel);
       shareLinkWrapper.appendChild(svgShare);
-      buttons.appendChild(shareLinkWrapper);
+      topWrap.appendChild(shareLinkWrapper);
       shareLinkWrapper.addEventListener("click", (event: MouseEvent) => showSharePopup(event));
       shareLinkWrapper.addEventListener("keydown", (event: KeyboardEvent) => {
         if (event.code === "Enter") {
@@ -486,8 +497,6 @@ export class Yasqe extends CodeMirror {
     if (this.config.showQueryButton) {
       const runButtonTooltip = document.createElement("yasgui-tooltip");
       runButtonTooltip.setAttribute("placement", "top");
-      // Only trigger on the buttons themselves, not on the dropdown menu
-      runButtonTooltip.setAttribute("trigger-target-selector", ".yasqe_queryButton, .yasqe_querySplitToggle");
 
       this.queryBtn = document.createElement("button");
       addClass(runButtonTooltip, "yasqe_tooltip_queryButton");
@@ -507,8 +516,8 @@ export class Yasqe extends CodeMirror {
 
       this.queryBtn.onclick = () => {
         if (this.config.queryingDisabled) return; // Don't do anything
-        this.pageNumber = 1;
-        this.query().catch(() => {}); //catch this to avoid unhandled rejection
+          this.pageNumber = 1;
+          this.query().catch(() => {}); //catch this to avoid unhandled rejection
       };
 
       const querySplitButtonEl = document.createElement("query-split-button");
@@ -520,7 +529,8 @@ export class Yasqe extends CodeMirror {
       this.querySplitButton.yasqe = this.rootEl;
       this.querySplitButton.translationService = this.translationService;
       this.querySplitButton.eventService = this.eventService;
-      buttons.appendChild(runButtonTooltip);
+
+      bottomWrap.appendChild(runButtonTooltip);
       this.updateQueryButton();
     }
   }
@@ -553,7 +563,7 @@ export class Yasqe extends CodeMirror {
       (this.keyboardShortcutsButton as any).translationService = this.translationService;
 
       this.keyboardShortcutsButton.addEventListener("click", this.handleKeyboardShortcutsOpen);
-      this.rootEl.appendChild(this.keyboardShortcutsButton);
+      (this.actionBtnsBottomEl ?? this.actionBtnsEl ?? this.rootEl).appendChild(this.keyboardShortcutsButton);
     }
   }
 

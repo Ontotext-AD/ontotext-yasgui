@@ -4,7 +4,6 @@ import {EventService} from '../../services/event-service';
 import {
     InternalRunDropdownValueSelectedEvent
 } from '../../models/internal-events/internal-run-dropdown-value-selected-event';
-import {InternalEventType} from '../../models/internal-events/internal-event-types';
 
 interface RunAction {
     labelKey: string;
@@ -65,6 +64,11 @@ export class QuerySplitButton {
             const dropdown = this.hostElement.querySelector('.ontotext-run-dropdown-menu.open') as HTMLElement;
 
             if (button && dropdown) {
+              const host = this.hostElement.closest('.yasgui-host-element') as HTMLElement | null;
+              const isModeYasgui =
+                !!host &&
+                host.classList.contains('orientation-horizontal') &&
+                host.classList.contains('mode-yasgui');
                 const buttonRect = this.hostElement.getBoundingClientRect();
                 const isFullscreen = this.yasqe.classList.contains('yasqe-fullscreen');
                 const buttonGroup = window.getComputedStyle(document.querySelector('.yasqe_buttons'));
@@ -72,8 +76,12 @@ export class QuerySplitButton {
                 const buttonGroupRight = buttonGroup.right !== 'auto' ? parseFloat(buttonGroup.right) || 0 : 0;
 
                 dropdown.style.position = 'fixed';
-                dropdown.style.right = `${(parseFloat(dropdown.style.right) || 0) + buttonGroupRight + distanceFromEditorRightEdge}px`;
-
+                if (!isModeYasgui) {
+                  const baseRight = (parseFloat(dropdown.style.right) || 0) + buttonGroupRight + distanceFromEditorRightEdge;
+                  dropdown.style.right = `${baseRight}px`;
+                } else {
+                  dropdown.style.removeProperty('right');
+                }
                 const dropdownRect = dropdown.getBoundingClientRect();
                 const dropdownHeight = dropdownRect.height;
 
@@ -93,21 +101,11 @@ export class QuerySplitButton {
 
     private openQuerySplitMenu() {
         this.querySplitOpen = true;
-        this.eventService.emitEvent(
-            this.hostElement.closest('.yasgui-host-element') as HTMLElement,
-            InternalEventType.INTERNAL_UPDATE_KEYBOARD_SHORTCUTS_BUTTON_Z_INDEX_EVENT,
-            { open: true }
-        );
         this.positionDropdownMenu();
     }
 
     private closeQuerySplitMenu() {
         this.querySplitOpen = false;
-        this.eventService.emitEvent(
-            this.hostElement.closest('.yasgui-host-element') as HTMLElement,
-            InternalEventType.INTERNAL_UPDATE_KEYBOARD_SHORTCUTS_BUTTON_Z_INDEX_EVENT,
-            { open: false }
-        );
     }
 
     private handleDropdownAction(action: string): void {

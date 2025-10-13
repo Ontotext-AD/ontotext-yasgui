@@ -74,6 +74,7 @@
     }
 
     .yasqe-fullscreen .keyboard-shortcuts-dialog-button {
+      font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
       position: fixed;
       bottom: 0;
       right: 0;
@@ -87,6 +88,10 @@
       line-height: 14px;
     }
 
+    .yasqe-fullscreen .yasqe_tooltip_queryButton {
+      margin-bottom: 1.3rem;
+    }
+
     .yasqe {
 
       .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item:hover {
@@ -96,29 +101,42 @@
       }
 
       .yasqe_buttons {
+        position: absolute;
+        right: 20px;
+        width: 105px;
+        bottom: 0;
+        height: auto;
+
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
-        height: 100%;
+        justify-content: space-between;
+        gap: 2px;
+
+        .yasqe_buttons-top,
+        .yasqe_buttons-bottom {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          width: 100%;
+        }
 
         // There is no other way to hide it but to patch the yasqe
         .yasqe_share {
           display: none;
         }
 
-        // Position the query button at the bottom right corner of the editor.
+        // Positioning is handled by wrappers; avoid auto-push
         .yasqe_tooltip_queryButton {
           display: flex;
-          margin-top: auto;
-          margin-bottom: 32px;
+          margin-top: 0;
         }
 
         .yasqe_queryButton {
           width: unset;
           height: unset;
           padding: 8px 16px;
-          margin-top: 1rem;
           color: $color-onto-white;
           background-color: $color-ontotext-orange;
           outline: none;
@@ -160,18 +178,22 @@
 
     .yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button {
       background-color: $color-onto-background-lightest;
+      font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
       outline: none;
       border: 0.5px solid $color-onto-border;
       cursor: pointer;
-      position: relative;
-      float: right;
-      top: -22px;
+      min-width: max-content;
+      margin-top: auto;
+      position: static;
+      float: none;
+      top: auto;
       z-index: 1015;
       line-height: 18px;
     }
 
     .yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning {
-      top: -32px;
+      min-width: max-content;
+      position: relative;
     }
     .yasqe-footer-buttons {
       display: flex;

@@ -636,7 +636,7 @@ export class OntotextYasguiWebComponent {
   explainQueryHandler() {
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
-        ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+        ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
           // catch this to avoid unhandled rejection
         });
       });
@@ -674,7 +674,7 @@ export class OntotextYasguiWebComponent {
         case 'explain_all':
           userQuery = ontotextYasgui.getQuery();
           ontotextYasgui.setQuery(this.removeQueryLLMComments(userQuery));
-          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
           });
           break;
@@ -684,7 +684,7 @@ export class OntotextYasguiWebComponent {
           if (!this.setExplainScope(ontotextYasgui, mode)) {
             return;
           }
-          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
           });
           break;
@@ -786,23 +786,6 @@ export class OntotextYasguiWebComponent {
   @Listen('internalKeyboardShortcutsClickedEvent')
   onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
     this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
-  }
-
-  /**
-   * Handler for the event fired when the keyboard shortcuts button z-index should be updated.
-   */
-  @Listen('internalUpdateKeyboardShortcutsButtonZIndexEvent')
-  onUpdateKeyboardShortcutsZIndex(ev: CustomEvent<{ open?: boolean; zIndex?: string | number }>) {
-    const shortcutsButtons = this.hostElement.querySelectorAll(
-        '.yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button.sparql-editor-positioning'
-    ) as NodeListOf<HTMLElement>;
-    // Updating the index for all shortcut buttons
-    shortcutsButtons.forEach(btn => {
-      if (btn) {
-        const zIndex = ev.detail.zIndex || (ev.detail.open ? '1' : this.keyboardShortcutsBtnDefaultZIndex);
-        btn.style.zIndex = zIndex.toString();
-      }
-    });
   }
 
   private removeQueryLLMComments(userQuery: string): string {
