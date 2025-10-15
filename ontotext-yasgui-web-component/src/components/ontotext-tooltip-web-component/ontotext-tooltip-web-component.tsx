@@ -57,6 +57,8 @@ export class OntotextTooltipWebComponent {
       placement: this.placement as Placement,
       allowHTML: true,
       triggerTarget: this.el,
+      // Fixed strategy, so the popper is positioned relative to the viewport and is stable on layout shifts
+      popperOptions: { strategy: 'fixed' as const },
       /**
        * The tippy library has some conflict with the Google Chart Editor. The editor adds a div element with the "jfk-tooltip" class.
        * When the mouse hovers over a chart editor element, this div is positioned accordingly.
