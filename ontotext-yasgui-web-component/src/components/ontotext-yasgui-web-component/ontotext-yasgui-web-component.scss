@@ -91,9 +91,15 @@
     .yasqe-fullscreen .yasqe_tooltip_queryButton {
       margin-bottom: 1.3rem;
     }
-
     .yasqe {
-
+      &:not(.yasqe-fullscreen) {
+        .yasqe_buttons {
+          .yasqe_buttons-top {
+            align-items: flex-end;
+            margin-right: 10px;
+          }
+        }
+      }
       .yasqe-inline-dropdown .ontotext-run-dropdown-menu-item:hover {
         background-color: $color-onto-hover-gray;
         color: $color-onto-black;
@@ -131,6 +137,7 @@
         .yasqe_tooltip_queryButton {
           display: flex;
           margin-top: 0;
+          margin-left: 15px;
         }
 
         .yasqe_queryButton {

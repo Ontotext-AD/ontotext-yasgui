@@ -25,6 +25,13 @@ export class QuerySplitButton {
 
     @State() querySplitOpen = false;
 
+    private runActions: RunAction[] = [
+        {labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan'},
+        {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_all', value: 'explain_all'},
+        {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_query', value: 'explain_query'},
+        {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_results', value: 'explain_results'},
+    ];
+
     @Listen('click', {target: 'window', capture: true})
     onWindowClick(e: MouseEvent) {
         if (this.querySplitOpen && this.hostElement && !this.hostElement.contains(e.target as Node)) {
@@ -123,13 +130,6 @@ export class QuerySplitButton {
     render() {
         const caretClass = this.querySplitOpen ? 'icon-caret-up-after' : 'icon-caret-down-after';
 
-        const runActions: RunAction[] = [
-            {labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan'},
-            {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_all', value: 'explain_all'},
-            {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_query', value: 'explain_query'},
-            {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_results', value: 'explain_results'},
-        ];
-
         return (
             <div class="yasqe_querySplitWrapper">
                 <button
@@ -141,7 +141,7 @@ export class QuerySplitButton {
                 {this.querySplitOpen && (
                     <div class="yasqe-inline-dropdown ontotext-run-dropdown open">
                         <div class="ontotext-run-dropdown-menu open" role="menu">
-                            {runActions.map((item) => (
+                            {this.runActions.map((item) => (
                                     <div
                                         class="ontotext-run-dropdown-menu-item"
                                         role="menuitem"

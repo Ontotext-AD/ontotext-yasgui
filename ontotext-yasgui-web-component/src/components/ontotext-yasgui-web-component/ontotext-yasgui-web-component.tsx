@@ -666,11 +666,34 @@ export class OntotextYasguiWebComponent {
             // catch this to avoid unhandled rejection
           });
           break;
-        case 'explain_query':
-        case 'explain_results': {
-          const mode = action === 'explain_query' ? 'query' : 'results';
-          if (!this.setExplainScope(ontotextYasgui, mode)) {
+        case 'explain_query': {
+          const query = ontotextYasgui.getQuery();
+
+          if (query.startsWith(this.llmQueryOnlyComment)) {
             return;
+          }
+          if (query.startsWith(this.llmResultOnlyComment)) {
+            ontotextYasgui.setQuery(query.replace(this.llmResultOnlyComment, this.llmQueryOnlyComment));
+          } else {
+            ontotextYasgui.setQuery(`${this.llmQueryOnlyComment}\n${query}`);
+          }
+
+          ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
+            // catch this to avoid unhandled rejection
+          });
+          break;
+        }
+
+        case 'explain_results': {
+          const query = ontotextYasgui.getQuery();
+
+          if (query.startsWith(this.llmResultOnlyComment)) {
+            return;
+          }
+          if (query.startsWith(this.llmQueryOnlyComment)) {
+            ontotextYasgui.setQuery(query.replace(this.llmQueryOnlyComment, this.llmResultOnlyComment));
+          } else {
+            ontotextYasgui.setQuery(`${this.llmResultOnlyComment}\n${query}`);
           }
           ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
@@ -798,22 +821,6 @@ export class OntotextYasguiWebComponent {
       .replace(this.llmResultOnlyComment, '')
       .replace(this.llmQueryOnlyComment, '')
       .trim();
-  }
-
-  private setExplainScope(editor: OntotextYasgui, mode: 'query' | 'results'): boolean {
-    const want = mode === 'query' ? this.llmQueryOnlyComment : this.llmResultOnlyComment;
-    const other = mode === 'query' ? this.llmResultOnlyComment : this.llmQueryOnlyComment;
-
-    const query = editor.getQuery();
-    if (query.startsWith(want)) {
-      return false;
-    }
-    if (query.startsWith(other)) {
-      editor.setQuery(query.replace(other, want));
-    } else {
-      editor.setQuery(`${want}\n${query}`);
-    }
-    return true;
   }
 
   private getKeyboardShortcutsItems(): KeyboardShortcutItem[] {

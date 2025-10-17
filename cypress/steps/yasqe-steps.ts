@@ -58,11 +58,11 @@ export class YasqeSteps {
   }
 
   static getRunSplitButton() {
-    return cy.get('.yasqe_querySplitToggle');
+    return this.getEditor().find('.yasqe_querySplitToggle');
   }
 
   static openRunSplitMenu() {
-    // Force needed to open the dropdown
+    // Force needed to open the dropdown, because the button element appears non-actionable to Cypress
     YasqeSteps.getRunSplitButton().click({ force: true });
   }
 
@@ -75,7 +75,7 @@ export class YasqeSteps {
   }
 
   static selectRunDropdownMenuOption(index: number) {
-    this.getRunDropdownMenuOption(index).invoke('click');
+    this.getRunDropdownMenuOption(index).click();
   }
 
   static executeQuery(index = 0) {

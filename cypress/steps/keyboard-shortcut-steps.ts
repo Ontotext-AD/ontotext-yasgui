@@ -18,7 +18,8 @@ export class KeyboardShortcutSteps {
     return KeyboardShortcutSteps.getInfoDialog().find('.keyboard-shortcut-description-item');
   }
   static openInfoDialog() {
-    KeyboardShortcutSteps.getInfoDialogButton().realClick();
+    // realClick() doesn't always work here, hence the use of click()
+    KeyboardShortcutSteps.getInfoDialogButton().click();
   }
 
   static switchOfKeyboardShortcuts() {
