@@ -18,6 +18,7 @@
       }
       .close-button {
         background-color: $color-onto-light-grey;
+        padding: 15px;
       }
     }
     .dialog-footer {
@@ -32,6 +33,7 @@
     gap: 10px;
     justify-content: flex-end;
     margin: 8px 0;
+    align-items: center;
   }
 
   .keyboard-shortcuts-content {
