@@ -1,0 +1,86 @@
+@import 'src/css/variables';
+
+query-split-button {
+  .yasqe_querySplitWrapper {
+    position: relative;
+    height: 100%;
+
+    .yasqe_querySplitToggle {
+      background-color: $color-ontotext-orange-buttons;
+      color: $color-onto-white;
+      font-weight: 400;
+      height: 100%;
+      margin-left: 1px;
+      border: none;
+      z-index: 9998;
+
+      &:hover {
+        background-color: $color-ontotext-orange-buttons;
+      }
+    }
+  }
+
+  .yasqe_querySplitWrapper .yasqe-inline-dropdown {
+    position: absolute;
+    top: 100%;
+    margin-top: 4px;
+    min-width: 140px;
+    width: max-content;
+    z-index: 10000;
+    display: block;
+  }
+
+  .ontotext-run-dropdown {
+    width: max-content;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1400;
+  }
+
+  .ontotext-run-dropdown-menu {
+    background-color: $color-onto-white;
+    box-shadow: 0 2px 6px $color-onto-input-border;
+    border-radius: 4px;
+    min-width: 140px;
+    font-size: 13px;
+
+    &.open {
+      display: block;
+      padding: 5px 0;
+    }
+  }
+
+  .ontotext-run-dropdown-menu-item {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--main-font);
+    gap: 5px;
+    padding: 6px 12px;
+    text-decoration: none;
+    text-align: left;
+    color: $color-onto-black;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-onto-hover-gray;
+      color: $color-onto-black;
+      text-decoration: none;
+    }
+
+    &__label {
+      font-size: 16px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 400;
+    }
+
+    &__shortcut {
+      kbd {
+        background-color: $color-onto-black;
+        color: $color-onto-white;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
