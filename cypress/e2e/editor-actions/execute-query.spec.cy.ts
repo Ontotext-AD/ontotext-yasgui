@@ -14,7 +14,7 @@ describe('Execute query action', () => {
 
   it('Should be able to execute a query', () => {
     ActionsPageSteps.visit();
-    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Run query');
+    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Explore all options');
     YasqeSteps.getExecuteQueryButton().should('be.visible');
     YasqeSteps.executeQuery();
     YasrSteps.getTableResults().should('have.length', 6);
@@ -25,6 +25,77 @@ describe('Execute query action', () => {
     ActionsPageSteps.visit();
     YasqeSteps.executeQueryWithoutWaitResult();
     YasqeSteps.getTabWithProgressBar().should('exist');
+  });
+
+  it('Should be able to execute LLM explain all', () => {
+    // Given I'm on the page
+    ActionsPageSteps.visit();
+    // When I click on the explain query button dropdown
+    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Explore all options');
+    YasqeSteps.getRunSplitButton().should('be.visible');
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    // Then I expect to see the LLM explain all option
+    YasqeSteps.getRunDropdownMenuOption(1).should('have.text', 'LLM explain all');
+    // When I select the LLM explain all option
+    YasqeSteps.selectRunDropdownMenuOption(1);
+    // Then I expect to see the results
+    YasrSteps.getTableResults().should('have.length', 6);
+    // And the query should NOT include the explain query/results comment
+    YasqeSteps.getQuery().then((query) => {
+      expect(query).to.not.include('# :gpt-query-only:');
+      expect(query).to.not.include('# :gpt-result-only:');
+    });
+  });
+
+  it('Should be able to execute LLM explain query', () => {
+    // Given I'm on the page
+    ActionsPageSteps.visit();
+    // When I click on the explain query button dropdown
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    // Then I expect to see the LLM explain query option
+    YasqeSteps.getRunDropdownMenuOption(2).should('have.text', 'LLM explain query');
+    // When I select the LLM explain query option
+    YasqeSteps.selectRunDropdownMenuOption(2);
+    // Then I expect to see the results
+    YasrSteps.getTableResults().should('have.length', 6);
+    // And the query should include the explain query comment
+    YasqeSteps.getQuery().then((query) => {
+      expect(query).to.include('# :gpt-query-only:');
+    });
+  });
+
+  it('Should be able to execute LLM explain results', () => {
+    // Given I'm on the page
+    ActionsPageSteps.visit();
+    // When I click on the explain query button dropdown
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    // Then I expect to see the LLM explain results option
+    YasqeSteps.getRunDropdownMenuOption(3).should('have.text', 'LLM explain results');
+    // When I select the LLM explain results option
+    YasqeSteps.selectRunDropdownMenuOption(3);
+    // Then I expect to see the results
+    YasrSteps.getTableResults().should('have.length', 6);
+    // And the query should include the explain result comment
+    YasqeSteps.getQuery().then((query) => {
+      expect(query).to.include('# :gpt-result-only:');
+    });
+  });
+
+  it('Should be able to execute Explain query plan', () => {
+    // Given I'm on the page
+    ActionsPageSteps.visit();
+    // When I click on the explain query button dropdown
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    // Then I expect to see the Explain query plan option
+    YasqeSteps.getRunDropdownMenuOption(0).should('have.text', 'Explain query plan');
+    // When I select the Explain query plan option
+    YasqeSteps.selectRunDropdownMenuOption(0);
+    // Then I expect to see the results
+    YasrSteps.getTableResults().should('have.length', 6);
   });
 
   it('Should emit queryExecuted event on each editor tab', {

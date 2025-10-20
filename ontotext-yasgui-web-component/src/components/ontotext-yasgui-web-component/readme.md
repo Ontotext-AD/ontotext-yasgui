@@ -42,6 +42,7 @@ yasgui can be tweaked using the values from the configuration.
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `createSavedQuery`     | Event emitted when saved query payload is collected and the query should be saved by the component client.                                              | `CustomEvent<SaveQueryData>`    |
 | `deleteSavedQuery`     | Event emitted when a saved query should be deleted. In result the client must perform a query delete.                                                   | `CustomEvent<SaveQueryData>`    |
+| `explainQuery`         | Event emitted when explain query button is pressed.                                                                                                     | `CustomEvent<TabQueryModel>`    |
 | `loadSavedQueries`     | Event emitted when saved queries is expected to be loaded by the component client and provided back in order to be displayed.                           | `CustomEvent<boolean>`          |
 | `output`               | Event emitter used to send message to the clients of component.                                                                                         | `CustomEvent<OutputEvent>`      |
 | `queryShareLinkCopied` | Event emitted when query share link gets copied in the clipboard.                                                                                       | `CustomEvent<any>`              |
