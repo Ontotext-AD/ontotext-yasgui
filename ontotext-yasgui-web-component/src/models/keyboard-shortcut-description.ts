@@ -41,7 +41,7 @@ export enum KEYBOARD_SHORTCUT_SECTIONS {
 
 export enum EXPLAIN_PLAN_TYPE {
   EXPLAIN= 'explain',
-  CHAT_GPT_EXPLAIN = 'gpt'
+  LLM_EXPLAIN = 'gpt'
 }
 
 export interface KeyboardShortcutItem {

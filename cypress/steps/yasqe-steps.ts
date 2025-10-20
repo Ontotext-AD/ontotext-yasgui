@@ -57,6 +57,28 @@ export class YasqeSteps {
     return YasqeSteps.getRunQueryButton().eq(index);
   }
 
+  static getRunSplitButton() {
+    return this.getEditor().find('.yasqe_querySplitToggle');
+  }
+
+  static openRunSplitMenu() {
+    // Force needed to open the dropdown, because the button element appears non-actionable to Cypress
+    YasqeSteps.getRunSplitButton().click({ force: true });
+  }
+
+  static getRunDropdownMenu() {
+    return cy.get('.ontotext-run-dropdown-menu');
+  }
+
+  static getRunDropdownMenuOption(index: number) {
+    return this.getRunDropdownMenu().find('.ontotext-run-dropdown-menu-item').eq(index);
+  }
+
+  static selectRunDropdownMenuOption(index: number) {
+    // Force needed because the menu disappears on scroll, so if Cypress has to scroll the test becomes flaky
+    this.getRunDropdownMenuOption(index).click({ force: true });
+  }
+
   static executeQuery(index = 0) {
     this.getExecuteQueryButton(index).click();
     LoaderSteps.getLoader(index).should('not.be.visible');
@@ -79,6 +101,10 @@ export class YasqeSteps {
 
   static getExecuteQueryButtonTooltip() {
     return this.getExecuteQueryButton().parent();
+  }
+
+  static getExplainQueryButtonTooltip() {
+    return this.getRunSplitButton().parent();
   }
 
   static getCreateSavedQueryButton() {
@@ -191,15 +217,15 @@ export class YasqeSteps {
       return (el[tabIndex] as any).CodeMirror.setValue(query);
     });
   }
-  
+
   static getEditQueryButton(index: number) {
     return this.getSavedQueries().eq(index).realHover().find('.edit-saved-query');
   }
-  
+
   static editQuery(index: number) {
     this.getEditQueryButton(index).click();
   }
-  
+
   static getDeleteQueryButton(index: number) {
     return this.getSavedQueries().eq(index).realHover().find('.delete-saved-query');
   }

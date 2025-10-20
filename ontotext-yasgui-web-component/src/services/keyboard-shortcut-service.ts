@@ -194,7 +194,7 @@ export class KeyboardShortcutService {
     keyboardShortcut.keyboardShortcuts.push('Ctrl-Alt-Enter');
     keyboardShortcut.keyboardShortcuts.push('Cmd-Alt-Enter');
     keyboardShortcut.executeFunction = (yasqe: Yasqe) => {
-      yasqe.query(undefined, EXPLAIN_PLAN_TYPE.CHAT_GPT_EXPLAIN).catch(() => {
+      yasqe.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
         // catch this to avoid unhandled rejection
       });
     };

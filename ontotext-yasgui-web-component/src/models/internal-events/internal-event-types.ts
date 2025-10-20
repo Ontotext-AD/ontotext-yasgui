@@ -5,6 +5,8 @@ export enum InternalEventType {
   INTERNAL_SHOW_RESOURCE_COPY_LINK_DIALOG_EVENT = 'internalShowResourceCopyLinkDialogEvent',
   INTERNAL_SHOW_SAVED_QUERIES_EVENT = 'internalShowSavedQueriesEvent',
   INTERNAL_SHARE_QUERY_EVENT = 'internalShareQueryEvent',
+  INTERNAL_EXPLAIN_QUERY_EVENT = 'internalExplainQueryEvent',
+  INTERNAL_YASQE_DROPDOWN_ACTION_SELECTED_EVENT = 'internalYasqeDropdownActionSelected',
   INTERNAL_CREATE_SAVED_QUERY_EVENT = 'internalCreateSavedQueryEvent',
   INTERNAL_QUERY_EXECUTED = 'internalQueryExecuted',
   INTERNAL_QUERY_EVENT = 'internalQueryEvent',
