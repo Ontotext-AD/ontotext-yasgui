@@ -1,0 +1,105 @@
+Subject: [PATCH] GDB-10616 - add split button in yasqe
+---
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision b7e5511daa049c0f69bbf33763ac3ff40b980f44)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision fefe2bffdc83bb1526f25c386634d801ce14aba6)
+@@ -113,6 +113,10 @@
+   private readonly isVirtualRepository: boolean;
+   private readonly tabId: string;
+   private subscriptions: any[] = [];
++  private querySplitButton?: any;
++  private actionBtnsEl?: HTMLDivElement;
++  private actionBtnsBottomEl?: HTMLDivElement;
++
+   constructor(parent: HTMLElement, conf: PartialConfig = {}) {
+     super();
+     if (!parent) throw new Error("No parent passed as argument. Dont know where to draw YASQE");
+@@ -358,16 +362,25 @@
+     const buttons = document.createElement("div");
+     buttons.className = "yasqe_buttons";
+     this.getWrapperElement().appendChild(buttons);
++    this.actionBtnsEl = buttons;
++
++    const topWrap = document.createElement("div");
++    topWrap.className = "yasqe_buttons-top";
++    const bottomWrap = document.createElement("div");
++    bottomWrap.className = "yasqe_buttons-bottom";
++    buttons.appendChild(topWrap);
++    buttons.appendChild(bottomWrap);
++    this.actionBtnsBottomEl = bottomWrap;
+ 
+     if (this.config.pluginButtons) {
+       const pluginButtons = this.config.pluginButtons(this);
+       if (!pluginButtons) return;
+       if (Array.isArray(pluginButtons)) {
+         for (const button of pluginButtons) {
+-          buttons.append(button);
++          topWrap.append(button);
+         }
+       } else {
+-        buttons.appendChild(pluginButtons);
++        topWrap.appendChild(pluginButtons);
+       }
+     }
+ 
+@@ -382,7 +395,7 @@
+       shareLinkWrapper.title = shareQueryLabel;
+       shareLinkWrapper.setAttribute("aria-label", shareQueryLabel);
+       shareLinkWrapper.appendChild(svgShare);
+-      buttons.appendChild(shareLinkWrapper);
++      topWrap.appendChild(shareLinkWrapper);
+       shareLinkWrapper.addEventListener("click", (event: MouseEvent) => showSharePopup(event));
+       shareLinkWrapper.addEventListener("keydown", (event: KeyboardEvent) => {
+         if (event.code === "Enter") {
+@@ -484,8 +497,8 @@
+     if (this.config.showQueryButton) {
+       const runButtonTooltip = document.createElement("yasgui-tooltip");
+       runButtonTooltip.setAttribute("placement", "top");
++
+       this.queryBtn = document.createElement("button");
+-      runButtonTooltip.appendChild(this.queryBtn);
+       addClass(runButtonTooltip, "yasqe_tooltip_queryButton");
+       this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
+       addClass(this.queryBtn, "yasqe_queryButton");
+@@ -507,7 +520,17 @@
+           this.query().catch(() => {}); //catch this to avoid unhandled rejection
+       };
+ 
+-      buttons.appendChild(runButtonTooltip);
++      const querySplitButtonEl = document.createElement("query-split-button");
++      querySplitButtonEl.setAttribute("id", "query-split-button");
++      runButtonTooltip.appendChild(this.queryBtn);
++      runButtonTooltip.appendChild(querySplitButtonEl);
++
++      this.querySplitButton = querySplitButtonEl as any;
++      this.querySplitButton.yasqe = this.rootEl;
++      this.querySplitButton.translationService = this.translationService;
++      this.querySplitButton.eventService = this.eventService;
++
++      bottomWrap.appendChild(runButtonTooltip);
+       this.updateQueryButton();
+     }
+   }
+@@ -540,7 +563,7 @@
+       (this.keyboardShortcutsButton as any).translationService = this.translationService;
+ 
+       this.keyboardShortcutsButton.addEventListener("click", this.handleKeyboardShortcutsOpen);
+-      this.rootEl.appendChild(this.keyboardShortcutsButton);
++      (this.actionBtnsBottomEl ?? this.actionBtnsEl ?? this.rootEl).appendChild(this.keyboardShortcutsButton);
+     }
+   }
+ 
+@@ -1252,6 +1275,8 @@
+     this.subscriptions.forEach((subscription) => subscription());
+     //  Abort running query;
+     this.abortQuery();
++    this.querySplitButton = undefined;
++
+     this.unregisterEventListeners();
+     if (this.keyboardShortcutsButton) {
+       this.keyboardShortcutsButton.removeEventListener("click", this.handleKeyboardShortcutsOpen);
