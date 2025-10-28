@@ -1,6 +1,8 @@
 import {Component, Element, h, Host, Prop, Watch} from '@stencil/core';
 import tippy, {Instance, Placement} from 'tippy.js';
 
+const TOOLTIP_CLASS_NAME = 'ontotext-yasgui-tooltip';
+
 @Component({
   tag: 'yasgui-tooltip',
   styleUrl: 'ontotext-tooltip-web-component.scss',
@@ -74,7 +76,8 @@ export class OntotextTooltipWebComponent {
       onHide: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.remove('hidden'))
     };
     this.tooltip = tippy(this.el, options);
-
+    this.tooltip.popper.classList.add(TOOLTIP_CLASS_NAME);
+    
     this.showFunction = this.createShowFunction(this.tooltip);
     this.hideFunction = this.createHideFunction(this.tooltip);
 
