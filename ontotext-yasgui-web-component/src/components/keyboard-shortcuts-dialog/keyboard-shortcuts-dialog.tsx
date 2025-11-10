@@ -94,13 +94,13 @@ export class KeyboardShortcutsDialog {
   private mapKeyToDisplay(key: string): any {
     switch (key.toLowerCase()) {
       case 'up':
-        return <i class="fa-solid fa-arrow-up"></i>;
+        return <i class="arrow-up">&#8593;</i>;
       case 'down':
-        return <i class="fa-solid fa-arrow-down"></i>;
+        return <i class="arrow-down">&#8595;</i>;
       case 'left':
-        return <i class="fa-solid fa-arrow-left"></i>;
+        return <i class="arrow-left">&#8592;</i>;
       case 'right':
-        return <i class="fa-solid fa-arrow-right"></i>;
+        return <i class="arrow-right">&#8594;</i>;
       default:
         return key;
     }
