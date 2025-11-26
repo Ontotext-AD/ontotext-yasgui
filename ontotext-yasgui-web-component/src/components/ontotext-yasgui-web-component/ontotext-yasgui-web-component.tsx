@@ -48,6 +48,7 @@ import {EXPLAIN_PLAN_TYPE, KeyboardShortcutItem} from '../../models/keyboard-sho
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
+import GeoPlugin from '../../plugins/yasr/geo/geo-plugin';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -1070,6 +1071,7 @@ export class OntotextYasguiWebComponent {
       // * Build a yasgui instance using the configuration
       YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
       YasrService.registerPlugin(ChartsPlugin.PLUGIN_NAME, ChartsPlugin as any);
+      YasrService.registerPlugin(GeoPlugin.PLUGIN_NAME, GeoPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.registerEventHandlers();
       this.afterInit();

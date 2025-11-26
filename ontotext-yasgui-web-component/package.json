@@ -29,7 +29,9 @@
   },
   "dependencies": {
     "@stencil/core": "^2.21.0",
-    "tippy.js": "^6.3.7"
+    "leaflet": "^1.9.4",
+    "tippy.js": "^6.3.7",
+    "wellknown": "^0.5.0"
   },
   "devDependencies": {
     "@stencil/sass": "^2.0.0",
