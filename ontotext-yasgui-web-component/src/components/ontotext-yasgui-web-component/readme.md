@@ -224,6 +224,16 @@ Type: `Promise<void>`
 
 
 
+### `setTheme(themeName: string) => Promise<void>`
+
+Sets the theme in the YASQE editor.
+
+#### Returns
+
+Type: `Promise<void>`
+
+A Promise that resolves once the theme has been successfully applied.
+
 ### `showYasqeActionButton(yasqeActionButtonNames: YasqeButtonType | YasqeButtonType[]) => Promise<void>`
 
 Shows the YASQE action button with the name <code>yasqeActionButtonNames</code>.

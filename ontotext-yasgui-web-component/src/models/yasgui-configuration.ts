@@ -178,6 +178,32 @@ export interface YasguiConfiguration {
        * @param req - the running request.
        */
       onQueryAborted?: (req) => Promise<void>;
+      
+      /**
+       * Name of the CodeMirror 5 theme to apply in YASQE.
+       *
+       * Usage:
+       * - This must match a theme name recognized by CodeMirror (e.g. "dracula", "monokai").
+       *
+       * Theme CSS requirement:
+       * - CodeMirror themes are entirely CSS-based. The corresponding theme CSS must be
+       *   loaded (via <link>, import, or injected <style>) before the theme can take effect.
+       *
+       * Custom themes:
+       * - You may define your own theme without a separate CSS file by adding styles for:
+       *       .cm-s-{themeName}.CodeMirror { ... }
+       *       .cm-s-{themeName} .cm-keyword { ... }
+       *       etc.
+       *   Example:
+       *       <style>
+       *         .cm-s-mytheme.CodeMirror { background: #222; color: #eee; }
+       *       </style>
+       *   Then set: themeName = "mytheme".
+       *
+       * If the <code>themeName</code> is not passed or the required CSS rules are not present,
+       * the editor will fall back to the default theme.
+       */
+      themeName?: string;
     }
     yasr: {
       /**
