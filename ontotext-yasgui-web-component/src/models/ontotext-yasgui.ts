@@ -53,7 +53,29 @@ export class OntotextYasgui {
   leaveFullScreen(): void {
     this.getYasqe()?.leaveFullScreen();
   }
-
+  
+  getYasguiConfiguration(): YasguiConfiguration {
+    return this.config;
+  }
+  
+  /**
+   * Applies the theme to the YASQE instance of the tab with ID <code>tabId</code>.
+   * If <code>tabId</code> is not provided, the theme will be applied to the active tab.
+   *
+   * @param tabId - The ID of the tab to apply the theme to (optional).
+   */
+  applyTheme(tabId?: string): void {
+    const tab = this.getTab(tabId);
+    if (!tab) {
+      return;
+    }
+    
+    const yasqe = tab.getYasqe();
+    if (yasqe) {
+      yasqe.setOption('theme', this.config.yasguiConfig.yasqe.themeName);
+    }
+  }
+  
   /**
    * Sets a query value in the editor by preserving the cursor position.
    * @param query The query value to be set.

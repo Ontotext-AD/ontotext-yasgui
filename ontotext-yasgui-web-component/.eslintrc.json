@@ -21,6 +21,7 @@
     "yasgui-script.js",
     "d3_7_8_5_renders.js",
     "**/*.scss",
+    "**/*.css",
     "**/*.html",
     "**/*.md",
     "**/*.eot",

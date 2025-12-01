@@ -62,6 +62,8 @@ export interface Yasqe {
   getCursor: () => Cursor;
 
   setCursor: (cursor: Cursor) => void;
+  
+  setOption: (optionName: string, optionValue: unknown) => void;
 }
 
 export class Doc {

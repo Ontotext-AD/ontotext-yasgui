@@ -51,12 +51,11 @@ export class HtmlElementsUtil {
     });
   }
 
-  static createAutocompleteHintElement(text: string): HTMLElement {
+  static createAutocompleteHintElement(text: string, themeName = 'default'): HTMLElement {
     const hint =  document.createElement('span');
     hint.innerHTML = text;
     hint.style.fontSize = '12px';
-    hint.style.color = "gray";
-    hint.style.backgroundColor = 'white';
+    hint.classList.add('yasqe-autocomplete-hint', themeName);
     hint.style.position = 'absolute';
     hint.style.zIndex = '3';
     hint.style.paddingLeft = 6 + 'px';

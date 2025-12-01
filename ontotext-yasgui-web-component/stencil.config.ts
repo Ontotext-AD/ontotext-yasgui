@@ -24,6 +24,8 @@ export const config: Config = {
         {src: 'js'},
         {src: 'pages'},
         {src: 'css/fonts'},
+        {src: 'css/external/dracula.css'},
+        {src: 'css/external/oceanic-next.css'},
         {src: 'i18n'}
       ]
     },
