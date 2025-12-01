@@ -80,7 +80,8 @@ export class YasguiConfigurationBuilder {
         keyboardShortcutDescriptions: [],
         isVirtualRepository: externalConfiguration.isVirtualRepository !== undefined ? externalConfiguration.isVirtualRepository : defaultYasqeConfig.isVirtualRepository,
         beforeUpdateQuery: externalConfiguration.beforeUpdateQuery !== undefined ? externalConfiguration.beforeUpdateQuery : defaultYasqeConfig.beforeUpdateQuery,
-        getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount
+        getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount,
+        themeName: externalConfiguration.themeName || 'default'
       },
       yasr: {
         showQueryLoader: externalConfiguration.showQueryLoader !== undefined ? externalConfiguration.showQueryLoader : defaultYasrConfig.showQueryLoader,

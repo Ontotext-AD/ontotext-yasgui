@@ -816,6 +816,11 @@
   }
 }
 
+.yasqe-autocomplete-hint {
+  color: #808080;
+  background-color: #FFFFFF;
+}
+
 // Styling for the Google Chart Editor tooltip.
 .jfk-tooltip {
   // For some reason, the tooltip was under the chart editor dialog and was not visible; adding a z-index will set it on top.

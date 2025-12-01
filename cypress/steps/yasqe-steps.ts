@@ -6,6 +6,10 @@ export class YasqeSteps {
   static getYasqe() {
     return cy.get('.yasqe');
   }
+  
+  static getYasgui() {
+    return cy.get('.yasgui');
+  }
 
   static getQueryTabs() {
     return cy.get('.tabsList');
@@ -308,6 +312,10 @@ export class YasqeSteps {
     });
   }
 
+  static getYasqeHintsElement() {
+    return YasqeSteps.getYasgui().find('.CodeMirror-hints');
+  }
+  
   static getQuery() {
     return this.getCodeMirror().then((cm) => {
       return cm.getValue();
@@ -372,5 +380,9 @@ export class YasqeSteps {
 
   static getAbortQueryTooltip() {
     return YasqeSteps.getAbortQueryButton().parent();
+  }
+  
+  static getAutocompleteHintElement() {
+    return cy.get('.yasqe-autocomplete-hint');
   }
 }
