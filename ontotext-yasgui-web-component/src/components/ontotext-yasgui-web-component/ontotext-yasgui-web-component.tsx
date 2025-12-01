@@ -1,5 +1,5 @@
 import {Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
-import {defaultOntotextYasguiConfig, RenderingMode} from '../../models/yasgui-configuration';
+import {defaultOntotextYasguiConfig, RenderingMode, YasguiConfiguration} from '../../models/yasgui-configuration';
 import {YASGUI_MIN_SCRIPT} from '../yasgui/yasgui-script';
 import {YasguiBuilder} from '../../services/yasgui/yasgui-builder';
 import {OntotextYasgui} from '../../models/ontotext-yasgui';
@@ -275,6 +275,40 @@ export class OntotextYasguiWebComponent {
       .then(() => {
         VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.isVerticalOrientation, editorHeight);
       });
+  }
+  
+  /**
+   * Sets the theme in the YASQE editor.
+   *
+   * @param themeName - The name of the theme to apply.
+   *   - Must match a CodeMirror theme name (e.g., "dracula", "monokai").
+   *   - The corresponding **CSS file for the theme must be loaded** before calling this method,
+   *     otherwise the theme will not be applied. You can load the CSS via:
+   *       - `<link>` tag in HTML
+   *       - importing the CSS file in your project
+   *       - dynamically injecting a `<style>` element
+   *   - You can also define a **custom theme** by adding CSS rules for
+   *     `.cm-s-{themeName}.CodeMirror` and related token classes.
+   *
+   * If the <code>themeName</code> is not passed or the required CSS rules are not present,
+   * the editor will fall back to the default theme.
+   *
+   * @returns A Promise that resolves once the theme has been successfully applied.
+   *
+   * @example
+   * // Applying a theme from an external CSS file. The corresponding CSS file must be loaded first.
+   * setTheme("dracula").then(() => console.log("Theme applied"));
+   *
+   * @example
+   * // Applying a custom theme (CSS must be loaded first)
+   * setTheme("mytheme").then(() => console.log("Custom theme applied"));
+   */
+  @Method()
+  setTheme(themeName: string): Promise<void> {
+    return this.getOntotextYasgui().then((ontotextYasgui) => {
+      ontotextYasgui.getYasguiConfiguration().yasguiConfig.yasqe.themeName = themeName;
+      ontotextYasgui.applyTheme();
+    });
   }
 
   /**
@@ -969,8 +1003,12 @@ export class OntotextYasguiWebComponent {
     }
   }
 
-  registerEventHandlers(): void {
-    const hint = HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'));
+  registerEventHandlers(yasguiConfiguration: YasguiConfiguration): void {
+    let hint = undefined;
+    
+    this.ontotextYasgui.getInstance().on('yasqeReady', (tab: Tab) => {
+      this.ontotextYasgui.applyTheme(tab.getId());
+    });
 
     this.ontotextYasgui.getInstance().on('tabAdd', (_yasgui, _tab) => {
       VisualisationUtils.changeRenderMode(this.hostElement, this.renderingMode, this.isVerticalOrientation);
@@ -982,7 +1020,8 @@ export class OntotextYasguiWebComponent {
     });
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
-      hint.parentNode && hint.parentNode.removeChild(hint);
+      const themeName = yasguiConfiguration.yasguiConfig.yasqe.themeName;
+      hint = HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'), themeName);
       const codemirrorHints: any = document.querySelector('.CodeMirror-hints');
       const elRect = codemirrorHints.getBoundingClientRect();
       // We don't use boundingClientRect because it is not accurate in case yasgui is two column layout and dropdown
@@ -998,7 +1037,10 @@ export class OntotextYasguiWebComponent {
     });
 
     this.ontotextYasgui.getInstance().on('autocompletionClose', (_instance, _tab) => {
-      hint.parentNode && hint.parentNode.removeChild(hint);
+      if (hint) {
+        hint.parentNode && hint.parentNode.removeChild(hint);
+        hint = undefined;
+      }
     });
   }
 
@@ -1071,7 +1113,8 @@ export class OntotextYasguiWebComponent {
       YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
       YasrService.registerPlugin(ChartsPlugin.PLUGIN_NAME, ChartsPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
-      this.registerEventHandlers();
+      this.ontotextYasgui.applyTheme();
+      this.registerEventHandlers(yasguiConfiguration);
       this.afterInit();
       const editorHeight = this.ontotextYasgui.getEditorHeight(this.ontotextYasgui.getTabId());
       VisualisationUtils.setYasqeFullHeight(this.renderingMode, VisualisationUtils.resolveOrientation(this.isVerticalOrientation), editorHeight);

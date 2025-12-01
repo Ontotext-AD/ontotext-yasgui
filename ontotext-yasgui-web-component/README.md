@@ -146,7 +146,28 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
   - closes_other_tabs_by_left_mouse_click
   - full_screen
   - esc
-
+- **themeName** (optional): Specifies the theme that YASQE should use: 
+  - Must match a theme name recognized by CodeMirror (e.g., `dracula`, `monokai`). Theme CSS is required CodeMirror
+  themes are entirely CSS-based, so the corresponding CSS must be loaded via `<link>`, import, or injected `<style>`
+  for the theme to take effect.
+  - Using a custom theme. You may define your own theme without a separate CSS file by adding styles for:
+    ```CSS
+    .cm-s-{themeName}.CodeMirror { ... }
+    .cm-s-{themeName} .cm-keyword { ... }
+    etc.
+    ```
+    
+    Example:
+     ```CSS
+        <style>
+          .cm-s-mytheme.CodeMirror { background: #222; color: #eee; }
+        </style>
+  
+      Then set: themeName = "mytheme".
+    ```
+    - Fallback behavior: If themeName is not provided or the required CSS rules for that theme are missing,
+    CodeMirror/YASQE will automatically fall back to the default theme to ensure the editor remains readable.
+    
 ### ontotext version and GraphDB Version Compatibility
 | ontotext-yasgui-web-component | Workbench | GraphDB Version |
 |-------------------------------|-----------|-----------------|
