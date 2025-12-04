@@ -331,23 +331,32 @@ export function postprocessIriCompletion(yasqe: Yasqe, token: AutocompletionToke
     // we need to get the suggested string back to prefixed form
     suggestedString = token.tokenPrefix + suggestedString.substring(token.tokenPrefixUri.length);
   } else {
-      // it is a regular uri. add '<' and '>' to string
-      const queryPrefixes = yasqe.getPrefixesFromQuery();
-      const existingPrefix = Object.values(queryPrefixes).filter((prefix) => suggestedString.startsWith(prefix));
-      if (existingPrefix.length > 0) {
-          const prefixFound = Object.keys(queryPrefixes).find((key) => existingPrefix[0] === key)!;
-          suggestedString = prefixFound + ":" + suggestedString.substring(queryPrefixes[prefixFound].length);
-      } else {
-          // Do not put brackets to prefixes
-          if (suggestedString.indexOf("<b>" + token.string) === 0) {
-              return suggestedString;
-          }
-          // Do not put brackets on nested triples
-          if (suggestedString.startsWith("<<") && suggestedString.endsWith(">>")) {
-              return suggestedString;
-          }
-          suggestedString = "<" + suggestedString + ">";
+    // it is a regular uri. add '<' and '>' to string
+    const queryPrefixes = yasqe.getPrefixesFromQuery();
+    let existingPrefix = undefined;
+    let existingPrefixFullURI = undefined;
+
+    for (const prefix in queryPrefixes) {
+      const prefixFullURI = queryPrefixes[prefix];
+      if (suggestedString.startsWith(prefixFullURI)) {
+        existingPrefix = prefixFullURI;
+        existingPrefixFullURI = prefixFullURI;
+        break;
       }
+    }
+    if (existingPrefix && existingPrefixFullURI) {
+      suggestedString = existingPrefix + ":" + suggestedString.substring(existingPrefixFullURI.length);
+    } else {
+      // Do not put brackets to prefixes
+      if (suggestedString.indexOf("<b>" + token.string) === 0) {
+        return suggestedString;
+      }
+      // Do not put brackets on nested triples
+      if (suggestedString.startsWith("<<") && suggestedString.endsWith(">>")) {
+        return suggestedString;
+      }
+      suggestedString = "<" + suggestedString + ">";
+    }
   }
   return suggestedString;
 }

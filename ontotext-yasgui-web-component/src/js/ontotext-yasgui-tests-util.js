@@ -195,5 +195,13 @@ const autocompleteResponse = {
         "value": "http://www.w3.org/ns/ldp#NonRDFSource",
         "description": "http://www.w3.org/ns/ldp#Non<b>RDF</b>Source"
       }]
+  },
+  'r': {
+    "suggestions":
+      [{
+        "type": "prefix",
+        "value": "rdf",
+        "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#<b>r</b>est"
+      }]
   }
 }
