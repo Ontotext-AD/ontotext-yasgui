@@ -61,4 +61,8 @@ export class HtmlElementsUtil {
     hint.style.paddingLeft = 6 + 'px';
     return hint;
   }
+  
+  static removeElement(element: HTMLElement) {
+    element && element.parentNode && element.parentNode.removeChild(element);
+  }
 }
