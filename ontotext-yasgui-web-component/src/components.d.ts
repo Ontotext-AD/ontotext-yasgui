@@ -223,7 +223,7 @@ export namespace Components {
         "setQuery": (query: string) => Promise<void>;
         /**
           * Sets the theme in the YASQE editor.
-          * @param themeName - The name of the theme to apply. - Must match a CodeMirror theme name (e.g., "dracula", "monokai"). - The corresponding **CSS file for the theme must be loaded** before calling this method, otherwise the theme will not be applied. You can load the CSS via: - `<link>` tag in HTML - importing the CSS file in your project - dynamically injecting a `<style>` element - You can also define a **custom theme** by adding CSS rules for `.cm-s-{themeName}.CodeMirror` and related token classes.
+          * @param themeName - The name of the theme to apply. - Must match a CodeMirror theme name (e.g., "dracula", "monokai"). - The corresponding **CSS file for the theme must be loaded** before calling this method, otherwise the theme will not be applied. You can load the CSS via: - `<link>` tag in HTML - importing the CSS file in your project - dynamically injecting a `<style>` element - You can also define a **custom theme** by adding CSS rules for `.cm-s-{themeName}.CodeMirror` and related token classes.  If the <code>themeName</code> is not passed or the required CSS rules are not present, the editor will fall back to the default theme.
           * @returns A Promise that resolves once the theme has been successfully applied.
           * @example // Applying a theme from an external CSS file. The corresponding CSS file must be loaded first. setTheme("dracula").then(() => console.log("Theme applied"));
           * @example // Applying a custom theme (CSS must be loaded first) setTheme("mytheme").then(() => console.log("Custom theme applied"));

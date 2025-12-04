@@ -1020,6 +1020,7 @@ export class OntotextYasguiWebComponent {
     });
 
     this.ontotextYasgui.getInstance().on('autocompletionShown', (_instance, _tab, _widget) => {
+      HtmlElementsUtil.removeElement(hint);
       const themeName = yasguiConfiguration.yasguiConfig.yasqe.themeName;
       hint = HtmlElementsUtil.createAutocompleteHintElement(this.translationService.translate('yasqe.autocomplete.hint'), themeName);
       const codemirrorHints: any = document.querySelector('.CodeMirror-hints');
@@ -1037,10 +1038,7 @@ export class OntotextYasguiWebComponent {
     });
 
     this.ontotextYasgui.getInstance().on('autocompletionClose', (_instance, _tab) => {
-      if (hint) {
-        hint.parentNode && hint.parentNode.removeChild(hint);
-        hint = undefined;
-      }
+      HtmlElementsUtil.removeElement(hint);
     });
   }
 
