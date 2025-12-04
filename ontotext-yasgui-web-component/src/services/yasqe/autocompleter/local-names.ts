@@ -85,10 +85,19 @@ const getLocalNamesAutocompleter = (localNamesLoader: (term: string) => any) => 
       } else {
         // it is a regular uri. add '<' and '>' to string
         const queryPrefixes: { [prefixLabel: string]: string } = yasqe.getPrefixesFromQuery();
-        const existingPrefix = Object.values(queryPrefixes).filter((prefix: string) => suggestedString.startsWith(prefix));
-        if (existingPrefix.length > 0) {
-          const prefixFound = Object.keys(queryPrefixes).find((prefix) => prefix === existingPrefix[0])
-          suggestedString = prefixFound + ":" + suggestedString.substring(queryPrefixes[prefixFound].length);
+        let existingPrefix: string;
+        let existingPrefixFullURI: string;
+        
+        for (const prefix in queryPrefixes) {
+          const prefixFullURI = queryPrefixes[prefix];
+          if (suggestedString.startsWith(prefixFullURI)) {
+            existingPrefix = prefixFullURI;
+            existingPrefixFullURI = prefixFullURI;
+            break;
+          }
+        }
+        if (existingPrefix && existingPrefixFullURI) {
+          suggestedString = existingPrefix + ":" + suggestedString.substring(existingPrefixFullURI.length);
         } else {
           // Do not put brackets to prefixes
           if (suggestedString.indexOf("<b>" + token.string) === 0) {
