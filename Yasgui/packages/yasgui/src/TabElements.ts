@@ -301,7 +301,7 @@ export class TabList {
       addTabLink.setAttribute("tabindex", "0"); // maintains tabability
     });
     const icon = document.createElement("i");
-    icon.className = "icon-plus";
+    icon.className = "ri-add-circle-line";
     addTabLink.prepend(icon);
     this.addTabEl.appendChild(addTabLink);
     this._tabsListEl.appendChild(this.addTabEl);
