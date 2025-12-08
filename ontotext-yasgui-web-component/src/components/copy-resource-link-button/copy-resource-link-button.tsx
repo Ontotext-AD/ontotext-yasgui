@@ -22,7 +22,7 @@ export class CopyResourceLinkButton {
     const classList = `copy-resource-link-button ${this.classes || ''}`;
     return (
       <Host class={classList}>
-        <a class="icon-link" href="#" onClick={() => this.onButtonClick()}></a>
+        <a class="ri-links-line" href="#" onClick={() => this.onButtonClick()}></a>
       </Host>
     );
   }

@@ -156,11 +156,11 @@ export class OntotextEditableTextField {
               ref={(el) => (this.inputElement = el)}></input>
             <button onClick={() => this.save()} class='save-btn'
                     title={(this.translationService ? this.translationService.translate('yasqe.tab_list.tab_rename.save.btn.label') : '')}>
-              <span class='save-btn-label icon-tick'></span>
+              <span class='save-btn-label ri-check-line'></span>
             </button>
             <button onClick={() => this.cancel()} class='cancel-btn'
                     title={(this.translationService ? this.translationService.translate('yasqe.tab_list.tab_rename.cancel.btn.label') : '')}>
-              <span class='cancel-btn-label icon-close'></span>
+              <span class='cancel-btn-label ri-close-line'></span>
             </button>
           </div>
         )}

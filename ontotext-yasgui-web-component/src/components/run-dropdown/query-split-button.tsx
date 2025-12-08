@@ -128,7 +128,7 @@ export class QuerySplitButton {
     }
 
     render() {
-        const caretClass = this.querySplitOpen ? 'icon-caret-up-after' : 'icon-caret-down-after';
+        const caretClass = this.querySplitOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line';
 
         return (
             <div class="yasqe_querySplitWrapper">

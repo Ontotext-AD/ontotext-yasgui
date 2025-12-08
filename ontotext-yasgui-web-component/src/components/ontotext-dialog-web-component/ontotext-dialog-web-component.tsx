@@ -61,7 +61,7 @@ export class OntotextDialogWebComponent {
           <div class={`dialog ${this.config.position === 'bottom' ? 'bottom-position' : ''}`}>
             <div class="dialog-header">
               <h4 class="dialog-title">{this.config.dialogTitle}</h4>
-              <button class="close-button icon-close"
+              <button class="close-button ri-close-line"
                       onClick={(evt) => this.config.onClose(evt)}
                       ref={(el) => (this.closeButton = el)}></button>
             </div>
@@ -83,7 +83,7 @@ export class OntotextDialogWebComponent {
           <div class={`dialog ${this.config.position === 'bottom' ? 'bottom-position' : ''}`}>
             <div class="dialog-header">
               <h4 class="dialog-title">{this.config.dialogTitle}</h4>
-              <button class="close-button icon-close"
+              <button class="close-button ri-close-line"
                       onClick={(evt) => this.config.onClose(evt)}
                       ref={(el) => (this.closeButton = el)}></button>
             </div>

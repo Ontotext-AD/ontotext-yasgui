@@ -36,7 +36,7 @@ export class DownloadAs {
         translationService={this.translationService}
         tooltipLabelKey={this.tooltipLabelKey}
         nameLabelKey={this.nameLabelKey ? this.nameLabelKey : DownloadAs.DEFAULT_NAME_LABEL}
-        iconClass='icon-download'
+        iconClass='ri-download-2-line'
         items={this.items}>
       </ontotext-dropdown>
     );
