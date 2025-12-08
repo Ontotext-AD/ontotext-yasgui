@@ -50,7 +50,7 @@ export class ExtendedTabListEl extends TabListEl {
 
   private createCloseButton(): HTMLSpanElement {
     const closeBtn = document.createElement("span");
-    closeBtn.innerHTML = '<i class="icon-close"></i>';
+    closeBtn.innerHTML = '<i class="ri-close-line"></i>';
     closeBtn.title = this.translationService.translate("yasgui.tab_list.close_tab.btn.label");
     closeBtn.setAttribute("tabindex", "-1");
     closeBtn.setAttribute("aria-hidden", "true");

@@ -281,7 +281,7 @@ export class ExtendedYasr extends Yasr {
         "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
         params
       );
-      return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="icon-warning icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
+      return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="ri-alert-line icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
     }
     return "";
   }
