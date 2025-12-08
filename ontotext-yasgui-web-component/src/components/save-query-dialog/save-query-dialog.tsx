@@ -187,7 +187,7 @@ export class SaveQueryDialog {
             <div class="dialog-header">
               <h3
                 class="dialog-title">{this.translationService.translate(this.isNew ? 'yasqe.actions.save_query.dialog.title' : 'yasqe.actions.edit_query.dialog.title')}</h3>
-              <button class="close-button icon-close" onClick={(evt) => this.onClose(evt)}></button>
+              <button class="close-button ri-close-line" onClick={(evt) => this.onClose(evt)}></button>
             </div>
             <div class="dialog-body">
 

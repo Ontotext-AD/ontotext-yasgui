@@ -85,7 +85,7 @@ export class ConfirmationDialog {
           <div class="dialog confirmation-dialog">
             <div class="dialog-header">
               <h3 class="dialog-title">{this.config.title}</h3>
-              <button class="close-button icon-close"
+              <button class="close-button ri-close-line"
                       onClick={(evt) => this.onClose(evt)}></button>
             </div>
             <div class="dialog-body" innerHTML={this.config.message}/>

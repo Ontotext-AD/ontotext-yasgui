@@ -276,7 +276,7 @@ export class OntotextYasguiWebComponent {
         VisualisationUtils.changeRenderMode(this.hostElement, newRenderMode, this.isVerticalOrientation, editorHeight);
       });
   }
-  
+
   /**
    * Sets the theme in the YASQE editor.
    *
@@ -1005,7 +1005,7 @@ export class OntotextYasguiWebComponent {
 
   registerEventHandlers(yasguiConfiguration: YasguiConfiguration): void {
     let hint = undefined;
-    
+
     this.ontotextYasgui.getInstance().on('yasqeReady', (tab: Tab) => {
       this.ontotextYasgui.applyTheme(tab.getId());
     });

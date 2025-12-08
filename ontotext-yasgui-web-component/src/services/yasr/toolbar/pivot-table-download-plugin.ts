@@ -7,7 +7,7 @@ export class PivotTableDownloadPlugin implements YasrToolbarPlugin {
   // @ts-ignore
   createElement(yasr: Yasr): HTMLElement {
     const downloadAsElement = document.createElement("button");
-    downloadAsElement.className = 'pivot-table-download-as-button icon-download';
+    downloadAsElement.className = 'pivot-table-download-as-button ri-download-2-line';
     downloadAsElement.onclick = this.onClick(yasr);
     this.updateElement(downloadAsElement, yasr);
     return downloadAsElement;

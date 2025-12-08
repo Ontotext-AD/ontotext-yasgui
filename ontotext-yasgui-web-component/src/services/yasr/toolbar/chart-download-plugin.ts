@@ -7,7 +7,7 @@ import {HtmlUtil} from "../../utils/html-util";
 export class ChartDownloadPlugin implements YasrToolbarPlugin {
   createElement(yasr: Yasr): HTMLElement {
     const downloadAsElement = document.createElement('button');
-    downloadAsElement.className = 'chart-download-as-button icon-download';
+    downloadAsElement.className = 'chart-download-as-button ri-download-2-line';
     downloadAsElement.onclick = this.onClick(yasr);
     this.updateElement(downloadAsElement, yasr);
     return downloadAsElement;

@@ -125,16 +125,16 @@ export class SavedQueriesPopup {
                 <a class="saved-query-link" onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
                 <span class="saved-query-actions">
                   {!savedQuery.readonly ?
-                    <button class="saved-query-action edit-saved-query icon-edit"
+                    <button class="saved-query-action edit-saved-query ri-edit-line"
                             title={this.translationService.translate('yasqe.actions.saved_query_dialog.edit.button.tooltip')}
                             onClick={(evt) => this.onEdit(evt, savedQuery)}></button>
                     : ''}
                   {!savedQuery.readonly ?
-                    <button class="saved-query-action delete-saved-query icon-trash"
+                    <button class="saved-query-action delete-saved-query ri-delete-bin-6-line"
                             title={this.translationService.translate('yasqe.actions.saved_query_dialog.delete.button.tooltip')}
                             onClick={(evt) => this.onDelete(evt, savedQuery)}></button>
                     : ''}
-                  <button class="saved-query-action share-saved-query icon-link"
+                  <button class="saved-query-action share-saved-query ri-links-line"
                           title={this.translationService.translate('yasqe.actions.saved_query_dialog.share.button.tooltip')}
                           onClick={(evt) => this.onShare(evt, savedQuery)}></button>
                 </span>

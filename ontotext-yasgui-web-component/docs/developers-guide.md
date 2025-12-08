@@ -166,7 +166,7 @@ The action buttons can have the following example implementation:
 
 ```javascript
 const createSavedQueryButton = document.createElement("button");
-createSavedQueryButton.className = "yasqe_createSavedQueryButton custom-button icon-save";
+createSavedQueryButton.className = "yasqe_createSavedQueryButton custom-button ri-save-line";
 createSavedQueryButton.title = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
 createSavedQueryButton.setAttribute("aria-label", this.translationService.translate('yasqe.actions.save_query.button.tooltip'));
 createSavedQueryButton.addEventListener("click",
@@ -194,7 +194,7 @@ Currently, the action buttons which are plugged in:
 * Every button must have as a minimum following css class names:
   * `yasqe_[actionName]Button` - unique class name to identify the button
   * `custom-button` - a marker class used for generic buttons styling in the editor
-  * `icon-save` - an icon as font applied with a css class (see: ontotext-yasgui-web-component/src/css/_icons.scss)
+  * `icon-plus` - an icon as font applied with a css class (see: ontotext-yasgui-web-component/src/css/_icons.scss)
 * Every button must have a title and aria-label. The title must be translated in all supported languages.
 * In the button's click handler can be emitted a named internal event through the `EventService` if necessary. This event can be 
   handled in the web component and eventually propagated further to the outside world.

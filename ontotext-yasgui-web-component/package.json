@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@stencil/core": "^2.21.0",
+    "remixicon": "^4.7.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {

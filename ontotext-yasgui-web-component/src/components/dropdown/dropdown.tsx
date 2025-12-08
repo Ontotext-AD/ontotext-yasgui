@@ -46,7 +46,7 @@ export class Dropdown {
 
   render() {
     const showToolbar = this.tooltipLabelKey && window.innerWidth < 768;
-    const dropdownButtonClass = `ontotext-dropdown-button ${this.open ? 'icon-caret-up-after' : ' icon-caret-down-after'}
+    const dropdownButtonClass = `ontotext-dropdown-button ${this.open ? 'ri-arrow-up-s-line-after' : ' ri-arrow-down-s-line-after'}
     ${this.iconClass ? `ontotext-dropdown-icon ${this.iconClass}` : ''}`;
     return (
       <yasgui-tooltip

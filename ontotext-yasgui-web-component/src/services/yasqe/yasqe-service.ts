@@ -116,7 +116,7 @@ export class YasqeService {
 
   private buildShowSavedQueriesButton(): HTMLElement {
     const buttonElement = document.createElement("button");
-    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)} custom-button icon-folder`;
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)} custom-button ri-folder-3-line`;
     buttonElement.addEventListener("click",
       () => {
         this.eventService.emit(new InternalShowSavedQueriesEvent(buttonElement))
@@ -128,7 +128,7 @@ export class YasqeService {
 
   private buildCreateSaveQueryButton(): HTMLElement {
     const buttonElement = document.createElement("button");
-    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)} custom-button icon-save`;
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)} custom-button ri-save-line`;
     buttonElement.addEventListener("click",
       () => this.eventService.emit(new InternalCreateSavedQueryEvent()));
     const tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
@@ -137,7 +137,7 @@ export class YasqeService {
 
   private buildShareQueryButton(): HTMLElement {
     const buttonElement = document.createElement("button");
-    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)} custom-button icon-link`;
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)} custom-button ri-links-line`;
     buttonElement.addEventListener("click",
       () => this.eventService.emit(new InternalShareQueryEvent()));
 

@@ -23,7 +23,7 @@ export class DownloadAsPageSteps {
   }
 
   static getDropdownAsIcon() {
-    return DownloadAsPageSteps.getDownloadAsDropdown().find('.icon-download');
+    return DownloadAsPageSteps.getDownloadAsDropdown().find('.ri-download-2-line');
   }
 
   static openDownloadAsDropdown() {
