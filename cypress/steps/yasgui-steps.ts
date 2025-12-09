@@ -49,7 +49,7 @@ export class YasguiSteps {
   }
 
   static getTooltipRoot() {
-    return cy.get('div[data-tippy-root]');
+    return cy.get('.ontotext-yasgui-tooltip');
   }
 
   static getTabName(tabIndex = 0) {

@@ -1,10 +1,51 @@
 @import "src/css/variables";
 
-.tippy-box {
+.tooltip-box {
   background-color: $color-onto-blue;
-  border-radius: 0;
+  color: #fff;
+  padding: 5px 9px;
+  font-size: 14px;
+  max-width: 320px;
+  white-space: normal;
 }
 
-.tippy-arrow {
+.ontotext-yasgui-tooltip .tooltip-arrow {
+  position: absolute;
+  width: 16px;
+  height: 16px;
   color: $color-onto-blue;
+}
+.ontotext-yasgui-tooltip .tooltip-arrow::before {
+  content: '';
+  position: absolute;
+  border-color: transparent;
+  border-style: solid;
+}
+
+.ontotext-yasgui-tooltip[data-placement^='top'] .tooltip-arrow { bottom: 0; }
+.ontotext-yasgui-tooltip[data-placement^='top'] .tooltip-arrow::before {
+  bottom: -7px; left: 0;
+  border-width: 8px 8px 0;
+  border-top-color: $color-onto-blue;
+}
+
+.ontotext-yasgui-tooltip[data-placement^='bottom'] .tooltip-arrow { top: 0; }
+.ontotext-yasgui-tooltip[data-placement^='bottom'] .tooltip-arrow::before {
+  top: -7px; left: 0;
+  border-width: 0 8px 8px;
+  border-bottom-color: $color-onto-blue;
+}
+
+.ontotext-yasgui-tooltip[data-placement^='left'] .tooltip-arrow { right: 0; }
+.ontotext-yasgui-tooltip[data-placement^='left'] .tooltip-arrow::before {
+  right: -7px;
+  border-width: 8px 0 8px 8px;
+  border-left-color: $color-onto-blue;
+}
+
+.ontotext-yasgui-tooltip[data-placement^='right'] .tooltip-arrow { left: 0; }
+.ontotext-yasgui-tooltip[data-placement^='right'] .tooltip-arrow::before {
+  left: -7px;
+  border-width: 8px 8px 8px 0;
+  border-right-color: $color-onto-blue;
 }
