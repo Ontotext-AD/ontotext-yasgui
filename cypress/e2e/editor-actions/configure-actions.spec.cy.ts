@@ -13,11 +13,11 @@ describe('Configure editor actions', () => {
 
     it('Should see all custom actions by default in particular order', () => {
         YasqeSteps.getActionButtons().should('have.length', 5);
-        YasqeSteps.getActionButtonTooltip(0).should('have.attr', 'data-tooltip', 'Create saved query');
-        YasqeSteps.getActionButtonTooltip(1).should('have.attr', 'data-tooltip', 'Show saved queries');
-        YasqeSteps.getActionButtonTooltip(2).should('have.attr', 'data-tooltip', 'Get URL to current query');
-        YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'data-tooltip', 'Include inferred data in results: ON');
-        YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+        YasqeSteps.getActionButtonTooltip(0).should('have.attr', 'yasgui-data-tooltip', 'Create saved query');
+        YasqeSteps.getActionButtonTooltip(1).should('have.attr', 'yasgui-data-tooltip', 'Show saved queries');
+        YasqeSteps.getActionButtonTooltip(2).should('have.attr', 'yasgui-data-tooltip', 'Get URL to current query');
+        YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'yasgui-data-tooltip', 'Include inferred data in results: ON');
+        YasqeSteps.getActionButtonTooltip(4).should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: ON');
     });
 
     it('Should be able to toggle yasqe action buttons', () => {
