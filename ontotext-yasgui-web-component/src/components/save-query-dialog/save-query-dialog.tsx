@@ -201,7 +201,7 @@ export class SaveQueryDialog {
                 </div>
                 <div class="form-field is-public-field">
                   <yasgui-tooltip placement="top"
-                                  data-tooltip={this.translationService.translate('yasqe.actions.save_query.dialog.public_query.tooltip')}>
+                                  yasgui-data-tooltip={this.translationService.translate('yasqe.actions.save_query.dialog.public_query.tooltip')}>
                     <label>
                       <input type="checkbox" name="publicQuery" id="publicQuery"
                              checked={this.isPublic}
