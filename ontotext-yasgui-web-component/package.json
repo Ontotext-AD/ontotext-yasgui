@@ -30,7 +30,7 @@
   "dependencies": {
     "@stencil/core": "^2.21.0",
     "remixicon": "^4.7.0",
-    "tippy.js": "^6.3.7"
+    "@floating-ui/dom": "^1.7.4"
   },
   "devDependencies": {
     "@stencil/sass": "^2.0.0",

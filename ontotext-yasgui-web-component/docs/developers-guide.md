@@ -95,13 +95,13 @@ The public API documentation can be found [here](../src/components/ontotext-yasg
 ## OntotextTooltipWebComponent
  ### Usage
 ```
-<yasgui-tooltip data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
+<yasgui-tooltip yasgui-data-tooltip={this.orientationButtonTooltip} placement="left" show-on-click={true}>
   <div class="btn-orientation icon-columns red" onClick={() => this.changeOrientation()}></div>
 </yasgui-tooltip>
 ```
 yasgui-tooltip tag have to wrap the element to which tooltip have to be appeared.
 ### Configuration
-- <b>data-tooltip</b>: value of this property will be the content of the tooltip;
+- <b>yasgui-data-tooltip</b>: value of this property will be the content of the tooltip;
 - <b>placement</b>: where tooltip to be appeared. default is top:
 - <b>show-on-click</b>: if tooltip have to be shown when wrapped element is clicked. Default behaviour is when mouse is over the element.
 
