@@ -14,7 +14,7 @@ describe('Execute query action', () => {
 
   it('Should be able to execute a query', () => {
     ActionsPageSteps.visit();
-    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Explore all options');
+    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Explore all options');
     YasqeSteps.getExecuteQueryButton().should('be.visible');
     YasqeSteps.executeQuery();
     YasrSteps.getTableResults().should('have.length', 6);
@@ -31,7 +31,7 @@ describe('Execute query action', () => {
     // Given I'm on the page
     ActionsPageSteps.visit();
     // When I click on the explain query button dropdown
-    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'data-tooltip', 'Explore all options');
+    YasqeSteps.getExecuteQueryButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Explore all options');
     YasqeSteps.getRunSplitButton().should('be.visible');
     YasqeSteps.openRunSplitMenu();
     YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');

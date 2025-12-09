@@ -7,11 +7,11 @@
 
 ## Properties
 
-| Property      | Attribute       | Description | Type      | Default     |
-| ------------- | --------------- | ----------- | --------- | ----------- |
-| `dataTooltip` | `data-tooltip`  |             | `string`  | `undefined` |
-| `placement`   | `placement`     |             | `string`  | `undefined` |
-| `showOnClick` | `show-on-click` |             | `boolean` | `undefined` |
+| Property            | Attribute             | Description | Type      | Default     |
+| ------------------- | --------------------- | ----------- | --------- | ----------- |
+| `placement`         | `placement`           |             | `string`  | `undefined` |
+| `showOnClick`       | `show-on-click`       |             | `boolean` | `undefined` |
+| `yasguiDataTooltip` | `yasgui-data-tooltip` |             | `string`  | `undefined` |
 
 
 ## Dependencies

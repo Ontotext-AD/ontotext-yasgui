@@ -50,7 +50,7 @@ export class Dropdown {
     ${this.iconClass ? `ontotext-dropdown-icon ${this.iconClass}` : ''}`;
     return (
       <yasgui-tooltip
-        data-tooltip={showToolbar ? this.translate(this.nameLabelKey) : ''}>
+        yasgui-data-tooltip={showToolbar ? this.translate(this.nameLabelKey) : ''}>
         <div class='ontotext-dropdown'>
           <button class={dropdownButtonClass}
                   onClick={() => this.toggleComponent()}>

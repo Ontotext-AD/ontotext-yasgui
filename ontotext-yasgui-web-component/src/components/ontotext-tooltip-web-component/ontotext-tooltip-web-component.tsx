@@ -1,5 +1,5 @@
 import {Component, Element, h, Host, Prop, Watch} from '@stencil/core';
-import tippy, {Instance, Placement} from 'tippy.js';
+import {autoUpdate, computePosition, flip, offset, shift, arrow, type Placement as FloatingPlacement} from '@floating-ui/dom';
 
 const TOOLTIP_CLASS_NAME = 'ontotext-yasgui-tooltip';
 
@@ -9,27 +9,111 @@ const TOOLTIP_CLASS_NAME = 'ontotext-yasgui-tooltip';
   shadow: false,
 })
 export class OntotextTooltipWebComponent {
-
   @Element() el: HTMLElement;
 
-  @Prop() dataTooltip: string;
-
+  @Prop() yasguiDataTooltip: string;
   @Prop() placement: string;
-
   @Prop() showOnClick: false;
 
-  @Watch('dataTooltip')
+  @Watch('yasguiDataTooltip')
   configurationChanged() {
-    this.update();
+    // Only update content if tooltip exists
+    if (this.boxEl) {
+      this.boxEl.innerHTML = this.yasguiDataTooltip || '';
+    }
   }
 
-  private tooltip: Instance;
+  private popperEl: HTMLElement | null = null;
+  private boxEl: HTMLElement | null = null;
+  private arrowEl: HTMLElement | null = null;
+  private cleanupAutoUpdate: (() => void) | null = null;
 
-  private showFunction;
-  private hideFunction;
+  private onMouseOver: ((e: MouseEvent) => void) | null = null;
+  private onMouseLeave: ((e: MouseEvent) => void) | null = null;
+  private onDocClick: ((e: MouseEvent) => void) | null = null;
+
+  private unsubscriptions: Array<() => void> = [];
+
+  private show = () => {
+    if (!this.yasguiDataTooltip) {
+      return;
+    }
+    this.ensurePopperCreated();
+    if (!this.popperEl) {
+      return;
+    }
+
+    this.popperEl.style.visibility = 'visible';
+    this.popperEl.style.pointerEvents = 'none';
+
+    this.updatePosition();
+    this.startAutoUpdate();
+
+    if (this.showOnClick && !this.onDocClick) {
+      const handler: (e: MouseEvent) => void = (e) => {
+        const target = e.target as Node | null;
+        const insideHost = !!(target && this.el.contains(target));
+        const insidePopper = !!(target && this.popperEl && this.popperEl.contains(target));
+        if (!insideHost && !insidePopper) {
+          this.hide();
+        }
+      };
+      this.onDocClick = handler;
+      document.addEventListener('click', handler, true);
+
+      this.unsubscriptions.push(() => {
+        document.removeEventListener('click', handler, true);
+        if (this.onDocClick === handler) this.onDocClick = null;
+      });
+    }
+  };
+
+  private hide = () => {
+    if (!this.popperEl) {
+      return;
+    }
+
+    this.stopAutoUpdate();
+
+    if (this.popperEl.parentNode) {
+      this.popperEl.parentNode.removeChild(this.popperEl);
+    }
+
+    this.popperEl = null;
+    this.boxEl = null;
+    this.arrowEl = null;
+  };
 
   componentDidLoad() {
-    this.init();
+    this.onMouseOver = (e: MouseEvent) => {
+      const from = e.relatedTarget as Node | null;
+      if (!from || !this.el.contains(from)) {
+        this.show();
+      }
+    };
+    this.onMouseLeave = (e: MouseEvent) => {
+      const to = e.relatedTarget as Node | null;
+      if (!to || !this.el.contains(to)) {
+        this.hide();
+      }
+    };
+
+    this.el.addEventListener('mouseover', this.onMouseOver);
+    this.unsubscriptions.push(() => {
+      this.el.removeEventListener('mouseover', this.onMouseOver);
+      this.onMouseOver = null;
+    });
+
+    this.el.addEventListener('mouseleave', this.onMouseLeave);
+    this.unsubscriptions.push(() => {
+      this.el.removeEventListener('mouseleave', this.onMouseLeave);
+      this.onMouseLeave = null;
+    });
+
+    if (this.showOnClick) {
+      this.el.addEventListener('click', this.show);
+      this.unsubscriptions.push(() => this.el.removeEventListener('click', this.show));
+    }
   }
 
   disconnectedCallback() {
@@ -44,67 +128,121 @@ export class OntotextTooltipWebComponent {
     );
   }
 
-  private update() {
-    this.init();
-    this.tooltip.setContent(this.dataTooltip);
-  }
-
-  private init() {
-    if (this.tooltip) {
+  private ensurePopperCreated() {
+    if (this.popperEl) {
       return;
     }
-    const options = {
-      content: this.dataTooltip,
-      trigger: 'manual',
-      placement: this.placement as Placement,
-      allowHTML: true,
-      triggerTarget: this.el,
-      // Fixed strategy, so the popper is positioned relative to the viewport and is stable on layout shifts
-      popperOptions: { strategy: 'fixed' as const },
-      /**
-       * The tippy library has some conflict with the Google Chart Editor. The editor adds a div element with the "jfk-tooltip" class.
-       * When the mouse hovers over a chart editor element, this div is positioned accordingly.
-       * When the mouse leaves the element, a "jfk-tooltip-hidden" class is added, and the div tag is hidden.
-       * For some reason, when a 'ontotext-tooltip-web-component' is open, the "jfk-tooltip-hidden" class is removed, and the Google Chart tooltip is displayed along with
-       * 'ontotext-tooltip-web-component' (maybe Google uses an old version of tippy or popover and there is a conflict in implementations).
-       * When 'ontotext-tooltip-web-component' is open, we add the class 'hidden' to the Google Chart tooltip to hide it.
-       */
-      onShow: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.add('hidden')),
-      /**
-       * When 'ontotext-tooltip-web-component' is closed, we remove the 'hidden' class to allow the Google Chart tooltip to work properly.
-       */
-      onHide: () => document.querySelectorAll('.jfk-tooltip').forEach(popper => popper.classList.remove('hidden'))
-    };
-    this.tooltip = tippy(this.el, options);
-    this.tooltip.popper.classList.add(TOOLTIP_CLASS_NAME);
-    
-    this.showFunction = this.createShowFunction(this.tooltip);
-    this.hideFunction = this.createHideFunction(this.tooltip);
 
-    this.el.addEventListener('mouseover', this.showFunction);
+    const popper = document.createElement('div');
+    popper.className = TOOLTIP_CLASS_NAME;
+    popper.style.position = 'fixed';
+    popper.style.zIndex = '9999';
+    popper.style.pointerEvents = 'none';
+    popper.style.visibility = 'hidden';
 
-    if (this.showOnClick) {
-      this.el.addEventListener('click', this.showFunction);
-    }
+    const box = document.createElement('div');
+    box.className = 'tooltip-box';
+    box.innerHTML = this.yasguiDataTooltip || '';
 
-    this.el.addEventListener('mouseleave', this.hideFunction);
+    const arrowEl = document.createElement('div');
+    arrowEl.className = 'tooltip-arrow';
+
+    popper.appendChild(box);
+    popper.appendChild(arrowEl);
+    document.body.appendChild(popper);
+
+    this.popperEl = popper;
+    this.boxEl = box;
+    this.arrowEl = arrowEl;
+
+    this.popperEl.addEventListener('mouseleave', this.hide);
+    this.unsubscriptions.push(() => {
+        this.popperEl.removeEventListener('mouseleave', this.hide);
+    });
   }
 
-  private createShowFunction(tooltip: Instance) {
-    return () => {
-      if (this.dataTooltip) {
-        tooltip.show();
+  private updatePosition = () => {
+    if (!this.popperEl || !this.arrowEl) {
+      return;
+    }
+
+    const placement = (this.placement as FloatingPlacement) || 'top';
+
+    computePosition(this.el, this.popperEl, {
+      placement,
+      strategy: 'fixed',
+      middleware: [offset(8), flip(), shift({padding: 8}), arrow({element: this.arrowEl})],
+    }).then(({x, y, placement: finalPlacement, middlewareData}) => {
+      if (!this.popperEl || !this.arrowEl) {
+        return;
       }
+
+      this.popperEl.style.left = `${x}px`;
+      this.popperEl.style.top = `${y}px`;
+      this.popperEl.setAttribute('data-placement', finalPlacement);
+
+      const ax = middlewareData.arrow?.x;
+      const ay = middlewareData.arrow?.y;
+
+      this.arrowEl.style.left = ax != null ? `${ax}px` : '';
+      this.arrowEl.style.top = ay != null ? `${ay}px` : '';
+
+      const base = finalPlacement.split('-')[0] as 'top' | 'right' | 'bottom' | 'left';
+      const staticSide = {top: 'bottom', right: 'left', bottom: 'top', left: 'right'}[base];
+      this.arrowEl.style.right = '';
+      this.arrowEl.style.bottom = '';
+      (this.arrowEl.style as Partial<CSSStyleDeclaration>)[staticSide] = '0';
+    });
+  };
+
+  private startAutoUpdate() {
+    if (this.cleanupAutoUpdate) {
+      return;
     }
+    if (this.popperEl === null) {
+      return;
+    }
+
+    // Update only on ancestor scroll/resize
+    this.cleanupAutoUpdate = autoUpdate(
+        this.el,
+        this.popperEl,
+        this.updatePosition,
+        {
+          animationFrame: false,
+          ancestorScroll: true,
+          ancestorResize: true,
+          elementResize: false
+        }
+    );
+
+    this.unsubscriptions.push(() => {
+      if (this.cleanupAutoUpdate) {
+        this.cleanupAutoUpdate();
+        this.cleanupAutoUpdate = null;
+      }
+    });
   }
 
-  private createHideFunction(tooltip: Instance) {
-    return () => tooltip.hide();
+  private stopAutoUpdate() {
+    if (this.cleanupAutoUpdate) {
+      this.cleanupAutoUpdate();
+      this.cleanupAutoUpdate = null;
+    }
   }
 
   private destroy() {
-    this.el.removeEventListener('mouseover', this.showFunction);
-    this.el.removeEventListener('click', this.showFunction);
-    this.el.removeEventListener('mouseleave', this.hideFunction);
+    this.unsubscriptions.forEach(unsub => {
+      try {
+        unsub();
+      } catch (e) {
+        // eslint-disable-next-line no-empty
+        /* no-op to ensure teardown continues */
+      }
+    });
+    this.unsubscriptions = [];
+    this.onDocClick = null;
+
+    this.hide();
   }
 }
