@@ -1,0 +1,53 @@
+Subject: [PATCH] Replacing our custom icons with icons form the remixicon set. This is needed for consistency between font styles.
+---
+Index: Yasgui/packages/yasgui/src/TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
+--- a/Yasgui/packages/yasgui/src/TabElements.ts	(revision 229a19dc40df414faaa3253df4dcd7d2ef67d29a)
++++ b/Yasgui/packages/yasgui/src/TabElements.ts	(revision f9fa46dd0df374bf1534f66bcdda80531ce7a26b)
+@@ -301,7 +301,7 @@
+       addTabLink.setAttribute("tabindex", "0"); // maintains tabability
+     });
+     const icon = document.createElement("i");
+-    icon.className = "icon-plus";
++    icon.className = "ri-add-circle-line";
+     addTabLink.prepend(icon);
+     this.addTabEl.appendChild(addTabLink);
+     this._tabsListEl.appendChild(this.addTabEl);
+Index: Yasgui/packages/yasgui/src/extended-TabElements.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/extended-TabElements.ts b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+--- a/Yasgui/packages/yasgui/src/extended-TabElements.ts	(revision 229a19dc40df414faaa3253df4dcd7d2ef67d29a)
++++ b/Yasgui/packages/yasgui/src/extended-TabElements.ts	(revision f9fa46dd0df374bf1534f66bcdda80531ce7a26b)
+@@ -50,7 +50,7 @@
+ 
+   private createCloseButton(): HTMLSpanElement {
+     const closeBtn = document.createElement("span");
+-    closeBtn.innerHTML = '<i class="icon-close"></i>';
++    closeBtn.innerHTML = '<i class="ri-close-line"></i>';
+     closeBtn.title = this.translationService.translate("yasgui.tab_list.close_tab.btn.label");
+     closeBtn.setAttribute("tabindex", "-1");
+     closeBtn.setAttribute("aria-hidden", "true");
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 229a19dc40df414faaa3253df4dcd7d2ef67d29a)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision f9fa46dd0df374bf1534f66bcdda80531ce7a26b)
+@@ -281,7 +281,7 @@
+         "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
+         params
+       );
+-      return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="icon-warning icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
++      return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="ri-alert-line icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
+     }
+     return "";
+   }
