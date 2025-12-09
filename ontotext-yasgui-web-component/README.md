@@ -169,6 +169,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
     CodeMirror/YASQE will automatically fall back to the default theme to ensure the editor remains readable.
     
 ### ontotext version and GraphDB Version Compatibility
+
 | ontotext-yasgui-web-component | Workbench | GraphDB Version |
 |-------------------------------|-----------|-----------------|
 | 1.2+                          | 2.6+      | 10+             |
@@ -177,6 +178,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 | 1.3.23                        | 3.0+      | 11.0+           |
 | 1.3+                          | 3.1+      | 11.1+           |
 | 1.4+                          | 3.2+      | 11.2+           |
+| 1.5+                          | 3.3+      | 11.3+           |
 
 
 ## Developers guide
