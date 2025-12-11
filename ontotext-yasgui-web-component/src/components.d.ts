@@ -256,9 +256,9 @@ export namespace Components {
         "serviceFactory": ServiceFactory;
     }
     interface YasguiTooltip {
-        "dataTooltip": string;
         "placement": string;
         "showOnClick": false;
+        "yasguiDataTooltip": string;
     }
 }
 export interface ConfirmationDialogCustomEvent<T> extends CustomEvent<T> {
@@ -704,9 +704,9 @@ declare namespace LocalJSX {
         "serviceFactory"?: ServiceFactory;
     }
     interface YasguiTooltip {
-        "dataTooltip"?: string;
         "placement"?: string;
         "showOnClick"?: false;
+        "yasguiDataTooltip"?: string;
     }
     interface IntrinsicElements {
         "alert-box": AlertBox;

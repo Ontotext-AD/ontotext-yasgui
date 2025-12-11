@@ -1166,7 +1166,7 @@ export class OntotextYasguiWebComponent {
             {this.yasrBtnLabel}
           </button>
           <yasgui-tooltip
-            data-tooltip={this.resolveOrientationButtonTooltip()}
+            yasgui-data-tooltip={this.resolveOrientationButtonTooltip()}
             placement="left"
             show-on-click={true}>
             <button class="btn-orientation icon-columns red"

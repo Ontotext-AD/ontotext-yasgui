@@ -442,7 +442,7 @@ export class Yasr extends EventEmitter {
       button.addEventListener("click", () => this.selectPlugin(pluginName));
       const li = document.createElement("li");
       const buttonPluginTooltip: any = document.createElement("yasgui-tooltip");
-      buttonPluginTooltip.dataTooltip = window.innerWidth < 768 ? name : "";
+      buttonPluginTooltip.yasguiDataTooltip = window.innerWidth < 768 ? name : "";
       buttonPluginTooltip.placement = "top";
       buttonPluginTooltip.appendChild(button);
       li.appendChild(buttonPluginTooltip);
@@ -621,7 +621,7 @@ export class Yasr extends EventEmitter {
           }
           const buttonPluginTooltip = button.parentElement;
           if (buttonPluginTooltip) {
-            (buttonPluginTooltip as any).dataTooltip = window.innerWidth < 768 ? name : "";
+            (buttonPluginTooltip as any).yasguiDataTooltip = window.innerWidth < 768 ? name : "";
           }
         }
       }

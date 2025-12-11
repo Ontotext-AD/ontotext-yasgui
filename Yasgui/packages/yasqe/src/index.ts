@@ -648,7 +648,7 @@ export class Yasqe extends CodeMirror {
 
     if (this.abortQueryButton) {
       const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
-      abortQueryButtonTooltip.dataTooltip = buttonTooltip;
+      abortQueryButtonTooltip.yasguiDataTooltip = buttonTooltip;
     }
   }
 
@@ -705,7 +705,7 @@ export class Yasqe extends CodeMirror {
       queryButtonTooltip = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
     }
 
-    this.queryBtn.parentElement?.setAttribute("data-tooltip", queryButtonTooltip);
+    this.queryBtn.parentElement?.setAttribute("yasgui-data-tooltip", queryButtonTooltip);
     this.queryBtn.parentElement?.setAttribute("aria-label", queryButtonTooltip);
     this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
 

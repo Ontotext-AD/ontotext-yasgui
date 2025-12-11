@@ -15,38 +15,38 @@ describe('Expand results over sameAs', () => {
     ActionsPageSteps.configureSameAsImmutable();
 
     // Then I expect sameAs button to be on.
-    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: ON');
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
 
     // When I click on inferred button
     YasqeSteps.getExpandResultsOverSameAsButton().click({force: true});
 
     // Then I expect sameAs button to not be toggled.
-    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: ON');
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
   });
 
   it('Should be able to toggle the include inferred button state', () => {
     // When I open the editor
     // Then I expect that expand results should be enabled by default
-    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: ON');
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
     // When I click the expand results action
     YasqeSteps.expandResultsOverSameAs();
     // Then I expect it to be disabled
-    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: OFF');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: OFF');
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-off');
   });
 
   it('Should be able to configure the default value of the expand results config', () => {
     // When I open the editor
     // Then I expect that expand results should be enabled by default
-    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: ON');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: ON');
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-on');
     // When I change the default of the expand results config
     YasqeSteps.toggleExpandResults();
     // Then I expect that the expand results value would be changed
-    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'data-tooltip', 'Expand results over owl:sameAs: OFF');
+    YasqeSteps.getExpandResultsOverSameAsButtonTooltip().should('have.attr', 'yasgui-data-tooltip', 'Expand results over owl:sameAs: OFF');
     YasqeSteps.getExpandResultsOverSameAsButton().should('have.class', 'icon-same-as-off');
   });
 
