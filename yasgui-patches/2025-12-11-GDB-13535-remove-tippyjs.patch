@@ -1,0 +1,69 @@
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision e7168731704b23814377cf41723e4c6b02e7f4d1)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 7980f406827aa210e7440121c4ebe4bc2b9ea2d3)
+@@ -648,7 +648,7 @@
+ 
+     if (this.abortQueryButton) {
+       const abortQueryButtonTooltip: any = this.abortQueryButton.closest("yasgui-tooltip");
+-      abortQueryButtonTooltip.dataTooltip = buttonTooltip;
++      abortQueryButtonTooltip.yasguiDataTooltip = buttonTooltip;
+     }
+   }
+ 
+@@ -705,7 +705,7 @@
+       queryButtonTooltip = this.translationService.translate("yasqe.action.run_query.btn.tooltip");
+     }
+ 
+-    this.queryBtn.parentElement?.setAttribute("data-tooltip", queryButtonTooltip);
++    this.queryBtn.parentElement?.setAttribute("yasgui-data-tooltip", queryButtonTooltip);
+     this.queryBtn.parentElement?.setAttribute("aria-label", queryButtonTooltip);
+     this.queryBtn.innerText = this.translationService.translate("yasqe.action.run_query.btn.label");
+ 
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision e7168731704b23814377cf41723e4c6b02e7f4d1)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 7980f406827aa210e7440121c4ebe4bc2b9ea2d3)
+@@ -281,7 +281,7 @@
+         "yasr.plugin_control.response_chip.timestamp.warning.tooltip",
+         params
+       );
+-      return `<yasgui-tooltip data-tooltip="${staleWarningMessage}" placement="top"><span class="ri-alert-line icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
++      return `<yasgui-tooltip yasgui-data-tooltip="${staleWarningMessage}" placement="top"><span class="ri-alert-line icon-lg" style="padding: 5px"></span></yasgui-tooltip>`;
+     }
+     return "";
+   }
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision e7168731704b23814377cf41723e4c6b02e7f4d1)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 7980f406827aa210e7440121c4ebe4bc2b9ea2d3)
+@@ -442,7 +442,7 @@
+       button.addEventListener("click", () => this.selectPlugin(pluginName));
+       const li = document.createElement("li");
+       const buttonPluginTooltip: any = document.createElement("yasgui-tooltip");
+-      buttonPluginTooltip.dataTooltip = window.innerWidth < 768 ? name : "";
++      buttonPluginTooltip.yasguiDataTooltip = window.innerWidth < 768 ? name : "";
+       buttonPluginTooltip.placement = "top";
+       buttonPluginTooltip.appendChild(button);
+       li.appendChild(buttonPluginTooltip);
+@@ -621,7 +621,7 @@
+           }
+           const buttonPluginTooltip = button.parentElement;
+           if (buttonPluginTooltip) {
+-            (buttonPluginTooltip as any).dataTooltip = window.innerWidth < 768 ? name : "";
++            (buttonPluginTooltip as any).yasguiDataTooltip = window.innerWidth < 768 ? name : "";
+           }
+         }
+       }
