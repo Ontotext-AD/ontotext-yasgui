@@ -145,10 +145,6 @@ export class YasrService {
 
   //@ts-ignore
   private static getLiteralAsString(binding: Parser.BindingValue, forHtml: boolean) {
-
-    if (this.isExplainResponse(binding)) {
-      return this.getExplainPlanQueryResponse(binding, forHtml);
-    }
     if (binding.type == "bnode") {
       return YasrService.addWordBreakToLiterals(`_:${HtmlUtil.escapeHTMLEntities(binding.value)}`);
     }
@@ -177,20 +173,6 @@ export class YasrService {
     }
 
     return YasrService.addWordBreakToLiterals(stringRepresentation.startsWith('"') ? stringRepresentation : `"${stringRepresentation}"`);
-  }
-
-  //@ts-ignore
-  private static isExplainResponse(binding: Parser.BindingValue): boolean {
-    return "literal" === binding.type && binding.value.includes("# NOTE: Optimization groups");
-  }
-  //@ts-ignore
-  private static getExplainPlanQueryResponse(binding: Parser.BindingValue, forHtml: boolean): string {
-    const stringRepresentation = HtmlUtil.escapeHTMLEntities(binding.value);
-    if (forHtml) {
-      return `<div id="explainPlanQuery" class="cm-s-default">${stringRepresentation}</div>`;
-    }
-
-    return stringRepresentation.startsWith('"') ? stringRepresentation : `"${stringRepresentation}"`;
   }
 
   private static addWorldBreakTagAfterSpecialCharacters(text) {
