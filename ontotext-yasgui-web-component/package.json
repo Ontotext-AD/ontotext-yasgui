@@ -30,7 +30,8 @@
   "dependencies": {
     "@stencil/core": "^2.21.0",
     "remixicon": "^4.7.0",
-    "@floating-ui/dom": "^1.7.4"
+    "@floating-ui/dom": "^1.7.4",
+    "codemirror": "^5.51.0"
   },
   "devDependencies": {
     "@stencil/sass": "^2.0.0",

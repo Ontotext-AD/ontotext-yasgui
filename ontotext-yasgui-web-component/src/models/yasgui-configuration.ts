@@ -178,7 +178,7 @@ export interface YasguiConfiguration {
        * @param req - the running request.
        */
       onQueryAborted?: (req) => Promise<void>;
-      
+
       /**
        * Name of the CodeMirror 5 theme to apply in YASQE.
        *
@@ -260,6 +260,11 @@ export interface YasguiConfiguration {
        * If the result information header of YASR should be rendered or not.
        */
       showResultInfo?: boolean;
+
+      /**
+       * Function that checks if the current query is run for explain plan.
+       */
+      isExplainPlan: (results: []) => boolean;
     }
   };
 

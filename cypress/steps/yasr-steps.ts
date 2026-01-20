@@ -47,6 +47,14 @@ export class YasrSteps {
     YasrSteps.getHeaderCell(columnNumber).click();
   }
 
+  static getExplainPlanCopyButton() {
+    return this.getYasr().find('.explain-plan-copy-btn');
+  }
+
+  static getExplainPlanResult() {
+    return this.getYasr().find('.yasr_results');
+  }
+
   static getTableResults(yasrIndex = 0) {
     return this.getYasr(yasrIndex).find('.yasr_results tbody').find('tr');
   }

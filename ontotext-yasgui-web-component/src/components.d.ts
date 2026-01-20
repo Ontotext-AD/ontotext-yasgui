@@ -112,6 +112,23 @@ export namespace Components {
          */
         "value": string;
     }
+    interface OntotextExplainPlan {
+        /**
+          * The SPARQL results binding cell that contains the explain-plan literal. Expected shape: `{ type: 'literal', value: string }`. If undefined or not containing the explain marker, component will render an empty query.
+          * @public
+         */
+        "binding": { type: 'literal', value: string };
+        /**
+          * When `true` the explain-plan is rendered as HTML (with CodeMirror styling applied). When `false` the component renders a plain string representation. Default: `true`
+          * @public
+         */
+        "forHtml": boolean;
+        /**
+          * Optional translation service used to get localized labels/messages
+          * @public
+         */
+        "translationService"?: TranslationService;
+    }
     interface OntotextPagination {
         "hasMorePages": boolean | undefined;
         "pageElements": number;
@@ -375,6 +392,12 @@ declare global {
         prototype: HTMLOntotextEditableTextFieldElement;
         new (): HTMLOntotextEditableTextFieldElement;
     };
+    interface HTMLOntotextExplainPlanElement extends Components.OntotextExplainPlan, HTMLStencilElement {
+    }
+    var HTMLOntotextExplainPlanElement: {
+        prototype: HTMLOntotextExplainPlanElement;
+        new (): HTMLOntotextExplainPlanElement;
+    };
     interface HTMLOntotextPaginationElement extends Components.OntotextPagination, HTMLStencilElement {
     }
     var HTMLOntotextPaginationElement: {
@@ -445,6 +468,7 @@ declare global {
         "ontotext-download-as": HTMLOntotextDownloadAsElement;
         "ontotext-dropdown": HTMLOntotextDropdownElement;
         "ontotext-editable-text-field": HTMLOntotextEditableTextFieldElement;
+        "ontotext-explain-plan": HTMLOntotextExplainPlanElement;
         "ontotext-pagination": HTMLOntotextPaginationElement;
         "ontotext-yasgui": HTMLOntotextYasguiElement;
         "query-split-button": HTMLQuerySplitButtonElement;
@@ -564,6 +588,23 @@ declare namespace LocalJSX {
           * The value of the text field.
          */
         "value"?: string;
+    }
+    interface OntotextExplainPlan {
+        /**
+          * The SPARQL results binding cell that contains the explain-plan literal. Expected shape: `{ type: 'literal', value: string }`. If undefined or not containing the explain marker, component will render an empty query.
+          * @public
+         */
+        "binding"?: { type: 'literal', value: string };
+        /**
+          * When `true` the explain-plan is rendered as HTML (with CodeMirror styling applied). When `false` the component renders a plain string representation. Default: `true`
+          * @public
+         */
+        "forHtml"?: boolean;
+        /**
+          * Optional translation service used to get localized labels/messages
+          * @public
+         */
+        "translationService"?: TranslationService;
     }
     interface OntotextPagination {
         "hasMorePages"?: boolean | undefined;
@@ -720,6 +761,7 @@ declare namespace LocalJSX {
         "ontotext-download-as": OntotextDownloadAs;
         "ontotext-dropdown": OntotextDropdown;
         "ontotext-editable-text-field": OntotextEditableTextField;
+        "ontotext-explain-plan": OntotextExplainPlan;
         "ontotext-pagination": OntotextPagination;
         "ontotext-yasgui": OntotextYasgui;
         "query-split-button": QuerySplitButton;
@@ -747,6 +789,7 @@ declare module "@stencil/core" {
             "ontotext-download-as": LocalJSX.OntotextDownloadAs & JSXBase.HTMLAttributes<HTMLOntotextDownloadAsElement>;
             "ontotext-dropdown": LocalJSX.OntotextDropdown & JSXBase.HTMLAttributes<HTMLOntotextDropdownElement>;
             "ontotext-editable-text-field": LocalJSX.OntotextEditableTextField & JSXBase.HTMLAttributes<HTMLOntotextEditableTextFieldElement>;
+            "ontotext-explain-plan": LocalJSX.OntotextExplainPlan & JSXBase.HTMLAttributes<HTMLOntotextExplainPlanElement>;
             "ontotext-pagination": LocalJSX.OntotextPagination & JSXBase.HTMLAttributes<HTMLOntotextPaginationElement>;
             /**
              * This is the custom web component which is adapter for the yasgui library. It allows as to
