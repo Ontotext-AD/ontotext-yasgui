@@ -225,6 +225,8 @@ export class Yasr extends EventEmitter {
     return supportedPlugins.sort((p1, p2) => p2.priority - p1.priority).map((p) => p.name);
   }
   public draw() {
+    const replacement = this.rootEl.querySelector(".yasr-header-replacement") as HTMLElement | null;
+    replacement?.parentElement?.removeChild(replacement);
     this.updateHelpButton();
     this.updateResponseInfo();
     this.hideWarning();
@@ -241,7 +243,17 @@ export class Yasr extends EventEmitter {
       }
       return;
     }
-    removeClass(this.headerEl, "hidden");
+
+    const isExplain = this.config.isExplainPlan(this.results);
+
+    if (isExplain) {
+      addClass(this.headerEl, "hidden");
+    } else {
+      removeClass(this.headerEl, "hidden");
+      const replacement = this.rootEl.querySelector(".yasr-header-replacement") as HTMLElement | null;
+      replacement?.parentElement?.removeChild(replacement);
+    }
+
     removeClass(this.resultsEl, "hidden");
     removeClass(this.fallbackInfoEl, "hidden");
     this.updatePluginSelectorNames();
@@ -824,6 +836,7 @@ export interface Config {
    */
   errorRenderers?: ((error: Parser.ErrorSummary) => Promise<HTMLElement | undefined>)[];
   clearState: boolean;
+  isExplainPlan: (results: Parser) => boolean;
 }
 
 export function registerPlugin(name: string, plugin: typeof Plugin, enable = true) {

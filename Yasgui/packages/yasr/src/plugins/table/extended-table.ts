@@ -330,7 +330,7 @@ export class ExtendedTable extends Table {
       this.tableEl.addEventListener('mouseout', this.tableMouseoutHandler.bind(this));
     }
     this.setupIndexColumn();
-    const explainPlanQueryElement = this.yasr.rootEl.querySelector("#explainPlanQuery") as HTMLElement | null;
+    const explainPlanQueryElement = this.yasr.rootEl.querySelector(".explainPlanQuery") as HTMLElement | null;
     if (!explainPlanQueryElement) {
       return;
     }

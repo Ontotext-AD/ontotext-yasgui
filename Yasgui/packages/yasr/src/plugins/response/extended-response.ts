@@ -6,11 +6,22 @@ export default class ExtendedResponse extends Response {
   private isVisibleInterval: any;
 
   canHandleResults() {
-    if (!this.yasr.results || !this.yasr.results.getOriginalResponseAsString || this.yasr.yasqe.isUpdateQuery()) {
+    const results = this.yasr?.results;
+    if (!results) {
       return false;
     }
 
-    return !this.yasr.results.hasError();
+    const isExplain = this.yasr.config.isExplainPlan(results);
+
+    if (
+      !results.getOriginalResponseAsString ||
+      this.yasr.yasqe.isUpdateQuery() ||
+      isExplain
+    ) {
+      return false;
+    }
+
+    return !results.hasError();
   }
 
   draw(persistentConfig: PluginConfig) {
