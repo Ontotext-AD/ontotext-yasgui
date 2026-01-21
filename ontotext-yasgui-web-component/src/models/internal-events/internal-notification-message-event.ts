@@ -17,7 +17,8 @@ export const MessageCode = {
   RESOURCE_LINK_COPIED_SUCCESSFULLY: 'resource_link_copied_successfully',
   QUERY_IS_RUNNING: 'query_is_running',
   EXPLAIN_NOT_ALLOWED: 'explain_not_allowed',
-  EXPLAIN_EXIT_FULLSCREEN: 'explain_exit_fullscreen'
+  EXPLAIN_EXIT_FULLSCREEN: 'explain_exit_fullscreen',
+  EXPLAIN_PLAN_COPIED_SUCCESSFULLY: 'explain_plan_copied_successfully',
 }
 
 export class InternalNotificationMessageEvent implements InternalEvent {

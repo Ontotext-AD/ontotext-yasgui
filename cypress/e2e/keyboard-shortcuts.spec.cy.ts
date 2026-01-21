@@ -271,7 +271,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnExplainPlanQueryShortcut();
 
       // Then I expect to see explain plan message.
-      YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
+      YasrSteps.getExplainPlanResult().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
     });
 
     it('should trigger "EXECUTE_EXPLAIN_PLAN_FOR_QUERY" action on DESCRIBE query', () => {
@@ -284,7 +284,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.clickOnExplainPlanQueryShortcut();
 
       // Then I expect to see explain plan message.
-      YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
+      YasrSteps.getExplainPlanResult().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
     });
   });
 
@@ -298,6 +298,6 @@ describe('Keyboard Shortcuts', () => {
     KeyboardShortcutSteps.clickOnExplainPlanChatGptQueryShortcut();
 
     // Then I expect to see explain plan message.
-    YasrSteps.getTableResults().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
+    YasrSteps.getExplainPlanResult().contains('NOTE: Optimization groups are evaluated one after another exactly in the given order.');
   });
 });
