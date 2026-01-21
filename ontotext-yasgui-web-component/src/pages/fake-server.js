@@ -3,8 +3,11 @@ const namespacesEndpoints = []
 module.exports = function (req, res, next) {
   if (req.url === '/repositories/test-repo') {
     // custom response overriding the dev server
-    res.writeHead(200, {"Content-Type": "application/json"});
+    res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(queryResponse));
+  } else if (req.url === "/repositories/acme") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(explainResponse));
   } else if (req.url === '/repositories/multiple-types') {
     // custom response overriding the dev server
     res.writeHead(200, {"Content-Type": "application/json"});
@@ -5653,4 +5656,22 @@ const compactViewResponse = {
     ]
   }
 }
+
+const explainResponse = {
+  "head" : {
+    "vars" : [
+      "plan"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "plan" : {
+          "type" : "literal",
+          "value" : "SELECT ?s ?p ?o\n{\n  \n  { # ----- Begin optimization group 1 -----\n    \n    ?s ?p ?o . # \tCollection size: 17,416\tPredicate collection size: 17,416\tUnique subjects: 16,359\tUnique objects: 7,658\tCurrent complexity: 17,416\n    \n  } # ----- End optimization group 1 -----\n  # ESTIMATED NUMBER OF ITERATIONS: 17,416\n  \n}\nLIMIT 5\n\n# NOTE: Optimization groups are evaluated one after another exactly in the given order.\n# If there are too many optimization groups consisting of a single statement pattern,\n# then one should try to relocate the following clauses by hand:\n# VALUES, BIND, OPTIONAL, property paths with '*' and/or '+' (the latter can be also surrounded with brackets).\n# Sub-SELECTs will always be evaluated first."
+        }
+      }
+    ]
+  }
+};
 

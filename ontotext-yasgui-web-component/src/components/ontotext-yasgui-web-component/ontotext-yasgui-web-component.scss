@@ -819,8 +819,26 @@
     outline: none;
   }
 
-  #explainPlanQuery {
+  .explainPlanQuery {
     white-space: pre-wrap;
+  }
+
+  .yasr-explain-plan-plugin {
+    background-color: $color-onto-hover-gray;
+  }
+
+  .yasr-explain-plan-plugin .explain-plan-container {
+    padding: 16px;
+  }
+
+  .tabPanel.active .yasr .yasr-header-replacement {
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 12px;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.2;
   }
 }
 

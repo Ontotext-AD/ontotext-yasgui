@@ -87,6 +87,8 @@ describe('Execute query action', () => {
   it('Should be able to execute Explain query plan', () => {
     // Given I'm on the page
     ActionsPageSteps.visit();
+    // I expect Explain plan results
+    QueryStubs.stubExplainPlanQueryResponse();
     // When I click on the explain query button dropdown
     YasqeSteps.openRunSplitMenu();
     YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
@@ -95,7 +97,11 @@ describe('Execute query action', () => {
     // When I select the Explain query plan option
     YasqeSteps.selectRunDropdownMenuOption(0);
     // Then I expect to see the results
-    YasrSteps.getTableResults().should('have.length', 6);
+    YasrSteps.getExplainPlanResult().should('contain.text', 'NOTE: Optimization groups are evaluated one after another exactly in the given order.');
+    // And the Explain plan button should be visible
+    YasrSteps.getExplainPlanCopyButton().should('be.visible');
+    // And the yasr header should not be visible
+    YasrSteps.getResultHeader().should('not.be.visible');
   });
 
   it('Should emit queryExecuted event on each editor tab', {

@@ -49,6 +49,7 @@ import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 import {DEFAULT_THEME} from "../../configurations/constants";
+import { ExplainPlanPlugin } from '../../plugins/yasr/explain-plan/explain-plan-plugin';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -1111,6 +1112,7 @@ export class OntotextYasguiWebComponent {
       // * Build a yasgui instance using the configuration
       YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
       YasrService.registerPlugin(ChartsPlugin.PLUGIN_NAME, ChartsPlugin as any);
+      YasrService.registerPlugin(ExplainPlanPlugin.PLUGIN_NAME, ExplainPlanPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.ontotextYasgui.applyTheme();
       this.registerEventHandlers(yasguiConfiguration);

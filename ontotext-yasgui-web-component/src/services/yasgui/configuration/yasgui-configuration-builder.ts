@@ -21,6 +21,7 @@ import {TimeFormattingService} from '../../utils/time-formatting-service';
 import {PivotTableDownloadPlugin} from '../../yasr/toolbar/pivot-table-download-plugin';
 import {ChartDownloadPlugin} from "../../yasr/toolbar/chart-download-plugin";
 import {DEFAULT_THEME} from "../../../configurations/constants";
+import { ExplainPlanUtil } from '../../utils/explain-plan-util';
 
 /**
  * Builder for yasgui configuration.
@@ -91,6 +92,7 @@ export class YasguiConfigurationBuilder {
         defaultPlugin: '',
         pluginOrder: [],
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration),
+        isExplainPlan: ExplainPlanUtil.isExplainResults
       }
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
