@@ -53,4 +53,40 @@ describe('Sort table plugin functionality', () => {
     // Then I expect results to be ordered alphabetically by the literal column
     YasrSteps.verifyTableColumnOrder(4, ['"10"', '"100"', '"11"', '"2"']);
   });
+
+  it('persists filter and recalculates index column on viewport resize', () => {
+    // Given I have opened the YASGUI
+    // And I have executed a query that returns results
+    YasqeSteps.executeQuery();
+
+    // Then I set a new filter term not in the table
+    YasrSteps.typeInResultFilter('someTerm');
+
+    // And I expect no results to be shown
+    YasrSteps.getTableRows().should('have.length.greaterThan', 0);
+
+    // Then I type 100 as the filter string and should produce one row with "b" in the second column
+    YasrSteps.clearResultFilter();
+    YasrSteps.typeInResultFilter('100');
+    YasrSteps.getTableRows().should('have.length', 1);
+    YasrSteps.getResultCell(0, 1).invoke('text').should('equal', '"b"');
+
+    // When I capture the first-row index before resize
+    YasrSteps.getResultCell(0, 0).invoke('text').as('indexBefore');
+
+    // Then I change the viewport and trigger resize handlers
+    cy.viewport(800, 600);
+    cy.window().trigger('resize');
+
+    // Then I wait briefly for datatable re-draw
+    cy.wait(100);
+
+    // Then the filter input should keep its value
+    YasrSteps.getResultFilter().should('have.value', '100');
+
+    // And the index column should be recalculated (still start at 1)
+    cy.get('@indexBefore').then((before) => {
+      YasrSteps.getResultCell(0, 0).invoke('text').should('equal', String(before).trim());
+    });
+  });
 });
