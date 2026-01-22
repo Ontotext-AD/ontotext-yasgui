@@ -1,0 +1,152 @@
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision d5d1f513241d3bcf6012ae34ed705325b6ac811e)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 4b5e70d39e358f8f12123197c289f5996bf3aa97)
+@@ -681,6 +681,7 @@
+     yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
+     yasrConf.showQueryLoader = this.yasgui.config.yasr.showQueryLoader;
+     yasrConf.clearState = this.yasgui.config.clearState;
++    yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
+     yasrConf.tabId = this.getId();
+ 
+     if (this.yasqe) {
+Index: Yasgui/packages/yasr/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision d5d1f513241d3bcf6012ae34ed705325b6ac811e)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision 4b5e70d39e358f8f12123197c289f5996bf3aa97)
+@@ -29,6 +29,7 @@
+     plugins: {},
+     pluginOrder: ["table", "response"], // Default plugins, others are sorted alphabetically
+     defaultPlugin: "table",
+-    clearState: false
++    clearState: false,
++    isExplainPlan: () => false
+   };
+ }
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision d5d1f513241d3bcf6012ae34ed705325b6ac811e)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 4b5e70d39e358f8f12123197c289f5996bf3aa97)
+@@ -225,6 +225,8 @@
+     return supportedPlugins.sort((p1, p2) => p2.priority - p1.priority).map((p) => p.name);
+   }
+   public draw() {
++    const replacement = this.rootEl.querySelector(".yasr-header-replacement") as HTMLElement | null;
++    replacement?.parentElement?.removeChild(replacement);
+     this.updateHelpButton();
+     this.updateResponseInfo();
+     this.hideWarning();
+@@ -241,7 +243,17 @@
+       }
+       return;
+     }
+-    removeClass(this.headerEl, "hidden");
++
++    const isExplain = this.config.isExplainPlan(this.results);
++
++    if (isExplain) {
++      addClass(this.headerEl, "hidden");
++    } else {
++      removeClass(this.headerEl, "hidden");
++      const replacement = this.rootEl.querySelector(".yasr-header-replacement") as HTMLElement | null;
++      replacement?.parentElement?.removeChild(replacement);
++    }
++
+     removeClass(this.resultsEl, "hidden");
+     removeClass(this.fallbackInfoEl, "hidden");
+     this.updatePluginSelectorNames();
+@@ -824,6 +836,7 @@
+    */
+   errorRenderers?: ((error: Parser.ErrorSummary) => Promise<HTMLElement | undefined>)[];
+   clearState: boolean;
++  isExplainPlan: (results: Parser) => boolean;
+ }
+ 
+ export function registerPlugin(name: string, plugin: typeof Plugin, enable = true) {
+Index: Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+--- a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision d5d1f513241d3bcf6012ae34ed705325b6ac811e)
++++ b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision 4b5e70d39e358f8f12123197c289f5996bf3aa97)
+@@ -6,11 +6,22 @@
+   private isVisibleInterval: any;
+ 
+   canHandleResults() {
+-    if (!this.yasr.results || !this.yasr.results.getOriginalResponseAsString || this.yasr.yasqe.isUpdateQuery()) {
++    const results = this.yasr?.results;
++    if (!results) {
+       return false;
+     }
+ 
+-    return !this.yasr.results.hasError();
++    const isExplain = this.yasr.config.isExplainPlan(results);
++
++    if (
++      !results.getOriginalResponseAsString ||
++      this.yasr.yasqe.isUpdateQuery() ||
++      isExplain
++    ) {
++      return false;
++    }
++
++    return !results.hasError();
+   }
+ 
+   draw(persistentConfig: PluginConfig) {
+Index: Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision d5d1f513241d3bcf6012ae34ed705325b6ac811e)
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts	(revision 4b5e70d39e358f8f12123197c289f5996bf3aa97)
+@@ -330,7 +330,7 @@
+       this.tableEl.addEventListener('mouseout', this.tableMouseoutHandler.bind(this));
+     }
+     this.setupIndexColumn();
+-    const explainPlanQueryElement = this.yasr.rootEl.querySelector("#explainPlanQuery") as HTMLElement | null;
++    const explainPlanQueryElement = this.yasr.rootEl.querySelector(".explainPlanQuery") as HTMLElement | null;
+     if (!explainPlanQueryElement) {
+       return;
+     }
+Index: Yasgui/packages/yasr/src/plugins/table/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision d5d1f513241d3bcf6012ae34ed705325b6ac811e)
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts	(revision 4b5e70d39e358f8f12123197c289f5996bf3aa97)
+@@ -463,7 +463,15 @@
+   }
+ 
+   public canHandleResults() {
+-    return !!this.yasr.results && this.yasr.results.getVariables() && this.yasr.results.getVariables().length > 0;
++    const results = this.yasr?.results;
++    if (!results) {
++      return false;
++    }
++
++    const isExplain = this.yasr.config.isExplainPlan(results);
++
++    const vars = results.getVariables?.();
++    return Array.isArray(vars) && vars.length > 0 && !isExplain;
+   }
+   private removeControls() {
+     // Unregister listeners and remove references to old fields
