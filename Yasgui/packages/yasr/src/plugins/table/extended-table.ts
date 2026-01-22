@@ -34,6 +34,7 @@ export class ExtendedTable extends Table {
   }
 
   public draw(persistentConfig: PersistentConfig) {
+    const previousFilter = this.getCurrentFilterValue();
     this.persistentConfig = { ...this.persistentConfig, ...persistentConfig };
     this.tableEl = document.createElement("table");
     const rows = this.getRows();
@@ -109,6 +110,9 @@ export class ExtendedTable extends Table {
     this.drawControls();
     this.updateTableEllipseClasses();
     this.afterDraw();
+    if (previousFilter) {
+      this.applyFilterValue(previousFilter);
+    }
 
     if (!rows || rows.length < 1) {
       this.updateEmptyTable(this.persistentConfig);
