@@ -27,6 +27,10 @@ export class YasrSteps {
     return YasrSteps.getResultsTableHeaders(yasrIndex).find('th');
   }
 
+  static getTableRows() {
+    return cy.get('table tbody tr');
+  }
+
   static verifyColumnHeaders(columnHeaders: string[]) {
     columnHeaders.forEach((header, index) => {
       YasrSteps.getResultsTableColumns().eq(index).should('have.text', header);
@@ -151,6 +155,14 @@ export class YasrSteps {
 
   static getResultFilter() {
     return cy.get('.tableFilter');
+  }
+
+  static typeInResultFilter(text: string) {
+    this.getResultFilter().type(text);
+  }
+
+  static clearResultFilter() {
+    this.getResultFilter().clear();
   }
 
   static switchToPlugin(pluginName: string, yasrIndex = 0) {
