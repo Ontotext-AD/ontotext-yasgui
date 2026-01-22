@@ -128,6 +128,20 @@ export default class Table implements Plugin<PluginConfig> {
       hideBrackets ? "" : "&gt;"
     }`;
   }
+
+  protected getCurrentFilterValue(): string {
+    return this.tableFilterField?.value || "";
+  }
+
+  protected applyFilterValue(value: string) {
+    if (this.tableFilterField) {
+      this.tableFilterField.value = value;
+    }
+    if (this.dataTable) {
+      this.dataTable.search(value).draw("page");
+    }
+  }
+
   protected getCellContent(binding: Parser.BindingValue, prefixes?: { [label: string]: string }): string {
     let content: string;
     if (binding.type == "uri") {
@@ -191,6 +205,7 @@ export default class Table implements Plugin<PluginConfig> {
   }
 
   public draw(persistentConfig: PersistentConfig) {
+    const previousFilter = this.getCurrentFilterValue();
     this.persistentConfig = { ...this.persistentConfig, ...persistentConfig };
     this.tableEl = document.createElement("table");
     const rows = this.getRows();
@@ -293,6 +308,10 @@ export default class Table implements Plugin<PluginConfig> {
     }
 
     this.drawControls();
+    if (previousFilter) {
+      this.applyFilterValue(previousFilter);
+    }
+
     // Draw again but with the events
     if (this.persistentConfig.isEllipsed !== false) {
       addClass(this.tableEl, "ellipseTable");
@@ -499,6 +518,10 @@ export default class Table implements Plugin<PluginConfig> {
   destroy() {
     this.removeControls();
     this.destroyResizer();
+
+    if (this.tableFilterField) {
+      this.tableFilterField.value = "";
+    }
     // According to datatables docs, destroy(true) will also remove all events
     this.dataTable?.destroy(true);
     this.dataTable = undefined;
