@@ -5,7 +5,6 @@ import {TimeFormattingService} from '../../services/utils/time-formatting-servic
 @Component({
   tag: 'loader-component',
   styleUrl: 'loader-component.scss',
-  shadow: true,
 })
 export class LoaderComponent {
 
