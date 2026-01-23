@@ -20,6 +20,7 @@ import {YasqeMode} from '../../../models/yasqe-mode';
 import {TimeFormattingService} from '../../utils/time-formatting-service';
 import {PivotTableDownloadPlugin} from '../../yasr/toolbar/pivot-table-download-plugin';
 import {ChartDownloadPlugin} from "../../yasr/toolbar/chart-download-plugin";
+import {DEFAULT_THEME} from "../../../configurations/constants";
 
 /**
  * Builder for yasgui configuration.
@@ -81,7 +82,7 @@ export class YasguiConfigurationBuilder {
         isVirtualRepository: externalConfiguration.isVirtualRepository !== undefined ? externalConfiguration.isVirtualRepository : defaultYasqeConfig.isVirtualRepository,
         beforeUpdateQuery: externalConfiguration.beforeUpdateQuery !== undefined ? externalConfiguration.beforeUpdateQuery : defaultYasqeConfig.beforeUpdateQuery,
         getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount,
-        themeName: externalConfiguration.themeName || 'default'
+        themeName: externalConfiguration.themeName || DEFAULT_THEME
       },
       yasr: {
         showQueryLoader: externalConfiguration.showQueryLoader !== undefined ? externalConfiguration.showQueryLoader : defaultYasrConfig.showQueryLoader,
