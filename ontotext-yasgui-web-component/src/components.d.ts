@@ -228,7 +228,7 @@ export namespace Components {
           * @example // Applying a theme from an external CSS file. The corresponding CSS file must be loaded first. setTheme("dracula").then(() => console.log("Theme applied"));
           * @example // Applying a custom theme (CSS must be loaded first) setTheme("mytheme").then(() => console.log("Custom theme applied"));
          */
-        "setTheme": (themeName: string) => Promise<void>;
+        "setTheme": (themeName?: string) => Promise<void>;
         /**
           * Shows the YASQE action button with the name <code>yasqeActionButtonNames</code>.
           * @param yasqeActionButtonNames - the name of the action that needs to be displayed.
