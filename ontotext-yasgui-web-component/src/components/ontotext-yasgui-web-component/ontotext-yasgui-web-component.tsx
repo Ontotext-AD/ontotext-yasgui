@@ -49,6 +49,7 @@ import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 import { ExplainPlanPlugin } from '../../plugins/yasr/explain-plan/explain-plan-plugin';
+import {DEFAULT_THEME} from "../../configurations/constants";
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -305,7 +306,7 @@ export class OntotextYasguiWebComponent {
    * setTheme("mytheme").then(() => console.log("Custom theme applied"));
    */
   @Method()
-  setTheme(themeName: string): Promise<void> {
+  setTheme(themeName = DEFAULT_THEME): Promise<void> {
     return this.getOntotextYasgui().then((ontotextYasgui) => {
       ontotextYasgui.getYasguiConfiguration().yasguiConfig.yasqe.themeName = themeName;
       ontotextYasgui.applyTheme();

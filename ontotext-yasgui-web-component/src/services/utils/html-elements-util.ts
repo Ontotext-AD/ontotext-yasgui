@@ -1,4 +1,5 @@
 import {RenderingMode} from "../../models/yasgui-configuration";
+import {DEFAULT_THEME} from "../../configurations/constants";
 
 export class HtmlElementsUtil {
 
@@ -51,7 +52,7 @@ export class HtmlElementsUtil {
     });
   }
 
-  static createAutocompleteHintElement(text: string, themeName = 'default'): HTMLElement {
+  static createAutocompleteHintElement(text: string, themeName = DEFAULT_THEME): HTMLElement {
     const hint =  document.createElement('span');
     hint.innerHTML = text;
     hint.style.fontSize = '12px';
@@ -61,7 +62,7 @@ export class HtmlElementsUtil {
     hint.style.paddingLeft = 6 + 'px';
     return hint;
   }
-  
+
   static removeElement(element: HTMLElement) {
     element && element.parentNode && element.parentNode.removeChild(element);
   }
