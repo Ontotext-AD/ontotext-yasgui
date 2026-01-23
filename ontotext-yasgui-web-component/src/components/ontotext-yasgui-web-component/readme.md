@@ -224,7 +224,7 @@ Type: `Promise<void>`
 
 
 
-### `setTheme(themeName: string) => Promise<void>`
+### `setTheme(themeName?: string) => Promise<void>`
 
 Sets the theme in the YASQE editor.
 
