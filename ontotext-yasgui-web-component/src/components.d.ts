@@ -29,9 +29,6 @@ import { YasguiResetFlags } from "./models/yasgui/yasgui-reset-flags";
 import { EventService } from "./services/event-service";
 import { ShareQueryDialogConfig } from "./components/share-query-dialog/share-query-dialog";
 export namespace Components {
-    /**
-     * Implementation of dismissible alert box component which can be configured.
-     */
     interface AlertBox {
         /**
           * The message which should be displayed in the alert. If the message is not provided, then the alert is not displayed.
@@ -136,22 +133,6 @@ export namespace Components {
         "pageSize": number;
         "totalElements": number;
     }
-    /**
-     * This is the custom web component which is adapter for the yasgui library. It allows as to
-     * configure and extend the library without potentially breaking the component clients.
-     * The component have some sane defaults for most of its configurations. So, in practice, it can be
-     * used as is by providing just the sparql endpoint config.
-     * For other customizations, the default configurations can be overridden by providing an external
-     * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
-     * component.
-     * There is a configuration watcher which triggers the initialization again after a change is
-     * detected.
-     * During the component initialization, the provided external configuration is passed down to a
-     * configuration builder which use it to override and extend the yasgui library defaults.
-     * After the configuration is ready, then a yasgui instance is created with it.
-     * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
-     * yasgui can be tweaked using the values from the configuration.
-     */
     interface OntotextYasgui {
         /**
           * Aborts all running requests.
@@ -323,9 +304,6 @@ export interface ShareQueryDialogCustomEvent<T> extends CustomEvent<T> {
     target: HTMLShareQueryDialogElement;
 }
 declare global {
-    /**
-     * Implementation of dismissible alert box component which can be configured.
-     */
     interface HTMLAlertBoxElement extends Components.AlertBox, HTMLStencilElement {
     }
     var HTMLAlertBoxElement: {
@@ -404,22 +382,6 @@ declare global {
         prototype: HTMLOntotextPaginationElement;
         new (): HTMLOntotextPaginationElement;
     };
-    /**
-     * This is the custom web component which is adapter for the yasgui library. It allows as to
-     * configure and extend the library without potentially breaking the component clients.
-     * The component have some sane defaults for most of its configurations. So, in practice, it can be
-     * used as is by providing just the sparql endpoint config.
-     * For other customizations, the default configurations can be overridden by providing an external
-     * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
-     * component.
-     * There is a configuration watcher which triggers the initialization again after a change is
-     * detected.
-     * During the component initialization, the provided external configuration is passed down to a
-     * configuration builder which use it to override and extend the yasgui library defaults.
-     * After the configuration is ready, then a yasgui instance is created with it.
-     * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
-     * yasgui can be tweaked using the values from the configuration.
-     */
     interface HTMLOntotextYasguiElement extends Components.OntotextYasgui, HTMLStencilElement {
     }
     var HTMLOntotextYasguiElement: {
@@ -479,9 +441,6 @@ declare global {
     }
 }
 declare namespace LocalJSX {
-    /**
-     * Implementation of dismissible alert box component which can be configured.
-     */
     interface AlertBox {
         /**
           * The message which should be displayed in the alert. If the message is not provided, then the alert is not displayed.
@@ -614,22 +573,6 @@ declare namespace LocalJSX {
         "pageSize"?: number;
         "totalElements"?: number;
     }
-    /**
-     * This is the custom web component which is adapter for the yasgui library. It allows as to
-     * configure and extend the library without potentially breaking the component clients.
-     * The component have some sane defaults for most of its configurations. So, in practice, it can be
-     * used as is by providing just the sparql endpoint config.
-     * For other customizations, the default configurations can be overridden by providing an external
-     * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
-     * component.
-     * There is a configuration watcher which triggers the initialization again after a change is
-     * detected.
-     * During the component initialization, the provided external configuration is passed down to a
-     * configuration builder which use it to override and extend the yasgui library defaults.
-     * After the configuration is ready, then a yasgui instance is created with it.
-     * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
-     * yasgui can be tweaked using the values from the configuration.
-     */
     interface OntotextYasgui {
         /**
           * An input object property containing the yasgui configuration.
@@ -775,9 +718,6 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            /**
-             * Implementation of dismissible alert box component which can be configured.
-             */
             "alert-box": LocalJSX.AlertBox & JSXBase.HTMLAttributes<HTMLAlertBoxElement>;
             "confirmation-dialog": LocalJSX.ConfirmationDialog & JSXBase.HTMLAttributes<HTMLConfirmationDialogElement>;
             "copy-link-dialog": LocalJSX.CopyLinkDialog & JSXBase.HTMLAttributes<HTMLCopyLinkDialogElement>;
@@ -791,22 +731,6 @@ declare module "@stencil/core" {
             "ontotext-editable-text-field": LocalJSX.OntotextEditableTextField & JSXBase.HTMLAttributes<HTMLOntotextEditableTextFieldElement>;
             "ontotext-explain-plan": LocalJSX.OntotextExplainPlan & JSXBase.HTMLAttributes<HTMLOntotextExplainPlanElement>;
             "ontotext-pagination": LocalJSX.OntotextPagination & JSXBase.HTMLAttributes<HTMLOntotextPaginationElement>;
-            /**
-             * This is the custom web component which is adapter for the yasgui library. It allows as to
-             * configure and extend the library without potentially breaking the component clients.
-             * The component have some sane defaults for most of its configurations. So, in practice, it can be
-             * used as is by providing just the sparql endpoint config.
-             * For other customizations, the default configurations can be overridden by providing an external
-             * configuration object compliant with the <code>ExternalYasguiConfiguration</code> interface to the
-             * component.
-             * There is a configuration watcher which triggers the initialization again after a change is
-             * detected.
-             * During the component initialization, the provided external configuration is passed down to a
-             * configuration builder which use it to override and extend the yasgui library defaults.
-             * After the configuration is ready, then a yasgui instance is created with it.
-             * After the yasgui instance is ready, then a post initialization phase begins. During the phase the
-             * yasgui can be tweaked using the values from the configuration.
-             */
             "ontotext-yasgui": LocalJSX.OntotextYasgui & JSXBase.HTMLAttributes<HTMLOntotextYasguiElement>;
             "query-split-button": LocalJSX.QuerySplitButton & JSXBase.HTMLAttributes<HTMLQuerySplitButtonElement>;
             "save-query-dialog": LocalJSX.SaveQueryDialog & JSXBase.HTMLAttributes<HTMLSaveQueryDialogElement>;

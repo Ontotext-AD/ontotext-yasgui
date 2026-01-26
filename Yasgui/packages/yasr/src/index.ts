@@ -257,9 +257,17 @@ export class Yasr extends EventEmitter {
     removeClass(this.resultsEl, "hidden");
     removeClass(this.fallbackInfoEl, "hidden");
     this.updatePluginSelectorNames();
-    const compatiblePlugins = this.getCompatiblePlugins();
+    let compatiblePlugins = this.getCompatiblePlugins();
+    if (isExplain) {
+     const explainPluginName = 'explain-plan';
+     if (this.plugins[explainPluginName] && this.config.plugins && this.config.plugins[explainPluginName] != null) {
+        compatiblePlugins = [explainPluginName];
+     } else {
+        compatiblePlugins = [];
+     }
+   }
     let pluginToDraw: string | undefined;
-    if (this.getSelectedPlugin() && this.getSelectedPlugin()?.canHandleResults()) {
+    if (!isExplain && this.getSelectedPlugin() && this.getSelectedPlugin()?.canHandleResults()) {
       pluginToDraw = this.getSelectedPluginName();
       // When present remove fallback box
       this.emptyFallbackElement();
