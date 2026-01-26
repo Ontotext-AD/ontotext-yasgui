@@ -4,7 +4,6 @@ import {SvgUtil} from '../../../services/utils/svg-util';
 import {HtmlUtil} from "../../../services/utils/html-util";
 import {SparqlUtils} from "../../../services/utils/sparql-utils";
 import {Yasr} from "../../../models/yasgui/yasr";
-import {ExplainPlanUtil} from "../../../services/utils/explain-plan-util";
 
 export interface PluginConfig {
   width: string;
@@ -51,11 +50,8 @@ export class ChartsPlugin implements YasrPlugin {
     if (!results) {
       return false;
     }
-
-    const isExplain = ExplainPlanUtil.isExplainResults(results);
-
     const vars = results.getVariables?.();
-    return Array.isArray(vars) && vars.length > 0 && !isExplain;
+    return Array.isArray(vars) && vars.length > 0;
   }
 
   initialize(): Promise<void> {

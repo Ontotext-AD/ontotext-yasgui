@@ -463,15 +463,7 @@ export default class Table implements Plugin<PluginConfig> {
   }
 
   public canHandleResults() {
-    const results = this.yasr?.results;
-    if (!results) {
-      return false;
-    }
-
-    const isExplain = this.yasr.config.isExplainPlan(results);
-
-    const vars = results.getVariables?.();
-    return Array.isArray(vars) && vars.length > 0 && !isExplain;
+    return !!this.yasr.results && this.yasr.results.getVariables() && this.yasr.results.getVariables().length > 0;
   }
   private removeControls() {
     // Unregister listeners and remove references to old fields
