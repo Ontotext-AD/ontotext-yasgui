@@ -13,7 +13,6 @@ import {PivotTableService} from '../../../services/plugins/pivot-table-service';
 import {PivotTableRenderer} from '../../../models/plugins/pivot-table/pivot-table-renderer';
 import {ObjectUtil} from '../../../services/utils/object-util';
 import {PivotTableRendererType} from '../../../models/plugins/pivot-table/pivot-table-renderer-type';
-import { ExplainPlanUtil } from '../../../services/utils/explain-plan-util';
 
 const NOT_TRANSLATED_RENDERERS_TYPES: string[] = [
   PivotTableRendererType.TREEMAP,
@@ -78,14 +77,7 @@ export class PivotTablePlugin implements YasrPlugin {
 
   canHandleResults(): boolean {
     const results = this.yasr?.results;
-    const isExplain = ExplainPlanUtil.isExplainResults(results);
-
-    return (
-      results &&
-      results.getVariables &&
-      results.getVariables() &&
-      !isExplain
-    );
+    return !!(results && results.getVariables && results.getVariables());
   }
 
   draw(persistentConfig: PivotTablePersistentConfig, _runtimeConfig?: any): Promise<void> | void {
