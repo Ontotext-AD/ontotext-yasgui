@@ -80,12 +80,8 @@ export class PivotTablePlugin implements YasrPlugin {
     const results = this.yasr?.results;
     const isExplain = ExplainPlanUtil.isExplainResults(results);
 
-    return (
-      results &&
-      results.getVariables &&
-      results.getVariables() &&
-      !isExplain
-    );
+    const variables = results?.getVariables?.();
+    return variables?.length > 0 && !isExplain;
   }
 
   draw(persistentConfig: PivotTablePersistentConfig, _runtimeConfig?: any): Promise<void> | void {
