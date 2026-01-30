@@ -27,13 +27,13 @@
   }
 
   .keyboard-shortcut-description-item {
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
-    overflow: auto;
     gap: 10px;
     justify-content: flex-end;
     margin: 8px 0;
     align-items: center;
+    width: 100%;
   }
 
   .keyboard-shortcuts-content {
@@ -97,10 +97,14 @@
   .keyboard-shortcut-keys {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 4px;
+    flex: 0 0 50%;
+    min-width: 200px ;
   }
 
   .key {
+    white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
