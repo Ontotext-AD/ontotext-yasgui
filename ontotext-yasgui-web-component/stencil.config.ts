@@ -26,7 +26,7 @@ export const config: Config = {
         {src: 'css/fonts'},
         {src: 'css/external/dracula.css'},
         {src: 'css/external/oceanic-next.css'},
-        {src: '../node_modules/remixicon/fonts', dest: 'fonts/remixicon'},
+        {src: '../node_modules/remixicon/fonts', dest: 'css/fonts/remixicon'},
         {src: 'i18n'}
       ]
     },
