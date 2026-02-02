@@ -7,6 +7,10 @@ example.
 The `ontotext-yasgui-web-component` component is implemented and build with the help of the 
 [Stencil](https://stenciljs.com/) framework.
 
+## Prerequisites
+⚠️ **Important**
+The `ontotext-yasgui-web-component` requires Remix Icons to be loaded by the client application before use.
+
 ## Installation
 
 ```
