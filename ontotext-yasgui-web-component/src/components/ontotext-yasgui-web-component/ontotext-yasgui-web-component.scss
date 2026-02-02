@@ -5,15 +5,6 @@
 @import 'src/css/toolbar';
 @import 'src/css/pivottable-plugin';
 @import 'src/css/charts-plugin';
-@import "~remixicon/fonts/remixicon.css";
-/* Override the remixicon font paths because we are copying them in the project with stenciljs and loading them from
-   there which messes with the relative paths used by remix for loading those fonts. */
-@font-face {
-  font-family: "remixicon";
-  src: url('fonts/remixicon/remixicon.woff2') format('woff2'),
-  url('fonts/remixicon/remixicon.woff') format('woff'),
-  url('fonts/remixicon/remixicon.ttf') format('truetype');
-}
 
 :host {
   display: block;
