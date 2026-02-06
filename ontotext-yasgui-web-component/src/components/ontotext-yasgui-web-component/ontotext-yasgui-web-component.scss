@@ -55,6 +55,7 @@
 
     .CodeMirror {
       border-color: $color-onto-border;
+      width: 100%;
     }
 
     /* prevent overlapping of the query text with the yasqe action buttons on the right side of the editor */
@@ -72,30 +73,12 @@
       z-index: 1015;
     }
 
-    .yasqe-fullscreen .keyboard-shortcuts-dialog-button {
-      font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      padding: 2px 8px;
-      margin-top: 0;
-      background-color: $color-onto-background-lightest;
-      outline: none;
-      border: 0.5px solid $color-onto-border;
-      cursor: pointer;
-      z-index: 1015;
-      line-height: 14px;
-    }
-
-    .yasqe-fullscreen .yasqe_tooltip_queryButton {
-      margin-bottom: 1.3rem;
-    }
     .yasqe {
       &:not(.yasqe-fullscreen) {
         .yasqe_buttons {
-          .yasqe_buttons-top {
+          .yasqe_buttons-top,
+          .yasqe_buttons-bottom {
             align-items: flex-end;
-            margin-right: 10px;
           }
         }
       }
@@ -106,12 +89,9 @@
       }
 
       .yasqe_buttons {
-        position: absolute;
-        right: 20px;
-        width: 105px;
         bottom: 0;
         height: auto;
-
+        right: 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -122,7 +102,7 @@
         .yasqe_buttons-bottom {
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-end;
           gap: 2px;
           width: 100%;
         }
@@ -135,8 +115,6 @@
         // Positioning is handled by wrappers; avoid auto-push
         .yasqe_tooltip_queryButton {
           display: flex;
-          margin-top: 0;
-          margin-left: 15px;
         }
 
         .yasqe_queryButton {
