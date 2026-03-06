@@ -36,6 +36,9 @@ module.exports = function (req, res, next) {
   } else if (req.url === '/repositories/compact-view') {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(compactViewResponse));
+  } else if (req.url === '/repositories/yasr-geo-plugin') {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(geoPluginResponse));
   } else {
     // pass request on to the default dev server
     next();
@@ -5675,3 +5678,150 @@ const explainResponse = {
   }
 };
 
+const geoPluginResponse = {
+  "head": {
+    "vars": [
+      "featureType",
+      "exampleWKT",
+      "geo_tooltip",
+      "geo_popup"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#Point"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POINT(25.9657 43.8356)"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": "Simple point tooltip"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "Simple point popup content"
+        }
+      },
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#MultiPoint"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "MULTIPOINT((25.9667 43.8356),(25.9669 43.8358),(25.9671 43.8356))"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": ""
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": ""
+        }
+      },
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#LineString"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "LINESTRING(25.9680 43.8356, 25.9682 43.8358, 25.9684 43.8356)"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": "Line string tooltip"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "Line string popup content"
+        }
+      },
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#MultiLineString"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "MULTILINESTRING((25.9690 43.8356,25.9692 43.8358), (25.9694 43.8357,25.9696 43.8359))"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": ""
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": ""
+        }
+      },
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#Polygon"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POLYGON((25.9700 43.8356,25.9704 43.8356,25.9704 43.8359,25.9700 43.8359,25.9700 43.8356))"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": "Polygon tooltip"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "Polygon popup content"
+        }
+      },
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#MultiPolygon"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "MULTIPOLYGON(((25.9710 43.8356,25.9713 43.8356,25.9713 43.8359,25.9710 43.8359,25.9710 43.8356)), ((25.9714 43.8356,25.9717 43.8356,25.9717 43.8359,25.9714 43.8359,25.9714 43.8356)))"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": "Multi Poligon tooltip"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "Multi Polygon popup content"
+        }
+      },
+      {
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#GeometryCollection"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "GEOMETRYCOLLECTION(POINT(25.9725 43.8357), LINESTRING(25.9727 43.8356,25.9729 43.8358))"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": "Geometry Collection tooltip"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "Geometry Collection popup content"
+        }
+      }
+    ]
+  }
+}

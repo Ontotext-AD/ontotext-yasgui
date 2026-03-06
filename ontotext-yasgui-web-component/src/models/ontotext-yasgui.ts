@@ -1,11 +1,12 @@
 import {Yasqe} from './yasgui/yasqe';
 import {YasguiConfiguration} from './yasgui-configuration';
-import {TabQueryModel} from "./external-yasgui-configuration";
+import {TabQueryModel} from './external-yasgui-configuration';
 import {Yasgui} from './yasgui/yasgui';
 import {Tab} from './yasgui/tab';
 import {OngoingRequestsInfo} from './ongoing-requests-info';
-import {YasguiResetFlags} from "./yasgui/yasgui-reset-flags";
+import {YasguiResetFlags} from './yasgui/yasgui-reset-flags';
 import {EXPLAIN_PLAN_TYPE} from './keyboard-shortcut-description';
+import {SparqlResults} from './yasgui/parser';
 
 /**
  * An adapter around the actual yasgui instance.
@@ -53,11 +54,11 @@ export class OntotextYasgui {
   leaveFullScreen(): void {
     this.getYasqe()?.leaveFullScreen();
   }
-  
+
   getYasguiConfiguration(): YasguiConfiguration {
     return this.config;
   }
-  
+
   /**
    * Applies the theme to the YASQE instance of the tab with ID <code>tabId</code>.
    * If <code>tabId</code> is not provided, the theme will be applied to the active tab.
@@ -69,13 +70,13 @@ export class OntotextYasgui {
     if (!tab) {
       return;
     }
-    
+
     const yasqe = tab.getYasqe();
     if (yasqe) {
       yasqe.setOption('theme', this.config.yasguiConfig.yasqe.themeName);
     }
   }
-  
+
   /**
    * Sets a query value in the editor by preserving the cursor position.
    * @param query The query value to be set.
@@ -143,7 +144,7 @@ export class OntotextYasgui {
     return this.yasgui.getTab().getYasqe().getQueryType();
   }
 
-  getEmbeddedResultAsJson(): string {
+  getEmbeddedResultAsJson(): false | SparqlResults | undefined {
     return this.yasgui.getTab().getYasr().results.getAsJson();
   }
 
@@ -212,7 +213,7 @@ export class OntotextYasgui {
   getEditorHeight(tabId: string): number {
     const heightString = this.getInstance().getTab(tabId).persistentJson.yasqe.editorHeight;
     if (heightString) {
-      return parseInt(heightString.replace("px", ""), 10);
+      return parseInt(heightString.replace('px', ''), 10);
     } else {
       return 300;
     }

@@ -5,6 +5,8 @@
 @import 'src/css/toolbar';
 @import 'src/css/pivottable-plugin';
 @import 'src/css/charts-plugin';
+@import 'src/css/geo-plugin';
+@import '~leaflet/dist/leaflet.css';
 
 :host {
   display: block;

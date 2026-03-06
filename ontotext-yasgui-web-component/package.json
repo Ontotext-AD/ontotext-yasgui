@@ -28,14 +28,19 @@
     "lint:fix": "eslint --fix 'src/**'"
   },
   "dependencies": {
-    "@stencil/core": "2.20.0",
-    "remixicon": "^4.7.0",
     "@floating-ui/dom": "^1.7.4",
-    "codemirror": "^5.51.0"
+    "@stencil/core": "2.20.0",
+    "betterknown": "^1.2.0",
+    "codemirror": "^5.51.0",
+    "leaflet": "^1.9.4",
+    "proj4": "^2.20.3",
+    "remixicon": "^4.7.0"
   },
   "devDependencies": {
     "@stencil/sass": "^2.0.0",
+    "@types/geojson": "^7946.0.16",
     "@types/jest": "^27.0.3",
+    "@types/leaflet": "^1.9.21",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0",
