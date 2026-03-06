@@ -198,6 +198,14 @@ export class YasrSteps {
     YasrSteps.getPivotTablePluginTab().click();
   }
 
+  static getGeoPluginTab() {
+    return YasrSteps.getYasr().find('.select_geo');
+  }
+
+  static openGeoPluginTab() {
+    YasrSteps.getGeoPluginTab().click();
+  }
+
   static getRawResults() {
     return this.getYasr().find('.yasr_results');
   }

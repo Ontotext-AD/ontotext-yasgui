@@ -1,4 +1,5 @@
 import {Yasqe} from './yasqe';
+import {Binding, SparqlResults} from './parser';
 
 /**
  * This is our internal Yasr type interface used only for typing convenience.
@@ -20,11 +21,12 @@ export interface Yasr {
 
   results?: {
     totalElements: number,
-    getBindings: () => [] | undefined,
+    getBindings: () => Binding[] | null,
     getHasMorePages: () => boolean,
-    getAsJson: () => any,
+    getAsJson: () => SparqlResults,
     asCsv: () => string,
-    getVariables: () => any
+    getVariables: () => any,
+    json?: SparqlResults;
   }
 
   config: any;

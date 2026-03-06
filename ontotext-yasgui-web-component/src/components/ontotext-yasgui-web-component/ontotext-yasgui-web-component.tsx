@@ -6,7 +6,7 @@ import {OntotextYasgui} from '../../models/ontotext-yasgui';
 import {VisualisationUtils} from '../../services/utils/visualisation-utils';
 import {HtmlElementsUtil} from '../../services/utils/html-elements-util';
 import {OntotextYasguiService} from '../../services/yasgui/ontotext-yasgui-service';
-import {ExternalYasguiConfiguration, TabQueryModel} from "../../models/external-yasgui-configuration";
+import {ExternalYasguiConfiguration, TabQueryModel} from '../../models/external-yasgui-configuration';
 import {TranslationService} from '../../services/translation.service';
 import {ServiceFactory} from '../../services/service-factory';
 import {YasguiConfigurationBuilder} from '../../services/yasgui/configuration/yasgui-configuration-builder';
@@ -15,8 +15,8 @@ import {
   SavedQueryConfig,
   SaveQueryData,
   UpdateQueryData
-} from "../../models/saved-query-configuration";
-import {ConfirmationDialogConfig} from "../confirmation-dialog/confirmation-dialog";
+} from '../../models/saved-query-configuration';
+import {ConfirmationDialogConfig} from '../confirmation-dialog/confirmation-dialog';
 import {ShareQueryDialogConfig} from '../share-query-dialog/share-query-dialog';
 import {OutputEvent, toOutputEvent} from '../../models/output-events/output-event';
 import {InternalDownloadAsEvent} from '../../models/internal-events/internal-download-as-event';
@@ -37,19 +37,20 @@ import {YasqeButtonType} from '../../models/yasqe-button-name';
 import {YasqeService} from '../../services/yasqe/yasqe-service';
 import {YasrService} from '../../services/yasr/yasr-service';
 import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugin';
-import {ChartsPlugin} from "../../plugins/yasr/charts/charts-plugin";
+import {ChartsPlugin} from '../../plugins/yasr/charts/charts-plugin';
 import {Tab} from '../../models/yasgui/tab';
 import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
 import {InternalRequestAbortedEvent} from '../../models/internal-events/internal-request-aborted-event';
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
-import {Debounce} from "../../services/utils/debounce";
-import {YasguiResetFlags} from "../../models/yasgui/yasgui-reset-flags";
+import {Debounce} from '../../services/utils/debounce';
+import {YasguiResetFlags} from '../../models/yasgui/yasgui-reset-flags';
 import {EXPLAIN_PLAN_TYPE, KeyboardShortcutItem} from '../../models/keyboard-shortcut-description';
 import {
   InternalKeyboardShortcutsClickedEvent
 } from '../../models/internal-events/internal-keyboard-shortcuts-clicked-event';
 import { ExplainPlanPlugin } from '../../plugins/yasr/explain-plan/explain-plan-plugin';
-import {DEFAULT_THEME} from "../../configurations/constants";
+import {DEFAULT_THEME} from '../../configurations/constants';
+import {GeoPlugin} from '../../plugins/yasr/geo/geo-plugin';
 
 /**
  * This is the custom web component which is adapter for the yasgui library. It allows as to
@@ -1113,6 +1114,7 @@ export class OntotextYasguiWebComponent {
       YasrService.registerPlugin(PivotTablePlugin.PLUGIN_NAME, PivotTablePlugin as any);
       YasrService.registerPlugin(ChartsPlugin.PLUGIN_NAME, ChartsPlugin as any);
       YasrService.registerPlugin(ExplainPlanPlugin.PLUGIN_NAME, ExplainPlanPlugin as any);
+      YasrService.registerPlugin(GeoPlugin.PLUGIN_NAME, GeoPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.ontotextYasgui.applyTheme();
       this.registerEventHandlers(yasguiConfiguration);
