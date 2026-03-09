@@ -23,6 +23,7 @@ function getYasqeAutocompleter() {
 
 function getPrefixes() {
   return {
+    "": "http://data.europe.eu",
     "gn": "http://www.geonames.org/ontology#",
     "path": "http://www.ontotext.com/path#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
