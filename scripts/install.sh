@@ -9,3 +9,10 @@ echo ''
 echo '#########################   Installing -- Yasgui --   ##########################'
 cd Yasgui
 yarn install
+
+cd ..
+
+echo ''
+echo '#########################   Installing -- Conformance tests --   ##########################'
+cd conformance-tests
+npm install

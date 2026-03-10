@@ -14,7 +14,8 @@
     "cy:open": "cypress open",
     "cy:open-flaky": "cypress open --config-file cypress-flaky.config.js",
     "cy:run": "cypress run",
-    "cy:run-flaky": "cypress run --config-file cypress-flaky.config.js"
+    "cy:run-flaky": "cypress run --config-file cypress-flaky.config.js",
+    "test:conformance": "npm run test --prefix \"conformance-tests\""
   },
   "repository": {
     "type": "git",
