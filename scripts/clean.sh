@@ -14,3 +14,5 @@ rm -fr Yasgui/packages/yasqe/node_modules
 rm -fr Yasgui/packages/yasqe/build
 rm -fr Yasgui/packages/yasr/node_modules
 rm -fr Yasgui/packages/yasr/build
+
+rm -rf conformance-tests/node_modules
