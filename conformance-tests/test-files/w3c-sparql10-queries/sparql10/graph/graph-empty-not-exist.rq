@@ -1,3 +1,0 @@
-PREFIX ex: <http://example.org/>
-
-SELECT * { GRAPH ex:unknown {} }

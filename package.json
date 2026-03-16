@@ -15,7 +15,10 @@
     "cy:open-flaky": "cypress open --config-file cypress-flaky.config.js",
     "cy:run": "cypress run",
     "cy:run-flaky": "cypress run --config-file cypress-flaky.config.js",
-    "test:conformance": "npm run test --prefix \"conformance-tests\""
+    "cy:run-conformance": "npm run test:update && cypress run --config-file cypress-conformance.config.js",
+    "cy:open-conformance": "npm run test:update && cypress open --config-file cypress-conformance.config.js",
+    "test:conformance": "npm run test:update && npm run test --prefix \"conformance-tests\"",
+    "test:update": "sh scripts/update-w3c-tests.sh"
   },
   "repository": {
     "type": "git",
@@ -40,6 +43,7 @@
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
+    "shared-conformance-utils": "file:./shared-conformance-utils",
     "yarn": "^1.22.22"
   }
 }

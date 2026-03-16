@@ -1,0 +1,16 @@
+{
+  "name": "shared-conformance-utils",
+  "version": "1.0.0",
+  "description": "Shared W3C SPARQL conformance test utilities",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "postinstall": "npm run build",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.126",
+    "typescript": "~5.4.5"
+  }
+}
+

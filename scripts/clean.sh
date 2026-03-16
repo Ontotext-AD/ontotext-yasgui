@@ -16,3 +16,6 @@ rm -fr Yasgui/packages/yasr/node_modules
 rm -fr Yasgui/packages/yasr/build
 
 rm -rf conformance-tests/node_modules
+
+rm -rf shared-conformance-utils/dist
+rm -rf shared-conformance-utils/node_modules

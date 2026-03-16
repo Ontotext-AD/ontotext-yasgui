@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Compiles the YASQE SPARQL 1.1 tokenizer for use in the Node.js syntax check test.
+ * Compiles the YASQE SPARQL 1.x tokenizer for use in the Node.js syntax check test.
  * Run from the Yasgui/ root directory.
  *
  * Usage:
@@ -17,7 +17,7 @@ interface BuildOptions {
 }
 
 /**
- * Compiles the YASQE SPARQL 1.1 tokenizer from TypeScript source and copies the
+ * Compiles the YASQE SPARQL 1.x tokenizer from TypeScript source and copies the
  * pre-generated tokenizer table into the build output directory.
  *
  * The compiled output is placed in `grammar-build/` relative to this script's directory,

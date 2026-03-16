@@ -6,7 +6,7 @@ export class YasqeSteps {
   static getYasqe() {
     return cy.get('.yasqe');
   }
-  
+
   static getYasgui() {
     return cy.get('.yasgui');
   }
@@ -315,7 +315,7 @@ export class YasqeSteps {
   static getYasqeHintsElement() {
     return YasqeSteps.getYasgui().find('.CodeMirror-hints');
   }
-  
+
   static getQuery() {
     return this.getCodeMirror().then((cm) => {
       return cm.getValue();
@@ -325,6 +325,12 @@ export class YasqeSteps {
   static clearEditor() {
     this.getCodeMirror().then((cm) => {
       cm.getDoc().setValue('');
+    })
+  }
+
+  static setQuery(query: string) {
+    this.getCodeMirror().then((cm) => {
+      cm.getDoc().setValue(query);
     })
   }
 
@@ -381,7 +387,7 @@ export class YasqeSteps {
   static getAbortQueryTooltip() {
     return YasqeSteps.getAbortQueryButton().parent();
   }
-  
+
   static getAutocompleteHintElement() {
     return cy.get('.yasqe-autocomplete-hint');
   }

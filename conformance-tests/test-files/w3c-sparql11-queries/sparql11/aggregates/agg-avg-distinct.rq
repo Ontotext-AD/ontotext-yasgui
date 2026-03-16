@@ -1,6 +1,0 @@
-PREFIX : <http://www.example.org/>
-SELECT ?s (AVG(DISTINCT ?o) AS ?avg)
-WHERE {
-	?s ?p ?o
-}
-GROUP BY ?s

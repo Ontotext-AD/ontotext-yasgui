@@ -11,6 +11,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "shared-conformance-utils": ["../shared-conformance-utils/dist/index"]
+    },
     "types": ["jest", "node"]
   },
   "files": ["node_modules/jest-expect-message/types/index.d.ts"],
