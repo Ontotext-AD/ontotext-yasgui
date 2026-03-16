@@ -984,7 +984,7 @@ export class Yasqe extends CodeMirror {
 
     this.clearGutter("gutterErrorBar");
 
-    var state: TokenizerState;
+    var state: TokenizerState | undefined;
     for (var l = 0; l < this.getDoc().lineCount(); ++l) {
       var precise = false;
       if (!this.prevQueryValid) {
@@ -1001,7 +1001,7 @@ export class Yasqe extends CodeMirror {
         },
         precise
       );
-      var state = token.state;
+      state = token.state;
       this.setOption("queryType", state.queryType);
       if (state.OK == false) {
         if (!this.config.syntaxErrorCheck) {
@@ -1037,6 +1037,22 @@ export class Yasqe extends CodeMirror {
 
         this.queryValid = false;
         break;
+      }
+    }
+
+    // Run end-of-query semantic validations (e.g. GROUP BY scoping at end of input)
+    if (this.queryValid && state) {
+      state.finalize();
+      if (state.OK == false) {
+        if (this.config.syntaxErrorCheck) {
+          const warningEl = drawSvgStringAsElement(imgs.warning);
+          if (state.errorMsg) {
+            tooltip(this, warningEl, escape(state.errorMsg));
+          }
+          warningEl.className = "parseErrorIcon";
+          this.setGutterMarker(l - 1, "gutterErrorBar", warningEl);
+        }
+        this.queryValid = false;
       }
     }
   }
