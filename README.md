@@ -7,6 +7,9 @@ This project is composed by following sub-projects:
 1. Yasgui;
 2. ontotext-yasgui-web-component;
 3. cypress. - An automated testing project.
+4. shared-conformance-utils -Shared utilities for the conformance tests. The utilities are used by both the conformance-tests and cypress conformance tests.
+5. conformance-tests - Contains tests for the SPARQL syntax and semantics conformance. The tests are executed against the grammar and tokenizer directly.
+6. test-files - A collection of test files used by the conformance tests. The test files are based on the W3C SPARQL test suite.
 
 ## Yasgui
 A workspace with the latest version of the original source code of the 
@@ -23,6 +26,17 @@ provides a common interface for unobtrusive customizations via configurations an
 ## cypress
 
 A project with automated e2e tests for the `ontotext-yasgui-web-component`.
+
+## shared-conformance-utils
+Shared utilities for the conformance tests. The utilities are used by both the conformance-tests and cypress conformance tests.
+The utilities parse the SPARQL test manifests from the W3C SPARQL test suite and provide a common interface for executing the tests.
+
+## conformance-tests
+A project with tests for the SPARQL syntax and semantics conformance. The tests are executed against the grammar and tokenizer directly. The tests are based on the W3C SPARQL test suite. The test suite is parsed with the shared utilities from the `shared-conformance-utils` project
+
+## test-files
+A collection of test files used by the conformance tests. The test files are based on the W3C SPARQL test suite.
+The test collection is automatically updated with the latest version of the W3C SPARQL test suite.
 
 # How to get started with development tasks in this project
 
@@ -56,13 +70,25 @@ npm install
     The server supports a watch mode, and a live reload of the web browser.
 
 7. #### Running the automated tests
+ - Running the Cypress tests
+
     The automated tests can be run by executing one of the following commands: <br/>
     `npm run cy:run` for headless tests execution. <br/>
     `npm run cy:open` for opening the cypress dashboard. <br/>
+    `npm run cy:run-conformance` for headless execution of the cypress conformance tests. <br/>
+    `npm run cy:open-conformance` for opening the cypress dashboard for the conformance tests. <br/>
 
-    > The development web server must be started before running the automated cypress tests.
+    >   The development web server must be started before running the automated cypress tests.
+- Running the syntax conformance tests
 
-8. #### Ensuring the code quality
+    The syntax conformance tests can be run by executing the `npm run test:conformance` command. This will execute the tests in the `conformance-tests` project. The tests are executed against the grammar and tokenizer directly.
+
+8. ### Updating the test files collection
+    The test files collection is based on the W3C SPARQL test suite.
+
+    To update the test files collection with the latest version of the W3C SPARQL test suite, execute the `npm run test:update` command. This will download the latest version of the W3C SPARQL test suite and update the test files collection in the `test-files` project.
+
+9. #### Ensuring the code quality
     The code quality is monitored with eslint. Executing the `npm run lint` command will perform a code
     lint check. And running the `npm run lint:fix` command will execute a code lint check as well as an
     automatic problems fixing where possible and reporting the rest.
