@@ -12,14 +12,17 @@
       "jest-expect-message"
     ],
     "testMatch": [
-      "**/src/syntax-check.spec.ts"
+      "**/src/tests/*.spec.ts"
     ],
     "testTimeout": 60000
+  },
+  "dependencies": {
+    "shared-conformance-utils": "file:../shared-conformance-utils"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^16.18.126",
-    "codemirror": "^5.55.0",
+    "codemirror": "^5.51.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-expect-message": "^1.1.3",

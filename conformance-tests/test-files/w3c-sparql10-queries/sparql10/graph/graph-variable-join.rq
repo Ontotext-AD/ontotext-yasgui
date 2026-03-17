@@ -1,5 +1,0 @@
-PREFIX : <http://example/>
-
-SELECT ?g {
-    GRAPH ?g { ?g :p ?o }
-}

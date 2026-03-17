@@ -13,6 +13,13 @@ yarn install
 cd ..
 
 echo ''
+echo '#########################   Installing -- Shared conformance utils --   ##########################'
+cd shared-conformance-utils
+npm install
+
+cd ..
+
+echo ''
 echo '#########################   Installing -- Conformance tests --   ##########################'
 cd conformance-tests
 npm install

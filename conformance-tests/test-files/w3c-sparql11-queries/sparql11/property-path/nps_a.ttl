@@ -1,3 +1,0 @@
-@prefix ex: <http://example.org/> .
-ex:sa a ex:oa .
-ex:sp ex:p ex:op .

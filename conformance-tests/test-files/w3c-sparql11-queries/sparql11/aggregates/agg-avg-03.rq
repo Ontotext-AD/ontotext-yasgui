@@ -1,2 +1,0 @@
-SELECT (AVG(?o) AS ?avg)
-WHERE { ?s ?p ?o }

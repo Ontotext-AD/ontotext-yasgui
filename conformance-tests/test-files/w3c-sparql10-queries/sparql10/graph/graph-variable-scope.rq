@@ -1,3 +1,0 @@
-SELECT * {
-    GRAPH ?g { FILTER (BOUND(?g)) }
-}
