@@ -2,56 +2,56 @@ export class QueryStubs {
 
   static readonly BASE_TRIPLE_QUERY = 'select (<<?s ?p ?o>> as ?t) {?s ?p ?o}';
 
-  static stubDefaultQueryResponse(withDelay: number = 0) {
-    QueryStubs.stubQueryResponse('/queries/default-query-response.json', 'getDefaultQueryResponse', withDelay);
+  static stubDefaultQueryResponse(repositoryId =  'test-repo', withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/default-query-response.json', repositoryId, 'getDefaultQueryResponse', withDelay);
   }
 
-  static stubExplainPlanQueryResponse(withDelay: number = 0) {
-    QueryStubs.stubQueryResponse('/queries/explain-plan-query-response.json', 'getExplainPlanQueryQueryResponse', withDelay);
+  static stubExplainPlanQueryResponse(repositoryId =  'test-repo', withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/explain-plan-query-response.json', repositoryId, 'getExplainPlanQueryQueryResponse', withDelay);
   }
 
-  static stubEmptyQueryResponse(withDelay: number = 0) {
-    QueryStubs.stubQueryResponse('/queries/empty-query-response.json', 'getEmptyResponse', withDelay);
+  static stubEmptyQueryResponse(repositoryId =  'test-repo', withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/empty-query-response.json', repositoryId, 'getEmptyResponse', withDelay);
   }
 
-  static stubDefaultTripleQueryResponse(withDelay: number = 0) {
-    QueryStubs.stubQueryResponse('/queries/default-triple-query-response.json', 'getDefaultTripleQueryResponse', withDelay);
+  static stubDefaultTripleQueryResponse(repositoryId =  'test-repo', withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/default-triple-query-response.json', repositoryId, 'getDefaultTripleQueryResponse', withDelay);
   }
 
-  static stubAskTrueQueryResponse(withDelay: number = 0) {
-    QueryStubs.stubQueryResponse('/queries/ask-true-query-response.json', 'askTrueQueryResponse', withDelay);
+  static stubAskTrueQueryResponse(repositoryId =  'test-repo', withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/ask-true-query-response.json', repositoryId, 'askTrueQueryResponse', withDelay);
   }
 
-  static stubAskFalseQueryResponse(withDelay: number = 0) {
-    QueryStubs.stubQueryResponse('/queries/ask-false-query-response.json', 'askFalseQueryResponse', withDelay);
+  static stubAskFalseQueryResponse(repositoryId =  'test-repo', withDelay: number = 0) {
+    QueryStubs.stubQueryResponse('/queries/ask-false-query-response.json', repositoryId, 'askFalseQueryResponse', withDelay);
   }
 
-  static stubSingleIRIResult(withDelay = 0) {
-    QueryStubs.stubQueryResponse('/queries/single-iri-result.json', 'single-iri-result', withDelay);
+  static stubSingleIRIResult(repositoryId =  'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-iri-result.json', repositoryId, 'single-iri-result', withDelay);
   }
 
-  static stubSingleLiteralWithLangTagResult(withDelay = 0) {
-    QueryStubs.stubQueryResponse('/queries/single-literal-with-lang-tag-response.json', 'single-iri-result', withDelay);
+  static stubSingleLiteralWithLangTagResult(repositoryId =  'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-lang-tag-response.json', repositoryId, 'single-iri-result', withDelay);
   }
 
-  static stubSingleLiteralWithoutLangTagResult(withDelay = 0) {
-    QueryStubs.stubQueryResponse('/queries/single-literal-without-lang-tag-response.json', 'single-iri-result', withDelay);
+  static stubSingleLiteralWithoutLangTagResult(repositoryId =  'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-without-lang-tag-response.json', repositoryId, 'single-iri-result', withDelay);
   }
 
-  static stubSingleLiteralWithDataTypeResult(withDelay = 0) {
-    QueryStubs.stubQueryResponse('/queries/single-literal-with-data-type-response.json', 'single-iri-result', withDelay);
+  static stubSingleLiteralWithDataTypeResult(repositoryId =  'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-data-type-response.json', repositoryId, 'single-iri-result', withDelay);
   }
 
-  static stubManyColumnResult(withDelay = 0) {
-    QueryStubs.stubQueryResponse('/queries/many-column-response.json', 'many-column-result', withDelay);
+  static stubManyColumnResult(repositoryId =  'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/many-column-response.json', repositoryId, 'many-column-result', withDelay);
   }
 
-  static stubQueryResponse(fixture: string, alias: string, withDelay: number = 0) {
-    cy.intercept('/repositories/test-repo', {fixture, delay: withDelay}).as(alias);
+  static stubQueryResponse(fixture: string, repositoryId: string, alias: string, withDelay: number = 0) {
+    cy.intercept(`/repositories/${repositoryId}`, {fixture, delay: withDelay}).as(alias);
   }
 
-  static stubQueryErrorResponse(errorBody = '', statusCode = 500) {
-    cy.intercept('/repositories/test-repo', {
+  static stubQueryErrorResponse(repositoryId = 'test-repo', errorBody = '', statusCode = 500) {
+    cy.intercept(`/repositories/${repositoryId}`, {
       statusCode,
       body: errorBody
     }).as('loadQueryErrorResponse');
@@ -64,7 +64,7 @@ export class QueryStubs {
   }
 
   static stubLongRunningQuery(delay = 3000) {
-    this.stubQueryResponse('/queries/default-query-response.json', 'longRunningQuery', delay);
+    this.stubQueryResponse('/queries/default-query-response.json', 'test-repo', 'longRunningQuery', delay);
   }
 
   static stubChartDataQuery() {

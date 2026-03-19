@@ -64,6 +64,7 @@
   "yasr.noresults.box.info": "Aucun résultat de l'exécution précédente. Cliquez sur Exécuter ou appuyez sur Ctrl/Cmd-Enter pour exécuter la requête ou la mise à jour en cours.",
   "yasr.fallback.box.info.for_more_info": "pour plus d'informations.",
   "yasr.fallback.box.info.info_message": "Impossible de rendre les résultats avec le plugin {{selectedPluginName}}, les résultats sont actuellement rendus avec le plugin {{selectedPluginName}}.",
+  "yasr.fallback.selected_plugin_render_failed": "Impossible d’afficher les résultats avec le plugin {{selectedPluginName}}. Veuillez choisir un autre plugin pour afficher les résultats.",
   "yasqe.keyboard_shortcuts.btn.label": "raccourcis clavier",
   "yasqe.keyboard_shortcuts.dialog.title": "Raccourcis clavier",
   "yasqe.keyboard_shortcuts.dialog.section.lines_formatting": "LIGNES (FORMATAGE)",

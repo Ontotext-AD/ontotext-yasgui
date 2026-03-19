@@ -1,7 +1,8 @@
-import {YasrGeoPluginPageSteps} from "../../../../steps/pages/yasr-geo-plugin-page-steps";
-import {YasqeSteps} from "../../../../steps/yasqe-steps";
-import {YasrSteps} from "../../../../steps/yasr-steps";
-import {GeoPluginSteps} from "../../../../steps/geo-plugin-steps";
+import {YasrGeoPluginPageSteps} from '../../../../steps/pages/yasr-geo-plugin-page-steps';
+import {YasqeSteps} from '../../../../steps/yasqe-steps';
+import {YasrSteps} from '../../../../steps/yasr-steps';
+import {GeoPluginSteps} from '../../../../steps/geo-plugin-steps';
+import {QueryStubs} from '../../../../stubs/query-stubs';
 
 describe('Geo Plugin', () => {
   it('should be able to display geo plugin', () => {
@@ -19,13 +20,13 @@ describe('Geo Plugin', () => {
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 10);
 
     // WHEN: I hover over a geo feature that has the binding variable geo_tooltip.
-    GeoPluginSteps.hoverGeoFeature(0);
+    GeoPluginSteps.hoverGeoFeature();
     // THEN: I should see the value of the geo_tooltip variable.
     GeoPluginSteps.getTooltip().contains('Simple point tooltip');
     GeoPluginSteps.closeGeoFeaturePopupAndTooltip();
 
     // WHEN: I click on a geo feature that has the binding variable geo_popup.
-    GeoPluginSteps.clickGeoFeature(0);
+    GeoPluginSteps.clickGeoFeature();
     // THEN: I should see the value of the geo_popup variable.
     GeoPluginSteps.getFeaturePopupContent().contains('Simple point popup content');
     GeoPluginSteps.closeGeoFeaturePopupAndTooltip();
@@ -50,4 +51,38 @@ describe('Geo Plugin', () => {
     // THEN: I should see the maps we configured.
     GeoPluginSteps.getAllControlPanelMaps().should('have.length', 2);
   });
+
+  it('should display an info message when the Geo plugin is selected and no geo data is returned', () => {
+    // GIVEN: I visit a page containing "ontotex-yasgui-web-component" with the Geo plugin selected.
+    openGeoPlugin();
+
+    // WHEN: I execute a query that returns no geo data.
+    QueryStubs.stubDefaultQueryResponse('yasr-geo-plugin');
+    YasqeSteps.executeQueryWithoutWaitResult();
+
+    // THEN: I should see the info message.
+    YasrSteps.getFallbackInfo().should('contain', 'Could not render results with the Geo plugin. Please choose another plugin to display the results.');
+    // AND: The plugin tabs should be visible.
+    YasrSteps.getPluginsButtons().should('be.visible');
+  });
+
+  it('should display an info message when the Geo plugin is selected and no data is returned', () => {
+    // GIVEN: I visit a page containing "ontotex-yasgui-web-component" with the Geo plugin selected.
+    openGeoPlugin();
+
+    // WHEN: I execute a query that returns an empty result.
+    QueryStubs.stubEmptyQueryResponse('yasr-geo-plugin');
+    YasqeSteps.executeQueryWithoutWaitResult();
+    // THEN: I should see the info message.
+    YasrSteps.getFallbackInfo().should('contain', 'Could not render results with the Geo plugin. Please choose another plugin to display the results.');
+    // AND: The plugin tabs should be visible.
+    YasrSteps.getPluginsButtons().should('be.visible');
+  });
 });
+
+const openGeoPlugin = () => {
+  YasrGeoPluginPageSteps.visit();
+  YasqeSteps.executeQuery();
+  YasrSteps.openGeoPluginTab();
+  GeoPluginSteps.getAllGeoFeatures().should('have.length', 10);
+};

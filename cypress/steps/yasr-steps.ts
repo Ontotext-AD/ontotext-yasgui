@@ -7,6 +7,10 @@ export class YasrSteps {
     return cy.get('.yasr_header');
   }
 
+  static getFallbackInfo() {
+    return cy.get('.yasr_fallback_info');
+  }
+
   static getErrorHeader() {
     return cy.get('.errorHeader');
   }

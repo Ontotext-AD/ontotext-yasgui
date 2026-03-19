@@ -17,7 +17,7 @@ describe('Error handling', () => {
   it('should show error without show full message button when error message is les than 160 characters.', () => {
     // When I visit a page with "ontotext-yasgui-web-component" in it,
     // and execute wrong query that returns short error message (less thant 160).
-    QueryStubs.stubQueryErrorResponse(SHORT_ERROR_BODY);
+    QueryStubs.stubQueryErrorResponse('test-repo', SHORT_ERROR_BODY);
     YasqeSteps.executeErrorQuery();
 
     // Then I expect to see a message that
@@ -39,7 +39,7 @@ describe('Error handling', () => {
   it('should show error with show full message button when error message is more than than 160 characters.', () => {
     // When I visit a page with "ontotext-yasgui-web-component" in it,
     // and execute wrong query.
-    QueryStubs.stubQueryErrorResponse(LONG_ERROR_BODY);
+    QueryStubs.stubQueryErrorResponse('test-repo', LONG_ERROR_BODY);
     YasqeSteps.executeErrorQuery();
 
     // Then I expect to see a message that
