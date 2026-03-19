@@ -1,8 +1,10 @@
 import {circleMarker, CircleMarker, GeoJSONOptions, LatLng, Layer, PathOptions} from 'leaflet';
 import {Feature, GeoJsonProperties} from 'geojson';
-import {GeoProperties} from '../models/geo-properties';
 import {BindingValue} from '../../../../models/yasgui/parser';
 import {ObjectUtil} from '../../../../services/utils/object-util';
+import {GeoProperties} from '../models/geo-properties';
+import {GeoPluginConfiguration} from '../models/geo-plugin-configuration';
+import {LeafletService} from './leaflet-service';
 
 /**
  * Builder class for constructing Leaflet GeoJSON options with customizable point markers,
@@ -14,6 +16,12 @@ export class GeoJsonOptionsBuilder {
    * Internal storage for the GeoJSON options being built
    */
   private options: GeoJSONOptions = {};
+
+  private configuration: GeoPluginConfiguration;
+
+  constructor(configuration: GeoPluginConfiguration) {
+    this.configuration = configuration;
+  }
 
   /**
    * Configure the GeoJSON to use custom point markers.
@@ -53,9 +61,10 @@ export class GeoJsonOptionsBuilder {
    * @returns A `GeoJsonProperties` object representing the Leaflet path options for the feature.
    */
   private styleFunction(feature: Feature): GeoJsonProperties {
-    const options: GeoJsonProperties = this.getDefaultPathOptions();
-    this.updatePathOptions(options, feature);
-    return options;
+    return {
+      ...this.getDefaultPathOptions(),
+      ...GeoJsonOptionsBuilder.getGeoProperties(feature)
+    };
   }
 
   /**
@@ -156,25 +165,43 @@ export class GeoJsonOptionsBuilder {
    * @returns A PathOptions object with default color, weight, opacity, and fillOpacity.
    */
   private getDefaultPathOptions(): PathOptions {
-    // TODO: Determine how to get the default color (possibly from configuration).
     return {
-      weight: 2,
-      color: '#3388ff',
-      fillColor: '#3388ff',
-      opacity: 0.7,
-      fillOpacity: 0.5,
+      weight: this.configuration.geoWeight,
+      color: this.configuration.geoColor,
+      opacity: this.configuration.geoOpacity,
+      fillColor: this.configuration.geoFillColor,
+      fillOpacity: this.configuration.geoFillOpacity,
     }
   }
 
   /**
-   * Updates path options based on feature properties.
-   * Intended to support options such as geo_color, geo_opacity, geo_fillOpacity, etc.
+   * Extracts style-related geo properties from a GeoJSON feature.
    *
-   * @param _options - The current PathOptions to update.
-   * @param _feature - The GeoJSON feature containing property values.
+   * @param feature - A GeoJSON Feature whose `properties` may contain geo-prefixed entries.
+   *
+   * @returns A flat key-value map of Leaflet style properties (e.g. `color`, `fillColor`).
+   *
+   * @example
+   * Input:
+   * feature.properties = {
+   *   geo_Color: { value: 'red' },
+   *   geo_fillOpacity: { value: 0.5 }
+   * }
+   *
+   * Output:
+   * {
+   *   color: 'red',
+   *   fillOpacity: '0.5'
+   * }
    */
-  private updatePathOptions(_options: GeoJsonProperties, _feature: Feature): void {
-    // TODO update color options that we will support geo_color, geo_opacity, geo_fillOpacity, etc.
-    //  _feature.properties.geo_color
+  private static getGeoProperties(feature: Feature): PathOptions {
+    return Object.entries(LeafletService.getGeoPropertiesMapping())
+      .reduce((geoProperties, [geoKey, targetKey]) => {
+        const propertyValue = feature?.properties?.[geoKey]?.value;
+        if (propertyValue) {
+          geoProperties[targetKey] = propertyValue;
+        }
+        return geoProperties;
+      }, {});
   }
 }

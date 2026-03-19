@@ -199,7 +199,7 @@ export interface ExternalYasguiConfiguration {
    * initializing the editor using them.
    */
   populateFromUrl?: boolean;
-  
+
   /**
    * Name of the CodeMirror 5 theme to apply in YASQE.
    *
@@ -225,7 +225,7 @@ export interface ExternalYasguiConfiguration {
    * the editor will fall back to the default theme.
    */
   themeName?: string;
-  
+
   // ***********************************************************
   //
   // All configurations related with the yasr instance
@@ -259,10 +259,9 @@ export interface ExternalYasguiConfiguration {
   pluginOrder: string[]
 
   /**
-   * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which
-   * fields are supported by the plugin configuration.
+   * An object containing the configuration for each plugin, where the keys are the plugin name and the values is the corresponding plugin configuration.
    */
-  pluginsConfigurations: Map<string, any>;
+  pluginsConfigurations: Record<string, any>;
 
   /**
    * Defines pageSize of pagination. Default value is 10.

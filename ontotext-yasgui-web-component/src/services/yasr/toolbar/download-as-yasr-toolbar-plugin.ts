@@ -10,7 +10,7 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
   private readonly translationService: TranslationService;
   private readonly pluginNameToPluginsConfigurations: Map<string, DownloadAsPluginConfiguration>;
 
-  constructor(serviceFactory: ServiceFactory, externalPluginsConfigurations: Map<string, any>) {
+  constructor(serviceFactory: ServiceFactory, externalPluginsConfigurations: Record<string, any>) {
     this.translationService = serviceFactory.get(TranslationService);
     this.pluginNameToPluginsConfigurations = new Map<string, DownloadAsPluginConfiguration>();
     this.pluginNameToPluginsConfigurations.set('extended_table', new ExtendedTableDownloadAsConfiguration());
@@ -22,7 +22,9 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
 
     Object.keys(externalPluginsConfigurations).forEach((pluginName) => {
       const pluginConfiguration = this.toDownloadAsPluginConfiguration(pluginName, externalPluginsConfigurations[pluginName]);
-      this.pluginNameToPluginsConfigurations.set(pluginConfiguration.getPluginName(), pluginConfiguration);
+      if (pluginConfiguration) {
+        this.pluginNameToPluginsConfigurations.set(pluginConfiguration.getPluginName(), pluginConfiguration);
+      }
     });
   }
 

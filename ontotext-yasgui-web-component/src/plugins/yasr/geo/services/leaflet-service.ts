@@ -1,5 +1,5 @@
 import {TileLayer, tileLayer} from 'leaflet';
-import {GeoJsonOptionsBuilder} from './geo-json-options-builder';
+import {GeoProperties} from '../models/geo-properties';
 
 /**
  * Service class providing factory methods to create Leaflet tile layers and GeoJSON configuration builders.
@@ -91,17 +91,15 @@ export class LeafletService {
   }
 
   /**
-   * Returns a new instance of GeoJsonOptionsBuilder for configuring GeoJSON layers.
-   *
-   * This builder allows you to define:
-   * - Feature styling
-   * - Popups and tooltips
-   * - Event handlers
-   * - Custom point-to-layer transformations
-   *
-   * @returns {GeoJsonOptionsBuilder} Instance of GeoJsonOptionsBuilder.
+   * Returns a mapping between geo-prefixed feature properties and their corresponding Leaflet style property keys.
    */
-  static getGeoJsonOptionsBuilder(): GeoJsonOptionsBuilder {
-    return new GeoJsonOptionsBuilder();
+  static getGeoPropertiesMapping(): Partial<Record<GeoProperties, string>> {
+    return {
+      [GeoProperties.FIGURE_WEIGHT]: 'weight',
+      [GeoProperties.FIGURE_COLOR]: 'color',
+      [GeoProperties.FIGURE_OPACITY]: 'opacity',
+      [GeoProperties.FIGURE_FILL_COLOR]: 'fillColor',
+      [GeoProperties.FIGURE_FILL_OPACITY]: 'fillOpacity',
+    };
   }
 }
