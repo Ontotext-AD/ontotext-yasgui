@@ -64,6 +64,7 @@
   "yasr.noresults.box.info": "No results from previous run. Click Run or press Ctrl/Cmd-Enter to execute the current query or update.",
   "yasr.fallback.box.info.for_more_info": "for more information.",
   "yasr.fallback.box.info.info_message": "Could not render results with the {{selectedPluginName}} plugin, the results currently are rendered with the {{selectedPluginName}} plugin.",
+  "yasr.fallback.selected_plugin_render_failed": "Could not render results with the {{selectedPluginName}} plugin. Please choose another plugin to display the results.",
   "yasqe.keyboard_shortcuts.btn.label": "keyboard shortcuts",
   "yasqe.keyboard_shortcuts.dialog.title": "Keyboard shortcuts",
   "yasqe.keyboard_shortcuts.dialog.section.lines_formatting": "LINES (FORMATTING)",

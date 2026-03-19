@@ -12,7 +12,7 @@ describe('Abort query', () => {
   it('should abort query when click on "Abort query" button.', () => {
     // When I visit a page with "ontotext-yasgui-web-component" in it,
     // and execute a query that takes a long time.
-    QueryStubs.stubDefaultQueryResponse(1000);
+    QueryStubs.stubDefaultQueryResponse('test-repo', 1000);
     YasqeSteps.executeQueryWithoutWaitResult();
 
     // Then I expect to an "Abort query" button to be displayed,

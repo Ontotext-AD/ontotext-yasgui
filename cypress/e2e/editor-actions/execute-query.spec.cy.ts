@@ -21,7 +21,7 @@ describe('Execute query action', () => {
   });
 
   it('Should display a progress indicator during query execution', () => {
-    QueryStubs.stubDefaultQueryResponse(2000);
+    QueryStubs.stubDefaultQueryResponse('test-repo', 2000);
     ActionsPageSteps.visit();
     YasqeSteps.executeQueryWithoutWaitResult();
     YasqeSteps.getTabWithProgressBar().should('exist');
