@@ -68,7 +68,7 @@ constructQuery ==>
 	 [*(datasetClause),'WHERE','{',?(triplesTemplate),'}',solutionModifier]].
 
 describeQuery ==>
-	['DESCRIBE',+(varOrIRIref or embeddedTriple) or '*',
+	['DESCRIBE',+(varOrIRIref) or '*',
 	*(describeDatasetClause),?(whereClause),solutionModifier].
 
 askQuery ==>
@@ -102,7 +102,7 @@ groupClause ==>
 %[20]
 groupCondition ==>
 	[builtInCall].
- groupCondition ==>
+groupCondition ==>
 	[functionCall].
 groupCondition ==>
 	['(',expression,?(['AS',var]),')'].
@@ -300,8 +300,6 @@ dataBlockValue ==> [iriRef].
 dataBlockValue ==> [rdfLiteral].
 dataBlockValue ==> [numericLiteral].
 dataBlockValue ==> [booleanLiteral].
-% SPARQL* extension
-dataBlockValue ==> [disallowVars,embeddedTriple,allowVars].
 dataBlockValue ==> ['UNDEF'].
 
 %[66]
@@ -327,10 +325,10 @@ functionCall ==>
 argList ==>
 	['NIL'].
 argList ==>
-	['(',?('DISTINCT'),expression,*([',',expression]),')'].
+	['(',?([?('DISTINCT'),expression,*([',',expression])]),')'].
 %[71]
 expressionList ==> ['NIL'].
-expressionList ==> ['(',expression,*([',',expression]),')'].
+expressionList ==> ['(',?([expression,*([',',expression])]),')'].
 %[73]
 constructTemplate ==>
 	['{',?(constructTriples),'}'].
@@ -445,11 +443,11 @@ blankNodePropertyList ==> ['[',propertyListNotEmpty,']'].
 triplesNodePath ==> [collectionPath].
 triplesNodePath ==> [blankNodePropertyListPath].
 %[101]
-blankNodePropertyListPath ==> ['[',propertyListPathNotEmpty,']'].
+blankNodePropertyListPath ==> ['[',propertyListPath,']'].
 %[102]
 collection ==> ['(',+(graphNode),')'].
 %[103]
-collectionPath ==> ['(',+(graphNodePath),')'].
+collectionPath ==> ['(',*(graphNodePath),')'].
 %[104]
 graphNode ==> [varOrTerm].
 graphNode ==> [triplesNode].
@@ -471,8 +469,6 @@ graphTerm ==> [rdfLiteral].
 graphTerm ==> [numericLiteral].
 graphTerm ==> [booleanLiteral].
 graphTerm ==> [blankNode].
-% SPARQL* extension
-graphTerm ==> [embeddedTriple].
 graphTerm ==> ['NIL'].
 %[110]
 expression ==> [conditionalOrExpression].
@@ -519,8 +515,6 @@ primaryExpression ==> [iriRefOrFunction].
 primaryExpression ==> [rdfLiteral].
 primaryExpression ==> [numericLiteral].
 primaryExpression ==> [booleanLiteral].
-% SPARQL* extension
-primaryExpression ==> [embeddedTriple].
 primaryExpression ==> [var].
 primaryExpression ==> [aggregate].
 %[120]
@@ -648,8 +642,7 @@ prefixedName ==> ['PNAME_NS'].
 %[138]
 blankNode ==> ['BLANK_NODE_LABEL'].
 blankNode ==> ['ANON'].
-% SPARQL* extension
-embeddedTriple ==> ['<<',varOrTerm,verb,varOrTerm,'>>'].
+
 
 % tokens defined by regular expressions elsewhere
 tm_regex([
@@ -800,11 +793,7 @@ tm_keywords([
 'SAMPLE',
 'SEPARATOR',
 
-'STR',
-
-% SPARQL* extension
-'<<',
-'>>'
+'STR'
 ]).
 
 % Other tokens representing fixed, case sensitive, strings

@@ -2003,8 +2003,8 @@ module.exports = {
       NOT: ["notExistsFunc"]
     },
     clear: { CLEAR: ["CLEAR", "?SILENT_2", "graphRefAll"] },
-    collection: { "(": ["(", "+graphNode", ")"] },
-    collectionPath: { "(": ["(", "+graphNodePath", ")"] },
+    collection: { "(": ["(", "*graphNode", ")"] },
+    collectionPath: { "(": ["(", "*graphNodePath", ")"] },
     conditionalAndExpression: {
       "!": ["valueLogical", "*[&&,valueLogical]"],
       "+": ["valueLogical", "*[&&,valueLogical]"],
