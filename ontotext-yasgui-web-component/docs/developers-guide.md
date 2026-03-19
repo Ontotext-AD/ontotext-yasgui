@@ -341,7 +341,7 @@ Follow the steps below:
   ```
 - **defaultPlugin**: then name of active plugin when yasr is created. Default value is "extended_table".
 - **pluginOrder**: describes the order of how plugins will be displayed. Default is ["extended_table", "response"].
-- **externalPluginsConfigurations**: Map with configurations for concrete plugin. The key of the map is a name of plugin and value is object with the configuration of the plugin.
+- **externalPluginsConfigurations**: An object containing the configuration for each plugin, where the keys are the plugin name and the values is the corresponding plugin configuration.
 
 ## Plugins
  ### Table plugin
@@ -411,6 +411,25 @@ This plugin extends the original yasgui plugin with ability to format the cell v
       ]
   }
 }
+```
+
+### Geo plugin
+This plugin extends the original yasgui plugin with ability to display geographical data.
+- name of plugin: **geo**
+- configuration into the common externalPluginsConfigurations:
+```
+        {
+           // Width of the geo feature line. Default value is 3.
+           geoWeight?: number, 
+           // Color of the geo feature line. Default value is '#3388ff'.
+           geoColor?: string, 
+           // Opacity of the geo feature line, The value must be between 0 and 1.
+           geoOpacity?: number, 
+           // Fill color of polygon features. Default value is '#3388ff'.
+           geoFillColor?: string,
+           // Fill opacity of polygon features, the value must be between 0 and 1.
+           geoFillOpacity?: number 
+        }
 ```
   
 

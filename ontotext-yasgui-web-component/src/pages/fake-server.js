@@ -5684,7 +5684,12 @@ const geoPluginResponse = {
       "featureType",
       "exampleWKT",
       "geo_tooltip",
-      "geo_popup"
+      "geo_popup",
+      "geo_weight",
+      "geo_color",
+      "geo_opacity",
+      "geo_fillColor",
+      "geo_fillOpacity"
     ]
   },
   "results": {
@@ -5706,6 +5711,29 @@ const geoPluginResponse = {
         "geo_popup": {
           "type": "literal",
           "value": "Simple point popup content"
+        },
+        "geo_weight": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+            "type": "literal",
+            "value": "4"
+        },
+        "geo_color": {
+          "type": "literal",
+          "value": "yellow"
+        },
+        "geo_opacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.4"
+        },
+        "geo_fillColor": {
+          "type": "literal",
+          "value": "red"
+        },
+        "geo_fillOpacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.5"
         }
       },
       {
@@ -5725,6 +5753,29 @@ const geoPluginResponse = {
         "geo_popup": {
           "type": "literal",
           "value": ""
+        },
+        "geo_weight": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "2"
+        },
+        "geo_color": {
+          "type": "literal",
+          "value": "green"
+        },
+        "geo_opacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.3"
+        },
+        "geo_fillColor": {
+          "type": "literal",
+          "value": "#F7F2EC"
+        },
+        "geo_fillOpacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.6"
         }
       },
       {
@@ -5744,6 +5795,29 @@ const geoPluginResponse = {
         "geo_popup": {
           "type": "literal",
           "value": "Line string popup content"
+        },
+        "geo_weight": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "4"
+        },
+        "geo_color": {
+          "type": "literal",
+          "value": "yellow"
+        },
+        "geo_opacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.4"
+        },
+        "geo_fillColor": {
+          "type": "literal",
+          "value": "red"
+        },
+        "geo_fillOpacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.5"
         }
       },
       {
@@ -5763,6 +5837,29 @@ const geoPluginResponse = {
         "geo_popup": {
           "type": "literal",
           "value": ""
+        },
+        "geo_weight": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "4"
+        },
+        "geo_color": {
+          "type": "literal",
+          "value": "yellow"
+        },
+        "geo_opacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.4"
+        },
+        "geo_fillColor": {
+          "type": "literal",
+          "value": "red"
+        },
+        "geo_fillOpacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.5"
         }
       },
       {
@@ -5782,6 +5879,29 @@ const geoPluginResponse = {
         "geo_popup": {
           "type": "literal",
           "value": "Polygon popup content"
+        },
+        "geo_weight": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "4"
+        },
+        "geo_color": {
+          "type": "literal",
+          "value": "yellow"
+        },
+        "geo_opacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.4"
+        },
+        "geo_fillColor": {
+          "type": "literal",
+          "value": "red"
+        },
+        "geo_fillOpacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.5"
         }
       },
       {
@@ -5820,6 +5940,29 @@ const geoPluginResponse = {
         "geo_popup": {
           "type": "literal",
           "value": "Geometry Collection popup content"
+        },
+        "geo_weight": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "4"
+        },
+        "geo_color": {
+          "type": "literal",
+          "value": "yellow"
+        },
+        "geo_opacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "1"
+        },
+        "geo_fillColor": {
+          "type": "literal",
+          "value": "red"
+        },
+        "geo_fillOpacity": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "type": "literal",
+          "value": "0.5"
         }
       }
     ]
