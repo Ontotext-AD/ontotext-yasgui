@@ -267,9 +267,21 @@ export class Yasr extends EventEmitter {
       if (this.drawnPlugin) {
         this.plugins[this.drawnPlugin].destroy?.();
       }
-      pluginToDraw = compatiblePlugins[0];
-      // Signal to create the plugin+
-      this.fillFallbackBox(pluginToDraw);
+      const compatiblePlugin = this.plugins[compatiblePlugins[0]];
+      // If the selected plugin cannot handle the results, we should prompt the user to switch to another compatible
+      // plugin (via the fallback dialog).
+
+      // However, if the first compatible plugin is hidden from selection (hideFromSelection = true)
+      // and therefore cannot be chosen manually, we must render it directly instead of showing the dialog.
+      // Otherwise, the user would be prompted to switch plugins without having access to the valid options.
+      //
+      // This can occur when the selected plugin supports only a subset of results, and a new query falls outside of its
+      // capabilities. In such cases, hidden compatible plugins must be applied automatically to ensure the results remain visible.
+      if (compatiblePlugin && compatiblePlugin.hideFromSelection) {
+        pluginToDraw = compatiblePlugins[0]
+      } else {
+        this.fillFallbackBox();
+      }
     }
 
     if (!pluginToDraw || (this.drawnPlugin && this.getSelectedPluginName() !== this.drawnPlugin)) {
@@ -464,40 +476,17 @@ export class Yasr extends EventEmitter {
     if (this.pluginSelectorsEl.children.length >= 1) this.headerEl.appendChild(this.pluginSelectorsEl);
     this.updatePluginSelectors();
   }
-  private fillFallbackBox(fallbackElement?: string) {
+  private fillFallbackBox() {
     this.emptyFallbackElement();
-
-    // Do not show fallback render warnings for plugins without a selector.
-    if (this.plugins[fallbackElement || this.drawnPlugin || ""]?.hideFromSelection) return;
-
-    const selectedPlugin = this.getSelectedPlugin();
-    const fallbackPluginLabel =
-      this.plugins[fallbackElement || this.drawnPlugin || ""]?.label || fallbackElement || this.drawnPlugin || "";
-    const selectedPluginLabel = selectedPlugin?.label || this.getSelectedPluginName();
-    const selectedPluginName = this.translationService.translate(
-      `yasr.plugin_control.plugin.name.${selectedPluginLabel}`.toLowerCase()
-    );
-
-    const textElement = document.createElement("p");
-    textElement.innerText = this.translationService.translate("yasr.fallback.box.info.info_message", [
-      { key: "selectedPluginName", value: fallbackPluginLabel },
-    ]);
-    textElement.innerText += this.getSelectedPlugin()?.helpReference
-      ? this.translationService.translate("yasr.plugin_control.info.see")
-      : "";
-
-    if (selectedPlugin?.helpReference) {
-      const linkElement = document.createElement("a");
-      linkElement.innerText = this.translationService.translate("yasr.plugin_control.plugin_documentation.link.label", [
-        { key: "selectedPluginName", value: selectedPluginName },
-      ]);
-      linkElement.href = selectedPlugin.helpReference;
-      linkElement.rel = "noopener noreferrer";
-      linkElement.target = "_blank";
-      textElement.append(linkElement);
-      textElement.innerHTML += " " + this.translationService.translate("yasr.fallback.box.info.for_more_info");
-    }
-
+    addClass(this.dataElement, "hidden");
+    const selectedPluginLabel = this.getSelectedPlugin()?.label || this.getSelectedPluginName();
+    const selectedPluginName = this.translationService.translate(`yasr.plugin_control.plugin.name.${selectedPluginLabel}`.toLowerCase());
+    const renderingFailedInfoMessage = this.translationService.translate('yasr.fallback.selected_plugin_render_failed', [{
+        key: 'selectedPluginName',
+        value: selectedPluginName
+    }]);
+    const textElement = document.createElement("div");
+    textElement.innerText = renderingFailedInfoMessage;
     this.fallbackInfoEl.appendChild(textElement);
   }
   private drawPluginElement() {
