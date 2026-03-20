@@ -1,5 +1,6 @@
 import {TileLayer, tileLayer} from 'leaflet';
-import {GeoJsonOptionsBuilder} from './geo-json-options-builder';
+import {GeoProperties} from '../models/geo-properties';
+import {GEO_NUMERIC_STYLE_KEYS, GEO_STRING_STYLE_KEYS, GeoStyleOptions} from "../models/geo-style-options";
 
 /**
  * Service class providing factory methods to create Leaflet tile layers and GeoJSON configuration builders.
@@ -91,17 +92,42 @@ export class LeafletService {
   }
 
   /**
-   * Returns a new instance of GeoJsonOptionsBuilder for configuring GeoJSON layers.
-   *
-   * This builder allows you to define:
-   * - Feature styling
-   * - Popups and tooltips
-   * - Event handlers
-   * - Custom point-to-layer transformations
-   *
-   * @returns {GeoJsonOptionsBuilder} Instance of GeoJsonOptionsBuilder.
+   * Returns a mapping between geo-prefixed feature properties and their corresponding Leaflet style property keys.
    */
-  static getGeoJsonOptionsBuilder(): GeoJsonOptionsBuilder {
-    return new GeoJsonOptionsBuilder();
+  static getGeoOptionsMapping(): Record<Exclude<GeoProperties, GeoProperties.FIGURE_POPUP_CONTENT | GeoProperties.FIGURE_TOOLTIP>,  keyof GeoStyleOptions> {
+    return {
+      [GeoProperties.FIGURE_WEIGHT]: 'weight',
+      [GeoProperties.FIGURE_COLOR]: 'color',
+      [GeoProperties.FIGURE_OPACITY]: 'opacity',
+      [GeoProperties.FIGURE_FILL_COLOR]: 'fillColor',
+      [GeoProperties.FIGURE_FILL_OPACITY]: 'fillOpacity',
+    };
+  }
+
+  /**
+   * Casts a raw feature property value to the appropriate type for a Leaflet GeoStyle option.
+   *
+   * This method ensures that the value matches the expected type for the given GeoStyle property:
+   * - Numeric properties (`weight`, `opacity`, `fillOpacity`) are converted to `number`.
+   * - String properties (`color`, `fillColor`) are converted to `string`.
+   * - Other properties or unknown keys are returned as-is.
+   *
+   * @param targetKey - The GeoStyleOptions property key that determines the expected type.
+   * @param rawValue - The raw value extracted from the feature properties.
+   * @returns The value cast to the appropriate type (`number` or `string`), or the original value if casting is not applicable.
+   */
+  static castGeoStyleValue(targetKey: keyof GeoStyleOptions, rawValue: unknown): number | string | unknown{
+    if (GEO_NUMERIC_STYLE_KEYS.has(targetKey)) {
+      const n = Number(rawValue);
+      return Number.isNaN(n) ? rawValue : n;
+    }
+
+    // String keys: convert to string
+    if (GEO_STRING_STYLE_KEYS.has(targetKey)) {
+      return String(rawValue);
+    }
+
+    // Fallback: return as-is
+    return rawValue;
   }
 }

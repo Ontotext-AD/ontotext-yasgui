@@ -2,6 +2,9 @@ import {HtmlUtil} from '../utils/html-util';
 import {ExternalYasguiConfiguration} from '../../models/external-yasgui-configuration';
 import {YasrPlugin} from '../../models/yasr-plugin';
 import {SparqlUtils} from '../utils/sparql-utils';
+import {GeoPlugin} from '../../plugins/yasr/geo/geo-plugin';
+import {GeoPluginConfiguration} from '../../plugins/yasr/geo/models/geo-plugin-configuration';
+import {defaultYasrConfig} from '../../models/yasgui-configuration';
 
 export class YasrService {
 
@@ -29,6 +32,7 @@ export class YasrService {
     const pluginsConfigurations = new Map<string, any>();
     this.addExtendedTableConfiguration(externalConfiguration, pluginsConfigurations);
     this.addTableConfiguration(externalConfiguration, pluginsConfigurations);
+    this.addGeoPluginConfiguration(externalConfiguration, pluginsConfigurations);
     return pluginsConfigurations;
   }
 
@@ -44,6 +48,14 @@ export class YasrService {
       getCellContent: externalConfiguration.getCellContent ? externalConfiguration.getCellContent : YasrService.getCellContent().bind(this),
     };
     pluginsConfigurations.set('extended_table', configuration);
+  }
+
+  private static addGeoPluginConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, any>): void {
+    const externalGeoConfigurations: GeoPluginConfiguration = {
+      ...defaultYasrConfig.defaultGeoPluginConfiguration,
+      ...(externalConfiguration?.pluginsConfigurations?.[GeoPlugin.PLUGIN_NAME] ?? {}),
+    };
+    pluginsConfigurations.set(GeoPlugin.PLUGIN_NAME, externalGeoConfigurations);
   }
 
   // @ts-ignore

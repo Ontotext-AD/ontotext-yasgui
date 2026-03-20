@@ -355,4 +355,13 @@ export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
   pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts'],
   showQueryLoader: true,
+  defaultGeoPluginConfiguration: {
+    defaultGeoStyleOptions: {
+      weight: 3,
+      color: '#3388ff',
+      opacity: 0.2,
+      fillColor: '#3388ff',
+      fillOpacity: 0.2
+    }
+  }
 }
