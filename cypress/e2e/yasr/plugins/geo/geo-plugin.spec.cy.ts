@@ -104,6 +104,23 @@ describe('Geo Plugin', () => {
     GeoPluginSteps.getGeoFeature(7).should('have.attr', 'fill', '#3388ff');
     GeoPluginSteps.getGeoFeature(7).should('have.attr', 'fill-opacity', '0.2');
   });
+
+  it('should call external function when clicking on a geo feature', () => {
+    // GIVEN: I visit a page containing "ontotext-yasgui-web-component"
+    // with an executed query that returns geo data with styling properties.
+    openGeoPlugin();
+
+    // AND: The plugin is configured with an onFeatureClick handler
+    YasrGeoPluginPageSteps.configureOnClickFeatureHandler();
+
+    // WHEN: I click on a geo feature
+    GeoPluginSteps.clickGeoFeature();
+    // THEN: The external function should be called with the feature's non-geo properties as an argument
+    YasrGeoPluginPageSteps.getOutputField().should(
+      'have.value',
+      '{"featureType":{"type":"uri","value":"http://www.opengis.net/ont/sf#Point"},"exampleWKT":{"datatype":"http://www.opengis.net/ont/geosparql#wktLiteral","type":"literal","value":"POINT(25.9657 43.8356)"}}'
+    );
+  });
 });
 
 const openGeoPlugin = () => {

@@ -5,7 +5,7 @@ import {Binding} from '../../../models/yasgui/parser';
 import {GeoSPARQLService} from './services/geo-sparql-service';
 import {TranslationService} from '../../../services/translation.service';
 import {Feature} from 'geojson';
-import {GeoJsonOptionsBuilder} from './services/geo-json-options-builder';
+import {LeafletOptionsBuilder} from './services/leaflet-options-builder';
 import {LeafletService} from './services/leaflet-service';
 import {GeoDatatype, GeometryColumns} from './models/geometry-columns';
 import {GeoPluginConfiguration} from './models/geo-plugin-configuration';
@@ -181,12 +181,12 @@ export class GeoPlugin implements YasrPlugin {
    */
   private createGeoLayer(bindings: Binding[], colName: string): FeatureGroup {
     const geojson = this.createGeoJson(bindings, colName);
-    const geoJsonOptions = new GeoJsonOptionsBuilder(this.pluginGonfiguration)
+    const leafletOptions = new LeafletOptionsBuilder(this.pluginGonfiguration, this.subscriptions)
       .withPointMarker()
       .withFeatureClick()
       .withStyle()
       .build();
-    return geoJson(geojson, geoJsonOptions);
+    return geoJson(geojson, leafletOptions);
   }
 
   /**
@@ -303,5 +303,6 @@ export class GeoPlugin implements YasrPlugin {
     this.geoMapContainer = undefined;
 
     this.subscriptions.forEach(unsubscribe => unsubscribe());
+    this.subscriptions = [];
   }
 }

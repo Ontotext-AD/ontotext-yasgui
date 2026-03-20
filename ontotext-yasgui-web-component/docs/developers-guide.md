@@ -428,7 +428,9 @@ This plugin extends the original yasgui plugin with ability to display geographi
            // Fill color of polygon features. Default value is '#3388ff'.
            geoFillColor?: string,
            // Fill opacity of polygon features, the value must be between 0 and 1.
-           geoFillOpacity?: number 
+           geoFillOpacity?: number,
+           // Callback invoked when a feature is clicked. Receives the feature properties excluding geo-related fields.
+           onFeatureClick?: (featureProperties: Record<string, any>) => void,
         }
 ```
   
