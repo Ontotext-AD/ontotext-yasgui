@@ -5,9 +5,10 @@ import {Binding} from '../../../models/yasgui/parser';
 import {GeoSPARQLService} from './services/geo-sparql-service';
 import {TranslationService} from '../../../services/translation.service';
 import {Feature} from 'geojson';
-import {GeoJsonOptionsBuilder} from './services/geo-json-options-builder';
+import {LeafletOptionsBuilder} from './services/leaflet-options-builder';
 import {LeafletService} from './services/leaflet-service';
 import {GeoDatatype, GeometryColumns} from './models/geometry-columns';
+import {GeoPluginConfiguration} from './models/geo-plugin-configuration';
 
 /**
  * A YASR plugin that visualizes SPARQL query results as geographic features on a Leaflet map.
@@ -22,8 +23,8 @@ export class GeoPlugin implements YasrPlugin {
   label = 'Geo';
   private yasr: Yasr;
   private readonly translationService: TranslationService;
+  private pluginGonfiguration: GeoPluginConfiguration;
   private geoMapContainer: HTMLElement;
-
   private map: Map;
   private resultsLayer: FeatureGroup;
   private subscriptions: Array<() => void> = [];
@@ -31,6 +32,7 @@ export class GeoPlugin implements YasrPlugin {
   constructor(yasr: Yasr) {
     if (yasr) {
       this.yasr = yasr;
+      this.pluginGonfiguration = this.yasr.config.externalPluginsConfigurations.get(GeoPlugin.PLUGIN_NAME) as GeoPluginConfiguration;
       this.translationService = this.yasr.config.translationService;
       // Subscribe for language changes
       this.subscriptions.push(this.translationService.subscribeForLanguageChange({
@@ -179,12 +181,12 @@ export class GeoPlugin implements YasrPlugin {
    */
   private createGeoLayer(bindings: Binding[], colName: string): FeatureGroup {
     const geojson = this.createGeoJson(bindings, colName);
-    const geoJsonOptions = new GeoJsonOptionsBuilder()
+    const leafletOptions = new LeafletOptionsBuilder(this.pluginGonfiguration, this.subscriptions)
       .withPointMarker()
       .withFeatureClick()
       .withStyle()
       .build();
-    return geoJson(geojson, geoJsonOptions);
+    return geoJson(geojson, leafletOptions);
   }
 
   /**
@@ -301,5 +303,6 @@ export class GeoPlugin implements YasrPlugin {
     this.geoMapContainer = undefined;
 
     this.subscriptions.forEach(unsubscribe => unsubscribe());
+    this.subscriptions = [];
   }
 }

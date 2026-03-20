@@ -126,6 +126,26 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **infer**: the value of "infer" parameter when a query is executed. Default value is true.
 - **immutableInfer**: if set to true, the 'infer' value cannot be changed. Default value is false.
 - **sameAs**: the value of "sameAs" parameter when a query is executed. Default value is true.
+- **pluginsConfigurations**: An object containing the configuration for each plugin, where the keys are the plugin name and the values is the corresponding plugin configuration.
+  - **Geo plugin**:
+    - **key**: "geo"
+    - **value**: 
+      ```
+        {
+           // Width of the geo feature line. Default value is 3.
+           geoWeight?: number, 
+           // Color of the geo feature line. Default value is '#3388ff'.
+           geoColor?: string, 
+           // Opacity of the geo feature line, The value must be between 0 and 1.
+           geoOpacity?: number, 
+           // Fill color of polygon features. Default value is '#3388ff'.
+           geoFillColor?: string,
+           // Fill opacity of polygon features, the value must be between 0 and 1.
+           geoFillOpacity?: number,
+           // Callback invoked when a feature is clicked. Receives the feature properties excluding geo-related fields.
+           onFeatureClick?: (featureProperties: Record<string, any>) => void,
+        }
+     ```
 - **immutableSameAs**: if set to true, the 'sameAs' value cannot be changed. Default value is false.
 - **language**: the language being used when the component is initialized. Default value is "en".
 - **keyboardShortcutConfiguration**: This is an object with key-value pairs. The key is the name of the keyboard shortcut, and the value is

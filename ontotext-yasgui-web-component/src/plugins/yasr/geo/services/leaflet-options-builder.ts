@@ -1,19 +1,44 @@
 import {circleMarker, CircleMarker, GeoJSONOptions, LatLng, Layer, PathOptions} from 'leaflet';
 import {Feature, GeoJsonProperties} from 'geojson';
-import {GeoProperties} from '../models/geo-properties';
 import {BindingValue} from '../../../../models/yasgui/parser';
 import {ObjectUtil} from '../../../../services/utils/object-util';
+import {GeoProperties} from '../models/geo-properties';
+import {GeoPluginConfiguration} from '../models/geo-plugin-configuration';
+import {LeafletService} from './leaflet-service';
 
 /**
- * Builder class for constructing Leaflet GeoJSON options with customizable point markers,
- * feature click handlers, and styling.
+ * Builder class for Leaflet necessary options.
  */
-export class GeoJsonOptionsBuilder {
+export class LeafletOptionsBuilder {
   private static readonly MAX_POPUP_CONTENT_LINE_LENGTH = 120;
   /**
    * Internal storage for the GeoJSON options being built
    */
   private options: GeoJSONOptions = {};
+
+  private configuration: GeoPluginConfiguration;
+
+  /**
+   * Collection of cleanup functions used to unregister event handlers (e.g. Leaflet layer listeners)
+   * created during plugin initialization.
+   */
+  private subscriptions: Array<() => void>;
+
+  /**
+   * Creates a new instance of the Geo plugin configuration wrapper.
+   *
+   * @param configuration - The resolved Geo plugin configuration.
+   * @param subscriptions - An array of cleanup functions responsible for unregistering event handlers (e.g. click listeners on Leaflet layers).
+   *
+   * @remarks
+   * The handlers are registered after the Leaflet options are constructed, so this array is provided by the client.
+   * The client is responsible for invoking these cleanup functions at the appropriate time (e.g. when the plugin is destroyed
+   * or reinitialized) to prevent memory leaks and duplicate handlers.
+   */
+  constructor(configuration: GeoPluginConfiguration, subscriptions: Array<() => void> = []) {
+    this.configuration = configuration;
+    this.subscriptions = subscriptions;
+  }
 
   /**
    * Configure the GeoJSON to use custom point markers.
@@ -53,9 +78,10 @@ export class GeoJsonOptionsBuilder {
    * @returns A `GeoJsonProperties` object representing the Leaflet path options for the feature.
    */
   private styleFunction(feature: Feature): GeoJsonProperties {
-    const options: GeoJsonProperties = this.getDefaultPathOptions();
-    this.updatePathOptions(options, feature);
-    return options;
+    return {
+      ...this.getDefaultPathOptions(),
+      ...LeafletOptionsBuilder.getGeoProperties(feature)
+    };
   }
 
   /**
@@ -110,8 +136,46 @@ export class GeoJsonOptionsBuilder {
       layer.bindTooltip(tooltip);
     }
 
-    // TODO: Register a click event handler that notifies external components when a feature is clicked.
-    //  Investigate the correct way to deregister it when the plugin is destroyed.
+    const { onFeatureClick } = this.configuration;
+    // Attach the click handler if a callback is provided
+    if (onFeatureClick) {
+      const featureProperties = this.getFeatureProperties(feature);
+      const handleClick = () => onFeatureClick(featureProperties);
+      layer.on('click', handleClick);
+      this.subscriptions.push(() => layer.off('click', handleClick));
+    }
+  }
+
+  /**
+   * Extracts the non-geo properties from a GeoJSON feature. Iterates over the `feature.properties` object and filters out any keys
+   * that correspond to geo-related properties defined in {@link GeoProperties}. The remaining properties are returned
+   * in a flat key-value map.
+   *
+   * @param feature - The GeoJSON feature containing `properties`.
+   *
+   * @returns A record of all non-geo properties, where keys are property names and values are of type {@link BindingValue}.
+   *
+   * @example
+   * // Given feature.properties:
+   * {
+   *   geo_color: { value: 'red' },
+   *   name: { value: 'Feature A' },
+   *   type: { value: 'Polygon' }
+   * }
+   *
+   * // Result:
+   * {
+   *   name: { value: 'Feature A' },
+   *   type: { value: 'Polygon' }
+   * }
+   */
+  private getFeatureProperties(feature: Feature): Record<string, BindingValue> {
+    return Object.keys(feature.properties ?? {})
+      .filter(key => !ObjectUtil.isEnumValue(key, GeoProperties))
+      .reduce((acc, key) => {
+        acc[key] = feature.properties[key];
+        return acc;
+      }, {} as Record<string, any>);
   }
 
   /**
@@ -135,8 +199,8 @@ export class GeoJsonOptionsBuilder {
       .filter(key => !ObjectUtil.isEnumValue(key, GeoProperties))
       .forEach((key) => {
         const value = properties[key]?.value ?? '';
-        const truncated = value.length > GeoJsonOptionsBuilder.MAX_POPUP_CONTENT_LINE_LENGTH
-          ? value.slice(0, GeoJsonOptionsBuilder.MAX_POPUP_CONTENT_LINE_LENGTH) + '...'
+        const truncated = value.length > LeafletOptionsBuilder.MAX_POPUP_CONTENT_LINE_LENGTH
+          ? value.slice(0, LeafletOptionsBuilder.MAX_POPUP_CONTENT_LINE_LENGTH) + '...'
           : value;
 
         const line = document.createElement('div');
@@ -156,25 +220,43 @@ export class GeoJsonOptionsBuilder {
    * @returns A PathOptions object with default color, weight, opacity, and fillOpacity.
    */
   private getDefaultPathOptions(): PathOptions {
-    // TODO: Determine how to get the default color (possibly from configuration).
     return {
-      weight: 2,
-      color: '#3388ff',
-      fillColor: '#3388ff',
-      opacity: 0.7,
-      fillOpacity: 0.5,
+      weight: this.configuration.geoWeight,
+      color: this.configuration.geoColor,
+      opacity: this.configuration.geoOpacity,
+      fillColor: this.configuration.geoFillColor,
+      fillOpacity: this.configuration.geoFillOpacity,
     }
   }
 
   /**
-   * Updates path options based on feature properties.
-   * Intended to support options such as geo_color, geo_opacity, geo_fillOpacity, etc.
+   * Extracts style-related geo properties from a GeoJSON feature.
    *
-   * @param _options - The current PathOptions to update.
-   * @param _feature - The GeoJSON feature containing property values.
+   * @param feature - A GeoJSON Feature whose `properties` may contain geo-prefixed entries.
+   *
+   * @returns A flat key-value map of Leaflet style properties (e.g. `color`, `fillColor`).
+   *
+   * @example
+   * Input:
+   * feature.properties = {
+   *   geo_Color: { value: 'red' },
+   *   geo_fillOpacity: { value: 0.5 }
+   * }
+   *
+   * Output:
+   * {
+   *   color: 'red',
+   *   fillOpacity: '0.5'
+   * }
    */
-  private updatePathOptions(_options: GeoJsonProperties, _feature: Feature): void {
-    // TODO update color options that we will support geo_color, geo_opacity, geo_fillOpacity, etc.
-    //  _feature.properties.geo_color
+  private static getGeoProperties(feature: Feature): PathOptions {
+    return Object.entries(LeafletService.getGeoPropertiesMapping())
+      .reduce((geoProperties, [geoKey, targetKey]) => {
+        const propertyValue = feature?.properties?.[geoKey]?.value;
+        if (propertyValue) {
+          geoProperties[targetKey] = propertyValue;
+        }
+        return geoProperties;
+      }, {});
   }
 }

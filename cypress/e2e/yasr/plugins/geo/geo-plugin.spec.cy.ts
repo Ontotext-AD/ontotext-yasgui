@@ -78,6 +78,49 @@ describe('Geo Plugin', () => {
     // AND: The plugin tabs should be visible.
     YasrSteps.getPluginsButtons().should('be.visible');
   });
+
+  it('should styled the features in geo map according geo properties', () => {
+    // GIVEN: I visit a page containing "ontotex-yasgui-web-component".
+    // with executed query that returns geo data with styled geo properties.
+    openGeoPlugin();
+
+    // THEN: I expect to see the features styled according to the geo properties if present in the binding.
+    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'stroke-width', '2');
+    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'stroke', 'green');
+    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'stroke-opacity', '0.3');
+    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'fill', '#F7F2EC');
+    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'fill-opacity', '0.6');
+
+    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'stroke-width', '4');
+    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'stroke', 'yellow');
+    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'stroke-opacity', '0.4');
+    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'fill', 'red');
+    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'fill-opacity', '0.5');
+
+    // OR: I expect to see the feature with the default style if no geo properties are present in the binding.
+    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'stroke-width', '3');
+    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'stroke', '#3388ff');
+    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'stroke-opacity', '0.2');
+    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'fill', '#3388ff');
+    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'fill-opacity', '0.2');
+  });
+
+  it('should call external function when clicking on a geo feature', () => {
+    // GIVEN: I visit a page containing "ontotext-yasgui-web-component"
+    // with an executed query that returns geo data with styling properties.
+    openGeoPlugin();
+
+    // AND: The plugin is configured with an onFeatureClick handler
+    YasrGeoPluginPageSteps.configureOnClickFeatureHandler();
+
+    // WHEN: I click on a geo feature
+    GeoPluginSteps.clickGeoFeature();
+    // THEN: The external function should be called with the feature's non-geo properties as an argument
+    YasrGeoPluginPageSteps.getOutputField().should(
+      'have.value',
+      '{"featureType":{"type":"uri","value":"http://www.opengis.net/ont/sf#Point"},"exampleWKT":{"datatype":"http://www.opengis.net/ont/geosparql#wktLiteral","type":"literal","value":"POINT(25.9657 43.8356)"}}'
+    );
+  });
 });
 
 const openGeoPlugin = () => {
