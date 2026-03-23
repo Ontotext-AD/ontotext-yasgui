@@ -59,6 +59,8 @@ export interface State {
   valuesClause: "vars" | "data" | "tuple" | undefined; // current phase in VALUES clause
   valuesVarCount: number;         // number of variables declared in VALUES
   valuesTupleCount: number;       // number of values in current data tuple
+  // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
+  tripleTermDepth: number;
   // BIND variable scoping
   bindScopeStack: Set<string>[];  // stack of variable scopes for BIND checking
   inBind: boolean;                // whether we're inside a BIND clause
@@ -66,6 +68,10 @@ export interface State {
   afterBindAS: boolean;           // whether we just saw AS inside BIND
   inFilter: boolean;              // whether we're inside a FILTER expression
   filterParenDepth: number;       // paren nesting depth inside FILTER
+  // Property-path predicate tracking for annotation/reifier validation
+  inVerbPath: boolean;            // whether we are currently parsing a verbPath predicate
+  verbPathIsComplex: boolean;     // whether the current verbPath has operators (/, |, +, *, ?, ^) making it a complex path
+  afterReifier: boolean;          // whether a named reifier (~) was just consumed before an annotation block
   // End-of-query semantic validation (called after all tokens processed)
   finalize: () => void;
 }
@@ -517,6 +523,40 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
         case "storeProperty":
           state.storeProperty = true;
           break;
+        case "verbPath":
+          // Entering a property-path predicate: reset path-complexity tracking
+          state.inVerbPath = true;
+          state.verbPathIsComplex = false;
+          break;
+        case "verbSimple":
+          // Entering a simple variable predicate: not a complex path
+          state.inVerbPath = false;
+          state.verbPathIsComplex = false;
+          break;
+        case "objectListPath":
+          // Verb is fully consumed; lock in what we found
+          state.inVerbPath = false;
+          break;
+        case "reifier":
+          // A named reifier (~) is about to be consumed before an annotation block
+          state.afterReifier = true;
+          break;
+        case "annotationBlock":
+        case "annotationBlockPath":
+          // 1) Annotation/reifier after a complex property-path predicate is illegal.
+          if (state.verbPathIsComplex && !state.afterReifier) {
+            state.OK = false;
+            state.errorMsg = "Annotation block is not allowed after a property-path predicate";
+          }
+          // 2) Anonymous annotation blocks (no preceding ~) are forbidden in
+          //    DELETE/INSERT template and DATA contexts (where bnodes are disallowed).
+          //    Named reifiers (~ :iri {| ... |}) ARE allowed.
+          if (!state.allowBnodes && !state.afterReifier) {
+            state.OK = false;
+            state.errorMsg = "Anonymous annotation block is not allowed in a DELETE/INSERT template or DATA block";
+          }
+          state.afterReifier = false;
+          break;
       }
     }
 
@@ -603,6 +643,41 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
               state.lastPropertyIndex = 0;
             }
 
+            // If a reifier (~) was consumed but no annotation block immediately
+            // followed it, clear the flag on any token that cannot appear between
+            // a reifier and its annotation block.  This prevents the flag from
+            // leaking into a later, unrelated annotation block and bypassing the
+            // anonymous-annotation / complex-path validation.
+            if (state.afterReifier &&
+                (tokenCat === "." || tokenCat === ";" || tokenCat === "," ||
+                 tokenCat === "]" || tokenCat === "}" || tokenCat === ">>")) {
+              state.afterReifier = false;
+            }
+
+            // Property-path complexity tracking:
+            // While parsing a verbPath, flag any operator that makes it a complex path
+            // (sequence /, alternation |, modifiers +/*/?, inverse ^).
+            if (state.inVerbPath &&
+                (tokenCat === "/" || tokenCat === "|" ||
+                 tokenCat === "+" || tokenCat === "*" || tokenCat === "?" ||
+                 tokenCat === "^")) {
+              state.verbPathIsComplex = true;
+            }
+
+            // Annotation/reifier after a complex property-path predicate is illegal.
+            // SPARQL 1.2 only allows annotations when the predicate is a simple IRI,
+            // 'a', or a variable — not a property-path expression.
+            if (state.verbPathIsComplex && tokenCat === "~") {
+              state.OK = false;
+              recordFailurePos();
+              state.errorMsg = "Annotation or reifier is not allowed after a property-path predicate";
+            }
+
+            // Annotation blocks ({| ... |}) are forbidden in DELETE/INSERT template
+            // and DATA contexts (where blank nodes are disallowed).
+            // Note: annotation blocks are detected via setSideConditions on the
+            // annotationBlock/annotationBlockPath non-terminals, not here.
+
             //check whether a used prefix is actually defined
             if (!state.inPrefixDecl && (tokenCat === "PNAME_NS" || tokenCat === "PNAME_LN")) {
               const colonIndex = tokenOb.string.indexOf(":");
@@ -647,6 +722,14 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
                 currentScope.childLabels.add(label);
               }
               currentScope.ownLabels.clear();
+            } else if (tokenCat === "WHERE" && state.allowVars && !state.hadDataBlock &&
+                       state.bnodeScopeStack.length === 1) {
+              // In non-DATA UPDATE (INSERT/DELETE template ... WHERE ...),
+              // blank node labels in the template and WHERE clause are independent:
+              // template blank nodes create fresh blank nodes per solution, so
+              // the same label may appear in both the template and the WHERE pattern.
+              // Reset bnode scope so the WHERE clause starts fresh.
+              state.bnodeScopeStack = [{ ownLabels: new Set(), childLabels: new Set() }];
             } else if (tokenCat === ";") {
               // In SPARQL UPDATE, ';' separates independent operations.
               // Blank node labels must not be reused across DATA operations
@@ -855,6 +938,7 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
             // Track: VALUES (var1 var2) { (val1 val2) (val1 val2) ... }
             // The number of values in each tuple must match the variable count.
             // State machine: undefined -> "vars" (after VALUES + '(') -> "data" (after ')' + '{') -> "tuple" (inside data tuple)
+            // Triple terms <<(...)>> are a single dataBlockValue — tokens inside them are not counted.
             if (tokenCat === "VALUES") {
               state.valuesClause = "vars";
               state.valuesVarCount = 0;
@@ -889,7 +973,7 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
               }
               // '{' just opens the data block, skip
             } else if (state.valuesClause === "tuple") {
-              if (tokenCat === ")") {
+              if (tokenCat === ")" && state.tripleTermDepth === 0) {
                 // End of data tuple — check arity
                 if (state.valuesTupleCount !== state.valuesVarCount) {
                   state.OK = false;
@@ -898,10 +982,19 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
                     " values but " + state.valuesVarCount + " variables declared";
                 }
                 state.valuesClause = "data";
-              } else {
-                // Count each value in the tuple
+              } else if (tokenCat !== ")" && state.tripleTermDepth === 0) {
+                // Count each top-level value in the tuple.
+                // <<( at depth 0 counts as one value (the whole triple term);
+                // tokens inside <<(...)>> (depth > 0) are not counted.
                 state.valuesTupleCount++;
               }
+            }
+
+            // Track triple term depth AFTER VALUES counting so <<( is counted at depth 0
+            if (tokenCat === "<<(") {
+              state.tripleTermDepth++;
+            } else if (tokenCat === ")>>") {
+              if (state.tripleTermDepth > 0) state.tripleTermDepth--;
             }
 
             // BIND variable scoping:
@@ -1165,6 +1258,10 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
         afterBindAS: s.afterBindAS,
         inFilter: s.inFilter,
         filterParenDepth: s.filterParenDepth,
+        tripleTermDepth: s.tripleTermDepth,
+        inVerbPath: s.inVerbPath,
+        verbPathIsComplex: s.verbPathIsComplex,
+        afterReifier: s.afterReifier,
         finalize: s.finalize,
       };
     },
@@ -1219,6 +1316,10 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
         afterBindAS: false,
         inFilter: false,
         filterParenDepth: 0,
+        tripleTermDepth: 0,
+        inVerbPath: false,
+        verbPathIsComplex: false,
+        afterReifier: false,
         finalize: function() {
           if (!this.OK) return;
           // GROUP BY scoping
@@ -1261,3 +1362,4 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
     electricChars: "}])"
   };
 }
+
