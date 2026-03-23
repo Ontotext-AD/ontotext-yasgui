@@ -590,6 +590,15 @@ builtInCall ==> ['ISURI','(',expression,')'].
 builtInCall ==> ['ISBLANK','(',expression,')'].
 builtInCall ==> ['ISLITERAL','(',expression,')'].
 builtInCall ==> ['ISNUMERIC','(',expression,')'].
+builtInCall ==> ['LANGDIR','(',expression,')'].
+builtInCall ==> ['HASLANG','(',expression,')'].
+builtInCall ==> ['HASLANGDIR','(',expression,')'].
+builtInCall ==> ['STRLANGDIR','(',expression,',',expression,',',expression,')'].
+builtInCall ==> ['ISTRIPLE','(',expression,')'].
+builtInCall ==> ['TRIPLE','(',expression,',',expression,',',expression,')'].
+builtInCall ==> ['SUBJECT','(',expression,')'].
+builtInCall ==> ['PREDICATE','(',expression,')'].
+builtInCall ==> ['OBJECT','(',expression,')'].
 builtInCall ==> [regexExpression].
 builtInCall ==> [existsFunc].
 builtInCall ==> [notExistsFunc].
@@ -873,14 +882,19 @@ tm_keywords([
 'MINUS',
 'BIND',
 
-'LANGMATCHES',
+'LANGMATCHES',  % Must appear before LANG
+'LANGDIR',      % Must appear before LANG
+'HASLANGDIR',   % Must appear before HASLANG
 'LANG',
+'HASLANG',
 'BOUND',
 'SAMETERM',
 'ISIRI',
 'ISURI',
 'ISBLANK',
 'ISLITERAL',
+'ISNUMERIC',    % Must appear before IS*
+'ISTRIPLE',     % Must appear before IS*
 'REGEX',
 'TRUE',
 'FALSE',
@@ -902,15 +916,10 @@ tm_keywords([
 'FLOOR',
 'ROUND',
 'CONCAT',
-'STRLEN',
 'UCASE',
 'LCASE',
 'ENCODE_FOR_URI',
 'CONTAINS',
-'STRSTARTS',
-'STRENDS',
-'STRBEFORE',
-'STRAFTER',
 'YEAR',
 'MONTH',
 'DAY',
@@ -921,7 +930,6 @@ tm_keywords([
 'TZ',
 'NOW',
 'UUID',
-'STRUUID',
 'MD5',
 'SHA1',
 'SHA256',
@@ -929,9 +937,16 @@ tm_keywords([
 'SHA512',
 'COALESCE',
 'IF',
+'STRLANGDIR',   % Must appear before STRLANG
 'STRLANG',
 'STRDT',
-'ISNUMERIC',
+'STRSTARTS',    % Must appear before STR
+'STRENDS',      % Must appear before STR
+'STRBEFORE',    % Must appear before STR
+'STRAFTER',     % Must appear before STR
+'STRLEN',       % Must appear before STR
+'STRUUID',      % Must appear before STR
+'STR',
 'SUBSTR',
 'REPLACE',
 'EXISTS',
@@ -943,7 +958,10 @@ tm_keywords([
 'SAMPLE',
 'SEPARATOR',
 
-'STR'
+'TRIPLE',
+'SUBJECT',
+'PREDICATE',
+'OBJECT'
 ]).
 
 % Other tokens representing fixed, case sensitive, strings
