@@ -301,6 +301,8 @@ dataBlockValue ==> [rdfLiteral].
 dataBlockValue ==> [numericLiteral].
 dataBlockValue ==> [booleanLiteral].
 dataBlockValue ==> ['UNDEF'].
+% SPARQL 1.2: TripleTermData in VALUES inline data blocks
+dataBlockValue ==> [tripleTermData].
 
 %[66]
 minusGraphPattern ==>
@@ -340,6 +342,9 @@ triplesSameSubject ==>
 	[varOrTerm,propertyListNotEmpty].
 triplesSameSubject ==>
 	[triplesNode,propertyList].
+% SPARQL 1.2: ReifiedTripleBlock as a subject with its own property list
+triplesSameSubject ==>
+	[reifiedTripleBlock].
 %[76]
 propertyList ==> [propertyListNotEmpty].
 propertyList ==> [].
@@ -356,10 +361,13 @@ objectList ==>
 	[object,*([',',object])].
 %[80]
 object ==>
-	[graphNode].
+	[graphNode,annotation].
 %[81]
 triplesSameSubjectPath ==> [varOrTerm,propertyListPathNotEmpty].
 triplesSameSubjectPath ==> [triplesNodePath,propertyListPath].
+% SPARQL 1.2: ReifiedTripleBlockPath as subject with its own property list
+triplesSameSubjectPath ==>
+	[reifiedTripleBlockPath].
 %[82]
 propertyListPath ==> [propertyListNotEmpty].
 propertyListPath ==> [].
@@ -367,7 +375,7 @@ propertyListPath ==> [].
 propertyListPathNotEmpty ==>
 	[verbPath or verbSimple,
 	objectListPath,
-	*([';',?([verbPath or verbSimple,objectList])])].
+	*([';',?([verbPath or verbSimple,objectListPath])])].
 %[84]
 verbPath ==> [path].
 %[85]
@@ -376,7 +384,7 @@ verbSimple ==> [var].
 objectListPath ==>
 	[objectPath,*([',',objectPath])].
 %[87]
-objectPath ==> [graphNodePath].
+objectPath ==> [graphNodePath,annotationPath].
 %[88]
 path ==> [pathAlternative].
 %[89].
@@ -451,12 +459,18 @@ collectionPath ==> ['(',*(graphNodePath),')'].
 %[104]
 graphNode ==> [varOrTerm].
 graphNode ==> [triplesNode].
+% SPARQL 1.2: ReifiedTriple as a graph node
+graphNode ==> [reifiedTriple].
 %[105]
 graphNodePath ==> [varOrTerm].
 graphNodePath ==> [triplesNodePath].
+% SPARQL 1.2: ReifiedTriple as a graph node path
+graphNodePath ==> [reifiedTriple].
 %[106]
 varOrTerm ==> [var].
 varOrTerm ==> [graphTerm].
+% SPARQL 1.2: TripleTerm is a valid term node in graph patterns
+varOrTerm ==> [tripleTerm].
 %[107]
 varOrIRIref ==> [var].
 varOrIRIref ==> [iriRef].
@@ -517,6 +531,8 @@ primaryExpression ==> [numericLiteral].
 primaryExpression ==> [booleanLiteral].
 primaryExpression ==> [var].
 primaryExpression ==> [aggregate].
+% SPARQL 1.2: ExprTripleTerm in expressions (BIND, FILTER, SELECT)
+primaryExpression ==> [exprTripleTerm].
 %[120]
 brackettedExpression ==> ['(',expression,')'].
 %[121]
@@ -643,8 +659,142 @@ prefixedName ==> ['PNAME_NS'].
 blankNode ==> ['BLANK_NODE_LABEL'].
 blankNode ==> ['ANON'].
 
+% SPARQL 1.2: Triple Terms
+% https://www.w3.org/TR/rdf12-concepts/#dfn-triple-term
+% A triple term is an RDF triple used as the object of another triple.
+%
+% Three syntactic variants exist with different constraints:
+%   tripleTerm      -- full form for graph patterns; reaches the parser via
+%                      varOrTerm (subject of TriplesSameSubjectPath, or the
+%                      node inside graphNode/graphNodePath for object lists and
+%                      collections); can also be nested inside tripleTermSubject
+%                      and tripleTermObject
+%   tripleTermData  -- restricted form for VALUES inline data blocks only
+%                      (dataBlockValue); subject must be an iri — no vars,
+%                      no bnodes, no literals; can nest as tripleTermDataObject
+%   exprTripleTerm  -- restricted form for expressions (primaryExpression),
+%                      e.g. BIND(<<(?s :p :o)>> AS ?t); subject must be
+%                      iri or Var — no blank nodes, no literals
 
-% tokens defined by regular expressions elsewhere
+% TripleTerm ::= '<<(' TripleTermSubject Verb TripleTermObject ')>>'
+tripleTerm ==> ['<<(',tripleTermSubject,verb,tripleTermObject,')>>'].
+
+% TripleTermSubject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | TripleTerm
+tripleTermSubject ==> [var].
+tripleTermSubject ==> [iriRef].
+tripleTermSubject ==> [rdfLiteral].
+tripleTermSubject ==> [numericLiteral].
+tripleTermSubject ==> [booleanLiteral].
+tripleTermSubject ==> [blankNode].
+tripleTermSubject ==> [tripleTerm].
+
+% TripleTermObject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | TripleTerm
+tripleTermObject ==> [var].
+tripleTermObject ==> [iriRef].
+tripleTermObject ==> [rdfLiteral].
+tripleTermObject ==> [numericLiteral].
+tripleTermObject ==> [booleanLiteral].
+tripleTermObject ==> [blankNode].
+tripleTermObject ==> [tripleTerm].
+
+% TripleTermData ::= '<<(' TripleTermDataSubject ( iri | 'a' ) TripleTermDataObject ')>>'
+% Used in VALUES inline data blocks (dataBlockValue). Subject must be an iri.
+% INSERT DATA uses tripleTerm (via varOrTerm/TriplesTemplate), not tripleTermData.
+tripleTermData ==> ['<<(',tripleTermDataSubject,iriRef or 'a',tripleTermDataObject,')>>'].
+
+% TripleTermDataSubject ::= iri
+tripleTermDataSubject ==> [iriRef].
+
+% TripleTermDataObject ::= iri | RDFLiteral | NumericLiteral | BooleanLiteral | TripleTermData
+tripleTermDataObject ==> [iriRef].
+tripleTermDataObject ==> [rdfLiteral].
+tripleTermDataObject ==> [numericLiteral].
+tripleTermDataObject ==> [booleanLiteral].
+tripleTermDataObject ==> [tripleTermData].
+
+% ExprTripleTerm ::= '<<(' ExprTripleTermSubject Verb ExprTripleTermObject ')>>'
+% Used in expressions (primaryExpression), e.g. BIND(<<(?s :p :o)>> AS ?t).
+% Subject is restricted to iri or Var (no blank nodes, no literals).
+exprTripleTerm ==> ['<<(',exprTripleTermSubject,verb,exprTripleTermObject,')>>'].
+
+% ExprTripleTermSubject ::= iri | Var
+exprTripleTermSubject ==> [iriRef].
+exprTripleTermSubject ==> [var].
+
+% ExprTripleTermObject ::= iri | RDFLiteral | NumericLiteral | BooleanLiteral | Var | ExprTripleTerm
+exprTripleTermObject ==> [iriRef].
+exprTripleTermObject ==> [rdfLiteral].
+exprTripleTermObject ==> [numericLiteral].
+exprTripleTermObject ==> [booleanLiteral].
+exprTripleTermObject ==> [var].
+exprTripleTermObject ==> [exprTripleTerm].
+
+% SPARQL 1.2: Reified Triples
+% https://www.w3.org/TR/sparql12-query/#sec-syntax-reified-triples
+%
+% ReifiedTriple  ::= '<<' ReifiedTripleSubject Verb ReifiedTripleObject Reifier? '>>'
+% ReifiedTripleBlock     ::= ReifiedTriple PropertyList
+% ReifiedTripleBlockPath ::= ReifiedTriple PropertyListPath
+%
+% Reifier        ::= '~' VarOrReifierId?
+% VarOrReifierId ::= Var | iri | BlankNode
+%
+% Annotation     ::= ( Reifier | AnnotationBlock )*
+% AnnotationPath ::= ( Reifier | AnnotationBlockPath )*
+% AnnotationBlock     ::= '{|' PropertyListNotEmpty '|}'
+% AnnotationBlockPath ::= '{|' PropertyListPathNotEmpty '|}'
+
+% ReifiedTriple ::= '<<' ReifiedTripleSubject Verb ReifiedTripleObject Reifier? '>>'
+reifiedTriple ==>
+    ['<<',reifiedTripleSubject,verb,reifiedTripleObject,?(reifier),'>>'].
+
+% ReifiedTripleSubject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | ReifiedTriple | TripleTerm
+reifiedTripleSubject ==> [var].
+reifiedTripleSubject ==> [iriRef].
+reifiedTripleSubject ==> [rdfLiteral].
+reifiedTripleSubject ==> [numericLiteral].
+reifiedTripleSubject ==> [booleanLiteral].
+reifiedTripleSubject ==> [blankNode].
+reifiedTripleSubject ==> [reifiedTriple].
+reifiedTripleSubject ==> [tripleTerm].
+
+% ReifiedTripleObject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | ReifiedTriple | TripleTerm
+reifiedTripleObject ==> [var].
+reifiedTripleObject ==> [iriRef].
+reifiedTripleObject ==> [rdfLiteral].
+reifiedTripleObject ==> [numericLiteral].
+reifiedTripleObject ==> [booleanLiteral].
+reifiedTripleObject ==> [blankNode].
+reifiedTripleObject ==> [reifiedTriple].
+reifiedTripleObject ==> [tripleTerm].
+
+% ReifiedTripleBlock     ::= ReifiedTriple PropertyList
+reifiedTripleBlock ==> [reifiedTriple,propertyList].
+
+% ReifiedTripleBlockPath ::= ReifiedTriple PropertyListPath
+reifiedTripleBlockPath ==> [reifiedTriple,propertyListPath].
+
+% Reifier ::= '~' VarOrReifierId?
+reifier ==> ['~',?(varOrReifierId)].
+
+% VarOrReifierId ::= Var | iri | BlankNode
+varOrReifierId ==> [var].
+varOrReifierId ==> [iriRef].
+varOrReifierId ==> [blankNode].
+
+% Annotation ::= ( Reifier | AnnotationBlock )*
+annotation ==> [*(reifier or annotationBlock)].
+
+% AnnotationPath ::= ( Reifier | AnnotationBlockPath )*
+annotationPath ==> [*(reifier or annotationBlockPath)].
+
+% AnnotationBlock ::= '{|' PropertyListNotEmpty '|}'
+annotationBlock ==> ['{|',propertyListNotEmpty,'|}'].
+
+% AnnotationBlockPath ::= '{|' PropertyListPathNotEmpty '|}'
+annotationBlockPath ==> ['{|',propertyListPathNotEmpty,'|}'].
+
+
 tm_regex([
 
 'IRI_REF',
@@ -807,10 +957,13 @@ tm_punct([
 '*'= '\\*',
 'a'= 'a',
 '.'= '\\.',
+'{|'= '\\{\\|',
+'|}'= '\\|\\}',
 '{'= '\\{',
 '}'= '\\}',
 ','= ',',
 '('= '\\(',
+')>>'= '\\)>>',
 ')'= '\\)',
 ';'= ';',
 '['= '\\[',
@@ -822,6 +975,9 @@ tm_punct([
 '!'= '!',
 '<='= '<=',
 '>='= '>=',
+('<<(')= '<<\\(',
+'<<'= '<<',
+'>>'= '>>',
 '<'= '<',
 '>'= '>',
 '+'= '\\+',
@@ -829,6 +985,7 @@ tm_punct([
 '/'= '\\/',
 '^^'= '\\^\\^',
 '?' = '\\?',
+'~'= '~',
 '|' = '\\|',
 '^'= '\\^'
 ]).
