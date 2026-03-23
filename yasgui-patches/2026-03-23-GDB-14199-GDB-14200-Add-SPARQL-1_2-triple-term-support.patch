@@ -1,0 +1,1562 @@
+Index: Yasgui/packages/yasqe/grammar/_tokenizer-table.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/_tokenizer-table.js b/Yasgui/packages/yasqe/grammar/_tokenizer-table.js
+--- a/Yasgui/packages/yasqe/grammar/_tokenizer-table.js	(revision e969a07c6ba37c057e429ecdd4cb012d92af9ad7)
++++ b/Yasgui/packages/yasqe/grammar/_tokenizer-table.js	(revision df156ee86652532c6818eaca1e83971b38f9dae4)
+@@ -14,6 +14,7 @@
+      ",": ["[,,objectPath]","*[,,objectPath]"],
+      ".": [],
+      ";": [],
++     "|}": [],
+      "{": [],
+      "OPTIONAL": [],
+      "MINUS": [],
+@@ -28,6 +29,7 @@
+      ".": [],
+      ";": [],
+      "]": [],
++     "|}": [],
+      "}": [],
+      "GRAPH": [],
+      "{": [],
+@@ -43,9 +45,11 @@
+      ")": [],
+      "(": [],
+      "[": [],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "IRI_REF": [],
+      "TRUE": [],
+      "FALSE": [],
+@@ -66,10 +70,24 @@
+      "INTEGER_NEGATIVE": [],
+      "DECIMAL_NEGATIVE": [],
+      "DOUBLE_NEGATIVE": []},
++  "*[;,?[or([verbPath,verbSimple]),objectListPath]]" : {
++     ";": ["[;,?[or([verbPath,verbSimple]),objectListPath]]","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     ".": [],
++     "|}": [],
++     "{": [],
++     "OPTIONAL": [],
++     "MINUS": [],
++     "GRAPH": [],
++     "SERVICE": [],
++     "FILTER": [],
++     "BIND": [],
++     "VALUES": [],
++     "}": []},
+   "*[;,?[or([verbPath,verbSimple]),objectList]]" : {
+      ";": ["[;,?[or([verbPath,verbSimple]),objectList]]","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+      ".": [],
+      "]": [],
++     "|}": [],
+      "}": [],
+      "GRAPH": [],
+      "{": [],
+@@ -81,9 +99,11 @@
+      "VALUES": []},
+   "*[UNION,groupGraphPattern]" : {
+      "UNION": ["[UNION,groupGraphPattern]","*[UNION,groupGraphPattern]"],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "(": [],
+      "[": [],
+      "IRI_REF": [],
+@@ -137,9 +157,11 @@
+      ")": [],
+      "(": [],
+      "[": [],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "IRI_REF": [],
+      "TRUE": [],
+      "FALSE": [],
+@@ -171,6 +193,7 @@
+      "IRI_REF": ["dataBlockValue","*dataBlockValue"],
+      "TRUE": ["dataBlockValue","*dataBlockValue"],
+      "FALSE": ["dataBlockValue","*dataBlockValue"],
++     "<<(": ["dataBlockValue","*dataBlockValue"],
+      "PNAME_LN": ["dataBlockValue","*dataBlockValue"],
+      "PNAME_NS": ["dataBlockValue","*dataBlockValue"],
+      "STRING_LITERAL1": ["dataBlockValue","*dataBlockValue"],
+@@ -206,9 +229,11 @@
+   "*graphNode" : {
+      "(": ["graphNode","*graphNode"],
+      "[": ["graphNode","*graphNode"],
++     "<<": ["graphNode","*graphNode"],
+      "VAR1": ["graphNode","*graphNode"],
+      "VAR2": ["graphNode","*graphNode"],
+      "NIL": ["graphNode","*graphNode"],
++     "<<(": ["graphNode","*graphNode"],
+      "IRI_REF": ["graphNode","*graphNode"],
+      "TRUE": ["graphNode","*graphNode"],
+      "FALSE": ["graphNode","*graphNode"],
+@@ -233,9 +258,11 @@
+   "*graphNodePath" : {
+      "(": ["graphNodePath","*graphNodePath"],
+      "[": ["graphNodePath","*graphNodePath"],
++     "<<": ["graphNodePath","*graphNodePath"],
+      "VAR1": ["graphNodePath","*graphNodePath"],
+      "VAR2": ["graphNodePath","*graphNodePath"],
+      "NIL": ["graphNodePath","*graphNodePath"],
++     "<<(": ["graphNodePath","*graphNodePath"],
+      "IRI_REF": ["graphNodePath","*graphNodePath"],
+      "TRUE": ["graphNodePath","*graphNodePath"],
+      "FALSE": ["graphNodePath","*graphNodePath"],
+@@ -460,6 +487,39 @@
+      "COPY": [],
+      "CREATE": [],
+      "WITH": []},
++  "*or([reifier,annotationBlockPath])" : {
++     "~": ["or([reifier,annotationBlockPath])","*or([reifier,annotationBlockPath])"],
++     "{|": ["or([reifier,annotationBlockPath])","*or([reifier,annotationBlockPath])"],
++     ".": [],
++     ";": [],
++     ",": [],
++     "|}": [],
++     "{": [],
++     "OPTIONAL": [],
++     "MINUS": [],
++     "GRAPH": [],
++     "SERVICE": [],
++     "FILTER": [],
++     "BIND": [],
++     "VALUES": [],
++     "}": []},
++  "*or([reifier,annotationBlock])" : {
++     "~": ["or([reifier,annotationBlock])","*or([reifier,annotationBlock])"],
++     "{|": ["or([reifier,annotationBlock])","*or([reifier,annotationBlock])"],
++     ".": [],
++     ";": [],
++     ",": [],
++     "]": [],
++     "|}": [],
++     "}": [],
++     "GRAPH": [],
++     "{": [],
++     "OPTIONAL": [],
++     "MINUS": [],
++     "SERVICE": [],
++     "FILTER": [],
++     "BIND": [],
++     "VALUES": []},
+   "*or([var,[(,expression,AS,var,)]])" : {
+      "(": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"],
+      "VAR1": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"],
+@@ -561,9 +621,11 @@
+   "+graphNode" : {
+      "(": ["graphNode","*graphNode"],
+      "[": ["graphNode","*graphNode"],
++     "<<": ["graphNode","*graphNode"],
+      "VAR1": ["graphNode","*graphNode"],
+      "VAR2": ["graphNode","*graphNode"],
+      "NIL": ["graphNode","*graphNode"],
++     "<<(": ["graphNode","*graphNode"],
+      "IRI_REF": ["graphNode","*graphNode"],
+      "TRUE": ["graphNode","*graphNode"],
+      "FALSE": ["graphNode","*graphNode"],
+@@ -779,9 +841,11 @@
+      "PNAME_NS": ["varOrIRIref","*varOrIRIref"]},
+   "?." : {
+      ".": ["."],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "(": [],
+      "[": [],
+      "IRI_REF": [],
+@@ -879,6 +943,7 @@
+      "AVG": [],
+      "SAMPLE": [],
+      "GROUP_CONCAT": [],
++     "<<(": [],
+      "SUBSTR": [],
+      "REPLACE": [],
+      "REGEX": [],
+@@ -1030,6 +1095,7 @@
+      "AVG": ["[?DISTINCT,expression,*[,,expression]]"],
+      "SAMPLE": ["[?DISTINCT,expression,*[,,expression]]"],
+      "GROUP_CONCAT": ["[?DISTINCT,expression,*[,,expression]]"],
++     "<<(": ["[?DISTINCT,expression,*[,,expression]]"],
+      "SUBSTR": ["[?DISTINCT,expression,*[,,expression]]"],
+      "REPLACE": ["[?DISTINCT,expression,*[,,expression]]"],
+      "REGEX": ["[?DISTINCT,expression,*[,,expression]]"],
+@@ -1124,6 +1190,7 @@
+      "AVG": ["[expression,*[,,expression]]"],
+      "SAMPLE": ["[expression,*[,,expression]]"],
+      "GROUP_CONCAT": ["[expression,*[,,expression]]"],
++     "<<(": ["[expression,*[,,expression]]"],
+      "SUBSTR": ["[expression,*[,,expression]]"],
+      "REPLACE": ["[expression,*[,,expression]]"],
+      "REGEX": ["[expression,*[,,expression]]"],
+@@ -1146,6 +1213,28 @@
+      "PNAME_LN": ["[expression,*[,,expression]]"],
+      "PNAME_NS": ["[expression,*[,,expression]]"],
+      ")": []},
++  "?[or([verbPath,verbSimple]),objectListPath]" : {
++     "VAR1": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "VAR2": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "^": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "a": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "!": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "(": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "IRI_REF": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "PNAME_LN": ["[or([verbPath,verbSimple]),objectListPath]"],
++     "PNAME_NS": ["[or([verbPath,verbSimple]),objectListPath]"],
++     ";": [],
++     ".": [],
++     "|}": [],
++     "{": [],
++     "OPTIONAL": [],
++     "MINUS": [],
++     "GRAPH": [],
++     "SERVICE": [],
++     "FILTER": [],
++     "BIND": [],
++     "VALUES": [],
++     "}": []},
+   "?[or([verbPath,verbSimple]),objectList]" : {
+      "VAR1": ["[or([verbPath,verbSimple]),objectList]"],
+      "VAR2": ["[or([verbPath,verbSimple]),objectList]"],
+@@ -1159,6 +1248,7 @@
+      ";": [],
+      ".": [],
+      "]": [],
++     "|}": [],
+      "}": [],
+      "GRAPH": [],
+      "{": [],
+@@ -1215,9 +1305,11 @@
+      "/": [],
+      ";": []},
+   "?constructTriples" : {
++     "<<": ["constructTriples"],
+      "VAR1": ["constructTriples"],
+      "VAR2": ["constructTriples"],
+      "NIL": ["constructTriples"],
++     "<<(": ["constructTriples"],
+      "(": ["constructTriples"],
+      "[": ["constructTriples"],
+      "IRI_REF": ["constructTriples"],
+@@ -1292,6 +1384,7 @@
+      "IRI_REF": [],
+      "TRUE": [],
+      "FALSE": [],
++     "<<(": [],
+      "PNAME_LN": [],
+      "PNAME_NS": [],
+      "STRING_LITERAL1": [],
+@@ -1316,7 +1409,10 @@
+      ".": [],
+      ";": [],
+      ",": [],
++     "~": [],
++     "{|": [],
+      "[": [],
++     "<<": [],
+      "NIL": [],
+      "BLANK_NODE_LABEL": [],
+      "ANON": [],
+@@ -1336,8 +1432,11 @@
+      "-": [],
+      "*": [],
+      "/": [],
++     ")>>": [],
++     ">>": [],
+      "}": [],
+      "]": [],
++     "|}": [],
+      "GRAPH": [],
+      "{": [],
+      "OPTIONAL": [],
+@@ -1403,9 +1502,11 @@
+      ")": [],
+      "(": [],
+      "[": [],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "IRI_REF": [],
+      "TRUE": [],
+      "FALSE": [],
+@@ -1426,10 +1527,15 @@
+      "INTEGER_NEGATIVE": [],
+      "DECIMAL_NEGATIVE": [],
+      "DOUBLE_NEGATIVE": []},
++  "?reifier" : {
++     "~": ["reifier"],
++     ">>": []},
+   "?triplesBlock" : {
++     "<<": ["triplesBlock"],
+      "VAR1": ["triplesBlock"],
+      "VAR2": ["triplesBlock"],
+      "NIL": ["triplesBlock"],
++     "<<(": ["triplesBlock"],
+      "(": ["triplesBlock"],
+      "[": ["triplesBlock"],
+      "IRI_REF": ["triplesBlock"],
+@@ -1462,9 +1568,11 @@
+      "VALUES": [],
+      "}": []},
+   "?triplesTemplate" : {
++     "<<": ["triplesTemplate"],
+      "VAR1": ["triplesTemplate"],
+      "VAR2": ["triplesTemplate"],
+      "NIL": ["triplesTemplate"],
++     "<<(": ["triplesTemplate"],
+      "(": ["triplesTemplate"],
+      "[": ["triplesTemplate"],
+      "IRI_REF": ["triplesTemplate"],
+@@ -1489,6 +1597,31 @@
+      "DOUBLE_NEGATIVE": ["triplesTemplate"],
+      "}": [],
+      "GRAPH": []},
++  "?varOrReifierId" : {
++     "VAR1": ["varOrReifierId"],
++     "VAR2": ["varOrReifierId"],
++     "IRI_REF": ["varOrReifierId"],
++     "BLANK_NODE_LABEL": ["varOrReifierId"],
++     "ANON": ["varOrReifierId"],
++     "PNAME_LN": ["varOrReifierId"],
++     "PNAME_NS": ["varOrReifierId"],
++     ">>": [],
++     "~": [],
++     "{|": [],
++     ".": [],
++     ";": [],
++     ",": [],
++     "]": [],
++     "|}": [],
++     "}": [],
++     "GRAPH": [],
++     "{": [],
++     "OPTIONAL": [],
++     "MINUS": [],
++     "SERVICE": [],
++     "FILTER": [],
++     "BIND": [],
++     "VALUES": []},
+   "?whereClause" : {
+      "WHERE": ["whereClause"],
+      "{": ["whereClause"],
+@@ -1540,6 +1673,8 @@
+      "/": ["/","pathEltOrInverse"]},
+   "[/,unaryExpression]" : {
+      "/": ["/","unaryExpression"]},
++  "[;,?[or([verbPath,verbSimple]),objectListPath]]" : {
++     ";": [";","?[or([verbPath,verbSimple]),objectListPath]"]},
+   "[;,?[or([verbPath,verbSimple]),objectList]]" : {
+      ";": [";","?[or([verbPath,verbSimple]),objectList]"]},
+   "[;,SEPARATOR,=,string]" : {
+@@ -1621,6 +1756,7 @@
+      "AVG": ["?DISTINCT","expression","*[,,expression]"],
+      "SAMPLE": ["?DISTINCT","expression","*[,,expression]"],
+      "GROUP_CONCAT": ["?DISTINCT","expression","*[,,expression]"],
++     "<<(": ["?DISTINCT","expression","*[,,expression]"],
+      "SUBSTR": ["?DISTINCT","expression","*[,,expression]"],
+      "REPLACE": ["?DISTINCT","expression","*[,,expression]"],
+      "REGEX": ["?DISTINCT","expression","*[,,expression]"],
+@@ -1726,6 +1862,7 @@
+      "AVG": ["expression","*[,,expression]"],
+      "SAMPLE": ["expression","*[,,expression]"],
+      "GROUP_CONCAT": ["expression","*[,,expression]"],
++     "<<(": ["expression","*[,,expression]"],
+      "SUBSTR": ["expression","*[,,expression]"],
+      "REPLACE": ["expression","*[,,expression]"],
+      "REGEX": ["expression","*[,,expression]"],
+@@ -1767,6 +1904,16 @@
+      "INTEGER_NEGATIVE": ["or([numericLiteralPositive,numericLiteralNegative])","?or([[*,unaryExpression],[/,unaryExpression]])"],
+      "DECIMAL_NEGATIVE": ["or([numericLiteralPositive,numericLiteralNegative])","?or([[*,unaryExpression],[/,unaryExpression]])"],
+      "DOUBLE_NEGATIVE": ["or([numericLiteralPositive,numericLiteralNegative])","?or([[*,unaryExpression],[/,unaryExpression]])"]},
++  "[or([verbPath,verbSimple]),objectListPath]" : {
++     "VAR1": ["or([verbPath,verbSimple])","objectListPath"],
++     "VAR2": ["or([verbPath,verbSimple])","objectListPath"],
++     "^": ["or([verbPath,verbSimple])","objectListPath"],
++     "a": ["or([verbPath,verbSimple])","objectListPath"],
++     "!": ["or([verbPath,verbSimple])","objectListPath"],
++     "(": ["or([verbPath,verbSimple])","objectListPath"],
++     "IRI_REF": ["or([verbPath,verbSimple])","objectListPath"],
++     "PNAME_LN": ["or([verbPath,verbSimple])","objectListPath"],
++     "PNAME_NS": ["or([verbPath,verbSimple])","objectListPath"]},
+   "[or([verbPath,verbSimple]),objectList]" : {
+      "VAR1": ["or([verbPath,verbSimple])","objectList"],
+      "VAR2": ["or([verbPath,verbSimple])","objectList"],
+@@ -1869,6 +2016,7 @@
+      "AVG": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
+      "SAMPLE": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
+      "GROUP_CONCAT": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
++     "<<(": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
+      "SUBSTR": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
+      "REPLACE": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
+      "REGEX": ["multiplicativeExpression","*or([[+,multiplicativeExpression],[-,multiplicativeExpression],[or([numericLiteralPositive,numericLiteralNegative]),?or([[*,unaryExpression],[/,unaryExpression]])]])"],
+@@ -1902,6 +2050,43 @@
+      "}": []},
+   "allowVars" : {
+      "}": []},
++  "annotation" : {
++     "~": ["*or([reifier,annotationBlock])"],
++     "{|": ["*or([reifier,annotationBlock])"],
++     ".": ["*or([reifier,annotationBlock])"],
++     ";": ["*or([reifier,annotationBlock])"],
++     ",": ["*or([reifier,annotationBlock])"],
++     "]": ["*or([reifier,annotationBlock])"],
++     "|}": ["*or([reifier,annotationBlock])"],
++     "}": ["*or([reifier,annotationBlock])"],
++     "GRAPH": ["*or([reifier,annotationBlock])"],
++     "{": ["*or([reifier,annotationBlock])"],
++     "OPTIONAL": ["*or([reifier,annotationBlock])"],
++     "MINUS": ["*or([reifier,annotationBlock])"],
++     "SERVICE": ["*or([reifier,annotationBlock])"],
++     "FILTER": ["*or([reifier,annotationBlock])"],
++     "BIND": ["*or([reifier,annotationBlock])"],
++     "VALUES": ["*or([reifier,annotationBlock])"]},
++  "annotationBlock" : {
++     "{|": ["{|","propertyListNotEmpty","|}"]},
++  "annotationBlockPath" : {
++     "{|": ["{|","propertyListPathNotEmpty","|}"]},
++  "annotationPath" : {
++     "~": ["*or([reifier,annotationBlockPath])"],
++     "{|": ["*or([reifier,annotationBlockPath])"],
++     ".": ["*or([reifier,annotationBlockPath])"],
++     ";": ["*or([reifier,annotationBlockPath])"],
++     ",": ["*or([reifier,annotationBlockPath])"],
++     "|}": ["*or([reifier,annotationBlockPath])"],
++     "{": ["*or([reifier,annotationBlockPath])"],
++     "OPTIONAL": ["*or([reifier,annotationBlockPath])"],
++     "MINUS": ["*or([reifier,annotationBlockPath])"],
++     "GRAPH": ["*or([reifier,annotationBlockPath])"],
++     "SERVICE": ["*or([reifier,annotationBlockPath])"],
++     "FILTER": ["*or([reifier,annotationBlockPath])"],
++     "BIND": ["*or([reifier,annotationBlockPath])"],
++     "VALUES": ["*or([reifier,annotationBlockPath])"],
++     "}": ["*or([reifier,annotationBlockPath])"]},
+   "argList" : {
+      "NIL": ["NIL"],
+      "(": ["(","?[?DISTINCT,expression,*[,,expression]]",")"]},
+@@ -2049,6 +2234,7 @@
+      "AVG": ["valueLogical","*[&&,valueLogical]"],
+      "SAMPLE": ["valueLogical","*[&&,valueLogical]"],
+      "GROUP_CONCAT": ["valueLogical","*[&&,valueLogical]"],
++     "<<(": ["valueLogical","*[&&,valueLogical]"],
+      "SUBSTR": ["valueLogical","*[&&,valueLogical]"],
+      "REPLACE": ["valueLogical","*[&&,valueLogical]"],
+      "REGEX": ["valueLogical","*[&&,valueLogical]"],
+@@ -2135,6 +2321,7 @@
+      "AVG": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
+      "SAMPLE": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
+      "GROUP_CONCAT": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
++     "<<(": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
+      "SUBSTR": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
+      "REPLACE": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
+      "REGEX": ["conditionalAndExpression","*[||,conditionalAndExpression]"],
+@@ -2220,9 +2407,11 @@
+   "constructTemplate" : {
+      "{": ["{","?constructTriples","}"]},
+   "constructTriples" : {
++     "<<": ["triplesSameSubject","?[.,?constructTriples]"],
+      "VAR1": ["triplesSameSubject","?[.,?constructTriples]"],
+      "VAR2": ["triplesSameSubject","?[.,?constructTriples]"],
+      "NIL": ["triplesSameSubject","?[.,?constructTriples]"],
++     "<<(": ["triplesSameSubject","?[.,?constructTriples]"],
+      "(": ["triplesSameSubject","?[.,?constructTriples]"],
+      "[": ["triplesSameSubject","?[.,?constructTriples]"],
+      "IRI_REF": ["triplesSameSubject","?[.,?constructTriples]"],
+@@ -2273,7 +2462,8 @@
+      "DOUBLE_NEGATIVE": ["numericLiteral"],
+      "TRUE": ["booleanLiteral"],
+      "FALSE": ["booleanLiteral"],
+-     "UNDEF": ["UNDEF"]},
++     "UNDEF": ["UNDEF"],
++     "<<(": ["tripleTermData"]},
+   "datasetClause" : {
+      "FROM": ["FROM","or([defaultGraphClause,namedGraphClause])"]},
+   "defaultGraphClause" : {
+@@ -2293,9 +2483,11 @@
+   "disallowBnodes" : {
+      "}": [],
+      "GRAPH": [],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "(": [],
+      "[": [],
+      "IRI_REF": [],
+@@ -2321,9 +2513,11 @@
+   "disallowVars" : {
+      "}": [],
+      "GRAPH": [],
++     "<<": [],
+      "VAR1": [],
+      "VAR2": [],
+      "NIL": [],
++     "<<(": [],
+      "(": [],
+      "[": [],
+      "IRI_REF": [],
+@@ -2350,6 +2544,36 @@
+      "DROP": ["DROP","?SILENT_2","graphRefAll"]},
+   "existsFunc" : {
+      "EXISTS": ["EXISTS","groupGraphPattern"]},
++  "exprTripleTerm" : {
++     "<<(": ["<<(","exprTripleTermSubject","verb","exprTripleTermObject",")>>"]},
++  "exprTripleTermObject" : {
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "STRING_LITERAL1": ["rdfLiteral"],
++     "STRING_LITERAL2": ["rdfLiteral"],
++     "STRING_LITERAL_LONG1": ["rdfLiteral"],
++     "STRING_LITERAL_LONG2": ["rdfLiteral"],
++     "INTEGER": ["numericLiteral"],
++     "DECIMAL": ["numericLiteral"],
++     "DOUBLE": ["numericLiteral"],
++     "INTEGER_POSITIVE": ["numericLiteral"],
++     "DECIMAL_POSITIVE": ["numericLiteral"],
++     "DOUBLE_POSITIVE": ["numericLiteral"],
++     "INTEGER_NEGATIVE": ["numericLiteral"],
++     "DECIMAL_NEGATIVE": ["numericLiteral"],
++     "DOUBLE_NEGATIVE": ["numericLiteral"],
++     "TRUE": ["booleanLiteral"],
++     "FALSE": ["booleanLiteral"],
++     "VAR1": ["var"],
++     "VAR2": ["var"],
++     "<<(": ["exprTripleTerm"]},
++  "exprTripleTermSubject" : {
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "VAR1": ["var"],
++     "VAR2": ["var"]},
+   "expression" : {
+      "!": ["conditionalOrExpression"],
+      "+": ["conditionalOrExpression"],
+@@ -2415,6 +2639,7 @@
+      "AVG": ["conditionalOrExpression"],
+      "SAMPLE": ["conditionalOrExpression"],
+      "GROUP_CONCAT": ["conditionalOrExpression"],
++     "<<(": ["conditionalOrExpression"],
+      "SUBSTR": ["conditionalOrExpression"],
+      "REPLACE": ["conditionalOrExpression"],
+      "REGEX": ["conditionalOrExpression"],
+@@ -2451,6 +2676,7 @@
+      "VAR1": ["varOrTerm"],
+      "VAR2": ["varOrTerm"],
+      "NIL": ["varOrTerm"],
++     "<<(": ["varOrTerm"],
+      "IRI_REF": ["varOrTerm"],
+      "TRUE": ["varOrTerm"],
+      "FALSE": ["varOrTerm"],
+@@ -2472,11 +2698,13 @@
+      "DECIMAL_NEGATIVE": ["varOrTerm"],
+      "DOUBLE_NEGATIVE": ["varOrTerm"],
+      "(": ["triplesNode"],
+-     "[": ["triplesNode"]},
++     "[": ["triplesNode"],
++     "<<": ["reifiedTriple"]},
+   "graphNodePath" : {
+      "VAR1": ["varOrTerm"],
+      "VAR2": ["varOrTerm"],
+      "NIL": ["varOrTerm"],
++     "<<(": ["varOrTerm"],
+      "IRI_REF": ["varOrTerm"],
+      "TRUE": ["varOrTerm"],
+      "FALSE": ["varOrTerm"],
+@@ -2498,7 +2726,8 @@
+      "DECIMAL_NEGATIVE": ["varOrTerm"],
+      "DOUBLE_NEGATIVE": ["varOrTerm"],
+      "(": ["triplesNodePath"],
+-     "[": ["triplesNodePath"]},
++     "[": ["triplesNodePath"],
++     "<<": ["reifiedTriple"]},
+   "graphOrDefault" : {
+      "DEFAULT": ["DEFAULT"],
+      "IRI_REF": ["?GRAPH","iriRef"],
+@@ -2617,9 +2846,11 @@
+      "FILTER": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "BIND": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "VALUES": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
++     "<<": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "VAR1": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "VAR2": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "NIL": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
++     "<<(": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "(": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "[": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+      "IRI_REF": ["?triplesBlock","*[graphPatternNotTriples,?.,?triplesBlock]"],
+@@ -2807,6 +3038,7 @@
+      "AVG": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
+      "SAMPLE": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
+      "GROUP_CONCAT": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
++     "<<(": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
+      "SUBSTR": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
+      "REPLACE": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
+      "REGEX": ["unaryExpression","*or([[*,unaryExpression],[/,unaryExpression]])"],
+@@ -2897,6 +3129,7 @@
+      "AVG": ["additiveExpression"],
+      "SAMPLE": ["additiveExpression"],
+      "GROUP_CONCAT": ["additiveExpression"],
++     "<<(": ["additiveExpression"],
+      "SUBSTR": ["additiveExpression"],
+      "REPLACE": ["additiveExpression"],
+      "REGEX": ["additiveExpression"],
+@@ -2941,37 +3174,41 @@
+      "DECIMAL": ["DECIMAL"],
+      "DOUBLE": ["DOUBLE"]},
+   "object" : {
+-     "(": ["graphNode"],
+-     "[": ["graphNode"],
+-     "VAR1": ["graphNode"],
+-     "VAR2": ["graphNode"],
+-     "NIL": ["graphNode"],
+-     "IRI_REF": ["graphNode"],
+-     "TRUE": ["graphNode"],
+-     "FALSE": ["graphNode"],
+-     "BLANK_NODE_LABEL": ["graphNode"],
+-     "ANON": ["graphNode"],
+-     "PNAME_LN": ["graphNode"],
+-     "PNAME_NS": ["graphNode"],
+-     "STRING_LITERAL1": ["graphNode"],
+-     "STRING_LITERAL2": ["graphNode"],
+-     "STRING_LITERAL_LONG1": ["graphNode"],
+-     "STRING_LITERAL_LONG2": ["graphNode"],
+-     "INTEGER": ["graphNode"],
+-     "DECIMAL": ["graphNode"],
+-     "DOUBLE": ["graphNode"],
+-     "INTEGER_POSITIVE": ["graphNode"],
+-     "DECIMAL_POSITIVE": ["graphNode"],
+-     "DOUBLE_POSITIVE": ["graphNode"],
+-     "INTEGER_NEGATIVE": ["graphNode"],
+-     "DECIMAL_NEGATIVE": ["graphNode"],
+-     "DOUBLE_NEGATIVE": ["graphNode"]},
++     "(": ["graphNode","annotation"],
++     "[": ["graphNode","annotation"],
++     "<<": ["graphNode","annotation"],
++     "VAR1": ["graphNode","annotation"],
++     "VAR2": ["graphNode","annotation"],
++     "NIL": ["graphNode","annotation"],
++     "<<(": ["graphNode","annotation"],
++     "IRI_REF": ["graphNode","annotation"],
++     "TRUE": ["graphNode","annotation"],
++     "FALSE": ["graphNode","annotation"],
++     "BLANK_NODE_LABEL": ["graphNode","annotation"],
++     "ANON": ["graphNode","annotation"],
++     "PNAME_LN": ["graphNode","annotation"],
++     "PNAME_NS": ["graphNode","annotation"],
++     "STRING_LITERAL1": ["graphNode","annotation"],
++     "STRING_LITERAL2": ["graphNode","annotation"],
++     "STRING_LITERAL_LONG1": ["graphNode","annotation"],
++     "STRING_LITERAL_LONG2": ["graphNode","annotation"],
++     "INTEGER": ["graphNode","annotation"],
++     "DECIMAL": ["graphNode","annotation"],
++     "DOUBLE": ["graphNode","annotation"],
++     "INTEGER_POSITIVE": ["graphNode","annotation"],
++     "DECIMAL_POSITIVE": ["graphNode","annotation"],
++     "DOUBLE_POSITIVE": ["graphNode","annotation"],
++     "INTEGER_NEGATIVE": ["graphNode","annotation"],
++     "DECIMAL_NEGATIVE": ["graphNode","annotation"],
++     "DOUBLE_NEGATIVE": ["graphNode","annotation"]},
+   "objectList" : {
+      "(": ["object","*[,,object]"],
+      "[": ["object","*[,,object]"],
++     "<<": ["object","*[,,object]"],
+      "VAR1": ["object","*[,,object]"],
+      "VAR2": ["object","*[,,object]"],
+      "NIL": ["object","*[,,object]"],
++     "<<(": ["object","*[,,object]"],
+      "IRI_REF": ["object","*[,,object]"],
+      "TRUE": ["object","*[,,object]"],
+      "FALSE": ["object","*[,,object]"],
+@@ -2995,9 +3232,11 @@
+   "objectListPath" : {
+      "(": ["objectPath","*[,,objectPath]"],
+      "[": ["objectPath","*[,,objectPath]"],
++     "<<": ["objectPath","*[,,objectPath]"],
+      "VAR1": ["objectPath","*[,,objectPath]"],
+      "VAR2": ["objectPath","*[,,objectPath]"],
+      "NIL": ["objectPath","*[,,objectPath]"],
++     "<<(": ["objectPath","*[,,objectPath]"],
+      "IRI_REF": ["objectPath","*[,,objectPath]"],
+      "TRUE": ["objectPath","*[,,objectPath]"],
+      "FALSE": ["objectPath","*[,,objectPath]"],
+@@ -3019,31 +3258,33 @@
+      "DECIMAL_NEGATIVE": ["objectPath","*[,,objectPath]"],
+      "DOUBLE_NEGATIVE": ["objectPath","*[,,objectPath]"]},
+   "objectPath" : {
+-     "(": ["graphNodePath"],
+-     "[": ["graphNodePath"],
+-     "VAR1": ["graphNodePath"],
+-     "VAR2": ["graphNodePath"],
+-     "NIL": ["graphNodePath"],
+-     "IRI_REF": ["graphNodePath"],
+-     "TRUE": ["graphNodePath"],
+-     "FALSE": ["graphNodePath"],
+-     "BLANK_NODE_LABEL": ["graphNodePath"],
+-     "ANON": ["graphNodePath"],
+-     "PNAME_LN": ["graphNodePath"],
+-     "PNAME_NS": ["graphNodePath"],
+-     "STRING_LITERAL1": ["graphNodePath"],
+-     "STRING_LITERAL2": ["graphNodePath"],
+-     "STRING_LITERAL_LONG1": ["graphNodePath"],
+-     "STRING_LITERAL_LONG2": ["graphNodePath"],
+-     "INTEGER": ["graphNodePath"],
+-     "DECIMAL": ["graphNodePath"],
+-     "DOUBLE": ["graphNodePath"],
+-     "INTEGER_POSITIVE": ["graphNodePath"],
+-     "DECIMAL_POSITIVE": ["graphNodePath"],
+-     "DOUBLE_POSITIVE": ["graphNodePath"],
+-     "INTEGER_NEGATIVE": ["graphNodePath"],
+-     "DECIMAL_NEGATIVE": ["graphNodePath"],
+-     "DOUBLE_NEGATIVE": ["graphNodePath"]},
++     "(": ["graphNodePath","annotationPath"],
++     "[": ["graphNodePath","annotationPath"],
++     "<<": ["graphNodePath","annotationPath"],
++     "VAR1": ["graphNodePath","annotationPath"],
++     "VAR2": ["graphNodePath","annotationPath"],
++     "NIL": ["graphNodePath","annotationPath"],
++     "<<(": ["graphNodePath","annotationPath"],
++     "IRI_REF": ["graphNodePath","annotationPath"],
++     "TRUE": ["graphNodePath","annotationPath"],
++     "FALSE": ["graphNodePath","annotationPath"],
++     "BLANK_NODE_LABEL": ["graphNodePath","annotationPath"],
++     "ANON": ["graphNodePath","annotationPath"],
++     "PNAME_LN": ["graphNodePath","annotationPath"],
++     "PNAME_NS": ["graphNodePath","annotationPath"],
++     "STRING_LITERAL1": ["graphNodePath","annotationPath"],
++     "STRING_LITERAL2": ["graphNodePath","annotationPath"],
++     "STRING_LITERAL_LONG1": ["graphNodePath","annotationPath"],
++     "STRING_LITERAL_LONG2": ["graphNodePath","annotationPath"],
++     "INTEGER": ["graphNodePath","annotationPath"],
++     "DECIMAL": ["graphNodePath","annotationPath"],
++     "DOUBLE": ["graphNodePath","annotationPath"],
++     "INTEGER_POSITIVE": ["graphNodePath","annotationPath"],
++     "DECIMAL_POSITIVE": ["graphNodePath","annotationPath"],
++     "DOUBLE_POSITIVE": ["graphNodePath","annotationPath"],
++     "INTEGER_NEGATIVE": ["graphNodePath","annotationPath"],
++     "DECIMAL_NEGATIVE": ["graphNodePath","annotationPath"],
++     "DOUBLE_NEGATIVE": ["graphNodePath","annotationPath"]},
+   "offsetClause" : {
+      "OFFSET": ["OFFSET","INTEGER"]},
+   "optionalGraphPattern" : {
+@@ -3114,6 +3355,7 @@
+      "AVG": ["expression"],
+      "SAMPLE": ["expression"],
+      "GROUP_CONCAT": ["expression"],
++     "<<(": ["expression"],
+      "SUBSTR": ["expression"],
+      "REPLACE": ["expression"],
+      "REGEX": ["expression"],
+@@ -3245,6 +3487,12 @@
+      "CREATE": ["updateAll"],
+      "WITH": ["updateAll"],
+      "$": ["updateAll"]},
++  "or([reifier,annotationBlockPath])" : {
++     "~": ["reifier"],
++     "{|": ["annotationBlockPath"]},
++  "or([reifier,annotationBlock])" : {
++     "~": ["reifier"],
++     "{|": ["annotationBlock"]},
+   "or([selectQuery,constructQuery,describeQuery,askQuery])" : {
+      "SELECT": ["selectQuery"],
+      "CONSTRUCT": ["constructQuery"],
+@@ -3260,9 +3508,11 @@
+      "FILTER": ["groupGraphPatternSub"],
+      "BIND": ["groupGraphPatternSub"],
+      "VALUES": ["groupGraphPatternSub"],
++     "<<": ["groupGraphPatternSub"],
+      "VAR1": ["groupGraphPatternSub"],
+      "VAR2": ["groupGraphPatternSub"],
+      "NIL": ["groupGraphPatternSub"],
++     "<<(": ["groupGraphPatternSub"],
+      "(": ["groupGraphPatternSub"],
+      "[": ["groupGraphPatternSub"],
+      "IRI_REF": ["groupGraphPatternSub"],
+@@ -3519,7 +3769,8 @@
+      "MAX": ["aggregate"],
+      "AVG": ["aggregate"],
+      "SAMPLE": ["aggregate"],
+-     "GROUP_CONCAT": ["aggregate"]},
++     "GROUP_CONCAT": ["aggregate"],
++     "<<(": ["exprTripleTerm"]},
+   "prologue" : {
+      "BASE": ["*or([baseDecl,prefixDecl])"],
+      "PREFIX": ["*or([baseDecl,prefixDecl])"],
+@@ -3583,15 +3834,15 @@
+      "VALUES": [],
+      "}": []},
+   "propertyListPathNotEmpty" : {
+-     "VAR1": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "VAR2": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "^": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "a": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "!": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "(": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "IRI_REF": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "PNAME_LN": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"],
+-     "PNAME_NS": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectList]]"]},
++     "VAR1": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "VAR2": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "^": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "a": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "!": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "(": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "IRI_REF": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "PNAME_LN": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"],
++     "PNAME_NS": ["or([verbPath,verbSimple])","objectListPath","*[;,?[or([verbPath,verbSimple]),objectListPath]]"]},
+   "quadData" : {
+      "{": ["{","disallowVars","quads","allowVars","}"]},
+   "quadDataNoBnodes" : {
+@@ -3602,9 +3853,11 @@
+      "{": ["{","disallowBnodes","quads","allowBnodes","}"]},
+   "quads" : {
+      "GRAPH": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
++     "<<": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+      "VAR1": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+      "VAR2": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+      "NIL": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
++     "<<(": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+      "(": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+      "[": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+      "IRI_REF": ["?triplesTemplate","*[quadsNotTriples,?.,?triplesTemplate]"],
+@@ -3642,6 +3895,64 @@
+      "STRING_LITERAL_LONG2": ["string","?or([LANGTAG,[^^,iriRef]])"]},
+   "regexExpression" : {
+      "REGEX": ["REGEX","(","expression",",","expression","?[,,expression]",")"]},
++  "reifiedTriple" : {
++     "<<": ["<<","reifiedTripleSubject","verb","reifiedTripleObject","?reifier",">>"]},
++  "reifiedTripleBlock" : {
++     "<<": ["reifiedTriple","propertyList"]},
++  "reifiedTripleBlockPath" : {
++     "<<": ["reifiedTriple","propertyListPath"]},
++  "reifiedTripleObject" : {
++     "VAR1": ["var"],
++     "VAR2": ["var"],
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "STRING_LITERAL1": ["rdfLiteral"],
++     "STRING_LITERAL2": ["rdfLiteral"],
++     "STRING_LITERAL_LONG1": ["rdfLiteral"],
++     "STRING_LITERAL_LONG2": ["rdfLiteral"],
++     "INTEGER": ["numericLiteral"],
++     "DECIMAL": ["numericLiteral"],
++     "DOUBLE": ["numericLiteral"],
++     "INTEGER_POSITIVE": ["numericLiteral"],
++     "DECIMAL_POSITIVE": ["numericLiteral"],
++     "DOUBLE_POSITIVE": ["numericLiteral"],
++     "INTEGER_NEGATIVE": ["numericLiteral"],
++     "DECIMAL_NEGATIVE": ["numericLiteral"],
++     "DOUBLE_NEGATIVE": ["numericLiteral"],
++     "TRUE": ["booleanLiteral"],
++     "FALSE": ["booleanLiteral"],
++     "BLANK_NODE_LABEL": ["blankNode"],
++     "ANON": ["blankNode"],
++     "<<": ["reifiedTriple"],
++     "<<(": ["tripleTerm"]},
++  "reifiedTripleSubject" : {
++     "VAR1": ["var"],
++     "VAR2": ["var"],
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "STRING_LITERAL1": ["rdfLiteral"],
++     "STRING_LITERAL2": ["rdfLiteral"],
++     "STRING_LITERAL_LONG1": ["rdfLiteral"],
++     "STRING_LITERAL_LONG2": ["rdfLiteral"],
++     "INTEGER": ["numericLiteral"],
++     "DECIMAL": ["numericLiteral"],
++     "DOUBLE": ["numericLiteral"],
++     "INTEGER_POSITIVE": ["numericLiteral"],
++     "DECIMAL_POSITIVE": ["numericLiteral"],
++     "DOUBLE_POSITIVE": ["numericLiteral"],
++     "INTEGER_NEGATIVE": ["numericLiteral"],
++     "DECIMAL_NEGATIVE": ["numericLiteral"],
++     "DOUBLE_NEGATIVE": ["numericLiteral"],
++     "TRUE": ["booleanLiteral"],
++     "FALSE": ["booleanLiteral"],
++     "BLANK_NODE_LABEL": ["blankNode"],
++     "ANON": ["blankNode"],
++     "<<": ["reifiedTriple"],
++     "<<(": ["tripleTerm"]},
++  "reifier" : {
++     "~": ["~","?varOrReifierId"]},
+   "relationalExpression" : {
+      "!": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+      "+": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+@@ -3707,6 +4018,7 @@
+      "AVG": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+      "SAMPLE": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+      "GROUP_CONCAT": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
++     "<<(": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+      "SUBSTR": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+      "REPLACE": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+      "REGEX": ["numericExpression","?or([[=,numericExpression],[!=,numericExpression],[<,numericExpression],[>,numericExpression],[<=,numericExpression],[>=,numericExpression],[IN,expressionList],[NOT,IN,expressionList]])"],
+@@ -3766,6 +4078,8 @@
+      "BASE": ["prologue","or([queryAll,updateAll])","$"],
+      "PREFIX": ["prologue","or([queryAll,updateAll])","$"]},
+   "storeProperty" : {
++     "VAR1": [],
++     "VAR2": [],
+      "IRI_REF": [],
+      "PNAME_LN": [],
+      "PNAME_NS": [],
+@@ -3781,10 +4095,88 @@
+      "SELECT": ["selectClause","whereClause","solutionModifier","valuesClause"]},
+   "substringExpression" : {
+      "SUBSTR": ["SUBSTR","(","expression",",","expression","?[,,expression]",")"]},
++  "tripleTerm" : {
++     "<<(": ["<<(","tripleTermSubject","verb","tripleTermObject",")>>"]},
++  "tripleTermData" : {
++     "<<(": ["<<(","tripleTermDataSubject","or([iriRef,a])","tripleTermDataObject",")>>"]},
++  "tripleTermDataObject" : {
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "STRING_LITERAL1": ["rdfLiteral"],
++     "STRING_LITERAL2": ["rdfLiteral"],
++     "STRING_LITERAL_LONG1": ["rdfLiteral"],
++     "STRING_LITERAL_LONG2": ["rdfLiteral"],
++     "INTEGER": ["numericLiteral"],
++     "DECIMAL": ["numericLiteral"],
++     "DOUBLE": ["numericLiteral"],
++     "INTEGER_POSITIVE": ["numericLiteral"],
++     "DECIMAL_POSITIVE": ["numericLiteral"],
++     "DOUBLE_POSITIVE": ["numericLiteral"],
++     "INTEGER_NEGATIVE": ["numericLiteral"],
++     "DECIMAL_NEGATIVE": ["numericLiteral"],
++     "DOUBLE_NEGATIVE": ["numericLiteral"],
++     "TRUE": ["booleanLiteral"],
++     "FALSE": ["booleanLiteral"],
++     "<<(": ["tripleTermData"]},
++  "tripleTermDataSubject" : {
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"]},
++  "tripleTermObject" : {
++     "VAR1": ["var"],
++     "VAR2": ["var"],
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "STRING_LITERAL1": ["rdfLiteral"],
++     "STRING_LITERAL2": ["rdfLiteral"],
++     "STRING_LITERAL_LONG1": ["rdfLiteral"],
++     "STRING_LITERAL_LONG2": ["rdfLiteral"],
++     "INTEGER": ["numericLiteral"],
++     "DECIMAL": ["numericLiteral"],
++     "DOUBLE": ["numericLiteral"],
++     "INTEGER_POSITIVE": ["numericLiteral"],
++     "DECIMAL_POSITIVE": ["numericLiteral"],
++     "DOUBLE_POSITIVE": ["numericLiteral"],
++     "INTEGER_NEGATIVE": ["numericLiteral"],
++     "DECIMAL_NEGATIVE": ["numericLiteral"],
++     "DOUBLE_NEGATIVE": ["numericLiteral"],
++     "TRUE": ["booleanLiteral"],
++     "FALSE": ["booleanLiteral"],
++     "BLANK_NODE_LABEL": ["blankNode"],
++     "ANON": ["blankNode"],
++     "<<(": ["tripleTerm"]},
++  "tripleTermSubject" : {
++     "VAR1": ["var"],
++     "VAR2": ["var"],
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "STRING_LITERAL1": ["rdfLiteral"],
++     "STRING_LITERAL2": ["rdfLiteral"],
++     "STRING_LITERAL_LONG1": ["rdfLiteral"],
++     "STRING_LITERAL_LONG2": ["rdfLiteral"],
++     "INTEGER": ["numericLiteral"],
++     "DECIMAL": ["numericLiteral"],
++     "DOUBLE": ["numericLiteral"],
++     "INTEGER_POSITIVE": ["numericLiteral"],
++     "DECIMAL_POSITIVE": ["numericLiteral"],
++     "DOUBLE_POSITIVE": ["numericLiteral"],
++     "INTEGER_NEGATIVE": ["numericLiteral"],
++     "DECIMAL_NEGATIVE": ["numericLiteral"],
++     "DOUBLE_NEGATIVE": ["numericLiteral"],
++     "TRUE": ["booleanLiteral"],
++     "FALSE": ["booleanLiteral"],
++     "BLANK_NODE_LABEL": ["blankNode"],
++     "ANON": ["blankNode"],
++     "<<(": ["tripleTerm"]},
+   "triplesBlock" : {
++     "<<": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+      "VAR1": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+      "VAR2": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+      "NIL": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
++     "<<(": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+      "(": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+      "[": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+      "IRI_REF": ["triplesSameSubjectPath","?[.,?triplesBlock]"],
+@@ -3817,6 +4209,7 @@
+      "VAR1": ["varOrTerm","propertyListNotEmpty"],
+      "VAR2": ["varOrTerm","propertyListNotEmpty"],
+      "NIL": ["varOrTerm","propertyListNotEmpty"],
++     "<<(": ["varOrTerm","propertyListNotEmpty"],
+      "IRI_REF": ["varOrTerm","propertyListNotEmpty"],
+      "TRUE": ["varOrTerm","propertyListNotEmpty"],
+      "FALSE": ["varOrTerm","propertyListNotEmpty"],
+@@ -3838,11 +4231,13 @@
+      "DECIMAL_NEGATIVE": ["varOrTerm","propertyListNotEmpty"],
+      "DOUBLE_NEGATIVE": ["varOrTerm","propertyListNotEmpty"],
+      "(": ["triplesNode","propertyList"],
+-     "[": ["triplesNode","propertyList"]},
++     "[": ["triplesNode","propertyList"],
++     "<<": ["reifiedTripleBlock"]},
+   "triplesSameSubjectPath" : {
+      "VAR1": ["varOrTerm","propertyListPathNotEmpty"],
+      "VAR2": ["varOrTerm","propertyListPathNotEmpty"],
+      "NIL": ["varOrTerm","propertyListPathNotEmpty"],
++     "<<(": ["varOrTerm","propertyListPathNotEmpty"],
+      "IRI_REF": ["varOrTerm","propertyListPathNotEmpty"],
+      "TRUE": ["varOrTerm","propertyListPathNotEmpty"],
+      "FALSE": ["varOrTerm","propertyListPathNotEmpty"],
+@@ -3864,11 +4259,14 @@
+      "DECIMAL_NEGATIVE": ["varOrTerm","propertyListPathNotEmpty"],
+      "DOUBLE_NEGATIVE": ["varOrTerm","propertyListPathNotEmpty"],
+      "(": ["triplesNodePath","propertyListPath"],
+-     "[": ["triplesNodePath","propertyListPath"]},
++     "[": ["triplesNodePath","propertyListPath"],
++     "<<": ["reifiedTripleBlockPath"]},
+   "triplesTemplate" : {
++     "<<": ["triplesSameSubject","?[.,?triplesTemplate]"],
+      "VAR1": ["triplesSameSubject","?[.,?triplesTemplate]"],
+      "VAR2": ["triplesSameSubject","?[.,?triplesTemplate]"],
+      "NIL": ["triplesSameSubject","?[.,?triplesTemplate]"],
++     "<<(": ["triplesSameSubject","?[.,?triplesTemplate]"],
+      "(": ["triplesSameSubject","?[.,?triplesTemplate]"],
+      "[": ["triplesSameSubject","?[.,?triplesTemplate]"],
+      "IRI_REF": ["triplesSameSubject","?[.,?triplesTemplate]"],
+@@ -3956,6 +4354,7 @@
+      "AVG": ["primaryExpression"],
+      "SAMPLE": ["primaryExpression"],
+      "GROUP_CONCAT": ["primaryExpression"],
++     "<<(": ["primaryExpression"],
+      "SUBSTR": ["primaryExpression"],
+      "REPLACE": ["primaryExpression"],
+      "REGEX": ["primaryExpression"],
+@@ -4081,6 +4480,7 @@
+      "AVG": ["relationalExpression"],
+      "SAMPLE": ["relationalExpression"],
+      "GROUP_CONCAT": ["relationalExpression"],
++     "<<(": ["relationalExpression"],
+      "SUBSTR": ["relationalExpression"],
+      "REPLACE": ["relationalExpression"],
+      "REGEX": ["relationalExpression"],
+@@ -4115,6 +4515,14 @@
+      "IRI_REF": ["iriRef"],
+      "PNAME_LN": ["iriRef"],
+      "PNAME_NS": ["iriRef"]},
++  "varOrReifierId" : {
++     "VAR1": ["var"],
++     "VAR2": ["var"],
++     "IRI_REF": ["iriRef"],
++     "PNAME_LN": ["iriRef"],
++     "PNAME_NS": ["iriRef"],
++     "BLANK_NODE_LABEL": ["blankNode"],
++     "ANON": ["blankNode"]},
+   "varOrTerm" : {
+      "VAR1": ["var"],
+      "VAR2": ["var"],
+@@ -4138,7 +4546,15 @@
+      "DOUBLE_POSITIVE": ["graphTerm"],
+      "INTEGER_NEGATIVE": ["graphTerm"],
+      "DECIMAL_NEGATIVE": ["graphTerm"],
+-     "DOUBLE_NEGATIVE": ["graphTerm"]},
++     "DOUBLE_NEGATIVE": ["graphTerm"],
++     "<<(": ["tripleTerm"]},
++  "verb" : {
++     "VAR1": ["storeProperty","varOrIRIref"],
++     "VAR2": ["storeProperty","varOrIRIref"],
++     "IRI_REF": ["storeProperty","varOrIRIref"],
++     "PNAME_LN": ["storeProperty","varOrIRIref"],
++     "PNAME_NS": ["storeProperty","varOrIRIref"],
++     "a": ["storeProperty","a"]},
+   "verbPath" : {
+      "^": ["path"],
+      "a": ["path"],
+@@ -4157,7 +4573,7 @@
+
+ keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BIND|LANGMATCHES|LANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|STRLEN|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|STRUUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANG|STRDT|ISNUMERIC|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|STR)/i ,
+
+-punct:/^(\*|a|\.|\{|\}|,|\(|\)|;|\[|\]|\|\||&&|=|!=|!|<=|>=|<|>|\+|-|\/|\^\^|\?|\||\^)/ ,
++punct:/^(\*|a|\.|\{\||\|\}|\{|\}|,|\(|\)>>|\)|;|\[|\]|\|\||&&|=|!=|!|<=|>=|<<\(|<<|>>|<|>|\+|-|\/|\^\^|\?|~|\||\^)/ ,
+
+ startSymbol:"sparql11",
+ acceptEmpty:true,
+Index: Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl b/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
+--- a/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl	(revision e969a07c6ba37c057e429ecdd4cb012d92af9ad7)
++++ b/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl	(revision df156ee86652532c6818eaca1e83971b38f9dae4)
+@@ -301,6 +301,8 @@
+ dataBlockValue ==> [numericLiteral].
+ dataBlockValue ==> [booleanLiteral].
+ dataBlockValue ==> ['UNDEF'].
++% SPARQL 1.2: TripleTermData in VALUES inline data blocks
++dataBlockValue ==> [tripleTermData].
+
+ %[66]
+ minusGraphPattern ==>
+@@ -340,6 +342,9 @@
+ 	[varOrTerm,propertyListNotEmpty].
+ triplesSameSubject ==>
+ 	[triplesNode,propertyList].
++% SPARQL 1.2: ReifiedTripleBlock as a subject with its own property list
++triplesSameSubject ==>
++	[reifiedTripleBlock].
+ %[76]
+ propertyList ==> [propertyListNotEmpty].
+ propertyList ==> [].
+@@ -356,10 +361,13 @@
+ 	[object,*([',',object])].
+ %[80]
+ object ==>
+-	[graphNode].
++	[graphNode,annotation].
+ %[81]
+ triplesSameSubjectPath ==> [varOrTerm,propertyListPathNotEmpty].
+ triplesSameSubjectPath ==> [triplesNodePath,propertyListPath].
++% SPARQL 1.2: ReifiedTripleBlockPath as subject with its own property list
++triplesSameSubjectPath ==>
++	[reifiedTripleBlockPath].
+ %[82]
+ propertyListPath ==> [propertyListNotEmpty].
+ propertyListPath ==> [].
+@@ -367,7 +375,7 @@
+ propertyListPathNotEmpty ==>
+ 	[verbPath or verbSimple,
+ 	objectListPath,
+-	*([';',?([verbPath or verbSimple,objectList])])].
++	*([';',?([verbPath or verbSimple,objectListPath])])].
+ %[84]
+ verbPath ==> [path].
+ %[85]
+@@ -376,7 +384,7 @@
+ objectListPath ==>
+ 	[objectPath,*([',',objectPath])].
+ %[87]
+-objectPath ==> [graphNodePath].
++objectPath ==> [graphNodePath,annotationPath].
+ %[88]
+ path ==> [pathAlternative].
+ %[89].
+@@ -451,12 +459,18 @@
+ %[104]
+ graphNode ==> [varOrTerm].
+ graphNode ==> [triplesNode].
++% SPARQL 1.2: ReifiedTriple as a graph node
++graphNode ==> [reifiedTriple].
+ %[105]
+ graphNodePath ==> [varOrTerm].
+ graphNodePath ==> [triplesNodePath].
++% SPARQL 1.2: ReifiedTriple as a graph node path
++graphNodePath ==> [reifiedTriple].
+ %[106]
+ varOrTerm ==> [var].
+ varOrTerm ==> [graphTerm].
++% SPARQL 1.2: TripleTerm is a valid term node in graph patterns
++varOrTerm ==> [tripleTerm].
+ %[107]
+ varOrIRIref ==> [var].
+ varOrIRIref ==> [iriRef].
+@@ -517,6 +531,8 @@
+ primaryExpression ==> [booleanLiteral].
+ primaryExpression ==> [var].
+ primaryExpression ==> [aggregate].
++% SPARQL 1.2: ExprTripleTerm in expressions (BIND, FILTER, SELECT)
++primaryExpression ==> [exprTripleTerm].
+ %[120]
+ brackettedExpression ==> ['(',expression,')'].
+ %[121]
+@@ -643,8 +659,142 @@
+ blankNode ==> ['BLANK_NODE_LABEL'].
+ blankNode ==> ['ANON'].
+
++% SPARQL 1.2: Triple Terms
++% https://www.w3.org/TR/rdf12-concepts/#dfn-triple-term
++% A triple term is an RDF triple used as the object of another triple.
++%
++% Three syntactic variants exist with different constraints:
++%   tripleTerm      -- full form for graph patterns; reaches the parser via
++%                      varOrTerm (subject of TriplesSameSubjectPath, or the
++%                      node inside graphNode/graphNodePath for object lists and
++%                      collections); can also be nested inside tripleTermSubject
++%                      and tripleTermObject
++%   tripleTermData  -- restricted form for VALUES inline data blocks only
++%                      (dataBlockValue); subject must be an iri — no vars,
++%                      no bnodes, no literals; can nest as tripleTermDataObject
++%   exprTripleTerm  -- restricted form for expressions (primaryExpression),
++%                      e.g. BIND(<<(?s :p :o)>> AS ?t); subject must be
++%                      iri or Var — no blank nodes, no literals
++
++% TripleTerm ::= '<<(' TripleTermSubject Verb TripleTermObject ')>>'
++tripleTerm ==> ['<<(',tripleTermSubject,verb,tripleTermObject,')>>'].
++
++% TripleTermSubject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | TripleTerm
++tripleTermSubject ==> [var].
++tripleTermSubject ==> [iriRef].
++tripleTermSubject ==> [rdfLiteral].
++tripleTermSubject ==> [numericLiteral].
++tripleTermSubject ==> [booleanLiteral].
++tripleTermSubject ==> [blankNode].
++tripleTermSubject ==> [tripleTerm].
++
++% TripleTermObject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | TripleTerm
++tripleTermObject ==> [var].
++tripleTermObject ==> [iriRef].
++tripleTermObject ==> [rdfLiteral].
++tripleTermObject ==> [numericLiteral].
++tripleTermObject ==> [booleanLiteral].
++tripleTermObject ==> [blankNode].
++tripleTermObject ==> [tripleTerm].
++
++% TripleTermData ::= '<<(' TripleTermDataSubject ( iri | 'a' ) TripleTermDataObject ')>>'
++% Used in VALUES inline data blocks (dataBlockValue). Subject must be an iri.
++% INSERT DATA uses tripleTerm (via varOrTerm/TriplesTemplate), not tripleTermData.
++tripleTermData ==> ['<<(',tripleTermDataSubject,iriRef or 'a',tripleTermDataObject,')>>'].
++
++% TripleTermDataSubject ::= iri
++tripleTermDataSubject ==> [iriRef].
++
++% TripleTermDataObject ::= iri | RDFLiteral | NumericLiteral | BooleanLiteral | TripleTermData
++tripleTermDataObject ==> [iriRef].
++tripleTermDataObject ==> [rdfLiteral].
++tripleTermDataObject ==> [numericLiteral].
++tripleTermDataObject ==> [booleanLiteral].
++tripleTermDataObject ==> [tripleTermData].
++
++% ExprTripleTerm ::= '<<(' ExprTripleTermSubject Verb ExprTripleTermObject ')>>'
++% Used in expressions (primaryExpression), e.g. BIND(<<(?s :p :o)>> AS ?t).
++% Subject is restricted to iri or Var (no blank nodes, no literals).
++exprTripleTerm ==> ['<<(',exprTripleTermSubject,verb,exprTripleTermObject,')>>'].
++
++% ExprTripleTermSubject ::= iri | Var
++exprTripleTermSubject ==> [iriRef].
++exprTripleTermSubject ==> [var].
++
++% ExprTripleTermObject ::= iri | RDFLiteral | NumericLiteral | BooleanLiteral | Var | ExprTripleTerm
++exprTripleTermObject ==> [iriRef].
++exprTripleTermObject ==> [rdfLiteral].
++exprTripleTermObject ==> [numericLiteral].
++exprTripleTermObject ==> [booleanLiteral].
++exprTripleTermObject ==> [var].
++exprTripleTermObject ==> [exprTripleTerm].
++
++% SPARQL 1.2: Reified Triples
++% https://www.w3.org/TR/sparql12-query/#sec-syntax-reified-triples
++%
++% ReifiedTriple  ::= '<<' ReifiedTripleSubject Verb ReifiedTripleObject Reifier? '>>'
++% ReifiedTripleBlock     ::= ReifiedTriple PropertyList
++% ReifiedTripleBlockPath ::= ReifiedTriple PropertyListPath
++%
++% Reifier        ::= '~' VarOrReifierId?
++% VarOrReifierId ::= Var | iri | BlankNode
++%
++% Annotation     ::= ( Reifier | AnnotationBlock )*
++% AnnotationPath ::= ( Reifier | AnnotationBlockPath )*
++% AnnotationBlock     ::= '{|' PropertyListNotEmpty '|}'
++% AnnotationBlockPath ::= '{|' PropertyListPathNotEmpty '|}'
++
++% ReifiedTriple ::= '<<' ReifiedTripleSubject Verb ReifiedTripleObject Reifier? '>>'
++reifiedTriple ==>
++    ['<<',reifiedTripleSubject,verb,reifiedTripleObject,?(reifier),'>>'].
++
++% ReifiedTripleSubject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | ReifiedTriple | TripleTerm
++reifiedTripleSubject ==> [var].
++reifiedTripleSubject ==> [iriRef].
++reifiedTripleSubject ==> [rdfLiteral].
++reifiedTripleSubject ==> [numericLiteral].
++reifiedTripleSubject ==> [booleanLiteral].
++reifiedTripleSubject ==> [blankNode].
++reifiedTripleSubject ==> [reifiedTriple].
++reifiedTripleSubject ==> [tripleTerm].
++
++% ReifiedTripleObject ::= Var | iri | RDFLiteral | NumericLiteral | BooleanLiteral | BlankNode | ReifiedTriple | TripleTerm
++reifiedTripleObject ==> [var].
++reifiedTripleObject ==> [iriRef].
++reifiedTripleObject ==> [rdfLiteral].
++reifiedTripleObject ==> [numericLiteral].
++reifiedTripleObject ==> [booleanLiteral].
++reifiedTripleObject ==> [blankNode].
++reifiedTripleObject ==> [reifiedTriple].
++reifiedTripleObject ==> [tripleTerm].
++
++% ReifiedTripleBlock     ::= ReifiedTriple PropertyList
++reifiedTripleBlock ==> [reifiedTriple,propertyList].
++
++% ReifiedTripleBlockPath ::= ReifiedTriple PropertyListPath
++reifiedTripleBlockPath ==> [reifiedTriple,propertyListPath].
+
+-% tokens defined by regular expressions elsewhere
++% Reifier ::= '~' VarOrReifierId?
++reifier ==> ['~',?(varOrReifierId)].
++
++% VarOrReifierId ::= Var | iri | BlankNode
++varOrReifierId ==> [var].
++varOrReifierId ==> [iriRef].
++varOrReifierId ==> [blankNode].
++
++% Annotation ::= ( Reifier | AnnotationBlock )*
++annotation ==> [*(reifier or annotationBlock)].
++
++% AnnotationPath ::= ( Reifier | AnnotationBlockPath )*
++annotationPath ==> [*(reifier or annotationBlockPath)].
++
++% AnnotationBlock ::= '{|' PropertyListNotEmpty '|}'
++annotationBlock ==> ['{|',propertyListNotEmpty,'|}'].
++
++% AnnotationBlockPath ::= '{|' PropertyListPathNotEmpty '|}'
++annotationBlockPath ==> ['{|',propertyListPathNotEmpty,'|}'].
++
++
+ tm_regex([
+
+ 'IRI_REF',
+@@ -807,10 +957,13 @@
+ '*'= '\\*',
+ 'a'= 'a',
+ '.'= '\\.',
++'{|'= '\\{\\|',
++'|}'= '\\|\\}',
+ '{'= '\\{',
+ '}'= '\\}',
+ ','= ',',
+ '('= '\\(',
++')>>'= '\\)>>',
+ ')'= '\\)',
+ ';'= ';',
+ '['= '\\[',
+@@ -822,6 +975,9 @@
+ '!'= '!',
+ '<='= '<=',
+ '>='= '>=',
++('<<(')= '<<\\(',
++'<<'= '<<',
++'>>'= '>>',
+ '<'= '<',
+ '>'= '>',
+ '+'= '\\+',
+@@ -829,6 +985,7 @@
+ '/'= '\\/',
+ '^^'= '\\^\\^',
+ '?' = '\\?',
++'~'= '~',
+ '|' = '\\|',
+ '^'= '\\^'
+ ]).
+Index: Yasgui/packages/yasqe/grammar/tokenizer.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/tokenizer.ts b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+--- a/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision e969a07c6ba37c057e429ecdd4cb012d92af9ad7)
++++ b/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision df156ee86652532c6818eaca1e83971b38f9dae4)
+@@ -59,6 +59,8 @@
+   valuesClause: "vars" | "data" | "tuple" | undefined; // current phase in VALUES clause
+   valuesVarCount: number;         // number of variables declared in VALUES
+   valuesTupleCount: number;       // number of values in current data tuple
++  // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
++  tripleTermDepth: number;
+   // BIND variable scoping
+   bindScopeStack: Set<string>[];  // stack of variable scopes for BIND checking
+   inBind: boolean;                // whether we're inside a BIND clause
+@@ -66,6 +68,10 @@
+   afterBindAS: boolean;           // whether we just saw AS inside BIND
+   inFilter: boolean;              // whether we're inside a FILTER expression
+   filterParenDepth: number;       // paren nesting depth inside FILTER
++  // Property-path predicate tracking for annotation/reifier validation
++  inVerbPath: boolean;            // whether we are currently parsing a verbPath predicate
++  verbPathIsComplex: boolean;     // whether the current verbPath has operators (/, |, +, *, ?, ^) making it a complex path
++  afterReifier: boolean;          // whether a named reifier (~) was just consumed before an annotation block
+   // End-of-query semantic validation (called after all tokens processed)
+   finalize: () => void;
+ }
+@@ -517,6 +523,40 @@
+         case "storeProperty":
+           state.storeProperty = true;
+           break;
++        case "verbPath":
++          // Entering a property-path predicate: reset path-complexity tracking
++          state.inVerbPath = true;
++          state.verbPathIsComplex = false;
++          break;
++        case "verbSimple":
++          // Entering a simple variable predicate: not a complex path
++          state.inVerbPath = false;
++          state.verbPathIsComplex = false;
++          break;
++        case "objectListPath":
++          // Verb is fully consumed; lock in what we found
++          state.inVerbPath = false;
++          break;
++        case "reifier":
++          // A named reifier (~) is about to be consumed before an annotation block
++          state.afterReifier = true;
++          break;
++        case "annotationBlock":
++        case "annotationBlockPath":
++          // 1) Annotation/reifier after a complex property-path predicate is illegal.
++          if (state.verbPathIsComplex && !state.afterReifier) {
++            state.OK = false;
++            state.errorMsg = "Annotation block is not allowed after a property-path predicate";
++          }
++          // 2) Anonymous annotation blocks (no preceding ~) are forbidden in
++          //    DELETE/INSERT template and DATA contexts (where bnodes are disallowed).
++          //    Named reifiers (~ :iri {| ... |}) ARE allowed.
++          if (!state.allowBnodes && !state.afterReifier) {
++            state.OK = false;
++            state.errorMsg = "Anonymous annotation block is not allowed in a DELETE/INSERT template or DATA block";
++          }
++          state.afterReifier = false;
++          break;
+       }
+     }
+
+@@ -603,6 +643,41 @@
+               state.lastPropertyIndex = 0;
+             }
+
++            // If a reifier (~) was consumed but no annotation block immediately
++            // followed it, clear the flag on any token that cannot appear between
++            // a reifier and its annotation block.  This prevents the flag from
++            // leaking into a later, unrelated annotation block and bypassing the
++            // anonymous-annotation / complex-path validation.
++            if (state.afterReifier &&
++                (tokenCat === "." || tokenCat === ";" || tokenCat === "," ||
++                 tokenCat === "]" || tokenCat === "}" || tokenCat === ">>")) {
++              state.afterReifier = false;
++            }
++
++            // Property-path complexity tracking:
++            // While parsing a verbPath, flag any operator that makes it a complex path
++            // (sequence /, alternation |, modifiers +/*/?, inverse ^).
++            if (state.inVerbPath &&
++                (tokenCat === "/" || tokenCat === "|" ||
++                 tokenCat === "+" || tokenCat === "*" || tokenCat === "?" ||
++                 tokenCat === "^")) {
++              state.verbPathIsComplex = true;
++            }
++
++            // Annotation/reifier after a complex property-path predicate is illegal.
++            // SPARQL 1.2 only allows annotations when the predicate is a simple IRI,
++            // 'a', or a variable — not a property-path expression.
++            if (state.verbPathIsComplex && tokenCat === "~") {
++              state.OK = false;
++              recordFailurePos();
++              state.errorMsg = "Annotation or reifier is not allowed after a property-path predicate";
++            }
++
++            // Annotation blocks ({| ... |}) are forbidden in DELETE/INSERT template
++            // and DATA contexts (where blank nodes are disallowed).
++            // Note: annotation blocks are detected via setSideConditions on the
++            // annotationBlock/annotationBlockPath non-terminals, not here.
++
+             //check whether a used prefix is actually defined
+             if (!state.inPrefixDecl && (tokenCat === "PNAME_NS" || tokenCat === "PNAME_LN")) {
+               const colonIndex = tokenOb.string.indexOf(":");
+@@ -647,6 +722,14 @@
+                 currentScope.childLabels.add(label);
+               }
+               currentScope.ownLabels.clear();
++            } else if (tokenCat === "WHERE" && state.allowVars && !state.hadDataBlock &&
++                       state.bnodeScopeStack.length === 1) {
++              // In non-DATA UPDATE (INSERT/DELETE template ... WHERE ...),
++              // blank node labels in the template and WHERE clause are independent:
++              // template blank nodes create fresh blank nodes per solution, so
++              // the same label may appear in both the template and the WHERE pattern.
++              // Reset bnode scope so the WHERE clause starts fresh.
++              state.bnodeScopeStack = [{ ownLabels: new Set(), childLabels: new Set() }];
+             } else if (tokenCat === ";") {
+               // In SPARQL UPDATE, ';' separates independent operations.
+               // Blank node labels must not be reused across DATA operations
+@@ -855,6 +938,7 @@
+             // Track: VALUES (var1 var2) { (val1 val2) (val1 val2) ... }
+             // The number of values in each tuple must match the variable count.
+             // State machine: undefined -> "vars" (after VALUES + '(') -> "data" (after ')' + '{') -> "tuple" (inside data tuple)
++            // Triple terms <<(...)>> are a single dataBlockValue — tokens inside them are not counted.
+             if (tokenCat === "VALUES") {
+               state.valuesClause = "vars";
+               state.valuesVarCount = 0;
+@@ -889,7 +973,7 @@
+               }
+               // '{' just opens the data block, skip
+             } else if (state.valuesClause === "tuple") {
+-              if (tokenCat === ")") {
++              if (tokenCat === ")" && state.tripleTermDepth === 0) {
+                 // End of data tuple — check arity
+                 if (state.valuesTupleCount !== state.valuesVarCount) {
+                   state.OK = false;
+@@ -898,12 +982,21 @@
+                     " values but " + state.valuesVarCount + " variables declared";
+                 }
+                 state.valuesClause = "data";
+-              } else {
+-                // Count each value in the tuple
++              } else if (tokenCat !== ")" && state.tripleTermDepth === 0) {
++                // Count each top-level value in the tuple.
++                // <<( at depth 0 counts as one value (the whole triple term);
++                // tokens inside <<(...)>> (depth > 0) are not counted.
+                 state.valuesTupleCount++;
+               }
+             }
+
++            // Track triple term depth AFTER VALUES counting so <<( is counted at depth 0
++            if (tokenCat === "<<(") {
++              state.tripleTermDepth++;
++            } else if (tokenCat === ")>>") {
++              if (state.tripleTermDepth > 0) state.tripleTermDepth--;
++            }
++
+             // BIND variable scoping:
+             // Variables bound by BIND (AS ?var) must not already be in scope.
+             // "In scope" means used in a basic graph pattern (triple pattern)
+@@ -1165,6 +1258,10 @@
+         afterBindAS: s.afterBindAS,
+         inFilter: s.inFilter,
+         filterParenDepth: s.filterParenDepth,
++        tripleTermDepth: s.tripleTermDepth,
++        inVerbPath: s.inVerbPath,
++        verbPathIsComplex: s.verbPathIsComplex,
++        afterReifier: s.afterReifier,
+         finalize: s.finalize,
+       };
+     },
+@@ -1219,6 +1316,10 @@
+         afterBindAS: false,
+         inFilter: false,
+         filterParenDepth: 0,
++        tripleTermDepth: 0,
++        inVerbPath: false,
++        verbPathIsComplex: false,
++        afterReifier: false,
+         finalize: function() {
+           if (!this.OK) return;
+           // GROUP BY scoping
+@@ -1261,3 +1362,4 @@
+     electricChars: "}])"
+   };
+ }
++
