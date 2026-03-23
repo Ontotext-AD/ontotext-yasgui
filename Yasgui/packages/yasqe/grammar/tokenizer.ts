@@ -107,7 +107,10 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
   const BLANK_NODE_LABEL = "_:(" + PN_CHARS_U + "|[0-9])((" + PN_CHARS + "|\\.)*" + PN_CHARS + ")?";
   const PNAME_NS = "(" + PN_PREFIX + ")?:";
   const PNAME_LN = PNAME_NS + PN_LOCAL;
-  const LANGTAG = "@[a-zA-Z]+(-[a-zA-Z0-9]+)*";
+  // SPARQL 1.2 LANG_DIR: '@' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)* ('--' ('ltr'|'rtl'))?
+  // Only 'ltr' and 'rtl' are valid base-direction suffixes (case-insensitive).
+  // RegEx is not strict about ltr|rtl, because of check, which would give meaningful error message
+  const LANGTAG = "@[a-zA-Z]+(-[a-zA-Z0-9]+)*(--[a-zA-Z]+)?";
 
   const EXPONENT = "[eE][\\+-]?[0-9]+";
   const INTEGER = "[0-9]+";
@@ -1056,6 +1059,23 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
                 // Variable in a triple pattern — add to scope
                 const currentScope = state.bindScopeStack[state.bindScopeStack.length - 1];
                 currentScope.add(tokenOb.string);
+              }
+            }
+
+            // SPARQL 1.2 base-direction validation:
+            // When a LANGTAG contains a '--' direction suffix, it must be
+            // exactly 'ltr' or 'rtl' (case-insensitive).
+            // e.g. @en--ltr and @en--RTL are valid; @en--foo is not.
+            if (state.OK && tokenCat === "LANGTAG") {
+              const dirMatch = tokenOb.string.match(/--([a-zA-Z]+)$/);
+              if (dirMatch) {
+                const dir = dirMatch[1].toLowerCase();
+                if (dir !== "ltr" && dir !== "rtl") {
+                  state.OK = false;
+                  recordFailurePos();
+                  state.errorMsg =
+                    "Invalid base direction '" + dirMatch[1] + "': must be 'ltr' or 'rtl'";
+                }
               }
             }
 
