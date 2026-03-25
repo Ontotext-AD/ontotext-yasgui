@@ -6,6 +6,7 @@ import {YasrToolbarPlugin} from './yasr-toolbar-plugin';
 import {EventService} from '../services/event-service';
 import {TimeFormattingService} from '../services/utils/time-formatting-service';
 import {KeyboardShortcutName} from './keyboard-shortcut-description';
+import {PluginConfigurations} from './plugin-configurations';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -236,7 +237,7 @@ export interface YasguiConfiguration {
        * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which fields are supported by
        * the plugin configuration.
        */
-      externalPluginsConfigurations: Map<string, any>;
+      externalPluginsConfigurations: Map<string, PluginConfigurations>;
 
       /**
        * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local store.
@@ -355,4 +356,13 @@ export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
   pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts'],
   showQueryLoader: true,
+  defaultGeoPluginConfiguration: {
+    defaultGeoStyleOptions: {
+      weight: 3,
+      color: '#3388ff',
+      opacity: 0.2,
+      fillColor: '#3388ff',
+      fillOpacity: 0.2
+    }
+  }
 }
