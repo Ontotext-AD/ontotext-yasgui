@@ -2,6 +2,10 @@ import {HtmlUtil} from '../utils/html-util';
 import {ExternalYasguiConfiguration} from '../../models/external-yasgui-configuration';
 import {YasrPlugin} from '../../models/yasr-plugin';
 import {SparqlUtils} from '../utils/sparql-utils';
+import {GeoPlugin} from '../../plugins/yasr/geo/geo-plugin';
+import {GeoPluginConfiguration} from '../../plugins/yasr/geo/models/geo-plugin-configuration';
+import {defaultYasrConfig} from '../../models/yasgui-configuration';
+import {PluginConfiguration} from '../../models/plugin-configurations';
 
 export class YasrService {
 
@@ -25,25 +29,34 @@ export class YasrService {
     Yasr.registerPlugin(name, plugin, enable);
   }
 
-  static getPluginsConfigurations(externalConfiguration: ExternalYasguiConfiguration): Map<string, any> {
-    const pluginsConfigurations = new Map<string, any>();
+  static getPluginsConfigurations(externalConfiguration: ExternalYasguiConfiguration): Map<string, PluginConfiguration> {
+    const pluginsConfigurations = new Map<string, PluginConfiguration>();
     this.addExtendedTableConfiguration(externalConfiguration, pluginsConfigurations);
     this.addTableConfiguration(externalConfiguration, pluginsConfigurations);
+    this.addGeoPluginConfiguration(externalConfiguration, pluginsConfigurations);
     return pluginsConfigurations;
   }
 
-  private static addTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, any>): void {
+  private static addTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, PluginConfiguration>): void {
     const configuration = {
       maxResizableResultsColumns: externalConfiguration.maxResizableResultsColumns ? externalConfiguration.maxResizableResultsColumns : 19,
     };
     pluginsConfigurations.set('table', configuration);
   }
 
-  private static addExtendedTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, any>) {
+  private static addExtendedTableConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, PluginConfiguration>) {
     const configuration = {
       getCellContent: externalConfiguration.getCellContent ? externalConfiguration.getCellContent : YasrService.getCellContent().bind(this),
     };
     pluginsConfigurations.set('extended_table', configuration);
+  }
+
+  private static addGeoPluginConfiguration(externalConfiguration: ExternalYasguiConfiguration, pluginsConfigurations: Map<string, PluginConfiguration>): void {
+    const externalGeoConfigurations: GeoPluginConfiguration = {
+      ...defaultYasrConfig.defaultGeoPluginConfiguration,
+      ...(externalConfiguration?.pluginsConfigurations?.[GeoPlugin.PLUGIN_NAME] ?? {}),
+    };
+    pluginsConfigurations.set(GeoPlugin.PLUGIN_NAME, externalGeoConfigurations);
   }
 
   // @ts-ignore

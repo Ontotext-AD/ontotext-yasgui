@@ -1,5 +1,4 @@
 import {TileLayer, tileLayer} from 'leaflet';
-import {GeoJsonOptionsBuilder} from './geo-json-options-builder';
 
 /**
  * Service class providing factory methods to create Leaflet tile layers and GeoJSON configuration builders.
@@ -88,20 +87,5 @@ export class LeafletService {
         attribution: '&copy; OpenStreetMap &copy; CARTO'
       }
     );
-  }
-
-  /**
-   * Returns a new instance of GeoJsonOptionsBuilder for configuring GeoJSON layers.
-   *
-   * This builder allows you to define:
-   * - Feature styling
-   * - Popups and tooltips
-   * - Event handlers
-   * - Custom point-to-layer transformations
-   *
-   * @returns {GeoJsonOptionsBuilder} Instance of GeoJsonOptionsBuilder.
-   */
-  static getGeoJsonOptionsBuilder(): GeoJsonOptionsBuilder {
-    return new GeoJsonOptionsBuilder();
   }
 }

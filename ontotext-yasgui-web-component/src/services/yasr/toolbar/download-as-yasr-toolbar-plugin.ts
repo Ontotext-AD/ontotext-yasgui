@@ -4,13 +4,14 @@ import {TranslationService} from '../../translation.service';
 import {DropdownOption} from '../../../models/dropdown-option';
 import {Yasr} from '../../../models/yasgui/yasr';
 import {QueryType} from '../../../models/yasgui/query-type';
+import {PluginConfigurations} from '../../../models/plugin-configurations';
 
 export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
 
   private readonly translationService: TranslationService;
   private readonly pluginNameToPluginsConfigurations: Map<string, DownloadAsPluginConfiguration>;
 
-  constructor(serviceFactory: ServiceFactory, externalPluginsConfigurations: Map<string, any>) {
+  constructor(serviceFactory: ServiceFactory, externalPluginsConfigurations: PluginConfigurations) {
     this.translationService = serviceFactory.get(TranslationService);
     this.pluginNameToPluginsConfigurations = new Map<string, DownloadAsPluginConfiguration>();
     this.pluginNameToPluginsConfigurations.set('extended_table', new ExtendedTableDownloadAsConfiguration());
@@ -22,7 +23,9 @@ export class DownloadAsYasrToolbarPlugin implements YasrToolbarPlugin {
 
     Object.keys(externalPluginsConfigurations).forEach((pluginName) => {
       const pluginConfiguration = this.toDownloadAsPluginConfiguration(pluginName, externalPluginsConfigurations[pluginName]);
-      this.pluginNameToPluginsConfigurations.set(pluginConfiguration.getPluginName(), pluginConfiguration);
+      if (pluginConfiguration) {
+        this.pluginNameToPluginsConfigurations.set(pluginConfiguration.getPluginName(), pluginConfiguration);
+      }
     });
   }
 
