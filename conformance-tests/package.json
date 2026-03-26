@@ -20,6 +20,7 @@
     "shared-conformance-utils": "file:../shared-conformance-utils"
   },
   "devDependencies": {
+    "@types/codemirror": "^5.60.17",
     "@types/jest": "^29.5.14",
     "@types/node": "^16.18.126",
     "codemirror": "^5.51.0",
