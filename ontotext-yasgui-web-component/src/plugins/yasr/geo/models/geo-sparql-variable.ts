@@ -52,4 +52,19 @@ export const GeoSparqlVariable = {
    * Fill opacity of polygons.
    */
   FIGURE_FILL_OPACITY: `${GEO_PROPERTIES_PREFIX}fillOpacity`,
-}
+} as const;
+
+/**
+ * Union type of all reserved GeoSPARQL property keys used by the map plugin.
+ *
+ * These keys represent special `geo_*` properties that may be present in a feature's property set
+ * (e.g., derived from SPARQL query bindings). When detected, they are interpreted by the rendering layer to control
+ * visual aspects of map features such as styling, popups, and tooltips.
+ *
+ * @example
+ * ```ts
+ * const key: GeoPropertyKey = "geo_popup";
+ * ```
+ */
+export type GeoPropertyKey = typeof GeoSparqlVariable[keyof typeof GeoSparqlVariable];
+
