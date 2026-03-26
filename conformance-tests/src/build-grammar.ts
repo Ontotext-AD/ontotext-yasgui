@@ -34,10 +34,14 @@ export default function buildGrammar(options: BuildOptions = {}): boolean {
 
   log(`Compiling tokenizer.ts → ${buildDir}/tokenizer.js`);
 
+  const localTsc = path.join(scriptDir, "..", "node_modules", ".bin", "tsc");
+  const typeRoots = path.join(scriptDir, "..", "node_modules", "@types");
+
   try {
     execSync(
-      `npx tsc --module commonjs --esModuleInterop --target es6 ` +
+      `"${localTsc}" --module commonjs --esModuleInterop --target es6 ` +
         `--moduleResolution node --skipLibCheck ` +
+        `--typeRoots "${typeRoots}" ` +
         `--outDir "${buildDir}" ` +
         `"${path.join(grammarSrc, "tokenizer.ts")}"`,
       { stdio: silent ? "pipe" : "inherit" }

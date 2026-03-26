@@ -69,6 +69,30 @@ export function initGrammar(options: InitGrammarOptions = {}): CodeMirrorInstanc
 }
 
 /**
+ * Expands SPARQL 1.2 codepoint escapes (\uXXXX and \UXXXXXXXX) to their
+ * corresponding Unicode characters.  Per the SPARQL specification, this
+ * pre-processing step is applied to the raw query text before any other
+ * lexical analysis (tokenisation, string escaping, etc.).
+ *
+ * Surrogate code points (U+D800–U+DFFF) are intentionally left unexpanded so
+ * that the tokenizer's existing surrogate-detection logic can reject them.
+ */
+function expandCodepointEscapes(query: string): string {
+  return query.replace(
+    /\\u([0-9A-Fa-f]{4})|\\U([0-9A-Fa-f]{8})/g,
+    (match, hex4, hex8) => {
+      const hex = hex4 ?? hex8;
+      const codePoint = parseInt(hex, 16);
+      // Leave surrogates unexpanded — the tokenizer already detects and rejects them.
+      if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+        return match;
+      }
+      return String.fromCodePoint(codePoint);
+    }
+  );
+}
+
+/**
  * Tokenises a SPARQL query string through the CodeMirror SPARQL grammar mode
  * and determines whether it is syntactically valid.
  *
@@ -76,6 +100,9 @@ export function initGrammar(options: InitGrammarOptions = {}): CodeMirrorInstanc
  * The first syntax error location (if any) is captured and returned.
  */
 export function checkQuerySyntax(CodeMirror: CodeMirrorInstance, query: string): SyntaxCheckResult {
+  // Apply SPARQL codepoint-escape pre-processing before tokenisation.
+  query = expandCodepointEscapes(query);
+
   const mode = CodeMirror.getMode(CodeMirror.defaults, 'sparqlGrammarTest');
   const state = CodeMirror.startState(mode);
   const lines = query.split(/\r\n?|\n/);
