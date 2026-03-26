@@ -33,13 +33,22 @@ queryAll ==>
 
 prologue ==>
 	%[?(baseDecl),*(prefixDecl)].
-	[*(baseDecl or prefixDecl)].
+	[*(baseDecl or prefixDecl or versionDecl)].
 
 baseDecl ==>
 	['BASE','IRI_REF'].
 
 prefixDecl ==>
 	['PREFIX','PNAME_NS','IRI_REF'].
+
+versionDecl ==>
+	['VERSION',versionSpecifier].
+
+versionSpecifier ==>
+	['STRING_LITERAL1'].
+
+versionSpecifier ==>
+	['STRING_LITERAL2'].
 
 % [7]
 selectQuery ==>
@@ -518,7 +527,7 @@ additiveExpression ==>
 multiplicativeExpression ==>
 	[unaryExpression,*(['*',unaryExpression] or ['/',unaryExpression])].
 %[118]
-unaryExpression ==> ['!',primaryExpression].
+unaryExpression ==> ['!',unaryExpression].
 unaryExpression ==> ['+',primaryExpression].
 unaryExpression ==> ['-',primaryExpression].
 unaryExpression ==> [primaryExpression].
@@ -842,6 +851,7 @@ tm_keywords([
 
 'BASE',
 'PREFIX',
+'VERSION',
 'SELECT',
 'CONSTRUCT',
 'DESCRIBE',
