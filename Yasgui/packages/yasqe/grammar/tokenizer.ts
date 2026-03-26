@@ -100,7 +100,7 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
 
   const HEX = "[0-9A-Fa-f]";
   const PERCENT = "(%" + HEX + HEX + ")";
-  const PN_LOCAL_ESC = "(\\\\[_~\\.\\-!\\$&'\\(\\)\\*\\+,;=/\\?#@%])";
+  const PN_LOCAL_ESC = "(\\\\[_~\\.\\-!\\$&a'\\(\\)\\*\\+,;=/\\?#@%])";
   const PLX = "(" + PERCENT + "|" + PN_LOCAL_ESC + ")";
   const PN_LOCAL =
     "(" + PN_CHARS_U + "|:|[0-9]|" + PLX + ")((" + PN_CHARS + "|\\.|:|" + PLX + ")*(" + PN_CHARS + "|:|" + PLX + "))?";
