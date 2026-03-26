@@ -487,9 +487,10 @@ module.exports = {table:
      "IN": [], 
      "NOT": [], 
      ";": []}, 
-  "*or([baseDecl,prefixDecl])" : {
-     "BASE": ["or([baseDecl,prefixDecl])","*or([baseDecl,prefixDecl])"], 
-     "PREFIX": ["or([baseDecl,prefixDecl])","*or([baseDecl,prefixDecl])"], 
+  "*or([baseDecl,or([prefixDecl,versionDecl])])" : {
+     "BASE": ["or([baseDecl,or([prefixDecl,versionDecl])])","*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "PREFIX": ["or([baseDecl,or([prefixDecl,versionDecl])])","*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "VERSION": ["or([baseDecl,or([prefixDecl,versionDecl])])","*or([baseDecl,or([prefixDecl,versionDecl])])"], 
      "$": [], 
      "CONSTRUCT": [], 
      "DESCRIBE": [], 
@@ -3639,9 +3640,10 @@ module.exports = {table:
   "or([[integer,or([[,,or([},[integer,}]])],}])],[,,integer,}]])" : {
      "INTEGER": ["[integer,or([[,,or([},[integer,}]])],}])]"], 
      ",": ["[,,integer,}]"]}, 
-  "or([baseDecl,prefixDecl])" : {
+  "or([baseDecl,or([prefixDecl,versionDecl])])" : {
      "BASE": ["baseDecl"], 
-     "PREFIX": ["prefixDecl"]}, 
+     "PREFIX": ["or([prefixDecl,versionDecl])"], 
+     "VERSION": ["or([prefixDecl,versionDecl])"]}, 
   "or([defaultGraphClause,namedGraphClause])" : {
      "IRI_REF": ["defaultGraphClause"], 
      "PNAME_LN": ["defaultGraphClause"], 
@@ -3669,6 +3671,9 @@ module.exports = {table:
      "INTEGER_NEGATIVE": ["numericLiteralNegative"], 
      "DECIMAL_NEGATIVE": ["numericLiteralNegative"], 
      "DOUBLE_NEGATIVE": ["numericLiteralNegative"]}, 
+  "or([prefixDecl,versionDecl])" : {
+     "PREFIX": ["prefixDecl"], 
+     "VERSION": ["versionDecl"]}, 
   "or([queryAll,updateAll])" : {
      "CONSTRUCT": ["queryAll"], 
      "DESCRIBE": ["queryAll"], 
@@ -3988,23 +3993,24 @@ module.exports = {table:
      "GROUP_CONCAT": ["aggregate"], 
      "<<(": ["exprTripleTerm"]}, 
   "prologue" : {
-     "BASE": ["*or([baseDecl,prefixDecl])"], 
-     "PREFIX": ["*or([baseDecl,prefixDecl])"], 
-     "$": ["*or([baseDecl,prefixDecl])"], 
-     "CONSTRUCT": ["*or([baseDecl,prefixDecl])"], 
-     "DESCRIBE": ["*or([baseDecl,prefixDecl])"], 
-     "ASK": ["*or([baseDecl,prefixDecl])"], 
-     "INSERT": ["*or([baseDecl,prefixDecl])"], 
-     "DELETE": ["*or([baseDecl,prefixDecl])"], 
-     "SELECT": ["*or([baseDecl,prefixDecl])"], 
-     "LOAD": ["*or([baseDecl,prefixDecl])"], 
-     "CLEAR": ["*or([baseDecl,prefixDecl])"], 
-     "DROP": ["*or([baseDecl,prefixDecl])"], 
-     "ADD": ["*or([baseDecl,prefixDecl])"], 
-     "MOVE": ["*or([baseDecl,prefixDecl])"], 
-     "COPY": ["*or([baseDecl,prefixDecl])"], 
-     "CREATE": ["*or([baseDecl,prefixDecl])"], 
-     "WITH": ["*or([baseDecl,prefixDecl])"]}, 
+     "BASE": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "PREFIX": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "VERSION": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "$": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "CONSTRUCT": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "DESCRIBE": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "ASK": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "INSERT": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "DELETE": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "SELECT": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "LOAD": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "CLEAR": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "DROP": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "ADD": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "MOVE": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "COPY": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "CREATE": ["*or([baseDecl,or([prefixDecl,versionDecl])])"], 
+     "WITH": ["*or([baseDecl,or([prefixDecl,versionDecl])])"]}, 
   "propertyList" : {
      "VAR1": ["propertyListNotEmpty"], 
      "VAR2": ["propertyListNotEmpty"], 
@@ -4301,7 +4307,8 @@ module.exports = {table:
      "CREATE": ["prologue","or([queryAll,updateAll])","$"], 
      "WITH": ["prologue","or([queryAll,updateAll])","$"], 
      "BASE": ["prologue","or([queryAll,updateAll])","$"], 
-     "PREFIX": ["prologue","or([queryAll,updateAll])","$"]}, 
+     "PREFIX": ["prologue","or([queryAll,updateAll])","$"], 
+     "VERSION": ["prologue","or([queryAll,updateAll])","$"]}, 
   "storeProperty" : {
      "VAR1": [], 
      "VAR2": [], 
@@ -4515,7 +4522,7 @@ module.exports = {table:
      "DECIMAL_NEGATIVE": ["triplesSameSubject","?[.,?triplesTemplate]"], 
      "DOUBLE_NEGATIVE": ["triplesSameSubject","?[.,?triplesTemplate]"]}, 
   "unaryExpression" : {
-     "!": ["!","primaryExpression"], 
+     "!": ["!","unaryExpression"], 
      "+": ["+","primaryExpression"], 
      "-": ["-","primaryExpression"], 
      "VAR1": ["primaryExpression"], 
@@ -4623,6 +4630,7 @@ module.exports = {table:
      "WITH": ["prologue","?[update1,?[;,update]]"], 
      "BASE": ["prologue","?[update1,?[;,update]]"], 
      "PREFIX": ["prologue","?[update1,?[;,update]]"], 
+     "VERSION": ["prologue","?[update1,?[;,update]]"], 
      "$": ["prologue","?[update1,?[;,update]]"]}, 
   "update1" : {
      "LOAD": ["load"], 
@@ -4809,12 +4817,17 @@ module.exports = {table:
   "verbSimple" : {
      "VAR1": ["var"], 
      "VAR2": ["var"]}, 
+  "versionDecl" : {
+     "VERSION": ["VERSION","versionSpecifier"]}, 
+  "versionSpecifier" : {
+     "STRING_LITERAL1": ["STRING_LITERAL1"], 
+     "STRING_LITERAL2": ["STRING_LITERAL2"]}, 
   "whereClause" : {
      "{": ["?WHERE","groupGraphPattern"], 
      "WHERE": ["?WHERE","groupGraphPattern"]}
 },
 
-keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BIND|LANGMATCHES|LANGDIR|HASLANGDIR|LANG|HASLANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|ISNUMERIC|ISTRIPLE|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANGDIR|STRLANG|STRDT|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|STRLEN|STRUUID|STR|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|TRIPLE|SUBJECT|PREDICATE|OBJECT)/i ,
+keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|VERSION|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BIND|LANGMATCHES|LANGDIR|HASLANGDIR|LANG|HASLANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|ISNUMERIC|ISTRIPLE|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANGDIR|STRLANG|STRDT|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|STRLEN|STRUUID|STR|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|TRIPLE|SUBJECT|PREDICATE|OBJECT)/i ,
 
 punct:/^(\*|a|\.|\{\||\|\}|\{|\}|,|\(|\)>>|\)|;|\[|\]|\|\||&&|=|!=|!|<=|>=|<<\(|<<|>>|<|>|\+|-|\/|\^\^|\?|~|\||\^)/ ,
 
