@@ -181,7 +181,7 @@ export class GeoPlugin implements YasrPlugin {
    */
   private createGeoLayer(bindings: Binding[], colName: string): FeatureGroup {
     const geojson = this.createGeoJson(bindings, colName);
-    const leafletOptions = new LeafletOptionsBuilder(this.pluginGonfiguration)
+    const leafletOptions = new LeafletOptionsBuilder(this.pluginGonfiguration, this.subscriptions)
       .withPointMarker()
       .withFeatureClick()
       .withStyle()

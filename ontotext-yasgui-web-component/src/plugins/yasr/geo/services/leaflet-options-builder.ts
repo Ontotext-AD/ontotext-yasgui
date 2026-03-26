@@ -5,6 +5,7 @@ import {ObjectUtil} from '../../../../services/utils/object-util';
 import {GEO_PROPERTIES_PREFIX, GeoSparqlVariable} from '../models/geo-sparql-variable';
 import {GeoPluginConfiguration} from '../models/geo-plugin-configuration';
 import {GeoStyleOptionKeys, GeoStyleOptions} from '../models/geo-style-options';
+import {FeatureClickPayload} from '../models/feature-click-payload';
 
 /**
  * Parsers for converting raw feature property values into typed GeoStyleOptions.
@@ -43,8 +44,26 @@ export class LeafletOptionsBuilder {
 
   private configuration: GeoPluginConfiguration;
 
-  constructor(configuration: GeoPluginConfiguration) {
+  /**
+   * Collection of cleanup functions used to unregister event handlers (e.g. Leaflet layer listeners)
+   * created during plugin initialization.
+   */
+  private subscriptions: Array<() => void>;
+
+  /**
+   * Creates a new instance of the Geo plugin configuration wrapper.
+   *
+   * @param configuration - The resolved Geo plugin configuration.
+   * @param subscriptions - An array of cleanup functions responsible for unregistering event handlers (e.g. click listeners on Leaflet layers).
+   *
+   * @remarks
+   * The handlers are registered after the Leaflet options are constructed, so this array is provided by the client.
+   * The client is responsible for invoking these cleanup functions at the appropriate time (e.g. when the plugin is destroyed
+   * or reinitialized) to prevent memory leaks and duplicate handlers.
+   */
+  constructor(configuration: GeoPluginConfiguration, subscriptions: Array<() => void>) {
     this.configuration = configuration;
+    this.subscriptions = subscriptions;
   }
 
   /**
@@ -143,8 +162,46 @@ export class LeafletOptionsBuilder {
       layer.bindTooltip(tooltip);
     }
 
-    // TODO: Register a click event handler that notifies external components when a feature is clicked.
-    //  Investigate the correct way to deregister it when the plugin is destroyed.
+    const { onFeatureClick } = this.configuration;
+    // Attach the click handler if a callback is provided
+    if (typeof onFeatureClick === 'function') {
+      const clikPayload = this.getFeatureClickPayload(feature);
+      const handleClick = () => onFeatureClick(clikPayload);
+      layer.on('click', handleClick);
+      this.subscriptions.push(() => layer.off('click', handleClick));
+    }
+  }
+
+  /**
+   * Extracts non-geo properties from a GeoJSON feature.
+   *
+   * Iterates over `feature.properties` and excludes any entries whose keys match geo-related variables defined in {@link GeoSparqlVariable}.
+   *
+   * @param feature - The GeoJSON feature containing a `properties` object.
+   *
+   * @returns An object containing only non-geo properties from the feature.
+   *
+   * @example
+   * // Given feature.properties:
+   * {
+   *   geo_color: { value: 'red' },
+   *   name: { value: 'Feature A' },
+   *   type: { value: 'Polygon' }
+   * }
+   *
+   * // Result:
+   * {
+   *   name: { value: 'Feature A' },
+   *   type: { value: 'Polygon' }
+   * }
+   */
+  private getFeatureClickPayload(feature: Feature): FeatureClickPayload {
+    return Object.keys(feature.properties ?? {})
+      .filter(key => !ObjectUtil.isEnumValue(key, GeoSparqlVariable))
+      .reduce((geoStyleOptions: FeatureClickPayload, key: string) => {
+        geoStyleOptions[key] = feature.properties[key];
+        return geoStyleOptions;
+      }, {} as FeatureClickPayload);
   }
 
   /**
