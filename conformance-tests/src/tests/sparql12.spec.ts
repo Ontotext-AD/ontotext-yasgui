@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  *
- * W3C SPARQL Grammar Syntax Tests
+ * W3C SPARQL 1.2 Grammar Syntax Tests
  *
  * Runs each .rq/.ru file from the W3C rdf-tests suites through the YASQE
  * grammar tokenizer and asserts that positive tests are accepted and
@@ -19,14 +19,27 @@ const SUITES: Suite = {
   name: 'SPARQL 1.2',
   dir: path.resolve(__dirname, '..', '..', '..', 'test-files', 'sparql12')
 };
+
 /**
- * Negative tests that require semantic checks beyond the LL1 grammar tokenizer's
- * capability. These are structurally valid SPARQL but violate constraints that
- * cannot be enforced by a context-free grammar:
- *
- * - Blank node label reuse across UPDATE operations.
+ * Positive tests that the grammar currently rejects but should accept.
+ * These cover SPARQL 1.2 features not yet implemented in the tokenizer.
+ * Each entry has a comment explaining why it is skipped.
  */
-const SKIPPED_NEGATIVE_TESTS = new Set<string>([]);
+const SKIPPED_POSITIVE_TESTS = new Set<string>([
+]);
+
+/**
+ * Negative tests that the grammar currently accepts but should reject.
+ * Split into two groups:
+ *
+ * A) Semantic constraints beyond LL(1): structurally valid SPARQL that
+ *    violates a prose rule the context-free grammar cannot express.
+ *
+ * B) Unimplemented features: the grammar hasn't been extended yet so it
+ *    cannot reject the invalid syntax either.
+ */
+const SKIPPED_NEGATIVE_TESTS = new Set<string>([
+]);
 
 let CodeMirror: CodeMirrorInstance;
 
@@ -34,13 +47,17 @@ beforeAll(() => {
   CodeMirror = initGrammar();
 }, 60_000); // grammar build may take a while
 
-describe.skip(`W3C SPARQL 1.2 Syntax Conformance Test`, () => {
+describe(`W3C SPARQL 1.2 Syntax Conformance Test`, () => {
   const {positiveTests, negativeTests} = getSuiteTests(SUITES);
+
+  const runnablePositiveTests = positiveTests.filter((t) => !SKIPPED_POSITIVE_TESTS.has(t.relativePath));
+  const skippedPositiveTests  = positiveTests.filter((t) =>  SKIPPED_POSITIVE_TESTS.has(t.relativePath));
   const runnableNegativeTests = negativeTests.filter((t) => !SKIPPED_NEGATIVE_TESTS.has(t.relativePath));
-  const skippedNegativeTests = negativeTests.filter((t) => SKIPPED_NEGATIVE_TESTS.has(t.relativePath));
-  if (positiveTests.length > 0) {
+  const skippedNegativeTests  = negativeTests.filter((t) =>  SKIPPED_NEGATIVE_TESTS.has(t.relativePath));
+
+  if (runnablePositiveTests.length > 0) {
     describe('Positive tests (grammar should accept)', () => {
-      test.each(positiveTests.map((t) => [`${t.label} - ${t.relativePath}`, t] as const))(
+      test.each(runnablePositiveTests.map((t) => [`${t.label} - ${t.relativePath}`, t] as const))(
         '%s',
         (_label: string, {filePath, relativePath}: TestEntry) => {
           const query = fs.readFileSync(filePath, 'utf-8');
@@ -62,13 +79,21 @@ describe.skip(`W3C SPARQL 1.2 Syntax Conformance Test`, () => {
       );
     });
   }
+  if (skippedPositiveTests.length > 0) {
+    describe('Skipped positive tests (unimplemented features)', () => {
+      test.skip.each(skippedPositiveTests.map((t) => [`${t.label} - ${t.relativePath}`, t] as const))(
+        '%s',
+        () => {}
+      );
+    });
+  }
   if (skippedNegativeTests.length > 0) {
     describe('Skipped negative tests (semantic checks beyond grammar scope)', () => {
       test.skip.each(skippedNegativeTests.map((t) => [`${t.label} - ${t.relativePath}`, t] as const))(
         '%s',
-        () => {
-        }
+        () => {}
       );
     });
   }
 });
+
