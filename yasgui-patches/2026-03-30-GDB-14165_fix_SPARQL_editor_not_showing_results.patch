@@ -1,0 +1,20 @@
+Subject: [PATCH] GDB-14165 fix SPARQL editor not showing results
+---
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision c20133ed13d966ead726d069ed7ea9c80bc91991)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision a990b43132d6ff09deeb1705810d3341f9c3b2ec)
+@@ -26,9 +26,6 @@
+   //       Overridden functions.
+   //=================================
+   drawPluginSelectors() {
+-    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery()) {
+-      return;
+-    }
+     super.drawPluginSelectors();
+ 
+     if (!this.yasrToolbarManagers && this.config.yasrToolbarPlugins) {

@@ -26,9 +26,6 @@ export class ExtendedYasr extends Yasr {
   //       Overridden functions.
   //=================================
   drawPluginSelectors() {
-    if (this.yasqe.isUpdateQuery() || this.yasqe.isAskQuery()) {
-      return;
-    }
     super.drawPluginSelectors();
 
     if (!this.yasrToolbarManagers && this.config.yasrToolbarPlugins) {
