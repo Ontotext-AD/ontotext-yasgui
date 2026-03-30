@@ -16,17 +16,6 @@ const SUITES = [
 ];
 
 /**
- * Skipped negative tests — queries that are syntactically valid prefixes but
- * violate semantic constraints that cannot be enforced by the LL1 grammar tokenizer.
- * Mirrors the skip lists from the Jest conformance-tests specs.
- */
-const SKIPPED_NEGATIVE_TESTS = new Set([
-  // SPARQL 1.0 — incomplete queries
-  'syntax-sparql3/syn-bad-01.rq',
-  'syntax-sparql3/syn-bad-25.rq',
-]);
-
-/**
  * Returns all manifests for all suites, grouped by suite name.
  *
  * Each entry in the returned array has:
@@ -41,7 +30,7 @@ function readAllManifestTests() {
   for (const suite of SUITES) {
     if (!fs.existsSync(suite.dir)) continue;
 
-    const {positiveTests, negativeTests: allNegative} = getSuiteTests(suite);
+    const {positiveTests, negativeTests} = getSuiteTests(suite);
 
     const positiveEntries = positiveTests.map(t => ({
       relativePath: t.relativePath,
@@ -49,27 +38,17 @@ function readAllManifestTests() {
       label: t.label,
     }));
 
-    const negativeEntries = [];
-    const skippedNegativeEntries = [];
-    for (const t of allNegative) {
-      const entry = {
-        relativePath: t.relativePath,
-        absolutePath: t.filePath,
-        label: t.label,
-      };
-      if (SKIPPED_NEGATIVE_TESTS.has(t.relativePath)) {
-        skippedNegativeEntries.push(entry);
-      } else {
-        negativeEntries.push(entry);
-      }
-    }
+    const negativeEntries = negativeTests.map(t => ({
+      relativePath: t.relativePath,
+      absolutePath: t.filePath,
+      label: t.label,
+    }));
 
     if (positiveEntries.length > 0 || negativeEntries.length > 0) {
       result.push({
         manifestId: suite.name,
         positiveTests: positiveEntries,
-        negativeTests: negativeEntries,
-        skippedNegativeTests: skippedNegativeEntries,
+        negativeTests: negativeEntries
       });
     }
   }
