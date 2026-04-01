@@ -1,0 +1,23 @@
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision b6835dd02c3c0f301a70c317cb114f0f0ea79b73)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 3de12e428cd27db8dac59ed6534082ea47224043)
+@@ -1050,7 +1050,13 @@
+             tooltip(this, warningEl, escape(state.errorMsg));
+           }
+           warningEl.className = "parseErrorIcon";
+-          this.setGutterMarker(l - 1, "gutterErrorBar", warningEl);
++          // Place the marker on the last non-empty line so that trailing
++          // blank lines don't push the error icon away from the query body.
++          let errorLine = l - 1;
++          while (errorLine > 0 && this.getDoc().getLine(errorLine).trim().length === 0) {
++            errorLine--;
++          }
++          this.setGutterMarker(errorLine, "gutterErrorBar", warningEl);
+         }
+         this.queryValid = false;
+       }
