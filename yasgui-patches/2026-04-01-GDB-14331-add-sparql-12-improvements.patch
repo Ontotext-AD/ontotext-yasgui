@@ -1,0 +1,331 @@
+Index: Yasgui/packages/yasqe/grammar/tokenizer.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/tokenizer.ts b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+--- a/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision a02831d1af8f26b780407403799958ca642863b1)
++++ b/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision c13d2076e5aff117f2585a285a7c5387ac810854)
+@@ -40,8 +40,9 @@
+   bnodeScopeStack: { ownLabels: Set<string>; childLabels: Set<string> }[];
+   // GROUP BY scoping: track non-aggregated SELECT variables and GROUP BY variables
+   inSelectClause: boolean;
+-  selectParenDepth: number;       // parent depth inside SELECT clause
++  selectParenDepth: number;       // paren depth inside SELECT clause
+   aggregateNesting: number;       // nesting depth inside aggregate functions (COUNT, SUM, etc.)
++  aggParenStack: number[];        // stack of selectParenDepth values at which each aggregate '(' was pushed
+   selectBareVars: Set<string>;    // bare ?var in SELECT not inside aggregate or (expr AS ?var)
+   selectHasAggregate: boolean;    // whether SELECT clause contains any aggregate
+   selectHasStar: boolean;         // whether SELECT clause used '*'
+@@ -58,6 +59,7 @@
+   // VALUES arity checking
+   valuesClause: "vars" | "data" | "tuple" | undefined; // current phase in VALUES clause
+   valuesVarCount: number;         // number of variables declared in VALUES
++  valuesVarNames: Set<string>;    // variable names declared in VALUES (for duplicate detection)
+   valuesTupleCount: number;       // number of values in current data tuple
+   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
+   tripleTermDepth: number;
+@@ -86,19 +88,30 @@
+   const grammar = require("./_tokenizer-table.js");
+   const ll1_table = grammar.table;
+ 
+-  const IRI_REF = '<[^<>"`|{}^\\\x00-\x20]*>';
++  const HEX = "[0-9A-Fa-f]";
++  // SPARQL 1.2 §19.3 Codepoint Escapes (\uXXXX / \UXXXXXXXX).
++  // Escapes that appear inside a single token (IRIs, prefixed names, strings,
++  // variable names) are accepted directly by the terminal regexes via the
++  // UCHAR pattern below.  Escapes that produce whitespace, delimiters, or
++  // keyword characters (and therefore change token boundaries) are handled
++  // by a parallel preprocessed buffer in tokenBase — see
++  // preprocessLineWithMapping — which keeps stream.string untouched so that
++  // CodeMirror position tracking (stream.pos, eol(), token boundaries)
++  // remains correct.
++  const UCHAR = "(\\\\u" + HEX + "{4}|\\\\U" + HEX + "{8})";
++
++  const IRI_REF = '<([^<>"`|{}^\\\x00-\x20]|' + UCHAR + ')*>';
+   const PN_CHARS_BASE =
+     "[A-Za-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD]";
+-  const PN_CHARS_U = PN_CHARS_BASE + "|_";
++  const PN_CHARS_U = PN_CHARS_BASE + "|_|" + UCHAR;
+ 
+   const PN_CHARS = "(" + PN_CHARS_U + "|-|[0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040])";
+   const VARNAME = "(" + PN_CHARS_U + "|[0-9])" + "(" + PN_CHARS_U + "|[0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040])*";
+   const VAR1 = "\\?" + VARNAME;
+   const VAR2 = "\\$" + VARNAME;
+ 
+-  const PN_PREFIX = "(" + PN_CHARS_BASE + ")(((" + PN_CHARS + ")|\\.)*(" + PN_CHARS + "))?";
++  const PN_PREFIX = "(" + PN_CHARS_BASE + "|" + UCHAR + ")(((" + PN_CHARS + ")|\\.)*(" + PN_CHARS + "))?";
+ 
+-  const HEX = "[0-9A-Fa-f]";
+   const PERCENT = "(%" + HEX + HEX + ")";
+   const PN_LOCAL_ESC = "(\\\\[_~\\.\\-!\\$&'\\(\\)\\*\\+,;=/\\?#@%])";
+   const PLX = "(" + PERCENT + "|" + PN_LOCAL_ESC + ")";
+@@ -126,11 +139,11 @@
+ 
+   const ECHAR = "\\\\[tbnrf\\\\\"']";
+ 
+-  //IMPORTANT: this unicode rule is not in the official grammar.
+-  //Reason: https://github.com/YASGUI/YASQE/issues/49
+-  //unicode escape sequences (which the sparql spec considers part of the pre-processing of sparql queries)
+-  //are marked as invalid. We have little choice (other than adding a layer of complixity) than to modify the grammar accordingly
+-  //however, for now only allow these escape sequences in literals (where actually, this should be allows in e.g. prefixes as well)
++  //unicode escape sequences (SPARQL 1.2 §19.3 codepoint escapes) are accepted
++  //in the terminal regexes (IRI_REF, PN_CHARS, string literals, etc.) via the
++  //UCHAR pattern defined above.  The 'unicode' variable below is the more
++  //restrictive variant used inside string-literal regexes (validates the \U
++  //range to U+0000–U+10FFFF).
+   const hex4 = HEX + "{4}";
+   const unicode = "(\\\\u" + hex4 + "|\\\\U00(10|0" + HEX + ")" + hex4 + ")";
+   const STRING_LITERAL1 = "'(([^\\x27\\x5C\\x0A\\x0D])|" + ECHAR + "|" + unicode + ")*'";
+@@ -358,6 +371,104 @@
+     return possibles;
+   }
+ 
++  /**
++   * Result of preprocessing a single line for SPARQL 1.2 §19.3 codepoint
++   * escapes.  Contains the decoded text together with bidirectional position
++   * mappings so that stream.pos can be translated between original and
++   * preprocessed coordinates without altering stream.string length.
++   */
++  interface PreprocResult {
++    /** Decoded line text (may be shorter than the original). */
++    text: string;
++    /** Original line text. */
++    origLine: string;
++    /** Maps each preprocessed char-index (+ end sentinel) → original index. */
++    toOrigPos: number[];
++    /** Maps each original char-index (+ end sentinel) → preprocessed index. */
++    origToPreproc: number[];
++  }
++
++  /**
++   * SPARQL 1.2 §19.3 — expand \uXXXX / \UXXXXXXXX escapes in a single
++   * left-to-right pass and build position mappings between the original
++   * and preprocessed strings.
++   *
++   * Surrogate codepoints (U+D800–U+DFFF) and values above U+10FFFF are
++   * left unconverted (the grammar will reject them downstream).
++   *
++   * Returns `null` when no escapes were expanded (the common case), so the
++   * caller can skip the swap/restore overhead entirely.
++   */
++  function preprocessLineWithMapping(original: string): PreprocResult | null {
++    const toOrigPos: number[] = [];
++    const origToPreproc: number[] = [];
++    let result = "";
++    let origIdx = 0;
++
++    while (origIdx < original.length) {
++      if (original[origIdx] === "\\") {
++        // Check for \uXXXX (6 chars total)
++        if (
++          original[origIdx + 1] === "u" &&
++          origIdx + 6 <= original.length
++        ) {
++          const hex = original.substring(origIdx + 2, origIdx + 6);
++          if (/^[0-9A-Fa-f]{4}$/.test(hex)) {
++            const cp = parseInt(hex, 16);
++            if (!(cp >= 0xD800 && cp <= 0xDFFF)) {
++              const decoded = String.fromCodePoint(cp);
++              const preprocStart = result.length;
++              for (let j = 0; j < decoded.length; j++) {
++                toOrigPos.push(origIdx);
++              }
++              result += decoded;
++              for (let j = 0; j < 6; j++) {
++                origToPreproc.push(preprocStart);
++              }
++              origIdx += 6;
++              continue;
++            }
++          }
++        }
++        // Check for \UXXXXXXXX (10 chars total)
++        if (
++          original[origIdx + 1] === "U" &&
++          origIdx + 10 <= original.length
++        ) {
++          const hex = original.substring(origIdx + 2, origIdx + 10);
++          if (/^[0-9A-Fa-f]{8}$/.test(hex)) {
++            const cp = parseInt(hex, 16);
++            if (cp <= 0x10FFFF && !(cp >= 0xD800 && cp <= 0xDFFF)) {
++              const decoded = String.fromCodePoint(cp);
++              const preprocStart = result.length;
++              for (let j = 0; j < decoded.length; j++) {
++                toOrigPos.push(origIdx);
++              }
++              result += decoded;
++              for (let j = 0; j < 10; j++) {
++                origToPreproc.push(preprocStart);
++              }
++              origIdx += 10;
++              continue;
++            }
++          }
++        }
++      }
++      // Regular character — identity mapping
++      origToPreproc.push(result.length);
++      toOrigPos.push(origIdx);
++      result += original[origIdx];
++      origIdx++;
++    }
++    // End-of-string sentinel positions
++    origToPreproc.push(result.length);
++    toOrigPos.push(original.length);
++
++    if (result === original) return null;
++
++    return { text: result, origLine: original, toOrigPos, origToPreproc };
++  }
++
+   function tokenBase(stream: CodeMirror.StringStream, state: State) {
+     function nextToken(): Token {
+       let consumed: string[];
+@@ -576,10 +687,32 @@
+     // CodeMirror works with one line at a time,
+     // but newline should behave like whitespace
+     // - i.e. a definite break between tokens (for autocompleter)
+-    if (stream.pos == 0) state.possibleCurrent = state.possibleNext;
++    if (stream.pos == 0) {
++      state.possibleCurrent = state.possibleNext;
++      // SPARQL 1.2 §19.3: preprocess codepoint escapes for this line.
++      // Build position mappings so we can swap to the preprocessed text for
++      // matching and restore the original before returning to CodeMirror.
++      if (stream.string.indexOf("\\u") !== -1 || stream.string.indexOf("\\U") !== -1) {
++        (state as any)._preprocData = preprocessLineWithMapping(stream.string);
++      } else {
++        (state as any)._preprocData = undefined;
++      }
++    }
++
++    // If escapes were expanded, temporarily swap stream.string to the
++    // preprocessed text so that regex matching operates on the decoded line.
++    // The original string and positions are restored in the finally block.
++    const preprocData: PreprocResult | undefined = (state as any)._preprocData;
++    if (preprocData) {
++      (stream as any).string = preprocData.text;
++      stream.pos = preprocData.origToPreproc[stream.pos];
++      stream.start = stream.pos;
++    }
+ 
+     const tokenOb = nextToken();
+ 
++    try {
++
+     if (tokenOb.cat == "<invalid_token>") {
+       // set error state, and
+       if (state.OK == true) {
+@@ -802,6 +935,7 @@
+               state.inSelectClause = true;
+               state.selectParenDepth = 0;
+               state.aggregateNesting = 0;
++              state.aggParenStack = [];
+               state.selectBareVars = new Set();
+               state.selectHasAggregate = false;
+               state.selectHasStar = false;
+@@ -816,16 +950,32 @@
+ 
+               // Track aggregate keywords
+               if (AGGREGATE_KEYWORDS.has(tokenCat)) {
++                // Nested aggregate: e.g. COUNT(SUM(?x)) — forbidden by the spec
++                if (state.aggregateNesting > 0) {
++                  state.OK = false;
++                  recordFailurePos();
++                  state.errorMsg = "Nested aggregate functions are not allowed";
++                }
+                 state.aggregateNesting++;
+                 state.selectHasAggregate = true;
++                // Record the paren depth that will open this aggregate's argument list
++                state.aggParenStack.push(state.selectParenDepth + 1);
+               }
+ 
+               if (tokenCat === "(") {
+                 state.selectParenDepth++;
+               } else if (tokenCat === ")") {
++                // Close an aggregate if this ) matches the top of the aggregate paren stack
++                if (state.aggParenStack.length > 0 &&
++                    state.aggParenStack[state.aggParenStack.length - 1] === state.selectParenDepth) {
++                  state.aggParenStack.pop();
++                  if (state.aggregateNesting > 0) state.aggregateNesting--;
++                }
+                 state.selectParenDepth--;
+-                if (state.aggregateNesting > 0 && state.selectParenDepth === 0) {
++                // Fallback: at depth 0 the whole SELECT expression is closed
++                if (state.selectParenDepth === 0) {
+                   state.aggregateNesting = 0;
++                  state.aggParenStack = [];
+                 }
+               }
+ 
+@@ -945,9 +1095,17 @@
+             if (tokenCat === "VALUES") {
+               state.valuesClause = "vars";
+               state.valuesVarCount = 0;
++              state.valuesVarNames = new Set();
+               state.valuesTupleCount = 0;
+             } else if (state.valuesClause === "vars") {
+               if (tokenCat === "VAR1" || tokenCat === "VAR2") {
++                if (state.valuesVarNames.has(tokenOb.string)) {
++                  state.OK = false;
++                  recordFailurePos();
++                  state.errorMsg = "Duplicate variable " + tokenOb.string + " in VALUES variable list";
++                } else {
++                  state.valuesVarNames.add(tokenOb.string);
++                }
+                 state.valuesVarCount++;
+               } else if (tokenCat === ")") {
+                 // End of variable list, next should be '{'
+@@ -1149,6 +1307,20 @@
+     state.possibleNext = getPossibles(state.stack[state.stack.length - 1]);
+ 
+     return tokenOb.style;
++
++    } finally {
++      // Restore the original line and translate positions back so that
++      // CodeMirror sees the unmodified string and correct char offsets.
++      if (preprocData) {
++        (stream as any).string = preprocData.origLine;
++        stream.pos = preprocData.toOrigPos[stream.pos] !== undefined
++          ? preprocData.toOrigPos[stream.pos]
++          : preprocData.origLine.length;
++        stream.start = preprocData.toOrigPos[stream.start] !== undefined
++          ? preprocData.toOrigPos[stream.start]
++          : 0;
++      }
++    }
+   }
+ 
+   const indentTop: { [symbol: string]: number } = {
+@@ -1256,6 +1428,7 @@
+         inSelectClause: s.inSelectClause,
+         selectParenDepth: s.selectParenDepth,
+         aggregateNesting: s.aggregateNesting,
++        aggParenStack: s.aggParenStack.slice(),
+         selectBareVars: new Set(s.selectBareVars),
+         selectHasAggregate: s.selectHasAggregate,
+         selectHasStar: s.selectHasStar,
+@@ -1271,6 +1444,7 @@
+         afterSubSelectAS: s.afterSubSelectAS,
+         valuesClause: s.valuesClause,
+         valuesVarCount: s.valuesVarCount,
++        valuesVarNames: new Set(s.valuesVarNames),
+         valuesTupleCount: s.valuesTupleCount,
+         bindScopeStack: s.bindScopeStack.map(scope => new Set(scope)),
+         inBind: s.inBind,
+@@ -1314,6 +1488,7 @@
+         inSelectClause: false,
+         selectParenDepth: 0,
+         aggregateNesting: 0,
++        aggParenStack: [],
+         selectBareVars: new Set(),
+         selectHasAggregate: false,
+         selectHasStar: false,
+@@ -1329,6 +1504,7 @@
+         afterSubSelectAS: false,
+         valuesClause: undefined,
+         valuesVarCount: 0,
++        valuesVarNames: new Set(),
+         valuesTupleCount: 0,
+         bindScopeStack: [new Set()],
+         inBind: false,
