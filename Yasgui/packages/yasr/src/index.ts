@@ -32,6 +32,7 @@ export interface Yasr {
   emit(event: "drawn", instance: Yasr, plugin: Plugin<any>): boolean;
   on(event: "toggle-help", listener: (instance: Yasr) => void): this;
   emit(event: "toggle-help", instance: Yasr): boolean;
+  emit(event: 'fullscreen-changed', isFullscreen: boolean): boolean
 }
 export class Yasr extends EventEmitter {
   public results?: Parser;
@@ -818,6 +819,10 @@ export interface Config {
   showResultInfo: boolean;
   showQueryLoader: boolean;
   sparqlResponse?: string;
+  yasrFullscreen?: {
+      defaultFullscreen: boolean,
+      allowEscape: boolean,
+  };
   /**
    * Custom renderers for errors.
    * Allow multiple to be able to add new custom renderers without having to

@@ -10,6 +10,11 @@ export class ExtendedYasr extends Yasr {
 
   private yasrToolbarManagers: YasrToolbarPluginManager[] | undefined;
   private readonly persistentJson: any;
+  private isFullscreen = false;
+  private fullscreenButton: HTMLButtonElement | undefined;
+  private fullscreenIcon: HTMLElement | undefined;
+  private boundFullscreenChangeHandler: EventListener | undefined;
+  private boundEscapeHandler: EventListener | undefined;
 
   constructor(yasqe: Yasqe, parent: HTMLElement, conf: Partial<Config> = {}, persistentJson?: any) {
     super(yasqe, parent, conf, persistentJson?.yasr.response);
@@ -20,6 +25,11 @@ export class ExtendedYasr extends Yasr {
       this.yasqe.on("totalElementsPersisted", this.updatePaginationRelatedElements.bind(this));
     }
     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
+
+    // Toggle only if the default fullscreen value is true and YASR is not in fullscreen mode.
+    if (this.config.yasrFullscreen?.defaultFullscreen && !this.isFullscreen) {
+        this.toggleFullscreen();
+    }
   }
 
   //=================================
@@ -41,6 +51,14 @@ export class ExtendedYasr extends Yasr {
       return;
     }
     const pluginSelectorsEl = this.getPluginSelectorsEl();
+    this.fullscreenButton = this.createFullscreenButton();
+    pluginSelectorsEl.appendChild(this.fullscreenButton);
+
+    if (this.config.yasrFullscreen?.allowEscape) {
+        this.boundEscapeHandler = this.onEscapeHandler.bind(this);
+        document.addEventListener('keydown', this.boundEscapeHandler);
+    }
+
     const spacerElement = document.createElement("li");
     spacerElement.classList.add("spacer");
     pluginSelectorsEl.appendChild(spacerElement);
@@ -127,6 +145,13 @@ export class ExtendedYasr extends Yasr {
   public destroy() {
     super.destroy();
     this.yasrToolbarManagers?.forEach((manager) => manager.destroy(this));
+    if (this.boundFullscreenChangeHandler) {
+        this.fullscreenButton?.removeEventListener('click', this.boundFullscreenChangeHandler);
+    }
+
+    if (this.boundEscapeHandler) {
+        document.removeEventListener('keydown', this.boundEscapeHandler);
+    }
   }
 
   private getUpdateTypeQueryResponseInfo(): string {
@@ -282,6 +307,60 @@ export class ExtendedYasr extends Yasr {
     }
     return "";
   }
+
+  /**
+   * Handles global keyboard events and exits fullscreen when the Escape key is pressed.
+   *
+   * @param event - The DOM event triggered by a key interaction.
+   */
+  private onEscapeHandler(event: Event): void {
+      if (event instanceof KeyboardEvent && event.key === 'Escape' && this.isFullscreen) {
+          this.toggleFullscreen();
+      }
+  }
+
+  /**
+   * Creates the icon element used inside the fullscreen toggle button.
+   *
+   * @returns The <i> element representing the fullscreen icon.
+   */
+  private createFullscreenIcon(): HTMLElement {
+      const fullscreenIcon = document.createElement('i');
+      fullscreenIcon.classList.add('ri-fullscreen-line', 'ri-1x');
+      return fullscreenIcon;
+  }
+
+  /**
+   * Creates the fullscreen toggle button and attaches the click event listener.
+   *
+   * @returns The button element used to toggle fullscreen mode.
+   */
+  private createFullscreenButton(): HTMLButtonElement {
+      const fullscreenButton = document.createElement('button');
+      fullscreenButton.classList.add('yasr-fullscreen-button');
+
+      this.boundFullscreenChangeHandler = this.toggleFullscreen.bind(this);
+      fullscreenButton.addEventListener('click', this.boundFullscreenChangeHandler);
+
+      this.fullscreenIcon = this.createFullscreenIcon();
+      fullscreenButton.appendChild(this.fullscreenIcon);
+
+      return fullscreenButton;
+  }
+
+  /**
+   * Toggles the fullscreen mode and emits a "fullscreen-changed" event with the new mode.
+   */
+  private toggleFullscreen(): void {
+      this.isFullscreen = !this.isFullscreen;
+
+      this.rootEl.classList.toggle('yasr-fullscreen', this.isFullscreen);
+
+      this.fullscreenIcon?.classList.toggle('ri-fullscreen-line', !this.isFullscreen);
+      this.fullscreenIcon?.classList.toggle('ri-fullscreen-exit-line', this.isFullscreen);
+
+      this.emit('fullscreen-changed', this.isFullscreen);
+    }
 }
 
 export interface YasrToolbarPlugin {
