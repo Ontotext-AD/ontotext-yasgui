@@ -1,0 +1,47 @@
+Subject: [PATCH] GDB-14270: Extends YASGUI with a new configuration selectedPlugin
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 6fb1fe91175e53f10dbff0969aa559fdeb8e6e6b)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision 5d2eb70cfb76028510c5d897d83b4a58caa8208f)
+@@ -684,6 +684,9 @@
+     yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
+     yasrConf.tabId = this.getId();
+     yasrConf.yasrFullscreen = this.yasgui.config.yasr.yasrFullscreen;
++    if (this.yasgui.config.yasr.selectedPlugin != null) {
++        yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
++    }
+ 
+     if (this.yasqe) {
+       if (this.yasgui.config.yasr.sparqlResponse) {
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 6fb1fe91175e53f10dbff0969aa559fdeb8e6e6b)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 5d2eb70cfb76028510c5d897d83b4a58caa8208f)
+@@ -66,7 +66,9 @@
+     this.timeFormattingService = conf.timeFormattingService;
+     parent.appendChild(this.rootEl);
+     this.config = merge({}, Yasr.defaults, conf);
+-
++    if (this.config.selectedPlugin && this.config.plugins?.[this.config.selectedPlugin]) {
++        this.selectedPlugin = this.config.selectedPlugin;
++    }
+     //Do some post processing
+     this.translationService = this.config.translationService;
+     this.storage = new YStorage(Yasr.storageNamespace);
+@@ -823,6 +825,7 @@
+       defaultFullscreen: boolean,
+       allowEscape: boolean,
+   };
++  selectedPlugin?: string;
+   /**
+    * Custom renderers for errors.
+    * Allow multiple to be able to add new custom renderers without having to
