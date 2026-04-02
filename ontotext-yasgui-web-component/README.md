@@ -137,6 +137,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **infer**: the value of "infer" parameter when a query is executed. Default value is true.
 - **immutableInfer**: if set to true, the 'infer' value cannot be changed. Default value is false.
 - **sameAs**: the value of "sameAs" parameter when a query is executed. Default value is true.
+- **selectedPlugin**: the plugin name to be selected for the active YASR instance. If not set, the persisted selection or the default plugin will be used.
 - **pluginsConfigurations**: An object containing the configuration for each plugin, where the keys are the plugin name and the values is the corresponding plugin configuration.
   - **Geo plugin**:
     - **key**: "geo"

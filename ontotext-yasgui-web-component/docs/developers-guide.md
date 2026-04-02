@@ -340,6 +340,7 @@ Follow the steps below:
   }
   ```
 - **defaultPlugin**: then name of active plugin when yasr is created. Default value is "extended_table".
+- **selectedPlugin**: the plugin name to be selected for the active YASR instance. If not set, the persisted selection or the default plugin will be used.
 - **pluginOrder**: describes the order of how plugins will be displayed. Default is ["extended_table", "response"].
 - **externalPluginsConfigurations**: An object containing the configuration for each plugin, where the keys are the plugin name and the values is the corresponding plugin configuration.
 

@@ -152,4 +152,19 @@ describe('View configurations', () => {
       YasqeSteps.getControlBar().should('be.visible');
     });
   });
+
+  it('should display results with plugin that is set via configuration', () => {
+    // GIVEN: I open a page that contains "ontotext-yasgui-web-component" without a selectedPlugin configuration.
+    // WHEN: I execute a query.
+    YasqeSteps.executeQuery();
+    // THEN: I expect the results are displayed using the extended table plugin.
+    YasrSteps.getExtendedTableTab().should('have.class', 'selected');
+    YasrSteps.getResponseTableTab().should('not.have.class', 'selected');
+
+    // WHEN: I configure the selectedPlugin to be the response plugin.
+    ViewConfigurationsPageSteps.configureSelectedPluginToResponsePlugin();
+    // THEN: I expect the results are displayed using the response table plugin.
+    YasrSteps.getExtendedTableTab().should('not.have.class', 'selected');
+    YasrSteps.getResponseTableTab().should('have.class', 'selected');
+  });
 });

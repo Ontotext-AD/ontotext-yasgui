@@ -57,3 +57,7 @@ function configureYasrFullscreenOnAllowEscapeOn() {
     }
   }
 }
+
+function configureSelectedPluginToResponsePlugin() {
+  ontoElement.config = {...ontoElement.config, selectedPlugin: 'extended_response'}
+}

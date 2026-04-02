@@ -107,6 +107,9 @@ export class YasguiConfigurationBuilder {
     // prepare the yasr config
     config.yasguiConfig.yasr.prefixes = externalConfiguration.prefixes || defaultYasrConfig.prefixes;
     config.yasguiConfig.yasr.defaultPlugin = externalConfiguration.defaultPlugin || defaultYasrConfig.defaultPlugin;
+    if(externalConfiguration.selectedPlugin != null) {
+      config.yasguiConfig.yasr.selectedPlugin = externalConfiguration.selectedPlugin;
+    }
     config.yasguiConfig.yasr.pluginOrder = externalConfiguration.pluginOrder || defaultYasrConfig.pluginOrder;
     if (externalConfiguration.maxPersistentResponseSize !== undefined) {
       config.yasguiConfig.yasr.maxPersistentResponseSize = externalConfiguration.maxPersistentResponseSize;
