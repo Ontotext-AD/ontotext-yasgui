@@ -50,4 +50,8 @@ export default class ViewConfigurationsPageSteps {
     static configureYasrFullscreenOnAllowEscapeOn() {
       cy.get('#configureYasrFullscreenOnAllowEscapeOn').click();
     }
+
+    static configureSelectedPluginToResponsePlugin() {
+      cy.get('#configureSelectedPluginToResponsePlugin').click();
+    }
 }

@@ -254,6 +254,11 @@ export interface ExternalYasguiConfiguration {
   defaultPlugin: string
 
   /**
+   * The plugin name to be selected for the active YASR instance. If not set, the persisted selection or the default plugin will be used.
+   */
+  selectedPlugin?: string;
+
+  /**
    * Describes the order of how YASR plugins will be displayed.
    * For example: ["extended_table", "response"]
    */
