@@ -66,7 +66,9 @@ export class Yasr extends EventEmitter {
     this.timeFormattingService = conf.timeFormattingService;
     parent.appendChild(this.rootEl);
     this.config = merge({}, Yasr.defaults, conf);
-
+    if (this.config.selectedPlugin && this.config.plugins?.[this.config.selectedPlugin]) {
+        this.selectedPlugin = this.config.selectedPlugin;
+    }
     //Do some post processing
     this.translationService = this.config.translationService;
     this.storage = new YStorage(Yasr.storageNamespace);
@@ -823,6 +825,7 @@ export interface Config {
       defaultFullscreen: boolean,
       allowEscape: boolean,
   };
+  selectedPlugin?: string;
   /**
    * Custom renderers for errors.
    * Allow multiple to be able to add new custom renderers without having to
