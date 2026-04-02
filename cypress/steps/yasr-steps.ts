@@ -298,4 +298,12 @@ export class YasrSteps {
   static getLoader(index?: number) {
     return YasrSteps.getYasr(index).find('.ontotext-yasgui-loader');
   }
+
+  static getFullscreenButton() {
+    return cy.get('.yasr-fullscreen-button');
+  }
+
+  static toggleFullscreen() {
+    YasrSteps.getFullscreenButton().click();
+  }
 }

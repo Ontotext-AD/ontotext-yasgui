@@ -305,6 +305,43 @@
   }
 
   .yasr {
+    &.yasr-fullscreen {
+      position: fixed;
+      inset: 0;
+      height: auto !important;
+      z-index: 1015;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+
+      .yasr_header {
+        display: none;
+      }
+
+      .yasr_results {
+        height: 100%;
+        overflow: auto;
+      }
+
+      // Overrides Google Charts to use the full available space when YASR is in fullscreen mode,
+      // otherwise sets a fixed height of 600px.
+      .google-visualization-table,
+      .google-visualization-table>div:first-child{
+        height: 100% !important;
+      }
+    }
+
+    .yasr-fullscreen-button {
+      border: none;
+      background-color: transparent;
+      font-weight: 600;
+      color: #505050;
+    }
+
+    .yasr-fullscreen-button:hover {
+      cursor: pointer;
+      color: #000;
+    }
 
     .rendering_result {
       opacity: 0;
@@ -830,3 +867,7 @@
 
 // Fixes Google visualization tooltip flickering. More info can be found at https://github.com/google/google-visualization-issues/issues/2162.
 svg > g > g.google-visualization-tooltip { pointer-events: none }
+
+.modal-dialog.google-visualization-charteditor-dialog {
+  z-index: 1016;
+}

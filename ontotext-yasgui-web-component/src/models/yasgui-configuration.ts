@@ -266,6 +266,27 @@ export interface YasguiConfiguration {
        * Function that checks if the current query is run for explain plan.
        */
       isExplainPlan: (results: []) => boolean;
+
+      /**
+       * Configuration options for controlling YASR fullscreen behavior.
+       */
+      yasrFullscreen: {
+        /**
+         * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized.
+         *
+         * - `true` → YASR starts in fullscreen mode
+         * - `false` → YASR starts in normal (embedded) mode
+         */
+        defaultFullscreen: boolean,
+
+        /**
+         * Controls whether the Escape (ESC) key can be used to exit fullscreen mode.
+         *
+         * - `true` → Pressing ESC will exit fullscreen
+         * - `false` → ESC key is ignored while in fullscreen
+         */
+        allowEscape: boolean
+        }
     }
   };
 
@@ -356,6 +377,10 @@ export const defaultYasrConfig: Record<string, any> = {
   defaultPlugin: 'extended_table',
   pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts'],
   showQueryLoader: true,
+  yasrFullscreen: {
+    defaultFullscreen: false,
+    allowEscape: true,
+  },
   defaultGeoPluginConfiguration: {
     defaultGeoStyleOptions: {
       weight: 3,

@@ -27,3 +27,33 @@ function setInitialQuery(initialQuery) {
 function setShowControlBar(showControlBar) {
   ontoElement.config = {...ontoElement.config, showControlBar: showControlBar}
 }
+
+function configureYasrFullscreenOnAllowEscapeOff() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasrFullscreen: {
+      defaultFullscreen: true,
+      allowEscape: false
+    }
+  }
+}
+
+function configureYasrFullscreenOffAllowEscapeOn() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasrFullscreen: {
+      defaultFullscreen: false,
+      allowEscape: true
+    }
+  }
+}
+
+function configureYasrFullscreenOnAllowEscapeOn() {
+  ontoElement.config = {
+    ...ontoElement.config,
+    yasrFullscreen: {
+      defaultFullscreen: true,
+      allowEscape: true
+    }
+  }
+}

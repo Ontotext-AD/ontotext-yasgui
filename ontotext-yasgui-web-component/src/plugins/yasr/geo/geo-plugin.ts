@@ -10,6 +10,8 @@ import {LeafletService} from './services/leaflet-service';
 import {GeoDatatype, GeometryColumns} from './models/geometry-columns';
 import {GeoPluginConfiguration} from './models/geo-plugin-configuration';
 
+const FULLSCREEN_CHANGED_EVENT_NAME = 'fullscreen-changed'
+
 /**
  * A YASR plugin that visualizes SPARQL query results as geographic features on a Leaflet map.
  *
@@ -39,6 +41,8 @@ export class GeoPlugin implements YasrPlugin {
         name: 'geo-plugin',
         notify: this.recreateMap,
       }));
+
+      this.yasr.on(FULLSCREEN_CHANGED_EVENT_NAME, this.yasrFullscreenHandler);
     }
   }
 
@@ -88,6 +92,13 @@ export class GeoPlugin implements YasrPlugin {
     const icon = document.createElement('i');
     icon.classList.add('ri-map-pin-fill');
     return icon;
+  }
+
+  /**
+   * Resizes the map when YASR enters or exits fullscreen mode to use the available height.
+   */
+  private yasrFullscreenHandler = () => {
+    this.map?.invalidateSize();
   }
 
   /**
@@ -303,5 +314,6 @@ export class GeoPlugin implements YasrPlugin {
     this.geoMapContainer = undefined;
 
     this.subscriptions.forEach(unsubscribe => unsubscribe());
+    this.yasr.off(FULLSCREEN_CHANGED_EVENT_NAME, this.yasrFullscreenHandler)
   }
 }

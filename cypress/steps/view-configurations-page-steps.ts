@@ -38,4 +38,16 @@ export default class ViewConfigurationsPageSteps {
     static getQueryRanInfo() {
         return cy.get('#queryRan');
     }
+
+    static configureYasrFullscreenOnAllowEscapeOff() {
+      cy.get('#configureYasrFullscreenOnAllowEscapeOff').click();
+    }
+
+    static configureYasrFullscreenOffAllowEscapeOn() {
+      cy.get('#configureYasrFullscreenOffAllowEscapeOn').click();
+    }
+
+    static configureYasrFullscreenOnAllowEscapeOn() {
+      cy.get('#configureYasrFullscreenOnAllowEscapeOn').click();
+    }
 }
