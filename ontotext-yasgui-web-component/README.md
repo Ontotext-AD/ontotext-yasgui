@@ -115,6 +115,17 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 - **pageSize**: the size of a page. Default value is 10.
 - **downloadAsOn**: if false "Download as" dropdown will not be shown.
 - **yasrToolbarPlugins**: "ontotext-yasgui-web-component" has a toolbar on the right next to the plugin buttons. **yasrToolbarPlugins** have to contain elements that implements [YasrToolbarPlugin](src/models/yasr-toolbar-plugin.ts) interface.
+- **yasrFullscreen**: Configuration options for controlling YASR fullscreen behavior.
+  ```
+    {
+       // Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized.
+       // Default is false.
+       defaultFullscreen: boolean,
+       // Controls whether the Escape (ESC) key can be used to exit fullscreen mode.
+       // Default is true.
+       allowEscape: boolean
+    }
+   ```
 - **yasqeMode**: There are three options:
    - WRITE - the query can be edited;
    - READ - the editor is read-only, but the query can be copied;

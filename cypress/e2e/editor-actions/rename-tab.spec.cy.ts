@@ -41,7 +41,7 @@ describe('Rename tab functionality', () => {
     // and change the name of the tab,
     EditableTabElement.getValueInput().invoke('val', '').type('New Value');
     // and click on cancel button
-    EditableTabElement.pressEscape();
+    YasguiSteps.pressEscape();
 
     // Then I expect the tab name do not be changed,
     verifyEditorClosed('Unnamed');
@@ -67,7 +67,7 @@ describe('Rename tab functionality', () => {
     // and change tab name,
     EditableTabElement.getValueInput().invoke('val', '').type('New Value');
     // and press the enter keyboard key.
-    EditableTabElement.pressEnter();
+    YasguiSteps.pressEnter();
 
     // Then I expect the tab name has been renamed.
     YasguiSteps.getTabName(0).should('have.text', 'New Value');

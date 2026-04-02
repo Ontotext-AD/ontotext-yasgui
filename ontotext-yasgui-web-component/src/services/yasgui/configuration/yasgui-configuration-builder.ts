@@ -92,7 +92,8 @@ export class YasguiConfigurationBuilder {
         defaultPlugin: '',
         pluginOrder: [],
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration),
-        isExplainPlan: ExplainPlanUtil.isExplainResults
+        isExplainPlan: ExplainPlanUtil.isExplainResults,
+        yasrFullscreen: {...defaultYasrConfig.yasrFullscreen, ...(externalConfiguration.yasrFullscreen ?? {})},
       }
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;

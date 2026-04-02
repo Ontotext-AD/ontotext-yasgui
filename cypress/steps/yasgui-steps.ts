@@ -59,6 +59,14 @@ export class YasguiSteps {
   static dblClickTab(tabIndex = 0) {
     YasguiSteps.getTabName(tabIndex).dblclick();
   }
+
+  static pressEnter() {
+    cy.get('body').type('{enter}');
+  }
+
+  static pressEscape() {
+    cy.get('body').type('{esc}');
+  }
 }
 
 export class EditableTabElement {
@@ -69,14 +77,6 @@ export class EditableTabElement {
 
   static save() {
     EditableTabElement.getSaveButton().click();
-  }
-
-  static pressEnter() {
-    cy.get('body').type('{enter}');
-  }
-
-  static pressEscape() {
-    cy.get('body').type('{esc}');
   }
 
   static getCancelButton() {
