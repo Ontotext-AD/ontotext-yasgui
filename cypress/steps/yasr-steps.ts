@@ -79,18 +79,12 @@ export class YasrSteps {
     return YasrSteps.getResultCell(rowNumber, cellNumber, yasrIndex).find('a');
   }
 
+  static getTripleList(rowNumber: number, cellNumber: number, yasrIndex = 0) {
+    return this.getResultCell(rowNumber, cellNumber, yasrIndex).find('.triple-list');
+  }
+
   static getTriple(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
-    return this.getResultCell(rowNumber, 1, yasrIndex).find('.triple-list').find('.uri-cell').eq(tripleNumber);
-  }
-
-  static hoverTripleResource(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
-    this.getTriple(rowNumber, tripleNumber, yasrIndex).realHover();
-  }
-
-  static getTripleCopyResourceLink(rowNumber: number, tripleNumber: 0 | 1 | 2, yasrIndex = 0) {
-    return this.getTriple(rowNumber, tripleNumber, yasrIndex)
-      .realHover()
-      .find('.resource-copy-link a');
+    return this.getTripleList(rowNumber, 1, yasrIndex).find('.uri-cell').eq(tripleNumber);
   }
 
   static hoverCell(rowNumber: number, cellNumber: number, yasrIndex = 0) {
@@ -105,20 +99,6 @@ export class YasrSteps {
     return this.getResultCell(rowNumber, cellNumber, yasrIndex)
       .realHover()
       .find('.resource-copy-link a');
-  }
-
-  static getCopyResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
-    return this.getResultCell(rowNumber, cellNumber, yasrIndex)
-      .find('.resource-copy-link a');
-  }
-
-  static clickOnCopyTripleLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
-    this.getResultCell(rowNumber, cellNumber, yasrIndex)
-      .find('.triple-open-link').eq(0)
-      .realHover();
-
-    this.getResultCell(rowNumber, cellNumber, yasrIndex)
-      .find('.triple-open-link').eq(0).find('.resource-copy-link a').realClick();
   }
 
   static clickOnCopyResourceLink(rowNumber: number, cellNumber: number, yasrIndex = 0) {
