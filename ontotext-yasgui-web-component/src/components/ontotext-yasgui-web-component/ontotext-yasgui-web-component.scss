@@ -567,9 +567,7 @@
           min-width: 1em;
         }
 
-        .uri-cell:hover,
-        .triple-close-link:hover,
-        .triple-open-link:hover {
+        .uri-cell:hover {
           .resource-copy-link {
             /** Shows copy resource link when mouse is over a table row with resources of type uri or triple */
             display: inline;
@@ -585,11 +583,6 @@
           flex-direction: column;
           align-items: stretch;
 
-          .triple-link {
-            color: $color-onto-purple-link;
-            text-decoration: none;
-          }
-
           .triple-list {
             display: flex;
             flex-direction: column;
@@ -598,13 +591,6 @@
             .nonUri {
               padding-left: 20px;
             }
-          }
-
-          .triple-close-link,
-          .triple-open-link {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
           }
         }
 

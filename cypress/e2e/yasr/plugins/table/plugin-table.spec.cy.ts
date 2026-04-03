@@ -262,17 +262,17 @@ describe('Plugin: Table', () => {
         YasrSteps.getTriple(1, 2).contains('ontogen:page_1-row_2-column_3');
       });
 
-      it('should copy url link be visible when the mouse is over a link with resource', () => {
-        // When I execute a query which return results and results type is triple.
+      it('should render triple terms with <<( and )>> brackets', () => {
+        // When I execute a query which returns triple term results.
         QueryStubs.stubDefaultTripleQueryResponse();
         YasqeSteps.setQueryInEditor(QueryStubs.BASE_TRIPLE_QUERY);
         YasqeSteps.executeQuery();
-
-        // And I hovered the mouse over a cell of result table.
-        YasrSteps.hoverTripleResource(1, 2);
-
-        // Then I expect copy url link to be visible
-        YasrSteps.getTripleCopyResourceLink(1, 2).should('be.visible');
+        // Then I expect results to be rendered.
+        YasrSteps.getTableResults().should('have.length.greaterThan', 0);
+        // And the triple term list should contain <<(
+        YasrSteps.getTripleList(0, 1).should('contain', '<<(');
+        // And the triple term list should contain )>>
+        YasrSteps.getTripleList(0, 1).should('contain', ')>>');
       });
     });
     describe('Literal result formatting', () => {

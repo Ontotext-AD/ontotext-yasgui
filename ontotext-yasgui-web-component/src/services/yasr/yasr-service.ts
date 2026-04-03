@@ -14,15 +14,15 @@ export class YasrService {
   static readonly XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema#";
   static readonly XML_SCHEMA_NS_STRING = YasrService.XML_SCHEMA_NS + 'string';
   /**
-   * Escaped <<
+   * Escaped <<( to represent triple term start in results
    */
-  static readonly ESCAPED_HTML_DOUBLE_LOWER = '&lt;&lt;';
+  static readonly ESCAPED_HTML_DOUBLE_LOWER = '&lt;&lt;(';
 
   /**
-   * Escaped >>
+   * Escaped )>> to represent triple term end in results
    *
    */
-  static readonly ESCAPED_HTML_DOUBLE_GREATER = '&gt;&gt';
+  static readonly ESCAPED_HTML_DOUBLE_GREATER = ')&gt;&gt;';
 
   static registerPlugin(name: string, plugin: YasrPlugin, enable = true) {
     // @ts-ignore
@@ -113,42 +113,19 @@ export class YasrService {
 
   // @ts-ignore
   private static getTripleCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
-    const tripleAsString = this.getValueAsString(binding, false);
-    const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}`;
-    const escapedTriple = HtmlUtil.escapeHTMLEntities(tripleAsString);
-
     return `<div class="triple-cell">` +
-              `<div class="triple-open-link">` +
-                `<a title="${escapedTriple}" class="triple-link" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</a>` +
-                `<copy-resource-link-button title="${escapedTriple}" class="resource-copy-link" uri="${escapedTriple}"></copy-resource-link-button>` +
-                `<span class="spacer"></span>` +
-              `</div>` +
               `<div class="triple-list">` +
+                `<div>${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</div>` +
                 `<div>${this.toCellContent(binding.value['s'], context)}</div>` +
                 `<div>${this.toCellContent(binding.value['p'], context)}</div>` +
                 `<div>${this.toCellContent(binding.value['o'], context)}</div>` +
-              `</div>` +
-              `<div class="triple-close-link">` +
-                `<a title="${escapedTriple}" class="triple-link triple-link-end" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</a>` +
-                `<copy-resource-link-button title="${escapedTriple}" class="resource-copy-link" uri="${escapedTriple}"></copy-resource-link-button>` +
-                `<span class="spacer"></span>` +
+                `<div>${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</div>` +
               `</div>` +
             `</div>`;
   }
 
   private static replaceSingleQuote(text: string): string {
     return text.replace(/'/g, "&#39;");
-  }
-
-  // @ts-ignore
-  private static getValueAsString(binding, forHtml: boolean): string {
-    if (binding.type === "uri") {
-      return `<${binding.value}>`;
-    }
-    if (binding.type === "triple") {
-      return `<<${this.getValueAsString(binding.value['s'], forHtml)} ${this.getValueAsString(binding.value['p'], forHtml)} ${this.getValueAsString(binding.value['o'], forHtml)}>>`;
-    }
-    return this.getLiteralAsString(binding, forHtml);
   }
 
   // @ts-ignore
