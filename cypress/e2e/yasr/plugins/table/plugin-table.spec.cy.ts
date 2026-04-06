@@ -67,7 +67,7 @@ describe('Plugin: Table', () => {
         PaginationPageSteps.visit();
       });
 
-      it('should that there aren\'t results when query returns no results', () => {
+      it('should verify that there aren\'t results when query returns no results', () => {
         // When I visit a page with "ontotext-yasgui" in it,
         // and execute a query which don't return results.
         const queryDescription = new QueryStubDescription()
@@ -286,6 +286,45 @@ describe('Plugin: Table', () => {
       });
     });
     describe('Literal result formatting', () => {
+      it('should apply dir="ltr" and show @lang--ltr when binding has dir ltr', () => {
+        // When I execute a query which returns a literal with dir: "ltr".
+        QueryStubs.stubSingleLiteralWithDirLtrResult();
+        YasqeSteps.executeQuery();
+        // Then I expect the literal cell to have dir="ltr".
+        YasrSteps.getResultLiteralCell(0, 1).should('have.attr', 'dir', 'ltr');
+        // And the displayed language tag should include the direction suffix.
+        YasrSteps.getResultLiteralCell(0, 1).contains('@en--ltr');
+      });
+
+      it('should apply dir="rtl" and show @lang--rtl when binding has dir rtl', () => {
+        // When I execute a query which returns a literal with dir: "rtl".
+        QueryStubs.stubSingleLiteralWithDirRtlResult();
+        YasqeSteps.executeQuery();
+        // Then I expect the literal cell to have dir="rtl".
+        YasrSteps.getResultLiteralCell(0, 1).should('have.attr', 'dir', 'rtl');
+        // And the displayed language tag should include the direction suffix.
+        YasrSteps.getResultLiteralCell(0, 1).contains('@he--rtl');
+      });
+
+      it('should apply dir="rtl" and show @lang--rtl when direction is embedded in the lang tag', () => {
+        // When I execute a query which returns a literal with direction embedded in xml:lang (e.g. "ar--rtl").
+        QueryStubs.stubSingleLiteralWithEmbeddedDirResult();
+        YasqeSteps.executeQuery();
+        // Then I expect the literal cell to have dir="rtl" extracted from the lang tag.
+        YasrSteps.getResultLiteralCell(0, 1).should('have.attr', 'dir', 'rtl');
+        // And the HTML lang attribute should be stripped to just the language code.
+        YasrSteps.getResultLiteralCell(0, 1).should('have.attr', 'lang', 'ar');
+        // And the displayed language tag should include the direction suffix.
+        YasrSteps.getResultLiteralCell(0, 1).contains('@ar--rtl');
+      });
+
+      it('should not add dir attribute to literal cell when binding has no dir field', () => {
+        // When I execute a query which returns a literal without a dir field.
+        QueryStubs.stubSingleLiteralWithoutLangTagResult();
+        YasqeSteps.executeQuery();
+        // Then I expect the literal cell to have no dir attribute.
+        YasrSteps.getResultLiteralCell(0, 1).should('not.have.attr', 'dir');
+      });
     });
   });
 });

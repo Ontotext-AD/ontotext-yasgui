@@ -1,0 +1,20 @@
+{
+  "head": {
+    "vars": [
+      "x"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x": {
+          "xml:lang": "en",
+          "its:dir": "ltr",
+          "type": "literal",
+          "value": "left-to-right text"
+        }
+      }
+    ]
+  }
+}
+
