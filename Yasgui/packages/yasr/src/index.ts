@@ -10,6 +10,7 @@ import {
   addClass,
   hasClass,
   TimeFormattingService,
+  NotificationMessageService,
 } from "@triply/yasgui-utils";
 import Parser from "./parsers";
 export { default as Parser } from "./parsers";
@@ -51,6 +52,7 @@ export class Yasr extends EventEmitter {
   private selectedPlugin: string | undefined;
 
   public readonly translationService: TranslationService;
+  public readonly notificationMessageService: NotificationMessageService;
   public readonly timeFormattingService: TimeFormattingService | undefined;
   readonly yasqe: Yasqe;
 
@@ -71,6 +73,7 @@ export class Yasr extends EventEmitter {
     }
     //Do some post processing
     this.translationService = this.config.translationService;
+    this.notificationMessageService = this.config.notificationMessageService;
     this.storage = new YStorage(Yasr.storageNamespace);
     this.getConfigFromStorage();
     this.headerEl = document.createElement("div");
@@ -813,6 +816,7 @@ export interface Config {
 
   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
   translationService: TranslationService;
+  notificationMessageService: NotificationMessageService;
   timeFormattingService: TimeFormattingService;
   externalPluginsConfigurations?: Map<string, any>;
   yasrToolbarPlugins?: YasrToolbarPlugin[];

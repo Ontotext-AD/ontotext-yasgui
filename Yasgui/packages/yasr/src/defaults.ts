@@ -1,8 +1,9 @@
 import { Config } from "./";
-import { TimeFormattingService, TranslationService } from "@triply/yasgui-utils";
+import { NotificationMessageService, TimeFormattingService, TranslationService } from "@triply/yasgui-utils";
 export default function get(): Config {
   return {
     translationService: TranslationService.INSTANCE,
+    notificationMessageService: NotificationMessageService.INSTANCE,
     timeFormattingService: TimeFormattingService.INSTANCE,
     showResultInfo: true,
     showQueryLoader: true,

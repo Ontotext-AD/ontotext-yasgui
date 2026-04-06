@@ -360,6 +360,11 @@ export class ExtendedYasr extends Yasr {
       this.fullscreenIcon?.classList.toggle('ri-fullscreen-exit-line', this.isFullscreen);
 
       this.emit('fullscreen-changed', this.isFullscreen);
+
+      if (this.isFullscreen && this.config.yasrFullscreen?.allowEscape) {
+        const message = this.translationService.translate('yasr.btn.fullscreen.escape.message');
+        this.notificationMessageService.info('yasr_exit_fullscreen', message);
+      }
     }
 }
 
