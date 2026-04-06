@@ -1,0 +1,97 @@
+Subject: [PATCH] GDB-14270: Added explanation for exit fullscreen mode.
+---
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision 5e3d6291decf0693e4b6d0c1475213ec1eb800c3)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision c122d4dec80675375e5b61e3d8160906396fd677)
+@@ -674,6 +674,7 @@
+       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
+     }
+     yasrConf.translationService = this.yasgui.config.translationService;
++    yasrConf.notificationMessageService = this.yasgui.config.notificationMessageService;
+     yasrConf.timeFormattingService = this.yasgui.config.timeFormattingService;
+     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
+     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
+Index: Yasgui/packages/yasr/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/defaults.ts b/Yasgui/packages/yasr/src/defaults.ts
+--- a/Yasgui/packages/yasr/src/defaults.ts	(revision 5e3d6291decf0693e4b6d0c1475213ec1eb800c3)
++++ b/Yasgui/packages/yasr/src/defaults.ts	(revision c122d4dec80675375e5b61e3d8160906396fd677)
+@@ -1,8 +1,9 @@
+ import { Config } from "./";
+-import { TimeFormattingService, TranslationService } from "@triply/yasgui-utils";
++import { NotificationMessageService, TimeFormattingService, TranslationService } from "@triply/yasgui-utils";
+ export default function get(): Config {
+   return {
+     translationService: TranslationService.INSTANCE,
++    notificationMessageService: NotificationMessageService.INSTANCE,
+     timeFormattingService: TimeFormattingService.INSTANCE,
+     showResultInfo: true,
+     showQueryLoader: true,
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 5e3d6291decf0693e4b6d0c1475213ec1eb800c3)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision c122d4dec80675375e5b61e3d8160906396fd677)
+@@ -360,6 +360,11 @@
+       this.fullscreenIcon?.classList.toggle('ri-fullscreen-exit-line', this.isFullscreen);
+ 
+       this.emit('fullscreen-changed', this.isFullscreen);
++
++      if (this.isFullscreen && this.config.yasrFullscreen?.allowEscape) {
++        const message = this.translationService.translate('yasr.btn.fullscreen.escape.message');
++        this.notificationMessageService.info('yasr_exit_fullscreen', message);
++      }
+     }
+ }
+ 
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 5e3d6291decf0693e4b6d0c1475213ec1eb800c3)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision c122d4dec80675375e5b61e3d8160906396fd677)
+@@ -10,6 +10,7 @@
+   addClass,
+   hasClass,
+   TimeFormattingService,
++  NotificationMessageService,
+ } from "@triply/yasgui-utils";
+ import Parser from "./parsers";
+ export { default as Parser } from "./parsers";
+@@ -51,6 +52,7 @@
+   private selectedPlugin: string | undefined;
+ 
+   public readonly translationService: TranslationService;
++  public readonly notificationMessageService: NotificationMessageService;
+   public readonly timeFormattingService: TimeFormattingService | undefined;
+   readonly yasqe: Yasqe;
+ 
+@@ -71,6 +73,7 @@
+     }
+     //Do some post processing
+     this.translationService = this.config.translationService;
++    this.notificationMessageService = this.config.notificationMessageService;
+     this.storage = new YStorage(Yasr.storageNamespace);
+     this.getConfigFromStorage();
+     this.headerEl = document.createElement("div");
+@@ -813,6 +816,7 @@
+ 
+   prefixes: Prefixes | ((yasr: Yasr) => Prefixes);
+   translationService: TranslationService;
++  notificationMessageService: NotificationMessageService;
+   timeFormattingService: TimeFormattingService;
+   externalPluginsConfigurations?: Map<string, any>;
+   yasrToolbarPlugins?: YasrToolbarPlugin[];
