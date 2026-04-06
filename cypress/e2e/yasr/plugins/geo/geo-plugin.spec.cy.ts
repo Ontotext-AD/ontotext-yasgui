@@ -18,6 +18,8 @@ describe('Geo Plugin', () => {
     YasrSteps.openGeoPluginTab();
     // THEN: I should see the geo data displayed on the map.
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 10);
+    // AND: I should not see the result info message.
+    YasrSteps.getResponseInfo().should('not.be.visible');
 
     // WHEN: I hover over a geo feature that has the binding variable geo_tooltip.
     GeoPluginSteps.hoverGeoFeature();

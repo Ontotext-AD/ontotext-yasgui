@@ -52,6 +52,7 @@ export interface Yasr {
   showWarning: (message: string) => void;
   hideWarning: () => void;
   refresh: () => void;
+  getResponseInfoElement: () => HTMLElement;
   on(event: string, callback: (payload?: any) => void): void;
   off(event: string, callback: (payload?: any) => void): void;
 }

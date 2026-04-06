@@ -19,6 +19,7 @@ export const MessageCode = {
   EXPLAIN_NOT_ALLOWED: 'explain_not_allowed',
   EXPLAIN_EXIT_FULLSCREEN: 'explain_exit_fullscreen',
   EXPLAIN_PLAN_COPIED_SUCCESSFULLY: 'explain_plan_copied_successfully',
+  YASR_EXIT_FULLSCREEN: 'yasr_exit_fullscreen',
 }
 
 export class InternalNotificationMessageEvent implements InternalEvent {
