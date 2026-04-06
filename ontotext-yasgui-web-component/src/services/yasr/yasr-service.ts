@@ -130,7 +130,11 @@ export class YasrService {
 
   // @ts-ignore
   private static getLiteralCellContent(binding: Parser.BindingValue): string {
-    return `<div lang="${YasrService.getLang(binding, 'xx')}" class="literal-cell"><p class="nonUri">${this.getLiteralAsString(binding, true)}</p></div>`;
+    const lang = HtmlUtil.escapeHTMLEntities(YasrService.getLang(binding, 'xx'));
+    const dir = YasrService.getDir(binding);
+    const dirAttr = dir ? ` dir="${dir}"` : '';
+
+    return `<div lang="${lang}"${dirAttr} class="literal-cell"><p class="nonUri">${this.getLiteralAsString(binding, true)}</p></div>`;
   }
 
   //@ts-ignore
@@ -141,12 +145,12 @@ export class YasrService {
 
     const stringRepresentation = HtmlUtil.escapeHTMLEntities(binding.value);
 
-    if (binding["xml:lang"]) {
-      return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["xml:lang"]}${forHtml ? '</sup>' : ''}`);
-    }
+    const lang = HtmlUtil.escapeHTMLEntities(YasrService.getLang(binding, undefined));
 
-    if (binding["lang"]) {
-      return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${binding["lang"]}${forHtml ? '</sup>' : ''}`);
+    if (lang) {
+      const dir = YasrService.getDir(binding);
+      const langTag = dir ? `${lang}--${dir}` : lang;
+      return YasrService.addWordBreakToLiterals(`"${stringRepresentation}"${forHtml ? '<sup>' : ''}@${langTag}${forHtml ? '</sup>' : ''}`);
     }
 
     if (binding.datatype && YasrService.XML_SCHEMA_NS_STRING !== binding.datatype) {
@@ -183,13 +187,36 @@ export class YasrService {
   }
 
   private static getLang(literalBinding, defaultLang) {
-    if (literalBinding["xml:lang"]) {
-      return literalBinding["xml:lang"];
-    }
-    if (literalBinding["lang"]) {
-      return literalBinding["lang"];
+    const lang = literalBinding["xml:lang"] || literalBinding["lang"];
+    if (lang) {
+      // Strip the direction suffix (e.g. "ar--rtl" → "ar") so the HTML lang
+      // attribute only contains a valid BCP 47 language subtag.
+      return lang.replace(/--(?:ltr|rtl)$/i, '');
     }
     return defaultLang;
+  }
+
+  private static getDir(literalBinding): 'ltr' | 'rtl' | undefined {
+    // its:dir field with values like "--ltr" or "--rtl" (ITS 2.0 / some SPARQL implementations).
+    const itsDir = literalBinding["its:dir"];
+    if (itsDir) {
+      const itsDirNormalized = itsDir.replace(/^-+/, '').toLowerCase();
+      if (itsDirNormalized === 'ltr' || itsDirNormalized === 'rtl') {
+        return itsDirNormalized as 'ltr' | 'rtl';
+      }
+    }
+    // Fallback: direction embedded in the lang tag (e.g. "ar--rtl").
+    const lang = literalBinding["xml:lang"] || literalBinding["lang"];
+    if (lang) {
+      const match = lang.match(/--([a-zA-Z]+)$/);
+      if (match) {
+        const dir = match[1].toLowerCase();
+        if (dir === 'ltr' || dir === 'rtl') {
+          return dir as 'ltr' | 'rtl';
+        }
+      }
+    }
+    return undefined;
   }
 }
 
