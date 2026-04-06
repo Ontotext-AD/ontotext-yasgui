@@ -674,6 +674,7 @@ export class Tab extends EventEmitter {
       yasrConf.getDownloadFileName = () => words(deburr(this.getName())).join("-");
     }
     yasrConf.translationService = this.yasgui.config.translationService;
+    yasrConf.notificationMessageService = this.yasgui.config.notificationMessageService;
     yasrConf.timeFormattingService = this.yasgui.config.timeFormattingService;
     yasrConf.externalPluginsConfigurations = this.yasgui.config.yasr.externalPluginsConfigurations;
     yasrConf.yasrToolbarPlugins = this.yasgui.config.yasr.yasrToolbarPlugins;
