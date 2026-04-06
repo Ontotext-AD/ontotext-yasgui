@@ -1,0 +1,20 @@
+{
+  "head": {
+    "vars": [
+      "x"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x": {
+          "xml:lang": "he",
+          "its:dir": "rtl",
+          "type": "literal",
+          "value": "טקסט מימין לשמאל"
+        }
+      }
+    ]
+  }
+}
+
