@@ -54,4 +54,8 @@ export default class ViewConfigurationsPageSteps {
     static configureSelectedPluginToResponsePlugin() {
       cy.get('#configureSelectedPluginToResponsePlugin').click();
     }
+
+    static getOutputMessage() {
+      return cy.get('#output-message');
+    }
 }

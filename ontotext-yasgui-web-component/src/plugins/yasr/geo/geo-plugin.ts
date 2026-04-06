@@ -81,6 +81,7 @@ export class GeoPlugin implements YasrPlugin {
     if (!this.geoMapContainer) {
       return;
     }
+    this.yasr.getResponseInfoElement().classList.add('empty');
     this.yasr.resultsEl.appendChild(this.geoMapContainer);
     this.redrawMap();
   }
