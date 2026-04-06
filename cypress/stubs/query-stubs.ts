@@ -42,6 +42,18 @@ export class QueryStubs {
     QueryStubs.stubQueryResponse('/queries/single-literal-with-data-type-response.json', repositoryId, 'single-iri-result', withDelay);
   }
 
+  static stubSingleLiteralWithDirLtrResult(repositoryId = 'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-dir-ltr-response.json', repositoryId, 'single-literal-with-dir-ltr', withDelay);
+  }
+
+  static stubSingleLiteralWithDirRtlResult(repositoryId = 'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-dir-rtl-response.json', repositoryId, 'single-literal-with-dir-rtl', withDelay);
+  }
+
+  static stubSingleLiteralWithEmbeddedDirResult(repositoryId = 'test-repo', withDelay = 0) {
+    QueryStubs.stubQueryResponse('/queries/single-literal-with-embedded-dir-response.json', repositoryId, 'single-literal-with-embedded-dir', withDelay);
+  }
+
   static stubManyColumnResult(repositoryId =  'test-repo', withDelay = 0) {
     QueryStubs.stubQueryResponse('/queries/many-column-response.json', repositoryId, 'many-column-result', withDelay);
   }
