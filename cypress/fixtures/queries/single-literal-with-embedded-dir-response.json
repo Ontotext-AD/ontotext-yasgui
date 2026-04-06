@@ -1,0 +1,19 @@
+{
+  "head": {
+    "vars": [
+      "x"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "x": {
+          "xml:lang": "ar--rtl",
+          "type": "literal",
+          "value": "يهوه"
+        }
+      }
+    ]
+  }
+}
+

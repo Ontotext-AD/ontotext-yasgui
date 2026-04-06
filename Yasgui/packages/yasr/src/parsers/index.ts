@@ -23,6 +23,7 @@ namespace Parser {
     type: "uri" | "literal" | "typed-literal" | "bnode";
     datatype?: string;
     "xml:lang"?: string;
+    "its:dir"?: string;
   }
   export interface Binding {
     [varname: string]: BindingValue;
