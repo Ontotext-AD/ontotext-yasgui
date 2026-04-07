@@ -122,6 +122,8 @@
   "yasgui.tab_list.close_other_tabs.confirmation.queries_one_update.message": "<div>Vous avez {{queriesCount}} requêtes et 1 mise à jour en cours. Les requêtes seront annulées.</div><div>Êtes-vous sûr de vouloir fermer tous les autres onglets de requête?</div>",
   "yasgui.tab_list.close_other_tabs.confirmation.queries_updates.message": "<div>Vous avez {{queriesCount}} requêtes et {{updatesCount}} mises à jour en cours. Les requêtes seront annulées.</div><div>Êtes-vous sûr de vouloir fermer tous les autres onglets de requête?</div>",
   "yasr.fullscreen.escape.message": "Press Esc to exit full screen",
+  "yasr.btn.fullscreen.exit.aria_label.message": "Quitter le mode plein écran",
+  "yasr.btn.fullscreen.enter.aria_label.message": "Passer en mode plein écran",
   "yasr.message_info.removed_statements.message": "Suppression de {{countAffectedRepositoryStatements}} déclarations.",
   "yasr.message_info.added_statements.message": "Ajout de {{countAffectedRepositoryStatements}} déclarations.",
   "yasr.message_info.no_changes.message": "Le nombre de déclarations n'a pas changé.",
