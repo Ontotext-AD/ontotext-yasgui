@@ -140,6 +140,7 @@ export class GeoPlugin implements YasrPlugin {
       center: [50 + 38 / 60 + 28 / 3600, 4 + 40 / 60 + 5 / 3600],
       zoom: 5,
     });
+    this.map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a>');
   }
 
   /**
