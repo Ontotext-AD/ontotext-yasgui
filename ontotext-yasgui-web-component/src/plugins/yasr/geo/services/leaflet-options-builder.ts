@@ -159,7 +159,11 @@ export class LeafletOptionsBuilder {
 
     const tooltip = feature.properties[GeoSparqlVariable.FIGURE_TOOLTIP]?.value;
     if (tooltip) {
-      layer.bindTooltip(tooltip);
+      layer.bindTooltip(tooltip, {
+        direction: 'top',
+        offset: [0, -10],
+        sticky: true
+      });
     }
 
     const { onFeatureClick } = this.configuration;
