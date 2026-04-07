@@ -338,6 +338,7 @@ export class ExtendedYasr extends Yasr {
   private createFullscreenButton(): HTMLButtonElement {
       const fullscreenButton = document.createElement('button');
       fullscreenButton.classList.add('yasr-fullscreen-button');
+      fullscreenButton.setAttribute('aria-label', this.getFullscreenAriaLabel());
 
       this.boundFullscreenChangeHandler = this.toggleFullscreen.bind(this);
       fullscreenButton.addEventListener('click', this.boundFullscreenChangeHandler);
@@ -348,6 +349,14 @@ export class ExtendedYasr extends Yasr {
       return fullscreenButton;
   }
 
+    /**
+     * Returns the localized `aria-label` for the fullscreen button based on its current state.
+     */
+  private getFullscreenAriaLabel(): string {
+      const labelKey = this.isFullscreen ? 'yasr.btn.fullscreen.exit.aria_label.message' : 'yasr.btn.fullscreen.enter.aria_label.message';
+      return this.translationService.translate(labelKey);
+  }
+
   /**
    * Toggles the fullscreen mode and emits a "fullscreen-changed" event with the new mode.
    */
@@ -356,6 +365,7 @@ export class ExtendedYasr extends Yasr {
 
       this.rootEl.classList.toggle('yasr-fullscreen', this.isFullscreen);
 
+      this.fullscreenButton?.setAttribute('aria-label', this.getFullscreenAriaLabel());
       this.fullscreenIcon?.classList.toggle('ri-fullscreen-line', !this.isFullscreen);
       this.fullscreenIcon?.classList.toggle('ri-fullscreen-exit-line', this.isFullscreen);
 
