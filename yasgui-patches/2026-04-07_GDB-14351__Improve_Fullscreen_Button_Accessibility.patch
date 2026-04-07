@@ -1,0 +1,41 @@
+Subject: [PATCH] GDB-14351: Improve Fullscreen Button Accessibility
+---
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 90f996fae48b918049d4295a2d900a89b5bd8b28)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision 536b513b1491bf5f150eda06f0f475977434c39d)
+@@ -338,6 +338,7 @@
+   private createFullscreenButton(): HTMLButtonElement {
+       const fullscreenButton = document.createElement('button');
+       fullscreenButton.classList.add('yasr-fullscreen-button');
++      fullscreenButton.setAttribute('aria-label', this.getFullscreenAriaLabel());
+ 
+       this.boundFullscreenChangeHandler = this.toggleFullscreen.bind(this);
+       fullscreenButton.addEventListener('click', this.boundFullscreenChangeHandler);
+@@ -348,6 +349,14 @@
+       return fullscreenButton;
+   }
+ 
++    /**
++     * Returns the localized `aria-label` for the fullscreen button based on its current state.
++     */
++  private getFullscreenAriaLabel(): string {
++      const labelKey = this.isFullscreen ? 'yasr.btn.fullscreen.exit.aria_label.message' : 'yasr.btn.fullscreen.enter.aria_label.message';
++      return this.translationService.translate(labelKey);
++  }
++
+   /**
+    * Toggles the fullscreen mode and emits a "fullscreen-changed" event with the new mode.
+    */
+@@ -356,6 +365,7 @@
+ 
+       this.rootEl.classList.toggle('yasr-fullscreen', this.isFullscreen);
+ 
++      this.fullscreenButton?.setAttribute('aria-label', this.getFullscreenAriaLabel());
+       this.fullscreenIcon?.classList.toggle('ri-fullscreen-line', !this.isFullscreen);
+       this.fullscreenIcon?.classList.toggle('ri-fullscreen-exit-line', this.isFullscreen);
+ 
