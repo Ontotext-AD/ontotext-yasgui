@@ -10,7 +10,7 @@ describe('YASR fullscreen', () => {
     ViewConfigurationsPageSteps.visit();
     YasqeSteps.executeQuery();
     // THEN: I should see YASR results in non-fullscreen mode, because the default behavior is not to open YASR in fullscreen.
-    YasrSteps.getYasr().should('not.have.class', 'yasr-fullscreen');
+    verifyYasrNonFullscreen();
 
     // WHEN: I toggle to fullscreen mode.
     YasrSteps.toggleFullscreen();
@@ -22,7 +22,7 @@ describe('YASR fullscreen', () => {
     // WHEN: I press the ESC key.
     YasguiSteps.pressEscape();
     // THEN: I should see YASR results in non-fullscreen mode, because escape is enabled by default.
-    YasrSteps.getYasr().should('not.have.class', 'yasr-fullscreen');
+    verifyYasrNonFullscreen();
   });
 
   it('should open YASR in fullscreen mode with escape enabled via configuration', () => {
@@ -39,7 +39,7 @@ describe('YASR fullscreen', () => {
     // WHEN: I press the ESC key.
     YasguiSteps.pressEscape();
     // THEN: I should see YASR results in non-fullscreen mode, because escape is enabled.
-    YasrSteps.getYasr().should('not.have.class', 'yasr-fullscreen');
+    verifyYasrNonFullscreen();
   });
 
   it('should open YASR in non-fullscreen mode with escape enabled via configuration', () => {
@@ -48,7 +48,7 @@ describe('YASR fullscreen', () => {
     YasqeSteps.executeQuery();
     ViewConfigurationsPageSteps.configureYasrFullscreenOffAllowEscapeOn();
     // THEN: I should see YASR results in non-fullscreen mode, because it is configured not to start in fullscreen.
-    YasrSteps.getYasr().should('not.have.class', 'yasr-fullscreen');
+    verifyYasrNonFullscreen();
     YasrSteps.getResultHeader().should('be.visible');
 
     // WHEN: I toggle fullscreen mode.
@@ -61,7 +61,7 @@ describe('YASR fullscreen', () => {
     // WHEN: I press the ESC key.
     YasguiSteps.pressEscape();
     // THEN: I should see YASR results in non-fullscreen mode, because escape is enabled.
-    YasrSteps.getYasr().should('not.have.class', 'yasr-fullscreen');
+    verifyYasrNonFullscreen();
   });
 
   it('should open YASR in fullscreen mode with escape disabled via configuration', () => {
@@ -88,5 +88,10 @@ const verifyYasrFullscreen = () => {
   YasrSteps.getYasr().should('have.class', 'yasr-fullscreen');
   // I should see the result header.
   YasrSteps.getResultHeader().should('be.visible');
+  YasrSteps.getFullscreenButton().should('attr', 'aria-label', 'Exit full screen');
 }
 
+const verifyYasrNonFullscreen = () => {
+  YasrSteps.getYasr().should('not.have.class', 'yasr-fullscreen');
+  YasrSteps.getFullscreenButton().should('attr', 'aria-label', 'Enter full screen');
+}
