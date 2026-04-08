@@ -1,4 +1,4 @@
-import {TileLayer, tileLayer} from 'leaflet';
+import {MapOptions, TileLayer, tileLayer} from 'leaflet';
 
 /**
  * Service class providing factory methods to create Leaflet tile layers and GeoJSON configuration builders.
@@ -87,5 +87,63 @@ export class LeafletService {
         attribution: '&copy; OpenStreetMap &copy; CARTO'
       }
     );
+  }
+
+  /**
+   * Builds the configuration object for initializing a Leaflet map.
+   *
+   * @returns {MapOptions} Leaflet map initialization options
+   */
+  static getMapOptions(): MapOptions {
+    return {
+      // Initial zoom level. Reference scale:
+      // 0 -> whole world
+      // ~5 -> country level
+      // ~10 -> city level
+      // ~15 -> street level
+      zoom: 5,
+
+      // Controls how zoom levels are rounded ("snapped").
+      // 1 -> integer zoom levels only (default)
+      // 0.5 -> steps of 0.5
+      // 0 -> no snapping (fully continuous zoom)
+      // Setting to 0 enables smooth fractional zoom (e.g., 5.37), which improves visual fitting when using fitBounds().
+      zoomSnap: 0,
+
+      // Minimum zoom level allowed (prevents zooming out too far).
+      // Using fractional values requires `zoomSnap: 0`.
+      minZoom: 2.5,
+
+      // Maximum zoom level allowed (prevents over-zooming into low-resolution tiles).
+      maxZoom: 18,
+
+      // Enables zooming using the mouse scroll wheel.
+      scrollWheelZoom: true,
+
+      // Controls scroll sensitivity (pixels per zoom level step). Higher value = slower, more controlled zooming.
+      wheelPxPerZoomLevel: 120,
+
+      // Amount of zoom change per zoom action (buttons, keyboard, API). Lower values allow finer zoom control.
+      zoomDelta: 0.5,
+
+      // Enables horizontal world wrapping. The map repeats infinitely along the longitude axis, allowing seamless left/right panning.
+      // Markers and layers are duplicated across world copies.
+      worldCopyJump: true,
+
+      // Restricts map panning to a vertical latitude range, while allowing infinite horizontal movement.
+      // Latitude is clamped to [-85, 85] because Web Mercator projection cannot render poles correctly beyond this range.
+      // Longitude is set to [-Infinity, Infinity] to avoid interfering with world wrapping.
+      maxBounds: [
+        [-85, -Infinity],
+        [85, Infinity]
+      ],
+
+      // Defines how strictly the map adheres to maxBounds:
+      // 0.0 -> no restriction (soft bounce)
+      // 1.0 -> hard constraint (cannot drag outside bounds)
+      //
+      // Using 1.0 prevents users from dragging into invalid vertical regions (e.g., grey polar areas).
+      maxBoundsViscosity: 1.0
+    }
   }
 }
