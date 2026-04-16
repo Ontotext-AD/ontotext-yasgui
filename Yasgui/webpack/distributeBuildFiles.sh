@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 packages="yasgui yasr yasqe utils"
 for p in ${packages}; do
   rm -rf packages/${p}/build

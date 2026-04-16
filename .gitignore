@@ -2,6 +2,7 @@
 node_modules
 test-files/
 
-cypress/videos/
-cypress/screenshots/
+cypress/report/videos/
+cypress/report/screenshots/
+cypress/logs/
 cypress/downloads/

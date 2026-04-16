@@ -54,11 +54,7 @@ describe('Sort table plugin functionality', () => {
     YasrSteps.verifyTableColumnOrder(4, ['"10"', '"100"', '"11"', '"2"']);
   });
 
-  it('persists filter and recalculates index column on viewport resize', {
-    retries: {
-      runMode: 1
-    }
-  }, () => {
+  it('persists filter and recalculates index column on viewport resize', () => {
     // Given I have opened the YASGUI
     // And I have executed a query that returns results
     YasqeSteps.executeQuery();
