@@ -23,12 +23,7 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkDialog().should('be.visible');
     });
 
-    it('Should close copy link dialog on close button click', {
-      retries: {
-        runMode: 1,
-        openMode: 0
-      }
-    }, () => {
+    it('Should close copy link dialog on close button click',  () => {
       // When I execute a query which returns results of type is uri.
       const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(2);
       QueryStubs.stubQueryResults(queryDescription);
@@ -41,12 +36,7 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkDialog().should('not.exist');
     });
 
-    it('Should close copy link dialog on cancel button click', {
-      retries: {
-        runMode: 1,
-        openMode: 0,
-      },
-    },() => {
+    it('Should close copy link dialog on cancel button click', () => {
       // When I execute a query which returns results of type is uri.
       const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
       QueryStubs.stubQueryResults(queryDescription);
@@ -59,12 +49,7 @@ describe('Plugin: Table', () => {
       YasrSteps.getCopyResourceLinkDialog().should('not.exist');
     });
 
-    it('Should close copy link dialog on copy link button click', {
-      retries: {
-        runMode: 1,
-        openMode: 0
-      }
-    },() => {
+    it('Should close copy link dialog on copy link button click', () => {
       // When I execute a query which returns results of type is uri.
       const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
       QueryStubs.stubQueryResults(queryDescription);
@@ -114,12 +99,7 @@ describe('Plugin: Table', () => {
       cy.assertClipboardValue('http://ontotext-yasgui/generated-yri#page_1-row_2-column_2');
     });
 
-    it('Should send notify message when resource link is copied successfully', {
-      retries: {
-        runMode: 1,
-        openMode: 0
-      }
-    }, () => {
+    it('Should send notify message when resource link is copied successfully',  () => {
       // When I attach handler to receive message from component
       YasrSteps.attachMessageHandler();
       // And I execute a query which returns results of type is uri.

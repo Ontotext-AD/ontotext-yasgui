@@ -21,3 +21,8 @@ import './commands'
 
 import 'cypress-real-events';
 import '@4tw/cypress-drag-drop'
+
+import 'cypress-failed-log';
+import installLogsCollector from 'cypress-terminal-report/src/installLogsCollector';
+
+installLogsCollector();

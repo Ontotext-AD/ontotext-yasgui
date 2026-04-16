@@ -104,12 +104,7 @@ describe('Execute query action', () => {
     YasrSteps.getResultHeader().should('not.be.visible');
   });
 
-  it('Should emit queryExecuted event on each editor tab', {
-    retries: {
-      runMode: 1,
-      openMode: 0
-    }
-  }, () => {
+  it('Should emit queryExecuted event on each editor tab', () => {
     ActionsPageSteps.visit();
     YasqeSteps.executeQuery();
     ActionsPageSteps.getEventLog().should('have.value', DEFAULT_SPARQL_QUERY_FROM_LOG);
@@ -119,12 +114,7 @@ describe('Execute query action', () => {
     ActionsPageSteps.getEventLog().should('have.value', DEFAULT_SPARQL_QUERY_FROM_LOG);
   });
 
-  it('should not run explain plan query for update query ', {
-    retries: {
-      runMode: 1,
-      openMode: 0
-    }
-  }, () => {
+  it('should not run explain plan query for update query ', () => {
     // When I visit a page with "ontotext-yasgui-web-component" in it,
     KeyboardShortcutPageSteps.visit();
     // and write an update query,

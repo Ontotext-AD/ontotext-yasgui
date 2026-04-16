@@ -10,7 +10,7 @@ describe('Edit saved query action', () => {
         ActionsPageSteps.visit();
     });
 
-    it('Should be able to edit saved query', {retries: {runMode: 1, openMode: 0}}, () => {
+    it('Should be able to edit saved query', () => {
         // Given I have opened the saved queries popup
         YasqeSteps.showSavedQueries();
         YasqeSteps.getSavedQueriesPopup().should('be.visible');

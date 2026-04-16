@@ -1,6 +1,7 @@
 export default class ViewConfigurationsPageSteps {
     static visit() {
         cy.visit('/pages/view-configurations');
+        cy.wait(500);
     }
 
     static showEditorTabs() {

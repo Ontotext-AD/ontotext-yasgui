@@ -11,12 +11,7 @@ describe('Plugin: Raw response', () => {
     YasrPluginPageSteps.visit();
   });
 
-  it('should be able to render raw response', {
-    retries: {
-      runMode: 1,
-      openMode: 0
-    }
-  }, () => {
+  it('should be able to render raw response',  () => {
     // Given I have opened the page
     // And I run a query
     YasqeSteps.executeQuery();

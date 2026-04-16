@@ -8,12 +8,7 @@ describe('YASR toolbar', () => {
     YasrCustomElementPageSteps.visit();
   });
 
-  it('Should display a custom button configured by user', {
-    retries: {
-      runMode: 1,
-      openMode: 0
-    }
-  }, () => {
+  it('Should display a custom button configured by user',  () => {
     // When I visit a page with "ontotext-yasgui-web-component",
     // and configured a yasr toolbar button.
     // When I execute a query, so yasr (yasr toolbar) to be visible.

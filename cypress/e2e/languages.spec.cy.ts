@@ -51,12 +51,7 @@ describe('Languages', () => {
 
   describe('Yasr internationalization support', () => {
 
-    it('Should translate labels in table plugin', {
-      retries: {
-        runMode: 1,
-        openMode: 0,
-      },
-    }, () => {
+    it('Should translate labels in table plugin', () => {
       // When execute a query.
       YasqeSteps.executeQuery();
 

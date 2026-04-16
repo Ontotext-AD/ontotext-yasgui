@@ -82,12 +82,7 @@ describe('Plugin: Table', () => {
         YasrTablePluginSteps.getQueryResultInfo().contains(/No results\. Query took \d{1}\.\d{1}s, moments ago\./);
       });
 
-      it('should show correct message when results are less than one page', {
-        retries: {
-          runMode: 1,
-          openMode: 0
-        }
-      }, () => {
+      it('should show correct message when results are less than one page', () => {
         // When I visit a page with "ontotext-yasgui" in it,
         // and execute a query which returns results less than one Page.
         const queryDescription = new QueryStubDescription()
@@ -239,12 +234,7 @@ describe('Plugin: Table', () => {
         YasrSteps.getResultCell(4, 3).contains('owl:TransitiveProperty');
       });
 
-      it('Should copy url link be visible when the mouse is over a cell of result table', {
-        retries: {
-          runMode: 1,
-          openMode: 0
-        }
-      }, () => {
+      it('Should copy url link be visible when the mouse is over a cell of result table', () => {
         // When I execute a query which return results and results type is uri.
         const queryDescription = new QueryStubDescription().setPageSize(10).setTotalElements(3);
         QueryStubs.stubQueryResults(queryDescription);
