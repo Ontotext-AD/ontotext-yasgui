@@ -62,10 +62,12 @@ module.exports = (on, config) => {
 
     // Video cleanup
     if (results?.video) {
-      const failures = results.tests.some((test) =>
-        test.attempts.some((attempt) => attempt.state === 'failed'),
+      const hasFailures = results.tests.some((test) => {
+          const title = test.title.join(' ');
+          return !!retryTracker.broken[title];
+        }
       );
-      if (!failures) {
+      if (!hasFailures) {
         const {deleteSync} = await import('del');
         return deleteSync(results.video);
       }
