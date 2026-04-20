@@ -59,6 +59,51 @@ pipeline {
             }
         }
 
+        stage('Conformance unit tests') {
+            agent {
+                docker {
+                    image env.NODE_IMAGE
+                    reuseNode true
+                    args '--entrypoint=""'
+                }
+            }
+
+            steps {
+                script {
+                    sh 'npm run test:conformance'
+                }
+            }
+        }
+
+        stage('Conformance cypress tests') {
+            agent {
+                docker {
+                    image env.CYPRESS_IMAGE
+                    reuseNode true
+                    args '--entrypoint=""'
+                }
+            }
+
+            steps {
+                script {
+                    sh """
+                        export TERM=xterm
+                        export ELECTRON_DISABLE_GPU=1
+                        export NO_COLOR=1
+
+                        # 1. Start the app in the background
+                        npm run start &
+
+                        # 2. Wait for the app
+                        sleep 5
+
+                        # 3. Run Cypress
+                        npm run cy:run-conformance
+                    """
+                }
+            }
+        }
+
         stage('Acceptance') {
             agent {
                 docker {
