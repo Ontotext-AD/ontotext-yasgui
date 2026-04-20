@@ -22,6 +22,7 @@ import {PivotTableDownloadPlugin} from '../../yasr/toolbar/pivot-table-download-
 import {ChartDownloadPlugin} from "../../yasr/toolbar/chart-download-plugin";
 import { ExplainPlanUtil } from '../../utils/explain-plan-util';
 import {DEFAULT_THEME} from "../../../configurations/constants";
+import {GEO_PROPERTIES_PREFIX, GeoSparqlVariable} from '../../../plugins/yasr/geo/models/geo-sparql-variable';
 
 /**
  * Builder for yasgui configuration.
@@ -77,6 +78,8 @@ export class YasguiConfigurationBuilder {
       paginationOn: externalConfiguration.paginationOn !== undefined ? externalConfiguration.paginationOn : defaultYasguiConfig.paginationOn,
       pageSize: externalConfiguration.pageSize !== undefined ? externalConfiguration.pageSize : defaultYasguiConfig.pageSize,
       yasqe: {
+        geoProperties: Object.values(GeoSparqlVariable),
+        geoPropertiesPrefix: GEO_PROPERTIES_PREFIX,
         prefixes: [],
         extraKeys: {},
         keyboardShortcutDescriptions: [],

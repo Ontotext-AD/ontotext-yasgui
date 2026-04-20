@@ -137,6 +137,16 @@ export interface YasguiConfiguration {
       prefixes: string[];
 
       /**
+       * Available GeoSPARQL properties
+       */
+      geoProperties: string[];
+
+      /**
+       * GeoSPARQL properties prefix
+       */
+      geoPropertiesPrefix: string;
+
+      /**
        * Object contains pair keyboard shortcut and function to be executed when user press the keyboard shortcut.
        * Example:
        * <pre>

@@ -103,6 +103,8 @@ SELECT * WHERE {
         yasqe.getInputField().blur();
       },
     },
+    geoProperties: [],
+    geoPropertiesPrefix: '',
 
     createShareableLink: function (yasqe: Yasqe) {
       return (
