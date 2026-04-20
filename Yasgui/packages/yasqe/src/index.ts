@@ -1468,6 +1468,15 @@ export interface Config extends Partial<CodeMirror.EditorConfiguration> {
   tabId: string;
   getRepositoryStatementsCount: () => Promise<number>;
   onQueryAborted?: (req: superagent.SuperAgentRequest | undefined) => Promise<void>;
+  /**
+   * Available GeoSPARQL properties
+   */
+  geoProperties: string[];
+
+  /**
+   * GeoSPARQL properties prefix
+   */
+  geoPropertiesPrefix: string;
 }
 
 export interface CustomResultMessage {

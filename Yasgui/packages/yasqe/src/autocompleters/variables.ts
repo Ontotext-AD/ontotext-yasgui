@@ -1,5 +1,21 @@
 import * as autocompleter from "./";
 
+/**
+ * Returns geo-variable suggestions for tokens that start with '?geo_'.
+ * E.g. for token "?geo_f" it returns ["?geo_fillColor", "?geo_fillOpacity"].
+ *
+ * @param variableIndicator - the leading character of the token ('?' or '$')
+ * @param variableName - the token string without the leading indicator
+ * @param geoProperties - the list of known geo property names
+ */
+function getGeoVariableSuggestions(variableIndicator: string, variableName: string, geoProperties: string[]): string[] {
+  return geoProperties
+    .filter((s) => s !== variableName && s.startsWith(variableName))
+    .map((s) => `${variableIndicator}${s}`)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+
 var conf: autocompleter.CompleterConfig = {
   name: "variables",
   isValidCompletionPosition: function (yasqe) {
@@ -44,7 +60,25 @@ var conf: autocompleter.CompleterConfig = {
         vars.push(variable);
       }
     }
-    return vars.sort();
+
+    vars.sort();
+
+    // If the token starts with '?geo_', also suggest geo-variable values from GeoSparqlVariable.
+    const geoProperties = yasqe.config.geoProperties;
+    const geoPropertiesPrefix = yasqe.config.geoPropertiesPrefix;
+    const variableName = token.string.slice(1);
+
+    if (variableName.startsWith(geoPropertiesPrefix)) {
+      const geoSuggestions = getGeoVariableSuggestions(token.string[0], variableName, geoProperties);
+      for (const suggestion of geoSuggestions) {
+        if (!distinctVars[suggestion]) {
+          distinctVars[suggestion] = true;
+          vars.push(suggestion);
+        }
+      }
+    }
+
+    return vars;
   },
   bulk: false,
   autoShow: true,
