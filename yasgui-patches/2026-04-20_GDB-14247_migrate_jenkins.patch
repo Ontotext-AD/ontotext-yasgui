@@ -1,0 +1,14 @@
+Index: Yasgui/webpack/distributeBuildFiles.sh
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/webpack/distributeBuildFiles.sh b/Yasgui/webpack/distributeBuildFiles.sh
+--- a/Yasgui/webpack/distributeBuildFiles.sh	(revision a73dd1cc752c68cf03107907243e97cfe87df1b3)
++++ b/Yasgui/webpack/distributeBuildFiles.sh	(revision ad4366abd7761c2c8616c790870a66807ce11920)
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ packages="yasgui yasr yasqe utils"
+ for p in ${packages}; do
+   rm -rf packages/${p}/build
