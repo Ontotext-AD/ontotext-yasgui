@@ -1,0 +1,98 @@
+Index: Yasgui/packages/yasqe/src/autocompleters/variables.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/variables.ts b/Yasgui/packages/yasqe/src/autocompleters/variables.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/variables.ts	(revision d3ded20ade8e93e6829fe16bce235d26c4a13ee4)
++++ b/Yasgui/packages/yasqe/src/autocompleters/variables.ts	(revision c3549e073d4453d9bf50d15ae1ce2a389d629484)
+@@ -1,5 +1,21 @@
+ import * as autocompleter from "./";
+
++/**
++ * Returns geo-variable suggestions for tokens that start with '?geo_'.
++ * E.g. for token "?geo_f" it returns ["?geo_fillColor", "?geo_fillOpacity"].
++ *
++ * @param variableIndicator - the leading character of the token ('?' or '$')
++ * @param variableName - the token string without the leading indicator
++ * @param geoProperties - the list of known geo property names
++ */
++function getGeoVariableSuggestions(variableIndicator: string, variableName: string, geoProperties: string[]): string[] {
++  return geoProperties
++    .filter((s) => s !== variableName && s.startsWith(variableName))
++    .map((s) => `${variableIndicator}${s}`)
++    .sort((a, b) => a.localeCompare(b));
++}
++
++
+ var conf: autocompleter.CompleterConfig = {
+   name: "variables",
+   isValidCompletionPosition: function (yasqe) {
+@@ -44,7 +60,25 @@
+         vars.push(variable);
+       }
+     }
+-    return vars.sort();
++
++    vars.sort();
++
++    // If the token starts with '?geo_', also suggest geo-variable values from GeoSparqlVariable.
++    const geoProperties = yasqe.config.geoProperties;
++    const geoPropertiesPrefix = yasqe.config.geoPropertiesPrefix;
++    const variableName = token.string.slice(1);
++
++    if (variableName.startsWith(geoPropertiesPrefix)) {
++      const geoSuggestions = getGeoVariableSuggestions(token.string[0], variableName, geoProperties);
++      for (const suggestion of geoSuggestions) {
++        if (!distinctVars[suggestion]) {
++          distinctVars[suggestion] = true;
++          vars.push(suggestion);
++        }
++      }
++    }
++
++    return vars;
+   },
+   bulk: false,
+   autoShow: true,
+Index: Yasgui/packages/yasqe/src/defaults.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/defaults.ts b/Yasgui/packages/yasqe/src/defaults.ts
+--- a/Yasgui/packages/yasqe/src/defaults.ts	(revision d3ded20ade8e93e6829fe16bce235d26c4a13ee4)
++++ b/Yasgui/packages/yasqe/src/defaults.ts	(revision c3549e073d4453d9bf50d15ae1ce2a389d629484)
+@@ -103,6 +103,8 @@
+         yasqe.getInputField().blur();
+       },
+     },
++    geoProperties: [],
++    geoPropertiesPrefix: '',
+
+     createShareableLink: function (yasqe: Yasqe) {
+       return (
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision d3ded20ade8e93e6829fe16bce235d26c4a13ee4)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision c3549e073d4453d9bf50d15ae1ce2a389d629484)
+@@ -1468,6 +1468,15 @@
+   tabId: string;
+   getRepositoryStatementsCount: () => Promise<number>;
+   onQueryAborted?: (req: superagent.SuperAgentRequest | undefined) => Promise<void>;
++  /**
++   * Available GeoSPARQL properties
++   */
++  geoProperties: string[];
++
++  /**
++   * GeoSPARQL properties prefix
++   */
++  geoPropertiesPrefix: string;
+ }
+
+ export interface CustomResultMessage {
