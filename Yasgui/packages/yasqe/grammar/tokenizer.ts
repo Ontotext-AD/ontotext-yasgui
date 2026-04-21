@@ -61,6 +61,7 @@ export interface State {
   valuesVarCount: number;         // number of variables declared in VALUES
   valuesVarNames: Set<string>;    // variable names declared in VALUES (for duplicate detection)
   valuesTupleCount: number;       // number of values in current data tuple
+  valuesSkipNext: boolean;        // skip next token in VALUES tuple (after ^^)
   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
   tripleTermDepth: number;
   // BIND variable scoping
@@ -1143,11 +1144,24 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
                     " values but " + state.valuesVarCount + " variables declared";
                 }
                 state.valuesClause = "data";
-              } else if (tokenCat !== ")" && state.tripleTermDepth === 0) {
+                state.valuesSkipNext = false;
+              } else if (state.tripleTermDepth === 0) {
                 // Count each top-level value in the tuple.
                 // <<( at depth 0 counts as one value (the whole triple term);
                 // tokens inside <<(...)>> (depth > 0) are not counted.
-                state.valuesTupleCount++;
+                // LANGTAG and ^^ (with its following IRI) are part of the
+                // preceding rdfLiteral and should not be counted separately.
+                if (state.valuesSkipNext) {
+                  // This token follows ^^ so it's the datatype IRI — skip it
+                  state.valuesSkipNext = false;
+                } else if (tokenCat === 'LANGTAG') {
+                  // Language tag is part of the preceding string literal — skip
+                } else if (tokenCat === '^^') {
+                  // Datatype marker — skip this and the next token (the datatype IRI)
+                  state.valuesSkipNext = true;
+                } else {
+                  state.valuesTupleCount++;
+                }
               }
             }
 
@@ -1446,6 +1460,7 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
         valuesVarCount: s.valuesVarCount,
         valuesVarNames: new Set(s.valuesVarNames),
         valuesTupleCount: s.valuesTupleCount,
+        valuesSkipNext: s.valuesSkipNext,
         bindScopeStack: s.bindScopeStack.map(scope => new Set(scope)),
         inBind: s.inBind,
         bindParenDepth: s.bindParenDepth,
@@ -1506,6 +1521,7 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
         valuesVarCount: 0,
         valuesVarNames: new Set(),
         valuesTupleCount: 0,
+        valuesSkipNext: false,
         bindScopeStack: [new Set()],
         inBind: false,
         bindParenDepth: 0,
