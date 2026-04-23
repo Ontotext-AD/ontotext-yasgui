@@ -275,8 +275,7 @@ export class GeoPlugin implements YasrPlugin {
           return undefined;// no cast needed
         }
 
-        const parser = GeoSPARQLService.SUPPORTED_CONVERSIONS[binding.datatype];
-        const geometry = parser ? parser(binding.value) : null;
+        const geometry = GeoSPARQLService.parse(binding.datatype, binding.value);
         if (!geometry) {
           return undefined;
         }

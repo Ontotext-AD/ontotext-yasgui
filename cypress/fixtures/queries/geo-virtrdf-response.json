@@ -1,0 +1,26 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "location": {
+          "datatype": "http://www.openlinksw.com/schemas/virtrdf#Geometry",
+          "type": "literal",
+          "value": "POINT(25.9657 43.8356)"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#LineString"},
+        "location": {
+          "datatype": "http://www.openlinksw.com/schemas/virtrdf#Geometry",
+          "type": "literal",
+          "value": "LINESTRING(25.9660 43.8356, 25.9665 43.8360, 25.9670 43.8356)"
+        }
+      }
+    ]
+  }
+}
+

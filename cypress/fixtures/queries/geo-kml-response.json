@@ -1,0 +1,34 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#kmlLiteral",
+          "type": "literal",
+          "value": "<Point><coordinates>25.9657,43.8356,0</coordinates></Point>"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#LineString"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#kmlLiteral",
+          "type": "literal",
+          "value": "<LineString><coordinates>25.9660,43.8356,0 25.9665,43.8360,0 25.9670,43.8356,0</coordinates></LineString>"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Polygon"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#kmlLiteral",
+          "type": "literal",
+          "value": "<Polygon><outerBoundaryIs><LinearRing><coordinates>25.9680,43.8356,0 25.9684,43.8356,0 25.9684,43.8360,0 25.9680,43.8360,0 25.9680,43.8356,0</coordinates></LinearRing></outerBoundaryIs></Polygon>"
+        }
+      }
+    ]
+  }
+}
+

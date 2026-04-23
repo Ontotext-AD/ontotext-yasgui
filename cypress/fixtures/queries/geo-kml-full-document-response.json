@@ -1,0 +1,18 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#kmlLiteral",
+          "type": "literal",
+          "value": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><Placemark><Point><coordinates>25.9657,43.8356,0</coordinates></Point></Placemark></Document></kml>"
+        }
+      }
+    ]
+  }
+}
+

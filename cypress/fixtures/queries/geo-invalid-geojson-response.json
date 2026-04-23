@@ -1,0 +1,26 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoJSONLiteral",
+          "type": "literal",
+          "value": "THIS IS NOT JSON {"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoJSONLiteral",
+          "type": "literal",
+          "value": "{\"type\":\"Point\",\"coordinates\":[25.9657,43.8356]}"
+        }
+      }
+    ]
+  }
+}
+

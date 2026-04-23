@@ -67,6 +67,86 @@ export class QueryStubs {
     this.stubQueryResponse('/queries/default-query-response.json', 'test-repo', 'longRunningQuery', delay);
   }
 
+  static stubGeoQueryResponse(fixture: string, repositoryId = 'yasr-geo-plugin') {
+    cy.intercept(`/repositories/${repositoryId}`, {fixture});
+  }
+
+  static stubGeoJsonLiteralResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-geojson-response.json', repositoryId);
+  }
+
+  static stubGeoGmlLiteralResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-gml-response.json', repositoryId);
+  }
+
+  static stubGeoKmlLiteralResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-kml-response.json', repositoryId);
+  }
+
+  static stubGeoDggsLiteralResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-dggs-response.json', repositoryId);
+  }
+
+  static stubGeoCodeLiteralResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-geocode-response.json', repositoryId);
+  }
+
+  static stubGeoWktSridResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-wkt-srid-response.json', repositoryId);
+  }
+
+  static stubGeoVirtRdfResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-virtrdf-response.json', repositoryId);
+  }
+
+  static stubGeoMultiColumnResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-multi-column-response.json', repositoryId);
+  }
+
+  static stubGeoDggsNoPrefixResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-dggs-no-prefix-response.json', repositoryId);
+  }
+
+  static stubGeoMalformedPrefixResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-malformed-prefix-response.json', repositoryId);
+  }
+
+  static stubGeoGeoUriEdgeCasesResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-geouri-edge-cases-response.json', repositoryId);
+  }
+
+  static stubGeoInvalidWktResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-invalid-wkt-response.json', repositoryId);
+  }
+
+  static stubGeoKmlFullDocumentResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-kml-full-document-response.json', repositoryId);
+  }
+
+  static stubGeoKmlMultiFeatureResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-kml-multi-feature-response.json', repositoryId);
+  }
+
+  static stubGeoKmlEmptyResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-kml-empty-response.json', repositoryId);
+  }
+
+  static stubGeoGeoHash36Response(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-geohash36-response.json', repositoryId);
+  }
+
+  static stubGeoCodeUnsupportedResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-geocode-unsupported-response.json', repositoryId);
+  }
+
+  static stubGeoDggsUnsupportedUriResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-dggs-unsupported-uri-response.json', repositoryId);
+  }
+
+  static stubGeoInvalidGeoJsonResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-invalid-geojson-response.json', repositoryId);
+  }
+
   static stubChartDataQuery() {
     cy.intercept('/repositories/chart-data', {fixture: '/queries/chart-data-response.json'}).as('chart-data-request');
   }

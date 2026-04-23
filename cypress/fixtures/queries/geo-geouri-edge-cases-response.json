@@ -1,0 +1,44 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://example.org/GeoURI-rfc5870-params"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
+          "type": "literal",
+          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657;u=10;crs=wgs84"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://example.org/GeoURI-with-altitude"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
+          "type": "literal",
+          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657,150"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://example.org/GeoURI-invalid-lon"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
+          "type": "literal",
+          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8,abc"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://example.org/GeoURI-invalid-altitude"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
+          "type": "literal",
+          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657,abc"
+        }
+      }
+    ]
+  }
+}
+
+
+
