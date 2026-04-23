@@ -39,6 +39,9 @@ module.exports = function (req, res, next) {
   } else if (req.url === '/repositories/yasr-geo-plugin') {
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(JSON.stringify(geoPluginResponse));
+  } else if (req.url === '/repositories/sanitize-geo-binding-values') {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(JSON.stringify(sanitizeGeoBindingValuesResponse));
   } else {
     // pass request on to the default dev server
     next();
@@ -5685,6 +5688,7 @@ const geoPluginResponse = {
       "exampleWKT",
       "geo_tooltip",
       "geo_popup",
+      "geo_markerUrl",
       "geo_weight",
       "geo_color",
       "geo_opacity",
@@ -5712,10 +5716,14 @@ const geoPluginResponse = {
           "type": "literal",
           "value": "Simple point popup content"
         },
+        "geo_markerUrl": {
+          "type": "literal",
+          "value": "/assets/images/map-pin-fill.png"
+        },
         "geo_weight": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
             "type": "literal",
-            "value": "4"
+            "value": "10"
         },
         "geo_color": {
           "type": "literal",
@@ -5754,10 +5762,14 @@ const geoPluginResponse = {
           "type": "literal",
           "value": ""
         },
+        "geo_markerUrl": {
+          "type": "literal",
+          "value": "/assets/images/default-marker.png"
+        },
         "geo_weight": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "2"
+          "value": "11"
         },
         "geo_color": {
           "type": "literal",
@@ -5799,25 +5811,16 @@ const geoPluginResponse = {
         "geo_weight": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "4"
+          "value": "12"
         },
         "geo_color": {
           "type": "literal",
-          "value": "yellow"
+          "value": "green"
         },
         "geo_opacity": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "0.4"
-        },
-        "geo_fillColor": {
-          "type": "literal",
-          "value": "red"
-        },
-        "geo_fillOpacity": {
-          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
-          "type": "literal",
-          "value": "0.5"
+          "value": "0.12"
         }
       },
       {
@@ -5841,7 +5844,7 @@ const geoPluginResponse = {
         "geo_weight": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "4"
+          "value": "13"
         },
         "geo_color": {
           "type": "literal",
@@ -5883,7 +5886,7 @@ const geoPluginResponse = {
         "geo_weight": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "4"
+          "value": "14"
         },
         "geo_color": {
           "type": "literal",
@@ -5892,7 +5895,7 @@ const geoPluginResponse = {
         "geo_opacity": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "0.4"
+          "value": "0.14"
         },
         "geo_fillColor": {
           "type": "literal",
@@ -5901,7 +5904,7 @@ const geoPluginResponse = {
         "geo_fillOpacity": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "0.5"
+          "value": "0.144"
         }
       },
       {
@@ -5944,7 +5947,7 @@ const geoPluginResponse = {
         "geo_weight": {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
-          "value": "4"
+          "value": "15"
         },
         "geo_color": {
           "type": "literal",
@@ -5963,6 +5966,246 @@ const geoPluginResponse = {
           "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
           "type": "literal",
           "value": "0.5"
+        }
+      }
+    ]
+  }
+}
+
+const sanitizeGeoBindingValuesResponse = {
+  "head": {
+    "vars": [
+      "id",
+      "featureType",
+      "exampleWKT",
+      "geo_tooltip",
+      "geo_popup",
+      "geo_markerUrl",
+      "geo_weight",
+      "geo_color",
+      "geo_opacity",
+      "geo_markerClass"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "id": { "type": "literal", "value": "weight-valid" },
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#GeometryCollection"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "GEOMETRYCOLLECTION(LINESTRING(25.9740 43.8365, 25.9725 43.8345))"
+        },
+        "geo_weight": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "2.5"
+        },
+        "geo_opacity": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "1"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "weight-invalid" },
+        "featureType": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/sf#GeometryCollection"
+        },
+        "exampleWKT": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "GEOMETRYCOLLECTION(LINESTRING(25.9740 43.8375, 25.9725 43.8355))"
+        },
+        "geo_weight": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "abc"
+        },
+        "geo_opacity": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "1"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "valid-color" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9650 43.8350)"
+        },
+        "geo_color": { "type": "literal", "value": "#1a2b3c" }
+      },
+      {
+        "id": { "type": "literal", "value": "invalid-color" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9670 43.8350)"
+        },
+        "geo_color": { "type": "literal", "value": "expression(alert(1))" }
+      },
+      {
+        "id": { "type": "literal", "value": "rgb-color" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9690 43.8350)"
+        },
+        "geo_color": { "type": "literal", "value": "rgb(255, 0, 128)" }
+      },
+      {
+        "id": { "type": "literal", "value": "opacity-high" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9650 43.8370)"
+        },
+        "geo_opacity": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "5"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "opacity-negative" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9670 43.8370)"
+        },
+        "geo_opacity": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "-0.5"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "opacity-in-range" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9670 43.8370)"
+        },
+        "geo_opacity": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "0.7"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "css-classes" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9670 43.8390)"
+        },
+        "geo_markerClass": {
+          "type": "literal",
+          "value": "valid-class invalid@class ri-home-smile-line"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "marker-valid" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9690 43.8390)"
+        },
+        "geo_markerUrl": {
+          "type": "literal",
+          "value": "https://example.com/icon.png"
+        }
+      },
+
+      {
+        "id": { "type": "literal", "value": "marker-invalid-ext" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9650 43.8410)"
+        },
+        "geo_markerUrl": {
+          "type": "literal",
+          "value": "https://example.com/file.svg"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "marker-js" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9670 43.8410)"
+        },
+        "geo_markerUrl": {
+          "type": "literal",
+          "value": "javascript:alert(1)"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "popup-xss" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9690 43.8410)"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "<div style='color: red'>Content</div><button onclick=\"alert('Hello from injected button!')\">Click me</button>"
+        }
+      },
+
+      {
+        "id": { "type": "literal", "value": "tooltip-xss" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9650 43.8430)"
+        },
+        "geo_tooltip": {
+          "type": "literal",
+          "value": "<script>alert(1)</script>Tooltip"
+        }
+      },
+      {
+        "id": { "type": "literal", "value": "mixed" },
+        "featureType": { "type": "uri", "value": "http://www.opengis.net/ont/sf#Point" },
+        "exampleWKT": {
+          "type": "literal",
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "value": "POINT(25.9670 43.8430)"
+        },
+        "geo_color": { "type": "literal", "value": "#fff" },
+        "geo_opacity": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+          "value": "2"
+        },
+        "geo_markerUrl": {
+          "type": "literal",
+          "value": "javascript:alert(1)"
+        },
+        "geo_popup": {
+          "type": "literal",
+          "value": "<b>Safe</b><script>alert(1)</script>"
         }
       }
     ]

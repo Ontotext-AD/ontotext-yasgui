@@ -272,7 +272,7 @@ export class GeoPlugin implements YasrPlugin {
       .map<Feature | undefined>((item) => {
         const binding = item[columnName];
         if (!binding) {
-          return undefined;// no cast needed
+          return undefined;
         }
 
         const geometry = GeoSPARQLService.parse(binding.datatype, binding.value);
@@ -282,7 +282,7 @@ export class GeoPlugin implements YasrPlugin {
 
         return {
           type: 'Feature',
-          properties: { ...item }, // optionally omit the geometry column
+          properties: { ...item },
           geometry
         };
       })

@@ -18,7 +18,8 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: I should see the geo features on the map.
     // Point → circle marker + LineString → 1 path + Polygon → 1 path = 3 features
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 2);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render geo features from GML literal (gmlLiteral) datatype', () => {
@@ -32,7 +33,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: I should see the geo features on the map (Point + LineString + Polygon = 3 features).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 2);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render geo features from KML literal (kmlLiteral) datatype', () => {
@@ -46,7 +48,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: I should see the geo features on the map (Point + LineString + Polygon = 3 features).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 2);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render geo features from DGGS H3 literal (dggsLiteral) datatype', () => {
@@ -61,7 +64,8 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: I should see geo features on the map.
     // CELL → Point (circle marker) = 1 + CELLLIST → MultiPolygon polygons
-    GeoPluginSteps.getAllGeoFeatures().should('have.length.at.least', 1);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render geo features from GeoCode literal (geoCodeLiteral) datatype', () => {
@@ -75,7 +79,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: I should see one point marker per geocode entry (3 entries = 3 circle markers).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 3);
   });
 
   it('should render geo features from WKT literals with SRID prefixes (CRS84, EPSG:4326, other EPSG)', () => {
@@ -89,7 +94,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: All three points should be rendered regardless of their SRID prefix (CRS84, EPSG:4326, EPSG:3857).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 3);
   });
 
   it('should render geo features from VirtRDF Geometry (virtrdf#Geometry) datatype', () => {
@@ -103,7 +109,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: I should see the geo features on the map (Point + LineString = 2 features).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 2);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render geo features from DGGS H3 literal without a URI prefix (bare CELL/CELLLIST syntax)', () => {
@@ -122,7 +129,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: All three entries should be rendered on the map (1 Point + 2 MultiPolygons).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length.at.least', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length.at.least', 2);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render GeoURI points with RFC 5870 parameters and skip entries with invalid coordinates', () => {
@@ -140,7 +148,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: Only the two valid points should be rendered; the NaN-coordinate entry is silently skipped.
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 2);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 2);
   });
 
   it('should skip invalid WKT and render only valid WKT features', () => {
@@ -154,7 +163,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: Only the valid WKT point should be rendered; the malformed one is silently skipped.
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render a geo feature from a full KML document (input already contains <kml> root)', () => {
@@ -169,7 +179,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: The single point inside the full KML document should be rendered.
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render a GeometryCollection when a single KML binding contains multiple features', () => {
@@ -185,7 +196,8 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: All geometries inside the GeometryCollection should be rendered on the map
     // (2 circle markers for the Points + 1 path for the LineString = 3 features).
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 3);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllMarkers().should('have.length', 2);
   });
 
   it('should render no features when a KML binding produces zero GeoJSON features', () => {
@@ -201,6 +213,7 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: No features should be rendered on the map.
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 0);
   });
 
   it('should render a geo feature from a GeoHash-36 (geoCodeLiteral) value', () => {
@@ -214,7 +227,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: The decoded GeoHash-36 point should be rendered on the map.
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should render no features for an unsupported geocode URI scheme or a GeoURI with wrong component count', () => {
@@ -231,6 +245,7 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: No features should be rendered on the map.
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 0);
   });
 
   it('should render no features for a dggsLiteral with an unsupported (non-H3) URI prefix', () => {
@@ -246,6 +261,7 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: No features should be rendered on the map.
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 0);
   });
 
   it('should skip malformed geoJSONLiteral and render only valid GeoJSON features', () => {
@@ -259,7 +275,8 @@ describe('Geo Plugin Parsers', () => {
     YasrSteps.openGeoPluginTab();
 
     // THEN: Only the valid GeoJSON point should be rendered; the malformed JSON entry is silently skipped.
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 1);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
   });
 
   it('should gracefully handle malformed URI prefixes without throwing and render no features', () => {
@@ -278,6 +295,7 @@ describe('Geo Plugin Parsers', () => {
     // THEN: The map should render no features (the malformed literals are silently skipped)
     // and no uncaught error should crash the page.
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 0);
   });
 
   it('should render geo features when result contains multiple geometry columns', () => {
@@ -292,13 +310,7 @@ describe('Geo Plugin Parsers', () => {
 
     // THEN: Features from both geometry columns should be rendered on the map.
     // 2 rows × 2 geometry columns = 4 circle markers
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 4);
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 4);
   });
 });
-
-const openGeoPlugin = () => {
-  YasrGeoPluginPageSteps.visit();
-  YasqeSteps.executeQuery();
-  YasrSteps.openGeoPluginTab();
-  GeoPluginSteps.getAllGeoFeatures().should('have.length', 10);
-};

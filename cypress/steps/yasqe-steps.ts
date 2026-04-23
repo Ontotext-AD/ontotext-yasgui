@@ -391,4 +391,12 @@ export class YasqeSteps {
   static getAutocompleteHintElement() {
     return cy.get('.yasqe-autocomplete-hint');
   }
+
+  static getAutocompleteHints() {
+    return cy.get('.CodeMirror-hints .CodeMirror-hint');
+  }
+
+  static getAutocompleteHint(index = 0) {
+    return YasqeSteps.getAutocompleteHints().eq(index);
+  }
 }

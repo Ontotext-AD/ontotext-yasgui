@@ -1,4 +1,5 @@
-import {MapOptions, TileLayer, tileLayer} from 'leaflet';
+import {DivIcon, divIcon, icon, Icon, MapOptions, TileLayer, tileLayer} from 'leaflet';
+import {ClassIconOptions} from '../models/marker-types';
 
 /**
  * Service class providing factory methods to create Leaflet tile layers and GeoJSON configuration builders.
@@ -145,5 +146,38 @@ export class LeafletService {
       // Using 1.0 prevents users from dragging into invalid vertical regions (e.g., grey polar areas).
       maxBoundsViscosity: 1.0
     }
+  }
+
+  /**
+   * Creates a Leaflet DivIcon using a CSS class-based icon (e.g., Remix Icon, Font Awesome).
+   * The icon is rendered as an <i> element with configurable color and opacity.
+   *
+   * @param options - Configuration for the class-based marker icon.
+   *
+   * @returns A Leaflet DivIcon instance configured with the provided class and styles.
+   */
+  static createClassBasedIcon(options: ClassIconOptions):  DivIcon  {
+    const html = `<i class="${options.className}" style="color: ${options.color || 'inherit'}; opacity: ${options.opacity ?? 1};"></i>`;
+    return divIcon({
+      className: 'geo-marker',
+      html: html,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+  }
+
+  /**
+   * Creates a Leaflet Icon using an image URL.
+   *
+   * @param url - The URL of the image to use as the marker icon.
+   * @returns A Leaflet Icon instance configured with the provided image.
+   */
+  static createIconFromUrl(url: string): Icon {
+    return icon({
+      className: 'geo-marker',
+      iconUrl: url,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+    });
   }
 }
