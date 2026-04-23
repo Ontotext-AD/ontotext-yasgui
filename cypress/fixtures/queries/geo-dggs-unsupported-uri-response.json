@@ -1,0 +1,18 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://example.org/UnknownDggs"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#dggsLiteral",
+          "type": "literal",
+          "value": "<https://example.org/dggs/custom> CELL('851f00b3fffffff')"
+        }
+      }
+    ]
+  }
+}
+

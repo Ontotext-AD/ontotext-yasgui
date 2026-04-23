@@ -2,7 +2,7 @@ export default class ViewConfigurationsPageSteps {
     static visit() {
         cy.visit('/pages/view-configurations');
         // add a 0.5 s wait so the page can be rendered, before triggeing actions
-        cy.wait(500);
+        cy.wait(1000);
     }
 
     static showEditorTabs() {

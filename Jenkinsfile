@@ -81,6 +81,7 @@ pipeline {
                     image env.CYPRESS_IMAGE
                     reuseNode true
                     args '--entrypoint=""'
+                    label 'aws-large'
                 }
             }
 

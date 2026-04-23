@@ -1,0 +1,19 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/geocode/GeoHash-36"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
+          "type": "literal",
+          "value": "<http://opengis.net/ont/geocode/GeoHash-36> BCD"
+        }
+      }
+    ]
+  }
+}
+
+

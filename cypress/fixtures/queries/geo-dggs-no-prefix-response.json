@@ -1,0 +1,36 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#H3Cell"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#dggsLiteral",
+          "type": "literal",
+          "value": "CELL('851f00b3fffffff')"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#H3CellList"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#dggsLiteral",
+          "type": "literal",
+          "value": "CELLLIST('851f00b3fffffff','851f0447fffffff')"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#H3CellList"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#dggsLiteral",
+          "type": "literal",
+          "value": "CELLLIST('851f00b3fffffff' '851f0447fffffff')"
+        }
+      }
+    ]
+  }
+}
+
+
+

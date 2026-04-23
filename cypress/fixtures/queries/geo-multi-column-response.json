@@ -1,0 +1,36 @@
+{
+  "head": {
+    "vars": ["featureType", "primaryLocation", "secondaryLocation"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "primaryLocation": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POINT(25.9657 43.8356)"
+        },
+        "secondaryLocation": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POINT(25.9700 43.8400)"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "primaryLocation": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POINT(25.9670 43.8370)"
+        },
+        "secondaryLocation": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POINT(25.9720 43.8420)"
+        }
+      }
+    ]
+  }
+}
+

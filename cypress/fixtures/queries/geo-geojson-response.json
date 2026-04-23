@@ -1,0 +1,34 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoJSONLiteral",
+          "type": "literal",
+          "value": "{\"type\":\"Point\",\"coordinates\":[25.9657,43.8356]}"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#LineString"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoJSONLiteral",
+          "type": "literal",
+          "value": "{\"type\":\"LineString\",\"coordinates\":[[25.9660,43.8356],[25.9665,43.8360],[25.9670,43.8356]]}"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Polygon"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoJSONLiteral",
+          "type": "literal",
+          "value": "{\"type\":\"Polygon\",\"coordinates\":[[[25.9680,43.8356],[25.9684,43.8356],[25.9684,43.8360],[25.9680,43.8360],[25.9680,43.8356]]]}"
+        }
+      }
+    ]
+  }
+}
+

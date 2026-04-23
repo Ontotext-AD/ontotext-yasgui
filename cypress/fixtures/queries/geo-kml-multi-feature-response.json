@@ -1,0 +1,18 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#GeometryCollection"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#kmlLiteral",
+          "type": "literal",
+          "value": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><Placemark><Point><coordinates>25.9657,43.8356,0</coordinates></Point></Placemark><Placemark><Point><coordinates>25.9660,43.8360,0</coordinates></Point></Placemark><Placemark><LineString><coordinates>25.9665,43.8356,0 25.9670,43.8360,0</coordinates></LineString></Placemark></Document></kml>"
+        }
+      }
+    ]
+  }
+}
+
