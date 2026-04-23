@@ -6,41 +6,31 @@ import {QueryStubs} from '../../../../stubs/query-stubs';
 
 describe('Geo Plugin', () => {
   it('should be able to display geo plugin', () => {
-    // GIVEN: I visit a page containing "ontotex-yasgui-web-component".
-    YasrGeoPluginPageSteps.visit();
-
-    // WHEN: I execute a query that returns geo data.
-    YasqeSteps.executeQuery();
-    // THEN: I should see the geo plugin tab and be able to open it.
-    YasrSteps.getGeoPluginTab().should('be.visible');
-
-    // WHEN: I open the geo plugin tab.
-    YasrSteps.openGeoPluginTab();
-    // THEN: I should see the geo data displayed on the map.
-    GeoPluginSteps.getAllGeoFeatures().should('have.length', 10);
+    // GIVEN: I visit a page containing "ontotex-yasgui-web-component" with the Geo plugin selected.
+    openGeoPlugin();
     // AND: I should not see the result info message.
     YasrSteps.getResponseInfo().should('not.be.visible');
 
     // WHEN: I hover over a geo feature that has the binding variable geo_tooltip.
-    GeoPluginSteps.hoverGeoFeature();
+    GeoPluginSteps.hoverMarker();
     // THEN: I should see the value of the geo_tooltip variable.
     GeoPluginSteps.getTooltip().contains('Simple point tooltip');
     GeoPluginSteps.closeGeoFeaturePopupAndTooltip();
 
     // WHEN: I click on a geo feature that has the binding variable geo_popup.
-    GeoPluginSteps.clickGeoFeature();
+    GeoPluginSteps.clickMarker();
     // THEN: I should see the value of the geo_popup variable.
     GeoPluginSteps.getFeaturePopupContent().contains('Simple point popup content');
     GeoPluginSteps.closeGeoFeaturePopupAndTooltip();
 
     // WHEN: I hover over a geo feature that has no binding variable geo_tooltip.
-    GeoPluginSteps.hoverGeoFeature(2);
+    GeoPluginSteps.hoverMarker(1);
     // THEN: I should not see any tooltip. The tooltip element exists in the DOM, but it is empty,
     // so we check its text content to ensure that the tooltip does not exist.
     GeoPluginSteps.getTooltip().should('have.text', '');
 
     // WHEN: I click on a geo feature that has no binding variable geo_popup.
-    GeoPluginSteps.clickGeoFeature(2);
+    GeoPluginSteps.clickMarker(2);
     // THEN: I should see the default popup content, which includes all variable bindings except the geo_* variables.
     GeoPluginSteps.getFeaturePopupContent().should('not.contain', 'geo_');
     GeoPluginSteps.getFeaturePopupContent().should('contain', 'featureType');
@@ -87,24 +77,26 @@ describe('Geo Plugin', () => {
     openGeoPlugin();
 
     // THEN: I expect to see the features styled according to the bindings.
-    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'stroke-width', '2');
-    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'stroke', 'green');
-    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'stroke-opacity', '0.3');
-    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'fill', '#F7F2EC');
-    GeoPluginSteps.getGeoFeature(1).should('have.attr', 'fill-opacity', '0.6');
+    // http://www.opengis.net/ont/sf#LineString
+    GeoPluginSteps.getGeoFeature(0).should('have.attr', 'stroke-width', '12');
+    GeoPluginSteps.getGeoFeature(0).should('have.attr', 'stroke', 'green');
+    GeoPluginSteps.getGeoFeature(0).should('have.attr', 'stroke-opacity', '0.12');
+    GeoPluginSteps.getGeoFeature(0).should('have.attr', 'fill', 'none');
 
-    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'stroke-width', '4');
-    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'stroke', 'yellow');
-    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'stroke-opacity', '0.4');
-    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'fill', 'red');
-    GeoPluginSteps.getGeoFeature(6).should('have.attr', 'fill-opacity', '0.5');
+    // http://www.opengis.net/ont/sf#Polygon
+    GeoPluginSteps.getGeoFeature(2).should('have.attr', 'stroke-width', '14');
+    GeoPluginSteps.getGeoFeature(2).should('have.attr', 'stroke', 'yellow');
+    GeoPluginSteps.getGeoFeature(2).should('have.attr', 'stroke-opacity', '0.14');
+    GeoPluginSteps.getGeoFeature(2).should('have.attr', 'fill', 'red');
+    GeoPluginSteps.getGeoFeature(2).should('have.attr', 'fill-opacity', '0.144');
 
     // OR: I expect to see the feature with the default style if no geo properties are present in the binding.
-    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'stroke-width', '3');
-    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'stroke', '#3388ff');
-    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'stroke-opacity', '0.2');
-    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'fill', '#3388ff');
-    GeoPluginSteps.getGeoFeature(7).should('have.attr', 'fill-opacity', '0.2');
+    // http://www.opengis.net/ont/sf#MultiPolygon
+    GeoPluginSteps.getGeoFeature(3).should('have.attr', 'stroke-width', '3');
+    GeoPluginSteps.getGeoFeature(3).should('have.attr', 'stroke', '#3388ff');
+    GeoPluginSteps.getGeoFeature(3).should('have.attr', 'stroke-opacity', '0.2');
+    GeoPluginSteps.getGeoFeature(3).should('have.attr', 'fill', '#3388ff');
+    GeoPluginSteps.getGeoFeature(3).should('have.attr', 'fill-opacity', '0.2');
   });
 
   it('should call external function when clicking on a geo feature', () => {
@@ -115,7 +107,7 @@ describe('Geo Plugin', () => {
     YasrGeoPluginPageSteps.configureOnClickFeatureHandler();
 
     // WHEN: I click on a geo feature
-    GeoPluginSteps.clickGeoFeature();
+    GeoPluginSteps.clickMarker();
     // THEN: The external function should be called with the feature's non-geo properties as an argument
     YasrGeoPluginPageSteps.getOutputField().should(
       'have.value',
@@ -128,5 +120,6 @@ const openGeoPlugin = () => {
   YasrGeoPluginPageSteps.visit();
   YasqeSteps.executeQuery();
   YasrSteps.openGeoPluginTab();
-  GeoPluginSteps.getAllGeoFeatures().should('have.length', 10);
+  GeoPluginSteps.getAllGeoFeatures().should('have.length', 5);
+  GeoPluginSteps.getAllMarkers().should('have.length', 5);
 };

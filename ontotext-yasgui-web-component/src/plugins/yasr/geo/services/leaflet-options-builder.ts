@@ -1,11 +1,13 @@
-import {circleMarker, CircleMarker, GeoJSONOptions, LatLng, Layer} from 'leaflet';
+import {GeoJSONOptions, LatLng, Layer, marker, Icon, DivIcon} from 'leaflet';
 import {Feature} from 'geojson';
 import {BindingValue} from '../../../../models/yasgui/parser';
 import {ObjectUtil} from '../../../../services/utils/object-util';
-import {GEO_PROPERTIES_PREFIX, GeoSparqlVariable} from '../models/geo-sparql-variable';
+import {GEO_PROPERTIES_PREFIX, GeoPropertyKey, GeoSparqlVariable} from '../models/geo-sparql-variable';
 import {GeoPluginConfiguration} from '../models/geo-plugin-configuration';
 import {GeoStyleOptionKeys, GeoStyleOptions} from '../models/geo-style-options';
 import {FeatureClickPayload} from '../models/feature-click-payload';
+import {LeafletService} from './leaflet-service';
+import {GeoPropertySanitizer} from '../utils/geo-property-sanitizer';
 
 /**
  * Parsers for converting raw feature property values into typed GeoStyleOptions.
@@ -106,7 +108,7 @@ export class LeafletOptionsBuilder {
   private styleFunction(feature: Feature): GeoStyleOptions {
     return {
       ...this.configuration.defaultGeoStyleOptions,
-      ...LeafletOptionsBuilder.getGeoStyleOptions(feature)
+      ...this.getGeoStyleOptions(feature)
     };
   }
 
@@ -120,28 +122,86 @@ export class LeafletOptionsBuilder {
   }
 
   /**
-   * Create a default CircleMarker for a point feature.
+   * Extracts and sanitizes a typed property value from a GeoJSON feature.
    *
-   * @param latlng - The Leaflet LatLng for the feature
-   * @returns A Leaflet CircleMarker with default styling.
+   * If the property is missing or has no value, `undefined` is returned.
+   *
+   * @template K - A valid GeoPropertyKey representing the feature property
+   *
+   * @param propertyName - The Geo property key to extract from the feature
+   * @param feature - The GeoJSON feature containing properties
+   *
+   * @returns The sanitized value, or undefined if the property is invalid or missing.   *
    */
-  getDefaultPointMarker(latlng: LatLng): CircleMarker {
-    return circleMarker(latlng, this.configuration.defaultGeoStyleOptions);
+  private getFeaturePropertyValue<K extends GeoPropertyKey>(propertyName: K, feature: Feature): ReturnType<typeof GeoPropertySanitizer.sanitize<K>> | undefined {
+    const property = feature.properties?.[propertyName];
+    if (!property?.value) {
+      return;
+    }
+    return GeoPropertySanitizer.sanitize(propertyName, property.value);
   }
 
   /**
    * Function used by Leaflet's pointToLayer option to create a marker for each point feature.
    *
-   * @param _feature - The GeoJSON feature .
+   * @param feature - The GeoJSON feature .
    * @param latlng - The Leaflet LatLng for the feature.
    * @returns A Leaflet Layer representing the point marker.
    */
-  private pointToLayerFunction(_feature: Feature, latlng: LatLng): Layer  {
-    // TODO: Implement custom point marker logic depending on the feature properties.
-    //  The properties are filled from the bindings of the SPARQL query result, so they can hold any information
-    //  that can be used to determine the marker style.
-    //  This is part of another task, currently, we just return a default point marker.
-    return this.getDefaultPointMarker(latlng);
+  private pointToLayerFunction(feature: Feature, latlng: LatLng): Layer  {
+    let icon: Icon | DivIcon | undefined;
+
+    icon = this.getIconByMarkerClass(feature);
+    if (!icon) {
+      icon = this.getIconByMarkerUrl(feature);
+    }
+    if (!icon) {
+      icon = LeafletService.createClassBasedIcon({
+        className: 'ri-map-pin-line default-geo-icon',
+        color: this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_COLOR, feature) ?? this.configuration.defaultGeoStyleOptions.color,
+        opacity: this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_OPACITY, feature) ?? 1
+      });
+    }
+
+    return marker(latlng, {icon});
+  }
+
+  /**
+   * Creates a Leaflet DivIcon based on the `geo_markerClass` feature property.
+   *
+   * When `geo_markerClass` is present, a class-based marker icon is generated.
+   * Additional styling properties are applied when available:
+   * - FIGURE_COLOR (fallback: defaultGeoStyleOptions.color)
+   * - FIGURE_OPACITY (fallback: defaultGeoStyleOptions.opacity)
+   *
+   * If `geo_markerClass` is missing or empty, the method returns `undefined`.
+   *
+   * @param feature - GeoJSON feature containing GeoSPARQL marker properties.
+   */
+  private getIconByMarkerClass(feature: Feature): DivIcon | undefined {
+    const className = this.getFeaturePropertyValue(GeoSparqlVariable.MARKER_CLASS, feature);
+      if (className) {
+        const color = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_COLOR, feature) ?? this.configuration.defaultGeoStyleOptions.color;
+        const opacity = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_OPACITY, feature) ?? this.configuration.defaultGeoStyleOptions.opacity;
+        return LeafletService.createClassBasedIcon({className, color, opacity});
+      }
+  }
+
+  /**
+   * Creates a Leaflet Icon based on the `geo_markerUrl` feature property.
+   *
+   * When `geo_markerUrl` is present, an image-based marker icon is created from the URL.
+   * This is typically used for safe raster images (e.g., PNG icons).
+   *
+   * If `geo_markerUrl` is missing or empty, the method returns `undefined`.
+   *
+   * @param feature - GeoJSON feature containing GeoSPARQL marker properties.
+   */
+  private getIconByMarkerUrl(feature: Feature): Icon | undefined {
+    const url = this.getFeaturePropertyValue(GeoSparqlVariable.MARKER_URL, feature);
+    if (url) {
+      return LeafletService.createIconFromUrl(url);
+    }
   }
 
   /**
@@ -151,13 +211,11 @@ export class LeafletOptionsBuilder {
    * @param layer - The Leaflet Layer representing the feature.
    */
   private onEachFeatureFunction(feature: Feature, layer: Layer) {
-    let popupContent = feature.properties[GeoSparqlVariable.FIGURE_POPUP_CONTENT]?.value;
-    if (!popupContent) {
-      popupContent = this.getDefaultPopupContent(feature);
-    }
+    const popupContent = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_POPUP_CONTENT, feature) ?? this.getDefaultPopupContent(feature);
+
     layer.bindPopup(popupContent);
 
-    const tooltip = feature.properties[GeoSparqlVariable.FIGURE_TOOLTIP]?.value;
+    const tooltip = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_TOOLTIP, feature);
     if (tooltip) {
       layer.bindTooltip(tooltip, {
         direction: 'top',
@@ -264,7 +322,7 @@ export class LeafletOptionsBuilder {
    *   fillOpacity: '0.5'
    * }
    */
-  private static getGeoStyleOptions(feature: Feature): GeoStyleOptions {
+  private getGeoStyleOptions(feature: Feature): GeoStyleOptions {
     const geoStyleOptions: GeoStyleOptions = {}
     if (!feature?.properties) {
       return geoStyleOptions;
@@ -272,11 +330,11 @@ export class LeafletOptionsBuilder {
 
     Object.values(GeoSparqlVariable)
       .forEach((geoSparqlVariable) => {
-        const featureProperty = feature.properties[geoSparqlVariable];
-        if (featureProperty && featureProperty.value) {
+        const featurePropertyValue = this.getFeaturePropertyValue(geoSparqlVariable, feature);
+        if (featurePropertyValue !== undefined) {
           const styleOptionKey = LeafletOptionsBuilder.toGeoStyleOptionKey(geoSparqlVariable);
           const parser = GEO_STYLE_OPTION_PARSERS[styleOptionKey];
-          geoStyleOptions[styleOptionKey] = parser ? parser(featureProperty.value) : featureProperty.value;
+          geoStyleOptions[styleOptionKey] = parser ? parser(featurePropertyValue) : featurePropertyValue;
         }
       });
     return geoStyleOptions;

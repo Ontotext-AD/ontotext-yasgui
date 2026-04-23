@@ -1,6 +1,28 @@
 export const GEO_PROPERTIES_PREFIX = 'geo_';
 
 /**
+ * Represents the set of SPARQL variable bindings used by the Geo plugin
+ * to style and configure rendered geographic features and markers.
+ *
+ * Each property corresponds to a SPARQL variable defined in GeoSparqlVariable
+ * and may be undefined if the binding is missing or invalid.
+ */
+export type GeoSparqlVariableType = {
+  [GeoSparqlVariable.FIGURE_POPUP_CONTENT]: string | undefined;
+  [GeoSparqlVariable.FIGURE_TOOLTIP]: string | undefined;
+
+  [GeoSparqlVariable.FIGURE_WEIGHT]: number | undefined;
+  [GeoSparqlVariable.FIGURE_OPACITY]: number | undefined;
+  [GeoSparqlVariable.FIGURE_FILL_OPACITY]: number | undefined;
+
+  [GeoSparqlVariable.FIGURE_COLOR]: string | undefined;
+  [GeoSparqlVariable.FIGURE_FILL_COLOR]: string | undefined;
+
+  [GeoSparqlVariable.MARKER_CLASS]: string | undefined;
+  [GeoSparqlVariable.MARKER_URL]: string | undefined;
+};
+
+/**
  * Defines reserved result variable names used by the geo map plugin.
  *
  * These names correspond to variables that may appear in the query result set (e.g., SPARQL bindings).
@@ -52,6 +74,16 @@ export const GeoSparqlVariable = {
    * Fill opacity of polygons.
    */
   FIGURE_FILL_OPACITY: `${GEO_PROPERTIES_PREFIX}fillOpacity`,
+
+  /**
+   * CSS class name(s) applied to the marker element.
+   */
+  MARKER_CLASS: `${GEO_PROPERTIES_PREFIX}markerClass`,
+
+  /**
+   *  URL of an image (for example, PNG) used as the marker icon.
+   */
+  MARKER_URL: `${GEO_PROPERTIES_PREFIX}markerUrl`,
 } as const;
 
 /**

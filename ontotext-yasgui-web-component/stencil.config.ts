@@ -22,6 +22,7 @@ export const config: Config = {
       serviceWorker: null, // disable service workers
       copy: [
         {src: 'js'},
+        {src: 'test-resources', dest: 'assets/images'},
         {src: 'pages'},
         {src: 'css/fonts'},
         {src: 'css/external/dracula.css'},
