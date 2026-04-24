@@ -1,0 +1,90 @@
+Index: Yasgui/packages/yasqe/src/autocompleters/sparql-functions.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/autocompleters/sparql-functions.ts b/Yasgui/packages/yasqe/src/autocompleters/sparql-functions.ts
+--- a/Yasgui/packages/yasqe/src/autocompleters/sparql-functions.ts	(revision 37617c3935abb0cbb92ba5e9f9a6017b84b35f73)
++++ b/Yasgui/packages/yasqe/src/autocompleters/sparql-functions.ts	(revision 31e5f4376ca7a9ef16f955cb5eb90f419d1d0439)
+@@ -1,11 +1,76 @@
+ import * as Autocompleter from "./";
+ 
+ //Taken from http://www.w3.org/TR/sparql11-query/#grammar BuiltInCall
+-const functions = ['COUNT', 'SUM', 'MIN', 'MAX', 'AVG', 'SAMPLE', 'STR', 'LANG', 'LANGMATCHES', 'DATATYPE', 'BOUND', 'IRI', 'URI',
+-  'BNODE', 'RAND', 'ABS', 'CEIL', 'FLOOR', 'ROUND', 'CONCAT', 'SUBSTR', 'STRLEN', 'REPLACE', 'UCASE', 'LCASE', 'ENCODE_FOR_URI',
+-  'CONTAINS', 'STRSTARTS', 'STRENDS', 'STRBEFORE', 'STRAFTER', 'YEAR', 'MONTH', 'DAY', 'HOURS', 'MINUTES', 'SECONDS', 'TIMEZONE',
+-  'TZ', 'NOW', 'UUID', 'STRUUID', 'MD5', 'SHA1', 'SHA256', 'SHA384', 'SHA512', 'COALESCE', 'IF', 'STRLANG', 'STRDT', 'sameTerm',
+-  'isIRI', 'isURI', 'isBLANK', 'isLITERAL', 'isNUMERIC', 'REGEX', 'EXISTS', 'FILTER'
++const functions = [
++  "COUNT",
++  "SUM",
++  "MIN",
++  "MAX",
++  "AVG",
++  "SAMPLE",
++  "STR",
++  "LANG",
++  "LANGMATCHES",
++  "DATATYPE",
++  "BOUND",
++  "IRI",
++  "URI",
++  "BNODE",
++  "RAND",
++  "ABS",
++  "CEIL",
++  "FLOOR",
++  "ROUND",
++  "CONCAT",
++  "SUBSTR",
++  "STRLEN",
++  "REPLACE",
++  "UCASE",
++  "LCASE",
++  "ENCODE_FOR_URI",
++  "CONTAINS",
++  "STRSTARTS",
++  "STRENDS",
++  "STRBEFORE",
++  "STRAFTER",
++  "YEAR",
++  "MONTH",
++  "DAY",
++  "HOURS",
++  "MINUTES",
++  "SECONDS",
++  "TIMEZONE",
++  "TZ",
++  "NOW",
++  "UUID",
++  "STRUUID",
++  "MD5",
++  "SHA1",
++  "SHA256",
++  "SHA384",
++  "SHA512",
++  "COALESCE",
++  "IF",
++  "STRLANG",
++  "STRDT",
++  "sameTerm",
++  "isIRI",
++  "isURI",
++  "isBLANK",
++  "isLITERAL",
++  "isNUMERIC",
++  "REGEX",
++  "EXISTS",
++  "FILTER",
++  "LANGDIR",
++  "HASLANG",
++  "HASLANGDIR",
++  "STRLANGDIR",
++  "ISTRIPLE",
++  "TRIPLE",
++  "SUBJECT",
++  "PREDICATE",
++  "OBJECT",
+ ];
+ 
+ const conf: Autocompleter.CompleterConfig = {
