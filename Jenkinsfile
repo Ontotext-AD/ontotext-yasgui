@@ -1,7 +1,7 @@
 @Library('ontotext-platform@v0.1.51') _
 pipeline {
     agent {
-        label 'aws-medium'
+        label 'aws-large'
     }
 
     environment {
@@ -59,6 +59,22 @@ pipeline {
             }
         }
 
+        stage('Get conformance tests') {
+            agent {
+                docker {
+                    image env.NODE_IMAGE
+                    reuseNode true
+                    args '--entrypoint=""'
+                }
+            }
+
+            steps {
+                script {
+                    sh 'npm run test:get-tests'
+                }
+            }
+        }
+
         stage('Conformance unit tests') {
             agent {
                 docker {
@@ -81,7 +97,6 @@ pipeline {
                     image env.CYPRESS_IMAGE
                     reuseNode true
                     args '--entrypoint=""'
-                    label 'aws-large'
                 }
             }
 
