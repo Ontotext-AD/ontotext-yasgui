@@ -65,6 +65,9 @@ export class VisualisationUtils {
 
   static toggleLayoutOrientationButton(hostElement: HTMLElement, newOrientation: Orientation): void {
     const buttonOrientation = HtmlElementsUtil.getOrientationButton(hostElement);
+    if (!buttonOrientation) {
+      return;
+    }
     if (Orientation.HORIZONTAL === newOrientation) {
       buttonOrientation.classList.add('icon-rotate-quarter');
     } else {
@@ -83,6 +86,18 @@ export class VisualisationUtils {
 
   static resolveOrientation(isVerticalOrientation: boolean): Orientation {
     return isVerticalOrientation ? Orientation.VERTICAL : Orientation.HORIZONTAL;
+  }
+
+  static toggleToolbarVisibility(hostElement: HTMLElement, showToolbar: boolean): void {
+    const toolbarElement = HtmlElementsUtil.getToolbar(hostElement);
+    if (!toolbarElement) {
+      return;
+    }
+    if (showToolbar) {
+      toolbarElement.classList.remove('hidden');
+    } else {
+      toolbarElement.classList.add('hidden');
+    }
   }
 
   /**

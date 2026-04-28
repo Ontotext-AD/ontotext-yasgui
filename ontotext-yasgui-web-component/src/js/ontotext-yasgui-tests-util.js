@@ -1,4 +1,4 @@
-function getOntotextYasgui(componentId, endpoint = "/repositories/test-repo") {
+function getOntotextYasgui(componentId, endpoint = "/repositories/test-repo", options = {}) {
   let ontoElement = document.querySelector("ontotext-yasgui");
   ontoElement.config = {
     infer: true,
@@ -7,7 +7,8 @@ function getOntotextYasgui(componentId, endpoint = "/repositories/test-repo") {
       return endpoint;
     },
     prefixes: getPrefixes(),
-    componentId
+    componentId,
+    ...options
   };
   return ontoElement;
 }

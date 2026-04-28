@@ -7,6 +7,7 @@ import {EventService} from '../services/event-service';
 import {TimeFormattingService} from '../services/utils/time-formatting-service';
 import {KeyboardShortcutName} from './keyboard-shortcut-description';
 import {PluginConfigurations} from './plugin-configurations';
+import {GeoPluginConfiguration} from '../plugins/yasr/geo/models/geo-plugin-configuration';
 
 export interface YasguiConfiguration {
   // ***********************************************************
@@ -74,7 +75,7 @@ export interface YasguiConfiguration {
    * Configuration that controls which keyboard shortcuts are enabled.
    *
    */
-  keyboardShortcutConfiguration?: Record<KeyboardShortcutName, boolean>[];
+  keyboardShortcutConfiguration?: Partial<Record<KeyboardShortcutName, boolean>>;
 
   // ***********************************************************
   //
@@ -107,202 +108,12 @@ export interface YasguiConfiguration {
     clearState: boolean;
     paginationOn: true,
     pageSize: 10,
-    yasqe?: {
-      /**
-       * Setup yasqe editor. There are three options:
-       * 1. true - the query can be edited;
-       * 2. false - the editor is read-only, but the query can be copied;
-       * 3.'nocursor' - the editor is read-only and hte query can't be copied.
-       */
-      readOnly?: boolean | 'nocursor';
-      /**
-       * Default query when a tab is opened.
-       */
-      value?: string;
-      /**
-       * Button implementations for the yasqe actions. This is passed down to yasqe.
-       */
-      pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
-      /**
-       * Used to track the changes in external or internal config for this property.
-       */
-      yasqeActionButtons?: YasqeActionButtonDefinition[];
-
-      createShareableLink?: (yasqe: any) => string | null;
-
-      showQueryButton?: boolean;
-
-      resizeable?: boolean;
-
-      prefixes: string[];
-
-      /**
-       * Available GeoSPARQL properties
-       */
-      geoProperties: string[];
-
-      /**
-       * GeoSPARQL properties prefix
-       */
-      geoPropertiesPrefix: string;
-
-      /**
-       * Object contains pair keyboard shortcut and function to be executed when user press the keyboard shortcut.
-       * Example:
-       * <pre>
-       *   {
-       *     "Ctrl-Space": function (_yasqe: any) {
-       *         const yasqe: Yasqe = _yasqe;
-       *         yasqe.autocomplete();
-       *       },
-       *       "Alt-Enter": function (_yasqe: any) {
-       *         const yasqe: Yasqe = _yasqe;
-       *         yasqe.autocomplete();
-       *       },
-       *   }
-       *   </pre>
-       */
-      //@ts-ignore
-      extraKeys: {[keyboardShortcut:string]: (yasqe: Yasqe) => void}
-
-      /**
-       * Array with keyboard shortcut names {@link KeyboardShortcutName}.
-       */
-      keyboardShortcutDescriptions: Array<{name: string; section: string}>;
-
-      /**
-       * Flag that controls update operations. If this flag is set to true, then all update operations will be disabled.
-       * For virtual repositories only select queries are allowed.
-       */
-      isVirtualRepository: boolean;
-
-      // This function will be called before the update query be executed. The client can abort execution of query for some reason and can
-      // provide a message or label key for the reason of aborting.
-      beforeUpdateQuery: (query: string, tabId: string) => Promise<BeforeUpdateQueryResult>;
-
-      // This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
-      getRepositoryStatementsCount: () => Promise<number>;
-
-      /**
-       * If this function is present, then an "Abort query" button wil be displayed when a query is running. If the  button is clicked then
-       * this function will be invoked after the abort operation was triggered. The button will be visible until "ontotext-yasgui-web-component" client resolve returned promise.
-       * @param req - the running request.
-       */
-      onQueryAborted?: (req) => Promise<void>;
-
-      /**
-       * Name of the CodeMirror 5 theme to apply in YASQE.
-       *
-       * Usage:
-       * - This must match a theme name recognized by CodeMirror (e.g. "dracula", "monokai").
-       *
-       * Theme CSS requirement:
-       * - CodeMirror themes are entirely CSS-based. The corresponding theme CSS must be
-       *   loaded (via <link>, import, or injected <style>) before the theme can take effect.
-       *
-       * Custom themes:
-       * - You may define your own theme without a separate CSS file by adding styles for:
-       *       .cm-s-{themeName}.CodeMirror { ... }
-       *       .cm-s-{themeName} .cm-keyword { ... }
-       *       etc.
-       *   Example:
-       *       <style>
-       *         .cm-s-mytheme.CodeMirror { background: #222; color: #eee; }
-       *       </style>
-       *   Then set: themeName = "mytheme".
-       *
-       * If the <code>themeName</code> is not passed or the required CSS rules are not present,
-       * the editor will fall back to the default theme.
-       */
-      themeName?: string;
-    }
-    yasr: {
-      /**
-       * Object with uris and their corresponding prefixes.
-       * For example:
-       * <pre>
-       *   {
-       *     "gn": "http://www.geonames.org/ontology#",
-       *     "path": "http://www.ontotext.com/path#",
-       *     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-       *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-       *     "xsd": "http://www.w3.org/2001/XMLSchema#",
-       *   }
-       * </pre>
-       */
-      prefixes: NamespaceMapping,
-
-      /**
-       * The name of plugin which have to be active when yasr is created.
-       */
-      defaultPlugin: string,
-
-      /**
-       * The plugin name to be selected for the active YASR instance. If not set, the persisted selection or the default plugin will be used.
-       */
-      selectedPlugin?: string;
-
-      /**
-       * Describes the order of how YASR plugins will be displayed.
-       * For example: ["extended_table", "response"]
-       */
-      pluginOrder: string[],
-
-      /**
-       * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which fields are supported by
-       * the plugin configuration.
-       */
-      externalPluginsConfigurations: Map<string, PluginConfigurations>;
-
-      /**
-       * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local store.
-       * Default value is 100000.
-       */
-      maxPersistentResponseSize?: number;
-
-      yasrToolbarPlugins?: YasrToolbarPlugin[],
-
-      /**
-       * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
-       */
-      sparqlResponse: string | undefined,
-
-      /**
-       * Flag that controls displaying the loader during the run query process.
-       */
-      showQueryLoader?: boolean;
-
-      /**
-       * If the result information header of YASR should be rendered or not.
-       */
-      showResultInfo?: boolean;
-
-      /**
-       * Function that checks if the current query is run for explain plan.
-       */
-      isExplainPlan: (results: []) => boolean;
-
-      /**
-       * Configuration options for controlling YASR fullscreen behavior.
-       */
-      yasrFullscreen: {
-        /**
-         * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized.
-         *
-         * - `true` → YASR starts in fullscreen mode
-         * - `false` → YASR starts in normal (embedded) mode
-         */
-        defaultFullscreen: boolean,
-
-        /**
-         * Controls whether the Escape (ESC) key can be used to exit fullscreen mode.
-         *
-         * - `true` → Pressing ESC will exit fullscreen
-         * - `false` → ESC key is ignored while in fullscreen
-         */
-        allowEscape: boolean
-        }
-    }
+    /**
+     * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized
+     */
+    yasrFullscreen: boolean;
+    yasqe?: YasqeConfiguration;
+    yasr: YasrConfiguration;
   };
 
   yasqeConfig?: {
@@ -311,6 +122,198 @@ export interface YasguiConfiguration {
      */
     initialQuery?: string;
   }
+}
+
+export interface YasqeConfiguration {
+  /**
+   * Setup yasqe editor. There are three options:
+   * 1. true - the query can be edited;
+   * 2. false - the editor is read-only, but the query can be copied;
+   * 3.'nocursor' - the editor is read-only and hte query can't be copied.
+   */
+  readOnly?: boolean | 'nocursor';
+  /**
+   * Default query when a tab is opened.
+   */
+  value?: string;
+  /**
+   * Button implementations for the yasqe actions. This is passed down to yasqe.
+   */
+  pluginButtons?: (() => HTMLElement[] | HTMLElement) | undefined;
+  /**
+   * Used to track the changes in external or internal config for this property.
+   */
+  yasqeActionButtons?: YasqeActionButtonDefinition[];
+
+  createShareableLink?: (yasqe: any) => string | null;
+
+  showQueryButton?: boolean;
+
+  resizeable?: boolean;
+
+  prefixes: string[];
+
+  /**
+   * Available GeoSPARQL properties
+   */
+  geoProperties: string[];
+
+  /**
+   * GeoSPARQL properties prefix
+   */
+  geoPropertiesPrefix: string;
+
+  /**
+   * Object contains pair keyboard shortcut and function to be executed when user press the keyboard shortcut.
+   * Example:
+   * <pre>
+   *   {
+   *     "Ctrl-Space": function (_yasqe: any) {
+   *         const yasqe: Yasqe = _yasqe;
+   *         yasqe.autocomplete();
+   *       },
+   *       "Alt-Enter": function (_yasqe: any) {
+   *         const yasqe: Yasqe = _yasqe;
+   *         yasqe.autocomplete();
+   *       },
+   *   }
+   *   </pre>
+   */
+  //@ts-ignore
+  extraKeys: {[keyboardShortcut:string]: (yasqe: Yasqe) => void}
+
+  /**
+   * Array with keyboard shortcut names {@link KeyboardShortcutName}.
+   */
+  keyboardShortcutDescriptions: Array<{name: string; section: string}>;
+
+  /**
+   * Flag that controls update operations. If this flag is set to true, then all update operations will be disabled.
+   * For virtual repositories only select queries are allowed.
+   */
+  isVirtualRepository: boolean;
+
+  // This function will be called before the update query be executed. The client can abort execution of query for some reason and can
+  // provide a message or label key for the reason of aborting.
+  beforeUpdateQuery: (query: string, tabId: string) => Promise<BeforeUpdateQueryResult>;
+
+  // This function will be called before and after execution of an update query. Depends on results a corresponding result message info will be generated.
+  getRepositoryStatementsCount: () => Promise<number>;
+
+  /**
+   * If this function is present, then an "Abort query" button wil be displayed when a query is running. If the  button is clicked then
+   * this function will be invoked after the abort operation was triggered. The button will be visible until "ontotext-yasgui-web-component" client resolve returned promise.
+   * @param req - the running request.
+   */
+  onQueryAborted?: (req) => Promise<void>;
+
+  /**
+   * Name of the CodeMirror 5 theme to apply in YASQE.
+   *
+   * Usage:
+   * - This must match a theme name recognized by CodeMirror (e.g. "dracula", "monokai").
+   *
+   * Theme CSS requirement:
+   * - CodeMirror themes are entirely CSS-based. The corresponding theme CSS must be
+   *   loaded (via <link>, import, or injected <style>) before the theme can take effect.
+   *
+   * Custom themes:
+   * - You may define your own theme without a separate CSS file by adding styles for:
+   *       .cm-s-{themeName}.CodeMirror { ... }
+   *       .cm-s-{themeName} .cm-keyword { ... }
+   *       etc.
+   *   Example:
+   *       <style>
+   *         .cm-s-mytheme.CodeMirror { background: #222; color: #eee; }
+   *       </style>
+   *   Then set: themeName = "mytheme".
+   *
+   * If the <code>themeName</code> is not passed or the required CSS rules are not present,
+   * the editor will fall back to the default theme.
+   */
+  themeName?: string;
+}
+
+export interface YasqeDefaultConfiguration extends YasqeConfiguration {
+  query: string;
+  initialQuery: string;
+}
+
+export interface YasrConfiguration {
+  /**
+   * Object with uris and their corresponding prefixes.
+   * For example:
+   * <pre>
+   *   {
+   *     "gn": "http://www.geonames.org/ontology#",
+   *     "path": "http://www.ontotext.com/path#",
+   *     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+   *     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+   *     "xsd": "http://www.w3.org/2001/XMLSchema#",
+   *   }
+   * </pre>
+   */
+  prefixes: NamespaceMapping,
+
+  /**
+   * The name of plugin which have to be active when yasr is created.
+   */
+  defaultPlugin: string,
+
+  /**
+   * The plugin name to be selected for the active YASR instance. If not set, the persisted selection or the default plugin will be used.
+   */
+  selectedPlugin?: string;
+
+  /**
+   * Describes the order of how YASR plugins will be displayed.
+   * For example: ["extended_table", "response"]
+   */
+  pluginOrder: string[],
+
+  /**
+   * Map with configuration of given plugin. The key of map is the name of a plugin. The value is any object which fields are supported by
+   * the plugin configuration.
+   */
+  externalPluginsConfigurations: Map<string, PluginConfigurations>;
+
+  /**
+   * Maximum length of response which will be persisted. If response is bigger it will not be persisted in browser local store.
+   * Default value is 100000.
+   */
+  maxPersistentResponseSize?: number;
+
+  yasrToolbarPlugins?: YasrToolbarPlugin[],
+
+  /**
+   * A response of a sparql query as string. If the parameter is provided, the result will be visualized in YASR.
+   */
+  sparqlResponse: string | undefined,
+
+  /**
+   * Flag that controls displaying the loader during the run query process.
+   */
+  showQueryLoader?: boolean;
+
+  /**
+   * If the result information header of YASR should be rendered or not.
+   */
+  showResultInfo?: boolean;
+
+  /**
+   * Function that checks if the current query is run for explain plan.
+   */
+  isExplainPlan: (results: []) => boolean;
+
+  /**
+   * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized
+   */
+  fullscreen: boolean;
+
+  /**
+   * Default configuration for Geo Plugin
+   */
+  defaultGeoPluginConfiguration?: GeoPluginConfiguration;
 }
 
 // namespaces mapped to their prefixes as keys
@@ -366,10 +369,11 @@ export const defaultYasguiConfig: Record<string, any> = {
       'Accept': 'application/sparql-results+json',
       'X-GraphDB-Local-Consistency': 'updating'
     };
-  }
+  },
+  yasrFullscreen: false,
 }
 
-export const defaultYasqeConfig: Record<string, any> = {
+export const defaultYasqeConfig: Partial<YasqeDefaultConfiguration> = {
   query: 'select * where {\n    ?s ?p ?o .\n} limit 100',
   initialQuery: '',
   createShareableLink: null,
@@ -379,23 +383,18 @@ export const defaultYasqeConfig: Record<string, any> = {
     {name: 'shareQuery', visible: true},
     {name: 'includeInferredStatements', visible: true}
   ],
-  prefixes: {
-
-  },
+  prefixes: [],
   isVirtualRepository: false,
   showQueryButton: true,
   resizeable: true,
   readOnly: false
 }
 
-export const defaultYasrConfig: Record<string, any> = {
+export const defaultYasrConfig: Partial<YasrConfiguration> = {
   defaultPlugin: 'extended_table',
   pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts'],
   showQueryLoader: true,
-  yasrFullscreen: {
-    defaultFullscreen: false,
-    allowEscape: true,
-  },
+  fullscreen: false,
   defaultGeoPluginConfiguration: {
     defaultGeoStyleOptions: {
       weight: 3,

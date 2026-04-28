@@ -67,6 +67,10 @@ export class YasguiSteps {
   static pressEscape() {
     cy.get('body').type('{esc}');
   }
+
+  static getControlBar() {
+    return cy.get('.controlbar');
+  }
 }
 
 export class EditableTabElement {

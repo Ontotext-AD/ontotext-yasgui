@@ -70,9 +70,9 @@ export class YasguiConfigurationBuilder {
       eventService: this.serviceFactory.getEventService(),
       timeFormattingService: this.serviceFactory.get(TimeFormattingService),
       infer: externalConfiguration.infer !== undefined ? externalConfiguration.infer : defaultYasguiConfig.infer,
-      immutableInfer: externalConfiguration.immutableInfer !== undefined ? externalConfiguration.immutableInfer : defaultYasqeConfig.immutableInfer,
+      immutableInfer: externalConfiguration.immutableInfer !== undefined ? externalConfiguration.immutableInfer : defaultYasguiConfig.immutableInfer,
       sameAs: externalConfiguration.sameAs !== undefined ? externalConfiguration.sameAs : defaultYasguiConfig.sameAs,
-      immutableSameAs: externalConfiguration.immutableSameAs !== undefined ? externalConfiguration.immutableSameAs : defaultYasqeConfig.immutableSameAs,
+      immutableSameAs: externalConfiguration.immutableSameAs !== undefined ? externalConfiguration.immutableSameAs : defaultYasguiConfig.immutableSameAs,
       clearState: externalConfiguration.clearState !== undefined ? externalConfiguration.clearState : false,
       requestConfig: {},
       paginationOn: externalConfiguration.paginationOn !== undefined ? externalConfiguration.paginationOn : defaultYasguiConfig.paginationOn,
@@ -96,8 +96,9 @@ export class YasguiConfigurationBuilder {
         pluginOrder: [],
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration),
         isExplainPlan: ExplainPlanUtil.isExplainResults,
-        yasrFullscreen: {...defaultYasrConfig.yasrFullscreen, ...(externalConfiguration.yasrFullscreen ?? {})},
-      }
+        fullscreen: externalConfiguration.yasrFullscreen ?? defaultYasrConfig.fullscreen,
+      },
+      yasrFullscreen: externalConfiguration.yasrFullscreen ?? defaultYasguiConfig.yasrFullscreen
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;

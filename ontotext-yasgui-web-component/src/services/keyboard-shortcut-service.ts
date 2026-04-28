@@ -17,7 +17,7 @@ export class KeyboardShortcutService {
 
   static initKeyboardShortcutMapping = (config: YasguiConfiguration): KeyboardShortcutDescription[] => {
     const keyboardShortcutDescriptions = [];
-    const insertAll = !config.keyboardShortcutConfiguration || config.keyboardShortcutConfiguration.length < 1;
+    const insertAll = !config.keyboardShortcutConfiguration || Object.keys(config.keyboardShortcutConfiguration).length < 1;
     KeyboardShortcutService.keyboardShortcutNameToFactoryFunction
       .forEach((factoryFunction: CreateKeyboardShortcutFunction, keyboardShortcutName: KeyboardShortcutName) => {
         if (insertAll || config.keyboardShortcutConfiguration[keyboardShortcutName] === undefined || config.keyboardShortcutConfiguration[keyboardShortcutName]) {
