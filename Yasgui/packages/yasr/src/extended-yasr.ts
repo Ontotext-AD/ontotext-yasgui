@@ -27,7 +27,7 @@ export class ExtendedYasr extends Yasr {
     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
 
     // Toggle only if the default fullscreen value is true and YASR is not in fullscreen mode.
-    if (this.config.yasrFullscreen?.defaultFullscreen && !this.isFullscreen) {
+    if (this.config.fullscreen && !this.isFullscreen) {
         this.toggleFullscreen();
     }
   }
@@ -51,15 +51,16 @@ export class ExtendedYasr extends Yasr {
       return;
     }
     const pluginSelectorsEl = this.getPluginSelectorsEl();
-    this.fullscreenButton = this.createFullscreenButton();
-    pluginSelectorsEl.appendChild(this.fullscreenButton);
 
-    if (this.config.yasrFullscreen?.allowEscape) {
-        this.boundEscapeHandler = this.onEscapeHandler.bind(this);
-        document.addEventListener('keydown', this.boundEscapeHandler);
+    if (!this.config.fullscreen) {
+      this.fullscreenButton = this.createFullscreenButton();
+      pluginSelectorsEl.appendChild(this.fullscreenButton);
+
+      this.boundEscapeHandler = this.onEscapeHandler.bind(this);
+      document.addEventListener('keydown', this.boundEscapeHandler);
     }
 
-    const spacerElement = document.createElement("li");
+    const spacerElement = document.createElement('li');
     spacerElement.classList.add("spacer");
     pluginSelectorsEl.appendChild(spacerElement);
 
@@ -371,7 +372,7 @@ export class ExtendedYasr extends Yasr {
 
       this.emit('fullscreen-changed', this.isFullscreen);
 
-      if (this.isFullscreen && this.config.yasrFullscreen?.allowEscape) {
+      if (this.isFullscreen && !this.config.fullscreen) {
         const message = this.translationService.translate('yasr.btn.fullscreen.escape.message');
         this.notificationMessageService.info('yasr_exit_fullscreen', message);
       }

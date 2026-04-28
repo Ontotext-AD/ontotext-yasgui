@@ -111,11 +111,14 @@ export class Tab extends EventEmitter {
     //controlbar
     this.controlBarEl = document.createElement("div");
     this.controlBarEl.className = "controlbar";
-    wrapper.appendChild(this.controlBarEl);
-
+    if (!this.yasgui.config.yasrFullscreen) {
+      wrapper.appendChild(this.controlBarEl);
+    }
     //yasqe
     this.yasqeWrapperEl = document.createElement("div");
-    wrapper.appendChild(this.yasqeWrapperEl);
+    if (!this.yasgui.config.yasrFullscreen) {
+      wrapper.appendChild(this.yasqeWrapperEl);
+    }
 
     //yasr
     this.yasrWrapperEl = document.createElement("div");
@@ -684,7 +687,7 @@ export class Tab extends EventEmitter {
     yasrConf.clearState = this.yasgui.config.clearState;
     yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
     yasrConf.tabId = this.getId();
-    yasrConf.yasrFullscreen = this.yasgui.config.yasr.yasrFullscreen;
+    yasrConf.fullscreen = this.yasgui.config.yasr.fullscreen;
     if (this.yasgui.config.yasr.selectedPlugin != null) {
         yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
     }

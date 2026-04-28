@@ -77,7 +77,7 @@ export class Yasr extends EventEmitter {
     this.storage = new YStorage(Yasr.storageNamespace);
     this.getConfigFromStorage();
     this.headerEl = document.createElement("div");
-    this.headerEl.className = "yasr_header";
+    this.headerEl.className = 'yasr_header';
     this.rootEl.appendChild(this.headerEl);
     this.fallbackInfoEl = document.createElement("div");
     this.fallbackInfoEl.className = "yasr_fallback_info";
@@ -432,6 +432,12 @@ export class Yasr extends EventEmitter {
   drawPluginSelectors() {
     this.pluginSelectorsEl = document.createElement("ul");
     this.pluginSelectorsEl.className = "yasr_btnGroup";
+
+    if (this.config.fullscreen) {
+      this.headerEl.appendChild(this.pluginSelectorsEl);
+      return;
+    }
+
     const pluginOrder = this.config.pluginOrder;
     Object.keys(this.config.plugins)
       .sort()
@@ -471,6 +477,7 @@ export class Yasr extends EventEmitter {
       button.appendChild(nameEl);
       button.addEventListener("click", () => this.selectPlugin(pluginName));
       const li = document.createElement("li");
+      addClass(li, "plugin_selector");
       const buttonPluginTooltip: any = document.createElement("yasgui-tooltip");
       buttonPluginTooltip.yasguiDataTooltip = window.innerWidth < 768 ? name : "";
       buttonPluginTooltip.placement = "top";
@@ -825,10 +832,7 @@ export interface Config {
   showResultInfo: boolean;
   showQueryLoader: boolean;
   sparqlResponse?: string;
-  yasrFullscreen?: {
-      defaultFullscreen: boolean,
-      allowEscape: boolean,
-  };
+  fullscreen?: boolean;
   selectedPlugin?: string;
   /**
    * Custom renderers for errors.

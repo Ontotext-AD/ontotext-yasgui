@@ -64,6 +64,7 @@ export interface Config<EndpointObject extends CatalogueItem = CatalogueItem> {
   paginationOn?: boolean;
   pageSize?: number;
   pageNumber: number;
+  yasrFullscreen?: boolean;
 }
 export type PartialConfig = {
   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
@@ -136,7 +137,9 @@ export class Yasgui extends EventEmitter {
     this.tabElements = new ExtendedTabElements(this);
     this.tabPanelsEl = document.createElement("div");
 
-    this.rootEl.appendChild(this.tabElements.drawTabsList());
+    if (!config.yasrFullscreen) {
+      this.rootEl.appendChild(this.tabElements.drawTabsList());
+    }
     this.rootEl.appendChild(this.tabPanelsEl);
     let executeIdAfterInit: string | undefined;
     let optionsFromUrl: PersistedTabJson | undefined;

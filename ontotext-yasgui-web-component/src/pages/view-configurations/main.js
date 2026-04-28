@@ -1,4 +1,4 @@
-let ontoElement = getOntotextYasgui();
+let ontoElement = getOntotextYasgui(undefined, undefined, {showToolbar: true});
 
 ontoElement.addEventListener("output", (event) => {
   if ('query' === event.detail.TYPE) {
@@ -28,33 +28,17 @@ function setShowControlBar(showControlBar) {
   ontoElement.config = {...ontoElement.config, showControlBar: showControlBar}
 }
 
-function configureYasrFullscreenOnAllowEscapeOff() {
+function configureYasrFullscreenOn() {
   ontoElement.config = {
     ...ontoElement.config,
-    yasrFullscreen: {
-      defaultFullscreen: true,
-      allowEscape: false
-    }
+    yasrFullscreen: true
   }
 }
 
-function configureYasrFullscreenOffAllowEscapeOn() {
+function configureYasrFullscreenOff() {
   ontoElement.config = {
     ...ontoElement.config,
-    yasrFullscreen: {
-      defaultFullscreen: false,
-      allowEscape: true
-    }
-  }
-}
-
-function configureYasrFullscreenOnAllowEscapeOn() {
-  ontoElement.config = {
-    ...ontoElement.config,
-    yasrFullscreen: {
-      defaultFullscreen: true,
-      allowEscape: true
-    }
+    yasrFullscreen: false
   }
 }
 

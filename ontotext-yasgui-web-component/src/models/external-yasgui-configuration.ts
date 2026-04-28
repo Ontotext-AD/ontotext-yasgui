@@ -348,28 +348,12 @@ export interface ExternalYasguiConfiguration {
    * Configuration that controls which keyboard shortcuts are enabled.
    *
    */
-  keyboardShortcutConfiguration: Record<KeyboardShortcutName, boolean>[];
+  keyboardShortcutConfiguration: Partial<Record<KeyboardShortcutName, boolean>>;
 
   /**
-   * Configuration options for controlling YASR fullscreen behavior.
+   * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized.
    */
-  yasrFullscreen: {
-    /**
-     * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized.
-     *
-     * - `true` → YASR starts in fullscreen mode
-     * - `false` → YASR starts in normal (embedded) mode
-     */
-    defaultFullscreen: boolean,
-
-    /**
-     * Controls whether the Escape (ESC) key can be used to exit fullscreen mode.
-     *
-     * - `true` → Pressing ESC will exit fullscreen
-     * - `false` → ESC key is ignored while in fullscreen
-     */
-    allowEscape: boolean
-  }
+  yasrFullscreen?: boolean;
 }
 
 export type AutocompleteLoader = () => any;

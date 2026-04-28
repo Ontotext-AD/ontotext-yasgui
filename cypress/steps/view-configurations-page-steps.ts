@@ -41,16 +41,12 @@ export default class ViewConfigurationsPageSteps {
         return cy.get('#queryRan');
     }
 
-    static configureYasrFullscreenOnAllowEscapeOff() {
-      cy.get('#configureYasrFullscreenOnAllowEscapeOff').click();
+    static configureYasrFullscreenOff() {
+      cy.get('#configureYasrFullscreenOff').click();
     }
 
-    static configureYasrFullscreenOffAllowEscapeOn() {
-      cy.get('#configureYasrFullscreenOffAllowEscapeOn').click();
-    }
-
-    static configureYasrFullscreenOnAllowEscapeOn() {
-      cy.get('#configureYasrFullscreenOnAllowEscapeOn').click();
+    static configureYasrFullscreenOn() {
+      cy.get('#configureYasrFullscreenOn').click();
     }
 
     static configureSelectedPluginToResponsePlugin() {

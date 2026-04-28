@@ -62,10 +62,6 @@ export class OntotextYasguiService {
     // Initialize orientation button styling.
     const orientation = config.orientation;
     VisualisationUtils.toggleLayoutOrientationButton(hostElement, orientation);
-    if (config.showToolbar) {
-      HtmlElementsUtil.getToolbar(hostElement).classList.remove('hidden');
-    } else {
-      HtmlElementsUtil.getToolbar(hostElement).classList.add('hidden');
-    }
+    VisualisationUtils.toggleToolbarVisibility(hostElement, !config.yasguiConfig.yasrFullscreen && config.showToolbar);
   }
 }
