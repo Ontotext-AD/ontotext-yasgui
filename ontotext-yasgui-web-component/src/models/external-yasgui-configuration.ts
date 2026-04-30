@@ -34,6 +34,11 @@ export interface ExternalYasguiConfiguration {
   showResultTabs: boolean;
 
   /**
+   * Flag that controls whether the button for toggling fullscreen mode in YASR should be displayed. By default, it is set to true.
+   */
+  showFullscreenButton?: boolean;
+
+  /**
    * If the result information header of YASR should be rendered or not.
    */
   showResultInfo: boolean;

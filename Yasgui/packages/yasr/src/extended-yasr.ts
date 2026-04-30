@@ -52,7 +52,7 @@ export class ExtendedYasr extends Yasr {
     }
     const pluginSelectorsEl = this.getPluginSelectorsEl();
 
-    if (!this.config.fullscreen) {
+    if (!this.config.fullscreen && this.config.showFullscreenButton) {
       this.fullscreenButton = this.createFullscreenButton();
       pluginSelectorsEl.appendChild(this.fullscreenButton);
 

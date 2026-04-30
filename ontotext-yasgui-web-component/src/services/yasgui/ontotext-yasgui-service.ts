@@ -46,7 +46,7 @@ export class OntotextYasguiService {
 
   private static initResultTabs(hostElement: HTMLElement, config: YasguiConfiguration): void {
     // TODO: this can be improved by getting the registered plugins directly from the yasr instead of hard-coding them here
-    const pluginTabsElementsSelectors = ['.select_extended_table', '.select_extended_response', '.select_charts', '.select_pivot-table-plugin'];
+    const pluginTabsElementsSelectors = ['.select_extended_table', '.select_extended_response', '.select_charts', '.select_pivot-table-plugin', '.select_geo'];
     HtmlElementsUtil.toggleHiddenByCondition(hostElement, pluginTabsElementsSelectors, () => !config.showResultTabs);
   }
 

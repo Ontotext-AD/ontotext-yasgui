@@ -833,6 +833,7 @@ export interface Config {
   showQueryLoader: boolean;
   sparqlResponse?: string;
   fullscreen?: boolean;
+  showFullscreenButton?: boolean;
   selectedPlugin?: string;
   /**
    * Custom renderers for errors.

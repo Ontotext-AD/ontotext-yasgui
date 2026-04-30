@@ -97,6 +97,7 @@ export class YasguiConfigurationBuilder {
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration),
         isExplainPlan: ExplainPlanUtil.isExplainResults,
         fullscreen: externalConfiguration.yasrFullscreen ?? defaultYasrConfig.fullscreen,
+        showFullscreenButton: externalConfiguration.showFullscreenButton ?? defaultYasrConfig.showFullscreenButton
       },
       yasrFullscreen: externalConfiguration.yasrFullscreen ?? defaultYasguiConfig.yasrFullscreen
     };

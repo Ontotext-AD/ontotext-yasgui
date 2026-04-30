@@ -301,6 +301,11 @@ export interface YasrConfiguration {
   showResultInfo?: boolean;
 
   /**
+   * Flag that controls whether the button for toggling fullscreen mode in YASR should be displayed. By default, it is set to true.
+   */
+  showFullscreenButton?: boolean;
+
+  /**
    * Function that checks if the current query is run for explain plan.
    */
   isExplainPlan: (results: []) => boolean;
@@ -403,5 +408,9 @@ export const defaultYasrConfig: Partial<YasrConfiguration> = {
       fillColor: '#3388ff',
       fillOpacity: 0.2
     }
-  }
+  },
+  /**
+   * Flag that controls whether the button for toggling fullscreen mode in YASR should be displayed. By default, it is set to true.
+   */
+  showFullscreenButton: true
 }
