@@ -688,6 +688,7 @@ export class Tab extends EventEmitter {
     yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
     yasrConf.tabId = this.getId();
     yasrConf.fullscreen = this.yasgui.config.yasr.fullscreen;
+    yasrConf.showFullscreenButton = this.yasgui.config.yasr.showFullscreenButton;
     if (this.yasgui.config.yasr.selectedPlugin != null) {
         yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
     }
