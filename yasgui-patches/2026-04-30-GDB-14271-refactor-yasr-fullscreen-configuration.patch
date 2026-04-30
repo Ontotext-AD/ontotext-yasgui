@@ -1,0 +1,161 @@
+Index: Yasgui/packages/yasgui/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/index.ts b/Yasgui/packages/yasgui/src/index.ts
+--- a/Yasgui/packages/yasgui/src/index.ts	(revision f33d8dddfd418e9c53475f37529d716a3ef8cbd4)
++++ b/Yasgui/packages/yasgui/src/index.ts	(revision b14f0fa70ca6875ed2c9b811825ad3af45f9bc43)
+@@ -64,6 +64,7 @@
+   paginationOn?: boolean;
+   pageSize?: number;
+   pageNumber: number;
++  yasrFullscreen?: boolean;
+ }
+ export type PartialConfig = {
+   [P in keyof Config]?: Config[P] extends object ? Partial<Config[P]> : Config[P];
+@@ -136,7 +137,9 @@
+     this.tabElements = new ExtendedTabElements(this);
+     this.tabPanelsEl = document.createElement("div");
+ 
+-    this.rootEl.appendChild(this.tabElements.drawTabsList());
++    if (!config.yasrFullscreen) {
++      this.rootEl.appendChild(this.tabElements.drawTabsList());
++    }
+     this.rootEl.appendChild(this.tabPanelsEl);
+     let executeIdAfterInit: string | undefined;
+     let optionsFromUrl: PersistedTabJson | undefined;
+Index: Yasgui/packages/yasgui/src/Tab.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+--- a/Yasgui/packages/yasgui/src/Tab.ts	(revision f33d8dddfd418e9c53475f37529d716a3ef8cbd4)
++++ b/Yasgui/packages/yasgui/src/Tab.ts	(revision b14f0fa70ca6875ed2c9b811825ad3af45f9bc43)
+@@ -111,11 +111,14 @@
+     //controlbar
+     this.controlBarEl = document.createElement("div");
+     this.controlBarEl.className = "controlbar";
+-    wrapper.appendChild(this.controlBarEl);
+-
++    if (!this.yasgui.config.yasrFullscreen) {
++      wrapper.appendChild(this.controlBarEl);
++    }
+     //yasqe
+     this.yasqeWrapperEl = document.createElement("div");
+-    wrapper.appendChild(this.yasqeWrapperEl);
++    if (!this.yasgui.config.yasrFullscreen) {
++      wrapper.appendChild(this.yasqeWrapperEl);
++    }
+ 
+     //yasr
+     this.yasrWrapperEl = document.createElement("div");
+@@ -684,7 +687,7 @@
+     yasrConf.clearState = this.yasgui.config.clearState;
+     yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
+     yasrConf.tabId = this.getId();
+-    yasrConf.yasrFullscreen = this.yasgui.config.yasr.yasrFullscreen;
++    yasrConf.fullscreen = this.yasgui.config.yasr.fullscreen;
+     if (this.yasgui.config.yasr.selectedPlugin != null) {
+         yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
+     }
+Index: Yasgui/packages/yasr/src/extended-yasr.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/extended-yasr.ts b/Yasgui/packages/yasr/src/extended-yasr.ts
+--- a/Yasgui/packages/yasr/src/extended-yasr.ts	(revision f33d8dddfd418e9c53475f37529d716a3ef8cbd4)
++++ b/Yasgui/packages/yasr/src/extended-yasr.ts	(revision b14f0fa70ca6875ed2c9b811825ad3af45f9bc43)
+@@ -27,7 +27,7 @@
+     this.yasqe.on("countAffectedRepositoryStatementsPersisted", this.updateResponseInfo.bind(this));
+ 
+     // Toggle only if the default fullscreen value is true and YASR is not in fullscreen mode.
+-    if (this.config.yasrFullscreen?.defaultFullscreen && !this.isFullscreen) {
++    if (this.config.fullscreen && !this.isFullscreen) {
+         this.toggleFullscreen();
+     }
+   }
+@@ -51,15 +51,16 @@
+       return;
+     }
+     const pluginSelectorsEl = this.getPluginSelectorsEl();
+-    this.fullscreenButton = this.createFullscreenButton();
+-    pluginSelectorsEl.appendChild(this.fullscreenButton);
++
++    if (!this.config.fullscreen) {
++      this.fullscreenButton = this.createFullscreenButton();
++      pluginSelectorsEl.appendChild(this.fullscreenButton);
+ 
+-    if (this.config.yasrFullscreen?.allowEscape) {
+-        this.boundEscapeHandler = this.onEscapeHandler.bind(this);
+-        document.addEventListener('keydown', this.boundEscapeHandler);
++      this.boundEscapeHandler = this.onEscapeHandler.bind(this);
++      document.addEventListener('keydown', this.boundEscapeHandler);
+     }
+ 
+-    const spacerElement = document.createElement("li");
++    const spacerElement = document.createElement('li');
+     spacerElement.classList.add("spacer");
+     pluginSelectorsEl.appendChild(spacerElement);
+ 
+@@ -371,7 +372,7 @@
+ 
+       this.emit('fullscreen-changed', this.isFullscreen);
+ 
+-      if (this.isFullscreen && this.config.yasrFullscreen?.allowEscape) {
++      if (this.isFullscreen && !this.config.fullscreen) {
+         const message = this.translationService.translate('yasr.btn.fullscreen.escape.message');
+         this.notificationMessageService.info('yasr_exit_fullscreen', message);
+       }
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision f33d8dddfd418e9c53475f37529d716a3ef8cbd4)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision b14f0fa70ca6875ed2c9b811825ad3af45f9bc43)
+@@ -77,7 +77,7 @@
+     this.storage = new YStorage(Yasr.storageNamespace);
+     this.getConfigFromStorage();
+     this.headerEl = document.createElement("div");
+-    this.headerEl.className = "yasr_header";
++    this.headerEl.className = 'yasr_header';
+     this.rootEl.appendChild(this.headerEl);
+     this.fallbackInfoEl = document.createElement("div");
+     this.fallbackInfoEl.className = "yasr_fallback_info";
+@@ -432,6 +432,12 @@
+   drawPluginSelectors() {
+     this.pluginSelectorsEl = document.createElement("ul");
+     this.pluginSelectorsEl.className = "yasr_btnGroup";
++
++    if (this.config.fullscreen) {
++      this.headerEl.appendChild(this.pluginSelectorsEl);
++      return;
++    }
++
+     const pluginOrder = this.config.pluginOrder;
+     Object.keys(this.config.plugins)
+       .sort()
+@@ -471,6 +477,7 @@
+       button.appendChild(nameEl);
+       button.addEventListener("click", () => this.selectPlugin(pluginName));
+       const li = document.createElement("li");
++      addClass(li, "plugin_selector");
+       const buttonPluginTooltip: any = document.createElement("yasgui-tooltip");
+       buttonPluginTooltip.yasguiDataTooltip = window.innerWidth < 768 ? name : "";
+       buttonPluginTooltip.placement = "top";
+@@ -825,10 +832,7 @@
+   showResultInfo: boolean;
+   showQueryLoader: boolean;
+   sparqlResponse?: string;
+-  yasrFullscreen?: {
+-      defaultFullscreen: boolean,
+-      allowEscape: boolean,
+-  };
++  fullscreen?: boolean;
+   selectedPlugin?: string;
+   /**
+    * Custom renderers for errors.
