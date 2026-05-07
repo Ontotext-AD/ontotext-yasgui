@@ -10,7 +10,8 @@ import {PluginConfiguration} from '../../models/plugin-configurations';
 export class YasrService {
 
   static readonly SHACL_GRAPH_URL = "http:%2F%2Frdf4j.org%2Fschema%2Frdf4j%23SHACLShapeGraph";
-  static readonly SHACL_GRAPH_URL_CONTEXT_PARAMETER: '&context=http%3A%2F%2Frdf4j.org%2Fschema%2Frdf4j%23SHACLShapeGraph"';
+  static readonly SHACL_CONTEXT_PARAM_VALUE = "http://rdf4j.org/schema/rdf4j#SHACLShapeGraph";
+  static readonly EMBEDDED_PARAM = "embedded";
   static readonly XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema#";
   static readonly XML_SCHEMA_NS_STRING = YasrService.XML_SCHEMA_NS + 'string';
   /**
@@ -62,8 +63,9 @@ export class YasrService {
   // @ts-ignore
   private static getCellContent(): (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => string {
     const shacl = window.location.href.includes(YasrService.SHACL_GRAPH_URL);
+    const embedded = new URLSearchParams(window.location.search).has(YasrService.EMBEDDED_PARAM);
     const ontotextResourceLocation = window.location.origin + '/resource/';
-    const context = new CellContentContext(shacl, ontotextResourceLocation);
+    const context = new CellContentContext(shacl, ontotextResourceLocation, embedded);
     //@ts-ignore
     return (binding: Parser.BindingValue, prefixes?: { [label: string]: string }) => {
       context.setPrefixes(prefixes);
@@ -94,6 +96,13 @@ export class YasrService {
     return context.getElement(uri);
   }
 
+  private static addQueryParam(href: string, name: string, value = ""): string {
+    const [path, query] = href.split("?", 2);
+    const params = new URLSearchParams(query);
+    params.set(name, value);
+    return `${path}?${params}`;
+  }
+
   private static getHref(uri: string, context: CellContentContext): string {
     let localHref;
     if (context.isOntotextResource(uri)) {
@@ -105,7 +114,11 @@ export class YasrService {
     }
 
     if (context.isShacl()) {
-      localHref += YasrService.SHACL_GRAPH_URL_CONTEXT_PARAMETER;
+      localHref = YasrService.addQueryParam(localHref, "context", YasrService.SHACL_CONTEXT_PARAM_VALUE);
+    }
+
+    if (context.isEmbedded()) {
+      localHref = YasrService.addQueryParam(localHref, YasrService.EMBEDDED_PARAM);
     }
 
     return this.replaceSingleQuote(localHref);
@@ -114,7 +127,8 @@ export class YasrService {
   // @ts-ignore
   private static getTripleCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
     const tripleAsString = this.getValueAsString(binding, false);
-    const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}`;
+    const embeddedParam = context.isEmbedded() ? `&${YasrService.EMBEDDED_PARAM}` : "";
+    const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}${embeddedParam}`;
     const escapedTriple = HtmlUtil.escapeHTMLEntities(tripleAsString);
 
     return `<div class="triple-cell">` +
@@ -221,11 +235,13 @@ class CellContentContext {
   private readonly fullUriToShortUri: Map<string, string> = new Map<string, string>();
   private prefixes: { [label: string]: string } = {};
   private readonly shacl: boolean;
+  private readonly embedded: boolean;
   private readonly ontotextResourceLocation: string
 
-  constructor(shacl: boolean, ontotextResourceLocation: string) {
+  constructor(shacl: boolean, ontotextResourceLocation: string, embedded = false) {
     this.shacl = shacl;
     this.ontotextResourceLocation = ontotextResourceLocation;
+    this.embedded = embedded;
   }
 
   /**
@@ -273,5 +289,9 @@ class CellContentContext {
 
   isShacl() {
     return this.shacl;
+  }
+
+  isEmbedded() {
+    return this.embedded;
   }
 }
