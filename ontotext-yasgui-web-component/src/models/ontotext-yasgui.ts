@@ -83,11 +83,12 @@ export class OntotextYasgui {
    */
   setQuery(query: string): void {
     const yasqe = this.yasgui.getTab().getYasqe();
-    const cursor = yasqe.getDoc().getCursor();
+    // clone the original, as replaceRange will overwrite it
+    const originalCursor = {...yasqe.getDoc().getCursor()};
     const lastLine = yasqe.getDoc().lastLine();
     const lastLineLength = yasqe.getDoc().getLine(lastLine).length;
     yasqe.getDoc().replaceRange(query, {line: 0, ch: 0}, {line: lastLine, ch: lastLineLength});
-    yasqe.getDoc().setCursor(cursor);
+    yasqe.getDoc().setCursor(originalCursor);
   }
 
   query(config?: any, explainType?: EXPLAIN_PLAN_TYPE | undefined): Promise<any> {
