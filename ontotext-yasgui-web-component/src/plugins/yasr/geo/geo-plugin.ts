@@ -176,27 +176,50 @@ export class GeoPlugin implements YasrPlugin {
       return;
     }
     const bindings = this.getBindings();
-    Object.entries(this.getGeometryColumns() ?? {})
-      .forEach(([colName, _datatype]) => {
-        this.resultsLayer.addLayer(this.createGeoLayer(bindings, colName));
+    const geometryColumns = this.getGeometryColumns() ?? {};
+
+    let totalGeometries = 0;
+    let validGeometries = 0;
+
+    const featuresPerColumn = Object.keys(geometryColumns)
+      .map((colName) => {
+        totalGeometries += bindings.filter((item) => item[colName]).length;
+        const features = this.createGeoJson(bindings, colName);
+        validGeometries += features.length;
+        return features;
       });
+
+    const hasValidFeatures = featuresPerColumn.some((features) => Boolean(features.length));
+
+    if (hasValidFeatures) {
+      featuresPerColumn.forEach((features) => {
+        const geoLayer = this.createGeoLayer(features);
+        this.resultsLayer.addLayer(geoLayer);
+      });
+
+      if (validGeometries < totalGeometries) {
+        this.yasr.showWarning(this.translationService.translate('yasr.plugin.geo-plugin.tile-layer.some_invalid_geometries'));
+      }
+    } else {
+      this.yasr.showWarning(this.translationService.translate('yasr.plugin.geo-plugin.tile-layer.no_valid_geometries'));
+      this.map.setView([0, 0], 0);
+    }
+
     this.fitResultsLayerBounds();
   }
 
   /**
    * Creates a Leaflet FeatureGroup from query bindings for a specific geometry column.
    *
-   * @param bindings SPARQL query bindings
-   * @param colName The geometry column name
+   * @param features An array of GeoJSON features to be added to the map layer.
    */
-  private createGeoLayer(bindings: Binding[], colName: string): FeatureGroup {
-    const geojson = this.createGeoJson(bindings, colName);
+  private createGeoLayer(features: Feature[]): FeatureGroup {
     const leafletOptions = new LeafletOptionsBuilder(this.pluginGonfiguration, this.subscriptions)
       .withPointMarker()
       .withFeatureClick()
       .withStyle()
       .build();
-    return geoJson(geojson, leafletOptions);
+    return geoJson(features, leafletOptions);
   }
 
   /**
@@ -269,12 +292,9 @@ export class GeoPlugin implements YasrPlugin {
    */
   private createGeoJson(bindings: Binding[], columnName: string): Feature[] {
     return bindings
+      .filter((item) => item[columnName])
       .map<Feature | undefined>((item) => {
         const binding = item[columnName];
-        if (!binding) {
-          return undefined;
-        }
-
         const geometry = GeoSPARQLService.parse(binding.datatype, binding.value);
         if (!geometry) {
           return undefined;
