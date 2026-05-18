@@ -8,6 +8,7 @@ import {GeoStyleOptionKeys, GeoStyleOptions} from '../models/geo-style-options';
 import {FeatureClickPayload} from '../models/feature-click-payload';
 import {LeafletService} from './leaflet-service';
 import {GeoPropertySanitizer} from '../utils/geo-property-sanitizer';
+import markdownit from "markdown-it";
 
 /**
  * Parsers for converting raw feature property values into typed GeoStyleOptions.
@@ -52,6 +53,8 @@ export class LeafletOptionsBuilder {
    */
   private subscriptions: Array<() => void>;
 
+  private markdown: markdownit.MarkdownIt;
+
   /**
    * Creates a new instance of the Geo plugin configuration wrapper.
    *
@@ -66,6 +69,7 @@ export class LeafletOptionsBuilder {
   constructor(configuration: GeoPluginConfiguration, subscriptions: Array<() => void>) {
     this.configuration = configuration;
     this.subscriptions = subscriptions;
+    this.markdown = markdownit({html: true});
   }
 
   /**
@@ -211,9 +215,20 @@ export class LeafletOptionsBuilder {
    * @param layer - The Leaflet Layer representing the feature.
    */
   private onEachFeatureFunction(feature: Feature, layer: Layer) {
-    const popupContent = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_POPUP_CONTENT, feature) ?? this.getDefaultPopupContent(feature);
+    // Cache the rendered popup content to avoid re-rendering on each open.
+    let renderedPopupContent: string | HTMLElement | undefined;
+    // Lazily render popup content only when the popup is first opened. This avoids unnecessary processing for features
+    // that are never clicked.
+    layer.bindPopup(() => {
+      if (renderedPopupContent !== null && renderedPopupContent !== undefined) {
+        return renderedPopupContent;
+      }
 
-    layer.bindPopup(popupContent, {maxWidth: 500, className: 'geo-popup'});
+      const popupContent = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_POPUP_CONTENT, feature);
+      // Caches the result for future opens
+      renderedPopupContent = popupContent !== null && popupContent !== undefined ? this.markdown.render(popupContent) : this.getDefaultPopupContent(feature);
+      return renderedPopupContent;
+    }, {maxWidth: 500, className: 'geo-popup'});
 
     const tooltip = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_TOOLTIP, feature);
     if (tooltip) {
