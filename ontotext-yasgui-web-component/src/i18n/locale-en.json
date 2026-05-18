@@ -260,6 +260,8 @@
   "yasr.plugin.geo-plugin.tile-layer.cartodb-voyager.name": "CartoDB Voyager",
   "yasr.plugin.geo-plugin.tile-layer.cartodb-voyager-dark.name": "Dark CartoDB Positron",
   "yasr.plugin.geo-plugin.tile-layer.results": "Results",
+  "yasr.plugin.geo-plugin.tile-layer.no_valid_geometries": "No valid geometries found in the results. Please ensure that the geometry column contains valid GeoSPARQL literals (e.g., WKT or GeoJSON) and that the correct datatype is specified.",
+  "yasr.plugin.geo-plugin.tile-layer.some_invalid_geometries": "Some geometries could not be rendered due to invalid format. Please ensure that the geometry column contains valid GeoSPARQL literals (e.g., WKT or GeoJSON) and that the correct datatype is specified.",
   "yasr.explain_plan.copy_button.label": "Copy to clipboard",
   "yasr.explain_plan.copied_success": "Copied to clipboard",
   "yasqe.actions.saved_query_dialog.edit.button.tooltip": "Edit query",

@@ -147,6 +147,14 @@ export class QueryStubs {
     QueryStubs.stubGeoQueryResponse('/queries/geo-invalid-geojson-response.json', repositoryId);
   }
 
+  static stubGeoAllInvalidWktResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-all-invalid-wkt-response.json', repositoryId);
+  }
+
+  static stubGeoSparseBindingResponse(repositoryId = 'yasr-geo-plugin') {
+    QueryStubs.stubGeoQueryResponse('/queries/geo-sparse-binding-response.json', repositoryId);
+  }
+
   static stubChartDataQuery() {
     cy.intercept('/repositories/chart-data', {fixture: '/queries/chart-data-response.json'}).as('chart-data-request');
   }
