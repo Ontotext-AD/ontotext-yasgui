@@ -1,0 +1,24 @@
+{
+  "head": {
+    "vars": ["featureType", "location"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"}
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#LineString"},
+        "location": {
+          "datatype": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "type": "literal",
+          "value": "POINT(25.9657 43.8356)"
+        }
+      },
+      {
+        "featureType": {"type": "uri", "value": "http://www.opengis.net/ont/sf#Point"}
+      }
+    ]
+  }
+}
+
