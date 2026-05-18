@@ -213,7 +213,7 @@ export class LeafletOptionsBuilder {
   private onEachFeatureFunction(feature: Feature, layer: Layer) {
     const popupContent = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_POPUP_CONTENT, feature) ?? this.getDefaultPopupContent(feature);
 
-    layer.bindPopup(popupContent);
+    layer.bindPopup(popupContent, {maxWidth: 500, className: 'geo-popup'});
 
     const tooltip = this.getFeaturePropertyValue(GeoSparqlVariable.FIGURE_TOOLTIP, feature);
     if (tooltip) {
