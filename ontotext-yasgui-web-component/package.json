@@ -33,9 +33,10 @@
     "@tmcw/togeojson": "^7.1.2",
     "betterknown": "^1.2.0",
     "codemirror": "^5.51.0",
-    "h3-js": "^4.4.0",
     "dompurify": "^3.4.1",
+    "h3-js": "^4.4.0",
     "leaflet": "^1.9.4",
+    "markdown-it": "^14.1.1",
     "open-location-code-typescript": "^1.5.0",
     "proj4": "^2.20.3",
     "remixicon": "^4.7.0"
