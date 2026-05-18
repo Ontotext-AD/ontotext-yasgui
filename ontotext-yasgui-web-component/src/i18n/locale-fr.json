@@ -262,6 +262,8 @@
   "yasr.plugin.geo-plugin.tile-layer.cartodb-voyager.name": "CartoDB Voyager",
   "yasr.plugin.geo-plugin.tile-layer.cartodb-voyager-dark.name": "CartoDB Positron Sombre",
   "yasr.plugin.geo-plugin.tile-layer.results": "Résultats",
+  "yasr.plugin.geo-plugin.tile-layer.no_valid_geometries": "Aucune géométrie valide n'a été trouvée dans les résultats. Veuillez vous assurer que la colonne « géométrie » contient des littéraux GeoSPARQL valides (par exemple, WKT ou GeoJSON) et que le type de données approprié est spécifié.",
+  "yasr.plugin.geo-plugin.tile-layer.some_invalid_geometries": "Certaines géométries invalides ont été trouvées dans les résultats et ont été ignorées. Veuillez vous assurer que la colonne « géométrie » contient des littéraux GeoSPARQL valides (par exemple, WKT ou GeoJSON) et que le type de données approprié est spécifié.",
   "yasqe.actions.saved_query_dialog.edit.button.tooltip": "Modifier la requête",
   "yasqe.actions.saved_query_dialog.delete.button.tooltip": "Supprimer une requête",
   "yasqe.actions.saved_query_dialog.share.button.tooltip": "Obtenir l'URL de la requête",

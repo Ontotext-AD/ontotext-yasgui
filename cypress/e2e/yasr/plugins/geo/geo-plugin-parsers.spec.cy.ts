@@ -165,6 +165,42 @@ describe('Geo Plugin Parsers', () => {
     // THEN: Only the valid WKT point should be rendered; the malformed one is silently skipped.
     GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
     GeoPluginSteps.getAllMarkers().should('have.length', 1);
+    // AND: A warning should be displayed indicating that some geometries could not be rendered.
+    GeoPluginSteps.getWarningMessage().should('contain', 'Some geometries could not be rendered due to invalid format.');
+  });
+
+  it('should display a warning and render no features when all WKT geometries are invalid', () => {
+    // GIVEN: I visit the geo plugin page.
+    YasrGeoPluginPageSteps.visit();
+    // AND: The query returns only invalid wktLiteral entries.
+    QueryStubs.stubGeoAllInvalidWktResponse();
+
+    // WHEN: I execute a query and open the geo tab (no wait – all results will be invalid).
+    YasqeSteps.executeQueryWithoutWaitResult();
+    YasrSteps.openGeoPluginTab();
+
+    // THEN: No features should be rendered on the map.
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 0);
+    // AND: A warning should be displayed indicating that no valid geometries were found.
+    GeoPluginSteps.getWarningMessage().should('contain', 'No valid geometries found in the results.');
+  });
+
+  it('should render only the valid feature when some binding rows are missing the geo column', () => {
+    // GIVEN: I visit the geo plugin page.
+    YasrGeoPluginPageSteps.visit();
+    // AND: The query returns three rows but only one has a location binding (the other two have no geo value).
+    QueryStubs.stubGeoSparseBindingResponse();
+
+    // WHEN: I execute a query and open the geo tab.
+    YasqeSteps.executeQuery();
+    YasrSteps.openGeoPluginTab();
+
+    // THEN: Only the one row with a valid binding should be rendered on the map.
+    GeoPluginSteps.getAllGeoFeatures().should('have.length', 0);
+    GeoPluginSteps.getAllMarkers().should('have.length', 1);
+    // AND: A warning should not be shown even though two out of three rows had no geometry value.
+    GeoPluginSteps.getWarningMessage().should('not.exist');
   });
 
   it('should render a geo feature from a full KML document (input already contains <kml> root)', () => {

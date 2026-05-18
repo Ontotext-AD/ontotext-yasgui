@@ -81,4 +81,12 @@ export class GeoPluginSteps {
   static getLeafletPopupContent() {
     return cy.get('.leaflet-popup-content');
   }
+
+  /**
+   * Returns the alert-box warning element rendered inside the YASR root element
+   * by the geo plugin when geometries are invalid or missing.
+   */
+  static getWarningMessage() {
+    return cy.get('alert-box .message');
+  }
 }
