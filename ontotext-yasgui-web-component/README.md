@@ -204,7 +204,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
     - Fallback behavior: If themeName is not provided or the required CSS rules for that theme are missing,
     CodeMirror/YASQE will automatically fall back to the default theme to ensure the editor remains readable.
     
-### ontotext version and GraphDB Version Compatibility
+### ontotext-yasgui-web-componen version and GraphDB Version Compatibility
 
 | ontotext-yasgui-web-component | Workbench | GraphDB Version |
 |-------------------------------|-----------|-----------------|
@@ -215,7 +215,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 | 1.3+                          | 3.1+      | 11.1+           |
 | 1.4+                          | 3.2+      | 11.2+           |
 | 1.5+                          | 3.3+      | 11.3+           |
-
+| 1.6+                          | 3.4+      | 11.4+           |
 
 ## Developers guide
 
