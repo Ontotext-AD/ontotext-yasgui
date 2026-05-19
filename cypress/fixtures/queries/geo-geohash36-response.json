@@ -9,7 +9,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/GeoHash-36> BCD"
+          "value": "<http://www.opengis.net/ont/geocode/GeoHash-36> BCD"
         }
       }
     ]

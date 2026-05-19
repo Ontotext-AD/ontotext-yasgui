@@ -9,7 +9,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657;u=10;crs=wgs84"
+          "value": "<http://www.opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657;u=10;crs=wgs84"
         }
       },
       {
@@ -17,7 +17,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657,150"
+          "value": "<http://www.opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657,150"
         }
       },
       {
@@ -25,7 +25,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8,abc"
+          "value": "<http://www.opengis.net/ont/geocode/GeoURI> geo:43.8,abc"
         }
       },
       {
@@ -33,7 +33,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657,abc"
+          "value": "<http://www.opengis.net/ont/geocode/GeoURI> geo:43.8356,25.9657,abc"
         }
       }
     ]
