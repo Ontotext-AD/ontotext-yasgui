@@ -19,6 +19,7 @@
   ],
   "ignorePatterns": [
     "yasgui-script.js",
+    "open-location-code.ts",
     "d3_7_8_5_renders.js",
     "**/*.scss",
     "**/*.css",
