@@ -144,20 +144,20 @@ export class Parsers {
    * Parses a geo code literal string into a GeoJSON Point geometry.
    *
    * Supports multiple geocode URI schemes:
-   * - http://opengis.net/ont/geocode/OpenLocationCode - Open Location Code (Plus Codes)
-   * - http://opengis.net/ont/geocode/GeoURI - RFC 5870 geo URI (e.g., geo:lat,lon or geo:lat,lon,alt).
+   * - http://www.opengis.net/ont/geocode/OpenLocationCode - Open Location Code (Plus Codes)
+   * - http://www.opengis.net/ont/geocode/GeoURI - RFC 5870 geo URI (e.g., geo:lat,lon or geo:lat,lon,alt).
    *   The geo: scheme prefix is matched case-insensitively. Optional RFC 5870 parameters
    *   (e.g., ;u=10, ;crs=wgs84) are stripped before parsing.
    *   Returns null if any of latitude, longitude, or (when present) altitude are not finite numbers.
-   * - http://opengis.net/ont/geocode/GeoHash - Geohash encoding
-   * - http://opengis.net/ont/geocode/GeoHash-36 - Geohash-36 encoding
+   * - http://www.opengis.net/ont/geocode/GeoHash - Geohash encoding
+   * - http://www.opengis.net/ont/geocode/GeoHash-36 - Geohash-36 encoding
    *
    * @param geocode - A geocode literal string, optionally prefixed with a URI in angle brackets.
    * @returns A GeoJSON Point geometry, or `null` if the scheme is not supported or coordinates are invalid.
    */
   static parseGeoCode(geocode: string): Geometry | null {
     const {uri: geocodeuri, value} = Parsers.extractUriPrefix(geocode.trim());
-    if (geocodeuri === 'http://opengis.net/ont/geocode/OpenLocationCode') {
+    if (geocodeuri === 'http://www.opengis.net/ont/geocode/OpenLocationCode') {
       try {
         const decoded = OpenLocationCode.decode(value);
         return {'type': 'Point', 'coordinates': [decoded.longitudeCenter, decoded.latitudeCenter]};
@@ -166,7 +166,7 @@ export class Parsers {
         return null;
       }
     }
-    if (geocodeuri === 'http://opengis.net/ont/geocode/GeoURI') {
+    if (geocodeuri === 'http://www.opengis.net/ont/geocode/GeoURI') {
       // Strip the "geo:" scheme prefix (case-insensitive per RFC 5870) then isolate the
       // coordinate triple before any optional parameters (e.g. ";u=10", ";crs=wgs84").
       const geoValue = value.replace(/^geo:/i, '');
@@ -192,7 +192,7 @@ export class Parsers {
       console.warn('Failed to parse GeoURI literal: unexpected coordinate format.', geocode);
       return null;
     }
-    if (geocodeuri === 'http://opengis.net/ont/geocode/GeoHash') {
+    if (geocodeuri === 'http://www.opengis.net/ont/geocode/GeoHash') {
       try {
         const decoded = GeoHash.decode(value);
         return {'type': 'Point', 'coordinates': [decoded.longitude, decoded.latitude]};
@@ -201,7 +201,7 @@ export class Parsers {
         return null;
       }
     }
-    if (geocodeuri === 'http://opengis.net/ont/geocode/GeoHash-36') {
+    if (geocodeuri === 'http://www.opengis.net/ont/geocode/GeoHash-36') {
       try {
         const decoded = GeoHash.decodeBase36(value);
         return {'type': 'Point', 'coordinates': [decoded.longitude, decoded.latitude]};

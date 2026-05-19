@@ -9,7 +9,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/Unknown> somevalue"
+          "value": "<http://www.opengis.net/ont/geocode/Unknown> somevalue"
         }
       },
       {
@@ -17,7 +17,7 @@
         "location": {
           "datatype": "http://www.opengis.net/ont/geosparql#geoCodeLiteral",
           "type": "literal",
-          "value": "<http://opengis.net/ont/geocode/GeoURI> geo:43.8356"
+          "value": "<http://www.opengis.net/ont/geocode/GeoURI> geo:43.8356"
         }
       }
     ]
