@@ -6,7 +6,7 @@ import {cellsToMultiPolygon, cellToLatLng} from 'h3-js';
 import {parseGML} from './gml-parser';
 import {kml as kmlToGeoJSON} from '@tmcw/togeojson';
 import {GeoHash} from './geo-hash';
-import OpenLocationCode from 'open-location-code-typescript';
+import OpenLocationCode from '../../../../vendor/typescript-open-location-code/open-location-code';
 
 /**
  * Provides static parsing methods for converting geospatial literal strings into GeoJSON Geometry objects.
