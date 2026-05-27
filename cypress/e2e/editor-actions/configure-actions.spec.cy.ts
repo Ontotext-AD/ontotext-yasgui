@@ -12,7 +12,7 @@ describe('Configure editor actions', () => {
     });
 
     it('Should see all custom actions by default in particular order', () => {
-        YasqeSteps.getActionButtons().should('have.length', 5);
+        YasqeSteps.getActionButtons().should('have.length', 6);
         YasqeSteps.getActionButtonTooltip(0).should('have.attr', 'yasgui-data-tooltip', 'Create saved query');
         YasqeSteps.getActionButtonTooltip(1).should('have.attr', 'yasgui-data-tooltip', 'Show saved queries');
         YasqeSteps.getActionButtonTooltip(2).should('have.attr', 'yasgui-data-tooltip', 'Get URL to current query');
@@ -44,11 +44,11 @@ describe('Configure editor actions', () => {
     });
 
     it('Should show editor actions on each editor tab', () => {
-        YasqeSteps.getActionButtons().should('have.length', 5);
+        YasqeSteps.getActionButtons().should('have.length', 6);
         YasguiSteps.openANewTab();
-        YasqeSteps.getActionButtons().should('have.length', 5);
+        YasqeSteps.getActionButtons().should('have.length', 6);
         YasguiSteps.openTab(0);
-        YasqeSteps.getActionButtons().should('have.length', 5);
+        YasqeSteps.getActionButtons().should('have.length', 6);
     });
 
     it('should toggle query button', () => {

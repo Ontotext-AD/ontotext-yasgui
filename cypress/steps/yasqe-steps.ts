@@ -192,6 +192,14 @@ export class YasqeSteps {
     this.getShowSavedQueriesButton().eq(index).click();
   }
 
+  static getFullscreenButton() {
+    return cy.get('.yasqe_fullscreenButton')
+  }
+
+  static toggleFullscreen() {
+    YasqeSteps.getFullscreenButton().click();
+  }
+
   static getSavedQueriesPopup() {
     return cy.get('.saved-queries-popup');
   }
