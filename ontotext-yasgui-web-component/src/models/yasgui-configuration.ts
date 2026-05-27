@@ -383,6 +383,7 @@ export const defaultYasqeConfig: Partial<YasqeDefaultConfiguration> = {
   initialQuery: '',
   createShareableLink: null,
   yasqeActionButtons: [
+    {name: 'fullscreen', visible: true},
     {name: 'createSavedQuery', visible: true},
     {name: 'showSavedQueries', visible: true},
     {name: 'shareQuery', visible: true},

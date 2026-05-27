@@ -1,13 +1,14 @@
-import {EventService} from "../event-service";
-import {TranslationService} from "../translation.service";
+import {EventService} from '../event-service';
+import {TranslationService} from '../translation.service';
 import {ServiceFactory} from '../service-factory';
-import {YasguiConfiguration} from "../../models/yasgui-configuration";
+import {YasguiConfiguration} from '../../models/yasgui-configuration';
 import {TooltipService} from '../tooltip-service';
 import {InternalShareQueryEvent} from '../../models/internal-events/internal-share-query-event';
 import {InternalShowSavedQueriesEvent} from '../../models/internal-events/internal-show-saved-queries-event';
 import {YasqeButtonName, YasqeButtonType} from '../../models/yasqe-button-name';
 import {InternalCreateSavedQueryEvent} from '../../models/internal-events/internal-create-saved-query-event';
-import {YasguiBuilder} from "../yasgui/yasgui-builder";
+import {YasguiBuilder} from '../yasgui/yasgui-builder';
+import {Yasqe} from '../../models/yasgui/yasqe';
 
 export class YasqeService {
 
@@ -15,7 +16,6 @@ export class YasqeService {
   private readonly yasguiBuilder: YasguiBuilder;
   private translationService: TranslationService;
 
-  //@ts-ignore
   buttonBuilders: Map<string, ((yasguiConfiguration: YasguiConfiguration, yasqe: Yasqe) => HTMLElement | HTMLElement[])> = new Map<string, (() => HTMLElement | HTMLElement[])>();
 
   private static pluginButtonNameToClassNameMapping: Map<YasqeButtonType, string>;
@@ -29,9 +29,10 @@ export class YasqeService {
       name: 'YasqeServiceLanguageChangeObserver',
       notify: (currentLang) => this.onLanguageChange(currentLang)
     });
-    this.buttonBuilders.set(YasqeButtonName.CREATE_SAVED_QUERY, () => this.buildCreateSaveQueryButton());
-    this.buttonBuilders.set(YasqeButtonName.SHOW_SAVED_QUERIES, () => this.buildShowSavedQueriesButton());
-    this.buttonBuilders.set(YasqeButtonName.SHARE_QUERY, () => this.buildShareQueryButton());
+    this.buttonBuilders.set(YasqeButtonName.FULLSCREEN, (_externalConfiguration, yasqe) => this.buildFullscreenButton(yasqe));
+    this.buttonBuilders.set(YasqeButtonName.CREATE_SAVED_QUERY, (_externalConfiguration, yasqe) => this.buildCreateSaveQueryButton(yasqe));
+    this.buttonBuilders.set(YasqeButtonName.SHOW_SAVED_QUERIES, (_externalConfiguration, yasqe) => this.buildShowSavedQueriesButton(yasqe));
+    this.buttonBuilders.set(YasqeButtonName.SHARE_QUERY, (_externalConfiguration, yasqe) => this.buildShareQueryButton(yasqe));
     this.buttonBuilders.set('includeInferredStatements', (externalConfiguration, yasqe) => this.buildInferAndSameAsButtons(externalConfiguration, yasqe));
   }
 
@@ -66,6 +67,7 @@ export class YasqeService {
 
   private static initPluginButtonNameToClassNameMapping() {
     YasqeService.pluginButtonNameToClassNameMapping = new Map();
+    YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.FULLSCREEN, `yasqe_${YasqeButtonName.FULLSCREEN}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.CREATE_SAVED_QUERY, `yasqe_${YasqeButtonName.CREATE_SAVED_QUERY}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHOW_SAVED_QUERIES, `yasqe_${YasqeButtonName.SHOW_SAVED_QUERIES}Button`);
     YasqeService.pluginButtonNameToClassNameMapping.set(YasqeButtonName.SHARE_QUERY, `yasqe_${YasqeButtonName.SHARE_QUERY}Button`);
@@ -106,7 +108,6 @@ export class YasqeService {
     actionsButtonNames.forEach((actionsButtonName) => YasqeService.showActionButton(actionsButtonName));
   }
 
-  //@ts-ignore
   getButtonInstance(buttonDefinition: { name }, yasguiConfiguration: YasguiConfiguration, yasqe: Yasqe): HTMLElement | HTMLElement[] {
     if (!this.buttonBuilders.has(buttonDefinition.name)) {
       throw Error(`No yasqe button builder was found for ${buttonDefinition.name}`);
@@ -114,38 +115,71 @@ export class YasqeService {
     return this.buttonBuilders.get(buttonDefinition.name)(yasguiConfiguration, yasqe);
   }
 
-  private buildShowSavedQueriesButton(): HTMLElement {
-    const buttonElement = document.createElement("button");
+  private buildFullscreenButton(yasqe: Yasqe): HTMLElement {
+    const buttonElement = document.createElement('button');
+    buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.FULLSCREEN)} custom-button`;
+
+    const updateIcon = () => {
+      const isFullscreen = yasqe.rootEl.classList.contains('yasqe-fullscreen');
+      buttonElement.classList.toggle('ri-fullscreen-line', !isFullscreen);
+      buttonElement.classList.toggle('ri-fullscreen-exit-line', isFullscreen);
+    };
+
+    const handleFullscreen = () => {
+      yasqe.toggleFullScreen();
+      yasqe.focus();
+    }
+    buttonElement.addEventListener('click', handleFullscreen);
+
+    const observer = new MutationObserver(updateIcon);
+    observer.observe(yasqe.rootEl, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    yasqe.addDestroyCallback(() => {
+      buttonElement.removeEventListener('click', handleFullscreen);
+      observer.disconnect();
+    });
+    updateIcon();
+    return buttonElement;
+  }
+
+  private buildShowSavedQueriesButton(yasqe: Yasqe): HTMLElement {
+    const buttonElement = document.createElement('button');
     buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)} custom-button ri-folder-3-line`;
-    buttonElement.addEventListener("click",
-      () => {
-        this.eventService.emit(new InternalShowSavedQueriesEvent(buttonElement))
-      });
+
+    const handleShowSavedQuery = () => this.eventService.emit(new InternalShowSavedQueriesEvent(buttonElement));
+    buttonElement.addEventListener('click', handleShowSavedQuery);
+    yasqe.addDestroyCallback(() => buttonElement.removeEventListener('click', handleShowSavedQuery));
 
     const tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
     return TooltipService.addTooltip(buttonElement, tooltip);
   }
 
-  private buildCreateSaveQueryButton(): HTMLElement {
-    const buttonElement = document.createElement("button");
+  private buildCreateSaveQueryButton(yasqe: Yasqe): HTMLElement {
+    const buttonElement = document.createElement('button');
     buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)} custom-button ri-save-line`;
-    buttonElement.addEventListener("click",
-      () => this.eventService.emit(new InternalCreateSavedQueryEvent()));
+
+    const handleCreateSaveQuery = () => this.eventService.emit(new InternalCreateSavedQueryEvent());
+    buttonElement.addEventListener('click', handleCreateSaveQuery);
+    yasqe.addDestroyCallback(() => buttonElement.removeEventListener('click', handleCreateSaveQuery));
+
     const tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
     return TooltipService.addTooltip(buttonElement, tooltip);
   }
 
-  private buildShareQueryButton(): HTMLElement {
-    const buttonElement = document.createElement("button");
+  private buildShareQueryButton(yasqe: Yasqe): HTMLElement {
+    const buttonElement = document.createElement('button');
     buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)} custom-button ri-links-line`;
-    buttonElement.addEventListener("click",
-      () => this.eventService.emit(new InternalShareQueryEvent()));
+
+    const handleShareQuery = () => this.eventService.emit(new InternalShareQueryEvent());
+    buttonElement.addEventListener('click', handleShareQuery);
+    yasqe.addDestroyCallback(() => buttonElement.removeEventListener('click', handleShareQuery));
 
     const tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
     return TooltipService.addTooltip(buttonElement, tooltip);
   }
 
-  //@ts-ignore
   private buildInferAndSameAsButtons(yasguiConfiguration: YasguiConfiguration, yasqe: Yasqe): HTMLElement[] {
     // When a new tab is open and infer action is configured to be visible infer and sameAs are undefined, so we have to initialized them.
     this.initInferAndSameAsState(yasqe, yasguiConfiguration.yasguiConfig);
@@ -158,49 +192,49 @@ export class YasqeService {
     return [inferredElement, sameAsElement];
   }
 
-  //@ts-ignore
   private createInferredElement(yasqe: Yasqe, sameAsElement: HTMLElement, immutable): HTMLElement {
-    const inferredButtonElement = document.createElement("button");
+    const inferredButtonElement = document.createElement('button');
     const inferredTooltipElement = TooltipService.addTooltip(inferredButtonElement, undefined, 'top');
     inferredButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.INFER_STATEMENTS)} custom-button`;
     if (immutable) {
       inferredButtonElement.setAttribute('disabled', '');
     } else {
-      inferredButtonElement.addEventListener("click",
-        () => {
-          const newInferredValue = !yasqe.getInfer();
-          yasqe.setInfer(newInferredValue);
-          // Same as value depends on infer value. When a user switch of the infer then same as have to be switched off too
-          // and when it is switched on then same as have to be switched on.
-          const newSameAsValue = newInferredValue;
-          yasqe.setSameAs(newSameAsValue);
-          this.updateInferredElement(inferredTooltipElement, sameAsElement, newInferredValue, newSameAsValue);
-        });
+      const handleInferred = () => {
+        const newInferredValue = !yasqe.getInfer();
+        yasqe.setInfer(newInferredValue);
+        // Same as value depends on infer value. When a user switch of the infer then same as have to be switched off too
+        // and when it is switched on then same as have to be switched on.
+        const newSameAsValue = newInferredValue;
+        yasqe.setSameAs(newSameAsValue);
+        this.updateInferredElement(inferredTooltipElement, sameAsElement, newInferredValue, newSameAsValue);
+      };
+      inferredButtonElement.addEventListener('click', handleInferred);
+      yasqe.addDestroyCallback(() => inferredButtonElement.removeEventListener('click', handleInferred));
     }
     return inferredTooltipElement;
   }
 
-  //@ts-ignore
   private createSameAsElement(yasqe: Yasqe, immutable): HTMLElement {
-    const sameAsButtonElement = document.createElement("button");
+    const sameAsButtonElement = document.createElement('button');
     const sameAsTooltipElement = TooltipService.addTooltip(sameAsButtonElement, undefined, 'top');
     sameAsButtonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.EXPANDS_RESULTS)} custom-button`;
 
     if (immutable) {
       sameAsButtonElement.setAttribute('disabled', '');
     } else {
-      sameAsButtonElement.addEventListener("click",
-        (event) => {
-          if (sameAsButtonElement.classList.contains('disabled')) {
-            // Stops event propagation if the button is disabled. The Disabled attribute is not used because it stops firing events and breaks the button tooltip.
-            event.preventDefault();
-            return;
-          }
-          const newSameAsValue = !yasqe.getSameAs();
-          const inferValue = yasqe.getInfer();
-          yasqe.setSameAs(newSameAsValue);
-          this.updateSameAsElement(sameAsTooltipElement, newSameAsValue, inferValue);
-        });
+      const handleSameAs = (event) => {
+        if (sameAsButtonElement.classList.contains('disabled')) {
+          // Stops event propagation if the button is disabled. The Disabled attribute is not used because it stops firing events and breaks the button tooltip.
+          event.preventDefault();
+          return;
+        }
+        const newSameAsValue = !yasqe.getSameAs();
+        const inferValue = yasqe.getInfer();
+        yasqe.setSameAs(newSameAsValue);
+        this.updateSameAsElement(sameAsTooltipElement, newSameAsValue, inferValue);
+      };
+      sameAsButtonElement.addEventListener('click', handleSameAs);
+      yasqe.addDestroyCallback(() => sameAsButtonElement.removeEventListener('click', handleSameAs));
     }
 
     return sameAsTooltipElement;
@@ -243,7 +277,6 @@ export class YasqeService {
    * @param yasguiConfig - the yasgui configuration
    * @private
    */
-  //@ts-ignore
   private initInferAndSameAsState(yasqe: Yasqe, yasguiConfig) {
     let infer: boolean;
     let sameAs: boolean;
