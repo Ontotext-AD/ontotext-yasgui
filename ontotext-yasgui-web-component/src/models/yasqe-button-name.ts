@@ -1,6 +1,7 @@
 import {MessageCode} from './internal-events/internal-notification-message-event';
 
 export const YasqeButtonName = {
+  FULLSCREEN: 'fullscreen',
   CREATE_SAVED_QUERY: 'createSavedQuery',
   SHOW_SAVED_QUERIES: 'showSavedQueries',
   SHARE_QUERY: 'shareQuery',

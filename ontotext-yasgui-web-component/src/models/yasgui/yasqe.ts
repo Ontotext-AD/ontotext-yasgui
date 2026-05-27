@@ -11,9 +11,11 @@ import {IndentSelection} from './indent-selection';
 export interface Yasqe {
   queryValid: boolean;
   tabId: string;
+  rootEl: HTMLDivElement;
   getInfer: () => boolean;
   getSameAs: () => boolean;
 
+  enterFullScreen: () => void;
   leaveFullScreen: () => void;
 
   isExplainPlanQuery: () => boolean;
@@ -62,8 +64,12 @@ export interface Yasqe {
   getCursor: () => Cursor;
 
   setCursor: (cursor: Cursor) => void;
-  
+
   setOption: (optionName: string, optionValue: unknown) => void;
+  addDestroyCallback: (callback: () => void) => void;
+  setInfer: (infer: boolean) => void;
+  setSameAs: (sameAs: boolean) => void;
+  focus: () => void;
 }
 
 export class Doc {

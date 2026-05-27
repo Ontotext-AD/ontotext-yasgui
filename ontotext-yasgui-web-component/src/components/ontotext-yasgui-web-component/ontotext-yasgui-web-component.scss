@@ -57,6 +57,7 @@
 
     .CodeMirror {
       border-color: $color-onto-border;
+      min-height: 330px;
     }
 
     /* prevent overlapping of the query text with the yasqe action buttons on the right side of the editor */
@@ -138,7 +139,8 @@
           background-color: $color-onto-white;
           color: $color-ontotext-orange;
           outline: none;
-          font-size: 2.5em;
+          font-size: 1.5em;
+          height: 1.5em;
           cursor: pointer;
           transition: all .15s ease-out;
 
