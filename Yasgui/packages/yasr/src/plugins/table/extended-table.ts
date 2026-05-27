@@ -33,90 +33,103 @@ export class ExtendedTable extends Table {
     return super.getCellContent(binding, prefixes);
   }
 
-  public draw(persistentConfig: PersistentConfig) {
-    const previousFilter = this.getCurrentFilterValue();
-    this.persistentConfig = { ...this.persistentConfig, ...persistentConfig };
-    this.tableEl = document.createElement("table");
-    const rows = this.getRows();
-    const columns = this.getColumns();
-    const types = this.resolveTypes();
-    const columnDefinitions = this.getColumnDefinitions(types);
-    if (rows.length <= (persistentConfig?.pageSize || DEFAULT_PAGE_SIZE)) {
-      this.yasr.pluginControls;
-      addClass(this.yasr.rootEl, "isSinglePage");
-    } else {
-      removeClass(this.yasr.rootEl, "isSinglePage");
-    }
+  public draw(persistentConfig: PersistentConfig): Promise<void> {
+    let waitForResolve = false;
+    return new Promise<void>((resolve) => {
+      const previousFilter = this.getCurrentFilterValue();
+      this.persistentConfig = {...this.persistentConfig, ...persistentConfig};
+      this.tableEl = document.createElement('table');
+      const rows = this.getRows();
+      const columns = this.getColumns();
+      const types = this.resolveTypes();
+      const columnDefinitions = this.getColumnDefinitions(types);
+      if (rows.length <= (persistentConfig?.pageSize || DEFAULT_PAGE_SIZE)) {
+        this.yasr.pluginControls;
+        addClass(this.yasr.rootEl, 'isSinglePage');
+      } else {
+        removeClass(this.yasr.rootEl, 'isSinglePage');
+      }
 
-    if (this.dataTable) {
-      this.destroyResizer();
-      this.removeDataTableEventHandlers(this.dataTable);
-      this.dataTable.destroy(true);
-      this.dataTable = undefined;
-    }
-    this.yasr.resultsEl.appendChild(this.tableEl);
-    // reset some default config properties as they couldn't be initialized beforehand
-    const dtConfig: DataTables.Settings = {
-      ...((cloneDeep(this.config.tableConfig) as unknown) as DataTables.Settings),
-      pageLength: -1,
-      data: rows,
-      columns: columns,
-      columnDefs: columnDefinitions,
-      // DataTables will only render the rows that are initially visible on the page.
-      deferRender: true,
-      // // Switch off the pagination.
-      paging: false,
-      // Switched off for optimization purposes.
-      // Our cells are calculated dynamically, and with this configuration on, rendering the datatable results becomes very slow.
-      autoWidth: false,
-      language: {
-        zeroRecords: this.translationService.translate("yasr.plugin_control.table.empty_result.label"),
-        info: this.translationService.translate("yasr.plugin.table.data_tables.info.result_info"),
-        paginate: {
-          first: this.translationService.translate("yasr.plugin.table.data_tables.paginate.first"),
-          last: this.translationService.translate("yasr.plugin.table.data_tables.paginate.last"),
-          next: this.translationService.translate("yasr.plugin.table.data_tables.paginate.next"),
-          previous: this.translationService.translate("yasr.plugin.table.data_tables.paginate.previous"),
-        },
-      },
-    };
+      if (this.dataTable) {
+        this.destroyResizer();
+        this.removeDataTableEventHandlers(this.dataTable);
+        this.dataTable.destroy(true);
+        this.dataTable = undefined;
+      }
+      this.yasr.resultsEl.appendChild(this.tableEl);
+      // reset some default config properties as they couldn't be initialized beforehand
+      const dtConfig: DataTables.Settings = {
+        ...((cloneDeep(this.config.tableConfig) as unknown) as DataTables.Settings),
+        pageLength: -1,
+        data: rows,
+        columns: columns,
+        columnDefs: columnDefinitions,
+        // DataTables will only render the rows that are initially visible on the page.
+        deferRender: true,
+        // // Switch off the pagination.
+        paging: false,
+        // Switched off for optimization purposes.
+        // Our cells are calculated dynamically, and with this configuration on, rendering the datatable results becomes very slow.
+        autoWidth: false,
+        language: {
+          zeroRecords: this.translationService.translate('yasr.plugin_control.table.empty_result.label'),
+          info: this.translationService.translate('yasr.plugin.table.data_tables.info.result_info'),
+          paginate: {
+            first: this.translationService.translate('yasr.plugin.table.data_tables.paginate.first'),
+            last: this.translationService.translate('yasr.plugin.table.data_tables.paginate.last'),
+            next: this.translationService.translate('yasr.plugin.table.data_tables.paginate.next'),
+            previous: this.translationService.translate('yasr.plugin.table.data_tables.paginate.previous')
+          }
+        }
+      };
 
-    this.dataTable = $(this.tableEl).DataTable(dtConfig);
-    this.tableEl.style.removeProperty("width");
-    this.tableEl.style.width = this.tableEl.clientWidth + "px";
+      this.dataTable = $(this.tableEl).DataTable(dtConfig);
+      this.tableEl.style.removeProperty('width');
+      this.tableEl.style.width = this.tableEl.clientWidth + 'px';
 
-    // If it is a compact view, the first column (row number column) is not visible, we decrease the maximum resizable columns.
-    const maxResizableResultsColumns = this.persistentConfig.compact
-      ? this.config.maxResizableResultsColumns - 1
-      : this.config.maxResizableResultsColumns;
+      // If it is a compact view, the first column (row number column) is not visible, we decrease the maximum resizable columns.
+      const maxResizableResultsColumns = this.persistentConfig.compact
+        ? this.config.maxResizableResultsColumns - 1
+        : this.config.maxResizableResultsColumns;
 
-    if (columns.length <= maxResizableResultsColumns) {
-      // There is an issue with columns resizing. When the table is rendered the columns resizing doesn't working until a column header is clicked.
-      // A possible reason could be that the table columns have not been fully rendered before the table resizer initialized.
-      // The timeout will ensure that the rendering of the table resizer occurs after the table is rendered.
-      setTimeout(() => {
-        this.tableResizer = new ColumnResizer.default(this.tableEl, {
-          partialRefresh: true,
-          headerOnly: false,
-          disabledColumns: this.persistentConfig.compact ? [] : [0],
+      if (columns.length <= maxResizableResultsColumns) {
+        waitForResolve = true;
+        // There is an issue with columns resizing. When the table is rendered the columns resizing doesn't working until a column header is clicked.
+        // A possible reason could be that the table columns have not been fully rendered before the table resizer initialized.
+        // The timeout will ensure that the rendering of the table resizer occurs after the table is rendered.
+        setTimeout(() => {
+          try {
+            this.tableResizer = new ColumnResizer.default(this.tableEl, {
+              partialRefresh: true,
+              headerOnly: false,
+              disabledColumns: this.persistentConfig.compact ? [] : [0]
+            });
+          } catch (error) {
+            // Just log the error and continue without the column resizer, the table will still be functional.
+            console.error('Failed to initialize column resizer', error);
+          }
+          resolve();
         });
-      }, 0);
-    } else {
-      addClass(this.tableEl, "fixedColumns");
-    }
+      } else {
+        addClass(this.tableEl, 'fixedColumns');
+      }
 
-    this.registerDataTableEventHandlers(this.dataTable);
+      this.registerDataTableEventHandlers(this.dataTable);
 
-    this.drawControls();
-    this.updateTableEllipseClasses();
-    this.afterDraw();
-    if (previousFilter) {
-      this.applyFilterValue(previousFilter);
-    }
+      this.drawControls();
+      this.updateTableEllipseClasses();
+      this.afterDraw();
+      if (previousFilter) {
+        this.applyFilterValue(previousFilter);
+      }
 
-    if (!rows || rows.length < 1) {
-      this.updateEmptyTable(this.persistentConfig);
-    }
+      if (!rows || rows.length < 1) {
+        this.updateEmptyTable(this.persistentConfig);
+      }
+      if (!waitForResolve) {
+        resolve();
+      }
+    });
   }
 
   /**
