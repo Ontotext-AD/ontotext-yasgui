@@ -516,8 +516,8 @@ export class Yasqe extends CodeMirror {
 
       this.queryBtn.onclick = () => {
         if (this.config.queryingDisabled) return; // Don't do anything
-          this.pageNumber = 1;
-          this.query().catch(() => {}); //catch this to avoid unhandled rejection
+        this.pageNumber = 1;
+        this.query().catch(() => {}); //catch this to avoid unhandled rejection
       };
 
       const querySplitButtonEl = document.createElement("query-split-button");
@@ -1285,6 +1285,17 @@ export class Yasqe extends CodeMirror {
 
   public expandEditor() {
     this.setSize(null, "100%");
+  }
+
+  /**
+   * Registers a callback to be executed on destroy.
+   *
+   * @param destroyCallback Callback invoked when the instance is destroyed.
+   */
+  public addDestroyCallback(destroyCallback: () => void) {
+    if (typeof destroyCallback === "function") {
+      this.subscriptions.push(destroyCallback);
+    }
   }
 
   public destroy() {
