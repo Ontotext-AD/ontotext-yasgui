@@ -12,6 +12,7 @@ export class ExtendedTable extends Table {
   public label = "Extended_Table";
   public priority = 11;
   private tableRenderingHandlerId: number | undefined;
+  private tableResizerTimeout: number | undefined;
 
   private readonly getCellContentCustom?: (
     binding: Parser.BindingValue,
@@ -97,17 +98,12 @@ export class ExtendedTable extends Table {
         // There is an issue with columns resizing. When the table is rendered the columns resizing doesn't working until a column header is clicked.
         // A possible reason could be that the table columns have not been fully rendered before the table resizer initialized.
         // The timeout will ensure that the rendering of the table resizer occurs after the table is rendered.
-        setTimeout(() => {
-          try {
-            this.tableResizer = new ColumnResizer.default(this.tableEl, {
-              partialRefresh: true,
-              headerOnly: false,
-              disabledColumns: this.persistentConfig.compact ? [] : [0]
-            });
-          } catch (error) {
-            // Just log the error and continue without the column resizer, the table will still be functional.
-            console.error('Failed to initialize column resizer', error);
-          }
+        this.tableResizerTimeout = setTimeout(() => {
+          this.tableResizer = new ColumnResizer.default(this.tableEl, {
+            partialRefresh: true,
+            headerOnly: false,
+            disabledColumns: this.persistentConfig.compact ? [] : [0],
+          });
           resolve();
         });
       } else {
@@ -475,7 +471,7 @@ export class ExtendedTable extends Table {
         const message = this.translationService.translate("loader.message.query.editor.render.results");
         this.yasr.showLoader(message, false, false);
       } else {
-        requestAnimationFrame(() => {
+        this.tableRenderingHandlerId = requestAnimationFrame(() => {
           this.tableRenderingHandlerId = undefined;
           this.yasr.hideLoader();
         });
@@ -515,6 +511,7 @@ export class ExtendedTable extends Table {
   }
 
   destroy() {
+    clearTimeout(this.tableResizerTimeout);
     if (this.tableEl) {
       this.tableEl.removeEventListener('click', this.dataTableClickHandler.bind(this));
       this.tableEl.removeEventListener('mouseover', this.tableMouseoverHandler.bind(this));
