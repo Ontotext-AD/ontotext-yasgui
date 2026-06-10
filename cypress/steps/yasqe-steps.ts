@@ -214,8 +214,16 @@ export class YasqeSteps {
     })
   }
 
+  static getSavedQuery(index = 0) {
+    return this.getSavedQueries().eq(index);
+  }
+
   static selectSavedQuery(index: number) {
-    this.getSavedQueries().eq(index).find('a').click();
+    YasqeSteps.getSavedQuery(index).find('a').click();
+  }
+
+  static hoverSavedQuery(index = 0) {
+    YasqeSteps.getSavedQuery(index).trigger('mouseenter');
   }
 
   static getTabQuery(tabIndex: number) {
