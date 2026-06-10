@@ -875,3 +875,26 @@ svg > g > g.google-visualization-tooltip { pointer-events: none }
 .modal-dialog.google-visualization-charteditor-dialog {
   z-index: 1016;
 }
+.yasgui-floating-tooltip {
+  position: fixed;
+  width: max-content;
+  top: 0;
+  left: 0;
+  background-color: $color-onto-blue;
+  color: $color-onto-white;
+  padding: 5px 9px;
+  font-size: 0.9em;
+  max-width: 520px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.yasgui-floating-tooltip-arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: $color-onto-blue;
+  transform: rotate(45deg);
+}
