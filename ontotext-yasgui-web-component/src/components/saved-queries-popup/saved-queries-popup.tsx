@@ -7,6 +7,7 @@ import {
 } from "../../models/saved-query-configuration";
 import {TranslationService} from "../../services/translation.service";
 import {ServiceFactory} from "../../services/service-factory";
+import {YasguiFloatingTooltipService} from '../../services/yasgui-floating-tooltip-service';
 
 @Component({
   tag: 'saved-queries-popup',
@@ -15,6 +16,7 @@ import {ServiceFactory} from "../../services/service-factory";
 })
 export class SavedQueriesPopup {
   private translationService: TranslationService;
+  private ontotextYasguiTooltipService: YasguiFloatingTooltipService;
 
   @Element() hostElement: HTMLElement;
 
@@ -71,14 +73,39 @@ export class SavedQueriesPopup {
     this.internalSaveQuerySelectedEvent.emit(selectedQuery);
   }
 
+  /**
+   * Displays a tooltip for the element that triggered the event.
+   *
+   * @param event The mouse event originating from the tooltip target element.
+   * @param text The text content to display in the tooltip.
+   */
+  private showTooltip(event: UIEvent, text: string): void {
+    this.ontotextYasguiTooltipService.show(event.currentTarget as HTMLElement, text, 'top');
+  }
+
+  /**
+   * Hides the currently displayed tooltip.
+   */
+  private hideTooltip(): void {
+    this.ontotextYasguiTooltipService.hide();
+  }
+
   componentWillLoad(): void {
     // TranslationService is injected here because the service factory is not available
     // in the constructor.
     this.translationService = this.serviceFactory.get(TranslationService);
+    this.ontotextYasguiTooltipService = this.serviceFactory.get(YasguiFloatingTooltipService);
   }
 
   componentDidRender(): void {
     this.setPopupPosition();
+  }
+
+  /**
+   * Cleans up component resources when the component is removed from the DOM.
+   */
+  disconnectedCallback(): void {
+    this.ontotextYasguiTooltipService.hide();
   }
 
   onEdit(evt: MouseEvent, selectedQuery: SaveQueryData): void {
@@ -100,16 +127,19 @@ export class SavedQueriesPopup {
     const panelRect = this.hostElement.getBoundingClientRect();
     const buttonRect = this.config.popupTarget.getBoundingClientRect();
 
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
     const isFullScreen = this.hostElement.closest('ontotext-yasgui').querySelector('.yasqe').classList.contains('yasqe-fullscreen');
 
     const arrowEl: HTMLElement = this.hostElement.querySelector('.arrow');
     if (isFullScreen) {
-      this.hostElement.style.top = '13px';
-      this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
+      this.hostElement.style.top = `${scrollTop + 13}px`;
+      this.hostElement.style.left = `${scrollLeft + buttonRect.left - panelRect.width - 10}px`;
       arrowEl.style.top = '40px';
     } else {
-      this.hostElement.style.top = ((buttonRect.top + buttonRect.height / 2) - panelRect.height / 2) + 'px';
-      this.hostElement.style.left = (buttonRect.left - panelRect.width - 10) + 'px';
+      this.hostElement.style.top = `${scrollTop + buttonRect.top + buttonRect.height / 2 - panelRect.height / 2}px`;
+      this.hostElement.style.left = `${scrollLeft + buttonRect.left - panelRect.width - 10}px`;
       arrowEl.style.top = panelRect.height / 2 - 16 + 'px';
     }
   }
@@ -122,7 +152,12 @@ export class SavedQueriesPopup {
           <ul>
             {this.config.savedQueriesList.map((savedQuery) => (
               <li class="saved-query">
-                <a class="saved-query-link" onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
+                <a class="saved-query-link"
+                   onMouseEnter={(event) => this.showTooltip(event, savedQuery.queryName)}
+                   onMouseLeave={() => this.hideTooltip()}
+                   onFocus={(event) => this.showTooltip(event, savedQuery.queryName)}
+                   onBlur={() => this.ontotextYasguiTooltipService.hide()}
+                   onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
                 <span class="saved-query-actions">
                   {!savedQuery.readonly ?
                     <button class="saved-query-action edit-saved-query ri-edit-line"
