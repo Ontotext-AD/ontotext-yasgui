@@ -23,6 +23,10 @@ export class YasrSteps {
     return YasrSteps.getPluginsButtons().find('.plugin_selector');
   }
 
+  static getPluginSelectorButton(index = 0) {
+    return YasrSteps.getPluginSelectors().eq(index).find('.yasr_btn');
+  }
+
   static getResultsTable(yasrIndex = 0) {
     return YasrSteps.getYasr(yasrIndex).find('.yasr_results tbody');
   }

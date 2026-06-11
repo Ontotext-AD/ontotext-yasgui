@@ -167,4 +167,35 @@ describe('View configurations', () => {
     YasrSteps.getExtendedTableTab().should('not.have.class', 'selected');
     YasrSteps.getResponseTableTab().should('have.class', 'selected');
   });
+
+  it('should configure the YASR plugin order', () => {
+    // GIVEN: I open a page that contains the "ontotext-yasgui-web-component" with the default pluginOrder configuration.
+
+    // WHEN: I execute a query.
+    YasqeSteps.executeQuery();
+    // THEN: I expect the default plugin order to be used because no custom plugin order is configured.
+    verifyDefaultPluginOrder();
+
+    // WHEN: I change the plugin order configuration.
+    ViewConfigurationsPageSteps.configurePluginOrder();
+    // THEN: I expect the order of plugins in changed according configuration.
+    YasrSteps.getPluginSelectorButton(0).should('have.text', 'Raw response');
+    YasrSteps.getPluginSelectorButton(1).should('have.text', 'Table');
+    YasrSteps.getPluginSelectorButton(2).should('have.text', 'Geo');
+    YasrSteps.getPluginSelectorButton(3).should('have.text', '\n        \n      Pivot Table');
+    YasrSteps.getPluginSelectorButton(4).should('have.text', '\n        \n      Google Chart');
+
+    // WHEN: I set the plugin order configuration to an empty array.
+    ViewConfigurationsPageSteps.configurePluginOrderEmptyArray();
+    // THEN: I expect the default plugin order to be used because an empty plugin order configuration is treated as missing.
+    verifyDefaultPluginOrder();
+  });
 });
+
+const verifyDefaultPluginOrder = () => {
+  YasrSteps.getPluginSelectorButton(0).should('have.text', 'Table');
+  YasrSteps.getPluginSelectorButton(1).should('have.text', 'Raw response');
+  YasrSteps.getPluginSelectorButton(2).should('have.text', '\n        \n      Pivot Table');
+  YasrSteps.getPluginSelectorButton(3).should('have.text', '\n        \n      Google Chart');
+  YasrSteps.getPluginSelectorButton(4).should('have.text', 'Geo');
+}
