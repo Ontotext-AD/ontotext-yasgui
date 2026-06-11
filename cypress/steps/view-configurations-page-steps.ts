@@ -53,6 +53,14 @@ export default class ViewConfigurationsPageSteps {
       cy.get('#configureSelectedPluginToResponsePlugin').click();
     }
 
+    static configurePluginOrder() {
+      cy.get('#configurePluginOrder').click();
+    }
+
+    static configurePluginOrderEmptyArray() {
+      cy.get('#configurePluginOrderEmptyArray').click();
+    }
+
     static getOutputMessage() {
       return cy.get('#output-message');
     }
