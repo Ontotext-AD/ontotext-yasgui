@@ -46,6 +46,14 @@ function configureSelectedPluginToResponsePlugin() {
   ontoElement.config = {...ontoElement.config, selectedPlugin: 'extended_response'}
 }
 
+const configurePluginOrder = () => {
+  ontoElement.config = {...ontoElement.config, pluginOrder: ['extended_response', 'extended_table', 'geo', 'pivot-table-plugin', 'charts']}
+}
+
+const configurePluginOrderEmptyArray = () => {
+  ontoElement.config = {...ontoElement.config, pluginOrder: []}
+}
+
 function attachMessageHandler() {
   ontoElement.addEventListener('output', (event) => {
     if ('notificationMessage' === event.detail.TYPE) {
