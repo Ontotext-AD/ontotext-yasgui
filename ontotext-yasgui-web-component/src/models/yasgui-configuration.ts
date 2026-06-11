@@ -398,7 +398,7 @@ export const defaultYasqeConfig: Partial<YasqeDefaultConfiguration> = {
 
 export const defaultYasrConfig: Partial<YasrConfiguration> = {
   defaultPlugin: 'extended_table',
-  pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts'],
+  pluginOrder: ['extended_table', 'extended_response', 'pivot-table-plugin', 'charts', 'geo'],
   showQueryLoader: true,
   fullscreen: false,
   defaultGeoPluginConfiguration: {
