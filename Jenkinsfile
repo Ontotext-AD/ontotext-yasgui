@@ -70,7 +70,7 @@ pipeline {
 
             steps {
                 script {
-                    sh 'npm run test:get-tests'
+                     sh 'npm run test:update'
                 }
             }
         }

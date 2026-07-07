@@ -270,9 +270,11 @@ describe('Plugin: Table', () => {
         // Then I expect results to be rendered.
         YasrSteps.getTableResults().should('have.length.greaterThan', 0);
         // And the triple term list should contain <<(
-        YasrSteps.getTripleList(0, 1).should('contain', '<<(');
+        YasrSteps.getTripleCell(0, 1).should('contain', '<<(');
         // And the triple term list should contain )>>
-        YasrSteps.getTripleList(0, 1).should('contain', ')>>');
+        YasrSteps.getTripleCell(0, 1).should('contain', ')>>');
+        // And I expect copy url link to be visible
+        YasrSteps.getTripleCopyResourceLink(1, 2).should('be.visible');
       });
     });
     describe('Literal result formatting', () => {

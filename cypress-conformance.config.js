@@ -5,7 +5,7 @@ const setupPlugins = require('./cypress/plugins/index.js');
 module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://localhost:3333/',
-    specPattern: 'cypress/e2e-conformance/**/*.spec.cy.ts',
+    specPattern: ['cypress/e2e-conformance/**/*.spec.cy.ts'],
     screenshotsFolder: 'cypress/report/screenshots',
     screenshotOnRunFailure: true,
     videosFolder: 'cypress/report/videos',

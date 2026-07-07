@@ -23,12 +23,12 @@
           "value": "s column literal"
         },
         "p": {
-          "type" : "literal",
-          "value" : "p column literal"
+          "type": "literal",
+          "value": "p column literal"
         },
         "o": {
-          "type" : "uri",
-          "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#uri-with-long-value"
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#uri-with-long-value"
         },
         "s1": {
           "type": "literal",
@@ -63,19 +63,19 @@
           "value": "p3 column literal"
         },
         "o3": {
-          "type" : "triple",
-          "value" : {
-            "s" : {
-              "type" : "uri",
-              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          "type": "triple",
+          "value": {
+            "subject": {
+              "type": "uri",
+              "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
             },
-            "p" : {
-              "type" : "uri",
-              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            "predicate": {
+              "type": "uri",
+              "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
             },
-            "o" : {
-              "type" : "uri",
-              "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+            "object": {
+              "type": "uri",
+              "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
             }
           }
         }
