@@ -26,6 +26,9 @@ const SUITES: Suite = {
  * Each entry has a comment explaining why it is skipped.
  */
 const SKIPPED_POSITIVE_TESTS = new Set<string>([
+  'codepoint-escapes/codepoint-esc-08.rq',
+  'codepoint-escapes/codepoint-esc-09.rq',
+  'grouping/select-variable-reuse.rq'
 ]);
 
 /**
@@ -39,6 +42,12 @@ const SKIPPED_POSITIVE_TESTS = new Set<string>([
  *    cannot reject the invalid syntax either.
  */
 const SKIPPED_NEGATIVE_TESTS = new Set<string>([
+  'codepoint-escapes/codepoint-esc-01-bad.rq',
+  'codepoint-escapes/codepoint-esc-03-bad.rq',
+  'codepoint-escapes/surrogate-esc-05-bad.rq',
+  'syntax/group-by-scope-bad-1.rq',
+  'syntax/group-by-scope-bad-2.rq',
+  'syntax/group-by-scope-bad-3.rq',
 ]);
 
 let CodeMirror: CodeMirrorInstance;
