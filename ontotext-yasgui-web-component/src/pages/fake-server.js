@@ -1,5 +1,3 @@
-const namespacesEndpoints = []
-
 module.exports = function (req, res, next) {
   if (req.url === '/repositories/test-repo') {
     // custom response overriding the dev server
@@ -4479,15 +4477,15 @@ const rdfStarResponse = {
         "a" : {
           "type" : "triple",
           "value" : {
-            "s" : {
+            "subject" : {
               "type" : "uri",
               "value" : "urn:test"
             },
-            "p" : {
+            "predicate" : {
               "type" : "uri",
               "value" : "http://www.w3.org/2000/01/rdf-schema#label"
             },
-            "o" : {
+            "object" : {
               "type" : "literal",
               "value" : "test"
             }
@@ -5644,15 +5642,15 @@ const compactViewResponse = {
         "o3": {
           "type" : "triple",
           "value" : {
-            "s" : {
+            "subject" : {
               "type" : "uri",
               "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
             },
-            "p" : {
+            "predicate" : {
               "type" : "uri",
               "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
             },
-            "o" : {
+            "object" : {
               "type" : "uri",
               "value" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
             }
