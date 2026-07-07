@@ -265,15 +265,15 @@ export class QueryStubs {
       t : {
         type : "triple",
         value : {
-          s : {
+          subject : {
             type : "uri",
             value : QueryStubs.createAnUri(page, row, 1)
           },
-          p : {
+          predicate : {
             type : "uri",
             value : QueryStubs.createAnUri(page, row, 2)
           },
-          o : {
+          object : {
             type : "uri",
             value : QueryStubs.createAnUri(page, row, 3)
           }

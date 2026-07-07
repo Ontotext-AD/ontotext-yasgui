@@ -126,19 +126,43 @@ export class YasrService {
 
   // @ts-ignore
   private static getTripleCellContent(binding: Parser.BindingValue, context: CellContentContext): string {
+    const tripleAsString = this.getValueAsString(binding, false);
+    const embeddedParam = context.isEmbedded() ? `&${YasrService.EMBEDDED_PARAM}` : "";
+    const tripleLinkHref = `resource?triple=${this.replaceSingleQuote(encodeURIComponent(tripleAsString))}${embeddedParam}`;
+    const escapedTriple = HtmlUtil.escapeHTMLEntities(tripleAsString);
+
     return `<div class="triple-cell">` +
+              `<div class="triple-open-link">` +
+                `<a title="${escapedTriple}" class="triple-link" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</a>` +
+                `<copy-resource-link-button title="${escapedTriple}" class="resource-copy-link" uri="${escapedTriple}"></copy-resource-link-button>` +
+                `<span class="spacer"></span>` +
+              `</div>` +
               `<div class="triple-list">` +
-                `<div>${YasrService.ESCAPED_HTML_DOUBLE_LOWER}</div>` +
-                `<div>${this.toCellContent(binding.value['s'], context)}</div>` +
-                `<div>${this.toCellContent(binding.value['p'], context)}</div>` +
-                `<div>${this.toCellContent(binding.value['o'], context)}</div>` +
-                `<div>${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</div>` +
+                `<div>${this.toCellContent(binding.value['subject'], context)}</div>` +
+                `<div>${this.toCellContent(binding.value['predicate'], context)}</div>` +
+                `<div>${this.toCellContent(binding.value['object'], context)}</div>` +
+              `</div>` +
+              `<div class="triple-close-link">` +
+                `<a title="${escapedTriple}" class="triple-link triple-link-end" href="${tripleLinkHref}">${YasrService.ESCAPED_HTML_DOUBLE_GREATER}</a>` +
+                `<copy-resource-link-button title="${escapedTriple}" class="resource-copy-link" uri="${escapedTriple}"></copy-resource-link-button>` +
+                `<span class="spacer"></span>` +
               `</div>` +
             `</div>`;
   }
 
   private static replaceSingleQuote(text: string): string {
     return text.replace(/'/g, "&#39;");
+  }
+
+  // @ts-ignore
+  private static getValueAsString(binding, forHtml: boolean): string {
+    if (binding.type === "uri") {
+      return `<${binding.value}>`;
+    }
+    if (binding.type === "triple") {
+      return `<<(${this.getValueAsString(binding.value['subject'], forHtml)} ${this.getValueAsString(binding.value['predicate'], forHtml)} ${this.getValueAsString(binding.value['object'], forHtml)})>>`;
+    }
+    return this.getLiteralAsString(binding, forHtml);
   }
 
   // @ts-ignore
