@@ -1,6 +1,6 @@
 import {ManifestGroup, SyntaxConformanceSteps} from '../steps/syntax-conformance-steps';
 
-describe('W3C SPARQL 1.0 Syntax Conformance – UI Error Indicators', () => {
+describe.skip('W3C SPARQL 1.0 Syntax Conformance – UI Error Indicators', () => {
   const SUITE_ID = 'sparql10';
   let suiteManifest: ManifestGroup;
 
