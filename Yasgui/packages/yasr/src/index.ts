@@ -834,6 +834,7 @@ export interface Config {
   sparqlResponse?: string;
   fullscreen?: boolean;
   showFullscreenButton?: boolean;
+  themeName?: string;
   selectedPlugin?: string;
   /**
    * Custom renderers for errors.

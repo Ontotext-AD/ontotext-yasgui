@@ -121,6 +121,11 @@ export namespace Components {
          */
         "forHtml": boolean;
         /**
+          * Optional theme name used to apply CodeMirror theme styling to the explain-plan query.
+          * @public
+         */
+        "themeName"?: string;
+        /**
           * Optional translation service used to get localized labels/messages
           * @public
          */
@@ -559,6 +564,11 @@ declare namespace LocalJSX {
           * @public
          */
         "forHtml"?: boolean;
+        /**
+          * Optional theme name used to apply CodeMirror theme styling to the explain-plan query.
+          * @public
+         */
+        "themeName"?: string;
         /**
           * Optional translation service used to get localized labels/messages
           * @public
