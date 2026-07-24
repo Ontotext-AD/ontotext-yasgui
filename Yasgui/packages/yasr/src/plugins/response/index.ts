@@ -96,6 +96,9 @@ export default class Response implements Plugin<PluginConfig> {
     }
 
     this.cm = CodeMirror(this.yasr.resultsEl, codemirrorOpts);
+    if (this.cm) {
+      this.cm.setOption("theme", this.yasr.config.themeName);
+    }
     // Don't show less originally we've already set the value in the codemirrorOpts
     if (lines.length > config.maxLines) this.showLess(false);
   }
