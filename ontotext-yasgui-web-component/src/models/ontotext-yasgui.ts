@@ -75,6 +75,10 @@ export class OntotextYasgui {
     if (yasqe) {
       yasqe.setOption('theme', this.config.yasguiConfig.yasqe.themeName);
     }
+    if (tab.getYasr()) {
+      tab.getYasr().config.themeName = this.config.yasguiConfig.yasr.themeName;
+      tab.getYasr().refresh();
+    }
   }
 
   /**

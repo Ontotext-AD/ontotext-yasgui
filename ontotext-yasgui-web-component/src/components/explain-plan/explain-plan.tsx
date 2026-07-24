@@ -43,6 +43,12 @@ export class ExplainPlan {
    */
   @Prop() translationService?: TranslationService;
 
+  /**
+   * Optional theme name used to apply CodeMirror theme styling to the explain-plan query.
+   * @public
+   */
+  @Prop() themeName?: string;
+
   private getStringRepresentation(): string {
     const value = this.binding?.value ?? '';
     return HtmlUtil.escapeHTMLEntities(value);
@@ -112,14 +118,15 @@ export class ExplainPlan {
     }
 
     const copyLabel = this.translationService.translate('yasr.explain_plan.copy_button.label');
-
+    const themeClass = this.themeName ? `cm-s-${this.themeName}` : 'cm-s-default';
+    const classList = `explainPlanQuery ${themeClass}`;
     return (
       <div class="yasr-explain-plan-component">
         <button class="explain-plan-copy-btn" type="button" onClick={() => this.onCopy()}>
           {copyLabel}
         </button>
         <div class="explain-plan-container">
-          <div class="cm-s-default explainPlanQuery" innerHTML={stringRepresentation}></div>
+          <div class={classList} innerHTML={stringRepresentation}></div>
         </div>
       </div>
     );

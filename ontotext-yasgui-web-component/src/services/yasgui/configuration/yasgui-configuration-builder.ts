@@ -86,7 +86,7 @@ export class YasguiConfigurationBuilder {
         isVirtualRepository: externalConfiguration.isVirtualRepository !== undefined ? externalConfiguration.isVirtualRepository : defaultYasqeConfig.isVirtualRepository,
         beforeUpdateQuery: externalConfiguration.beforeUpdateQuery !== undefined ? externalConfiguration.beforeUpdateQuery : defaultYasqeConfig.beforeUpdateQuery,
         getRepositoryStatementsCount: externalConfiguration.getRepositoryStatementsCount !== undefined ? externalConfiguration.getRepositoryStatementsCount : defaultYasqeConfig.getRepositoryStatementsCount,
-        themeName: externalConfiguration.themeName || DEFAULT_THEME
+        themeName: externalConfiguration.themeName ?? DEFAULT_THEME
       },
       yasr: {
         showQueryLoader: externalConfiguration.showQueryLoader !== undefined ? externalConfiguration.showQueryLoader : defaultYasrConfig.showQueryLoader,
@@ -97,7 +97,8 @@ export class YasguiConfigurationBuilder {
         externalPluginsConfigurations: YasrService.getPluginsConfigurations(externalConfiguration),
         isExplainPlan: ExplainPlanUtil.isExplainResults,
         fullscreen: externalConfiguration.yasrFullscreen ?? defaultYasrConfig.fullscreen,
-        showFullscreenButton: externalConfiguration.showFullscreenButton ?? defaultYasrConfig.showFullscreenButton
+        showFullscreenButton: externalConfiguration.showFullscreenButton ?? defaultYasrConfig.showFullscreenButton,
+        themeName: externalConfiguration.themeName ?? DEFAULT_THEME
       },
       yasrFullscreen: externalConfiguration.yasrFullscreen ?? defaultYasguiConfig.yasrFullscreen
     };

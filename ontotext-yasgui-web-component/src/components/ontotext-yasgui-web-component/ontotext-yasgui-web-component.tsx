@@ -310,6 +310,7 @@ export class OntotextYasguiWebComponent {
   setTheme(themeName = DEFAULT_THEME): Promise<void> {
     return this.getOntotextYasgui().then((ontotextYasgui) => {
       ontotextYasgui.getYasguiConfiguration().yasguiConfig.yasqe.themeName = themeName;
+      ontotextYasgui.getYasguiConfiguration().yasguiConfig.yasr.themeName = themeName;
       ontotextYasgui.applyTheme();
     });
   }

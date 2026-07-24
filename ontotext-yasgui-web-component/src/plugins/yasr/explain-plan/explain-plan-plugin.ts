@@ -84,6 +84,7 @@ export class ExplainPlanPlugin implements YasrPlugin {
     explainComponent.binding = explainBinding;
     explainComponent.forHtml = true;
     explainComponent.translationService = this.translationService;
+    explainComponent.themeName = this.yasr.config.themeName;
     const wrapper = document.createElement('div');
     wrapper.classList.add('yasr-explain-plan-plugin');
     wrapper.appendChild(explainComponent);
