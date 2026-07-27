@@ -1,0 +1,87 @@
+Index: Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts
+--- a/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision 3c3b1488ab9bea826cf4e5f81be83a1ef7c9db23)
++++ b/Yasgui/packages/yasr/src/plugins/response/extended-response.ts	(revision 8c02f6aff18ec914bd9e822e40a53c91743a6dde)
+@@ -41,6 +41,10 @@
+     }
+   }
+ 
++  applyTheme() {
++    this.cm?.setOption("theme", this.yasr.config.themeName);
++  }
++
+   // Function is overriden and download button is removed from the view because we already has one.
+   showLess(setValue = true) {
+     if (!this.cm) return;
+Index: Yasgui/packages/yasr/src/plugins/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/plugins/index.ts b/Yasgui/packages/yasr/src/plugins/index.ts
+--- a/Yasgui/packages/yasr/src/plugins/index.ts	(revision 3c3b1488ab9bea826cf4e5f81be83a1ef7c9db23)
++++ b/Yasgui/packages/yasr/src/plugins/index.ts	(revision 8c02f6aff18ec914bd9e822e40a53c91743a6dde)
+@@ -12,6 +12,9 @@
+   getIcon(): Element | undefined;
+   download?(filename?: string): DownloadInfo | undefined;
+   helpReference?: string;
++
++  // Called when the theme changes
++  applyTheme?(persistentConfig: any): void;
+ }
+ export interface DownloadInfo {
+   contentType: string;
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision 3c3b1488ab9bea826cf4e5f81be83a1ef7c9db23)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 8c02f6aff18ec914bd9e822e40a53c91743a6dde)
+@@ -265,11 +265,12 @@
+     this.updatePluginSelectorNames();
+     const compatiblePlugins = this.getCompatiblePlugins();
+     let pluginToDraw: string | undefined;
+-    if (this.getSelectedPlugin() && this.getSelectedPlugin()?.canHandleResults()) {
++    const selectedPlugin = this.getSelectedPlugin();
++    if (selectedPlugin && selectedPlugin?.canHandleResults()) {
+       pluginToDraw = this.getSelectedPluginName();
+       // When present remove fallback box
+       this.emptyFallbackElement();
+-    } else if (compatiblePlugins[0]) {
++    } else if (compatiblePlugins.length) {
+       if (this.drawnPlugin) {
+         this.plugins[this.drawnPlugin].destroy?.();
+       }
+@@ -277,14 +278,14 @@
+       // If the selected plugin cannot handle the results, we should prompt the user to switch to another compatible
+       // plugin (via the fallback dialog).
+ 
+-      // However, if the first compatible plugin is hidden from selection (hideFromSelection = true)
+-      // and therefore cannot be chosen manually, we must render it directly instead of showing the dialog.
++      // However, if the first compatible plugin is hidden from selection, or the last selected plugin is hidden from selection
++      // we must render the compatible plugin directly instead of showing the dialog.
+       // Otherwise, the user would be prompted to switch plugins without having access to the valid options.
+       //
+       // This can occur when the selected plugin supports only a subset of results, and a new query falls outside of its
+       // capabilities. In such cases, hidden compatible plugins must be applied automatically to ensure the results remain visible.
+-      if (compatiblePlugin && compatiblePlugin.hideFromSelection) {
+-        pluginToDraw = compatiblePlugins[0]
++      if (compatiblePlugin.hideFromSelection ||  selectedPlugin?.hideFromSelection) {
++        pluginToDraw = compatiblePlugins[0];
+       } else {
+         this.fillFallbackBox();
+       }
+@@ -301,6 +302,7 @@
+     }
+ 
+     if (pluginToDraw) {
++      this.selectPlugin(pluginToDraw)
+       this.updatePluginControlVisibility(true);
+       this.drawnPlugin = pluginToDraw;
+ 
