@@ -41,6 +41,10 @@ export default class ExtendedResponse extends Response {
     }
   }
 
+  applyTheme() {
+    this.cm?.setOption("theme", this.yasr.config.themeName);
+  }
+
   // Function is overriden and download button is removed from the view because we already has one.
   showLess(setValue = true) {
     if (!this.cm) return;

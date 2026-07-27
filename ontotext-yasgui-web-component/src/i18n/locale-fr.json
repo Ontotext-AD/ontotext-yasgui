@@ -141,6 +141,8 @@
   "yasr.plugin_control.plugin.name.extended_table": "Tableau",
   "yasr.plugin_control.plugin.name.response": "Réponse brute",
   "yasr.plugin_control.plugin.name.table": "Tableau",
+  "yasr.plugin_control.plugin.name.boolean": "Booléen",
+  "yasr.plugin_control.plugin.name.extended_boolean": "Booléen",
   "yasr.plugin_control.plugin.name.explain-plan": "Plan d’exécution",
   "yasr.plugin_control.plugin.name.explain-plan.title": "Plan d’explication de la requête",
   "yasr.plugin_control.plugin.name.pivot-table-plugin": "Table de pivotement",

@@ -265,11 +265,12 @@ export class Yasr extends EventEmitter {
     this.updatePluginSelectorNames();
     const compatiblePlugins = this.getCompatiblePlugins();
     let pluginToDraw: string | undefined;
-    if (this.getSelectedPlugin() && this.getSelectedPlugin()?.canHandleResults()) {
+    const selectedPlugin = this.getSelectedPlugin();
+    if (selectedPlugin && selectedPlugin?.canHandleResults()) {
       pluginToDraw = this.getSelectedPluginName();
       // When present remove fallback box
       this.emptyFallbackElement();
-    } else if (compatiblePlugins[0]) {
+    } else if (compatiblePlugins.length) {
       if (this.drawnPlugin) {
         this.plugins[this.drawnPlugin].destroy?.();
       }
@@ -277,14 +278,14 @@ export class Yasr extends EventEmitter {
       // If the selected plugin cannot handle the results, we should prompt the user to switch to another compatible
       // plugin (via the fallback dialog).
 
-      // However, if the first compatible plugin is hidden from selection (hideFromSelection = true)
-      // and therefore cannot be chosen manually, we must render it directly instead of showing the dialog.
+      // However, if the first compatible plugin is hidden from selection, or the last selected plugin is hidden from selection
+      // we must render the compatible plugin directly instead of showing the dialog.
       // Otherwise, the user would be prompted to switch plugins without having access to the valid options.
       //
       // This can occur when the selected plugin supports only a subset of results, and a new query falls outside of its
       // capabilities. In such cases, hidden compatible plugins must be applied automatically to ensure the results remain visible.
-      if (compatiblePlugin && compatiblePlugin.hideFromSelection) {
-        pluginToDraw = compatiblePlugins[0]
+      if (compatiblePlugin.hideFromSelection ||  selectedPlugin?.hideFromSelection) {
+        pluginToDraw = compatiblePlugins[0];
       } else {
         this.fillFallbackBox();
       }
@@ -301,6 +302,7 @@ export class Yasr extends EventEmitter {
     }
 
     if (pluginToDraw) {
+      this.selectPlugin(pluginToDraw)
       this.updatePluginControlVisibility(true);
       this.drawnPlugin = pluginToDraw;
 

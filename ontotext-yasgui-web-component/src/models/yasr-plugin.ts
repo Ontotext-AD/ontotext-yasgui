@@ -1,3 +1,5 @@
+import {PersistentConfig} from '../../../Yasgui/packages/yasqe/src';
+
 /**
  * This interface must be implemented by all Yasr plugins, and it is initialized with a YASR instance as a constructor argument.
  */
@@ -40,6 +42,12 @@ export interface YasrPlugin {
   draw(persistentConfig: any, runtimeConfig?: any): Promise<void> | void;
 
   getIcon(): Element | undefined;
+
+  /**
+   * Called when the theme changes
+   * @param config
+   */
+  applyTheme?(config: PersistentConfig): void;
 }
 
 export interface DownloadInfo {
