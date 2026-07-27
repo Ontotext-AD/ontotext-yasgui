@@ -216,6 +216,21 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 | 1.4+                          | 3.2+      | 11.2+           |
 | 1.5+                          | 3.3+      | 11.3+           |
 | 1.6+                          | 3.4+      | 11.4+           |
+| 1.7+                          | 3.5+      | 11.5+           |
+
+#### How the component version is bumped
+
+The version of `ontotext-yasgui-web-component` is bound to the Workbench release cycle. On every new
+Workbench version the rule is:
+
+* **No changes in this project** – the current component version is kept and is simply mapped to the new
+  Workbench/GraphDB version in the table above. A new component version is _not_ released.
+* **Any change in this project** – the minor version is bumped, regardless of the complexity or the size of
+  the change. A single bugfix and a whole new feature both lead to the same bump.
+
+Example: with a new Workbench `3.6`, if nothing was changed in this project, `1.7` stays as the supported
+version and a new row `1.7+ | 3.6+ | 11.6+` is added. If there were changes – no matter how small – the
+version becomes `1.8` and the new row is `1.8+ | 3.6+ | 11.6+`.
 
 
 ## Developers guide
