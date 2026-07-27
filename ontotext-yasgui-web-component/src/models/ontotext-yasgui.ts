@@ -72,12 +72,16 @@ export class OntotextYasgui {
     }
 
     const yasqe = tab.getYasqe();
+    const yasr = tab.getYasr();
     if (yasqe) {
       yasqe.setOption('theme', this.config.yasguiConfig.yasqe.themeName);
     }
-    if (tab.getYasr()) {
-      tab.getYasr().config.themeName = this.config.yasguiConfig.yasr.themeName;
-      tab.getYasr().refresh();
+    if (yasr) {
+      const selectedPlugin = yasr.getSelectedPlugin();
+      yasr.config.themeName = this.config.yasguiConfig.yasr.themeName;
+      if (selectedPlugin.applyTheme) {
+        selectedPlugin.applyTheme(selectedPlugin.config);
+      }
     }
   }
 

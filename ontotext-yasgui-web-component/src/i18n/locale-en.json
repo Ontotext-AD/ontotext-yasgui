@@ -141,6 +141,8 @@
   "yasr.plugin_control.plugin.name.extended_table": "Table",
   "yasr.plugin_control.plugin.name.response": "Raw response",
   "yasr.plugin_control.plugin.name.table": "Table",
+  "yasr.plugin_control.plugin.name.boolean": "Boolean",
+  "yasr.plugin_control.plugin.name.extended_boolean": "Boolean",
   "yasr.plugin_control.plugin.name.explain-plan": "Explain plan",
   "yasr.plugin_control.plugin.name.explain-plan.title": "Query explain plan",
   "yasr.plugin_control.plugin.name.pivot-table-plugin": "Pivot Table",

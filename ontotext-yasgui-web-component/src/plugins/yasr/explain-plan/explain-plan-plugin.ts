@@ -7,6 +7,7 @@ import 'codemirror/addon/runmode/runmode';
 import 'codemirror/mode/sparql/sparql';
 import 'codemirror/lib/codemirror.css';
 import { ExplainPlanUtil } from '../../../services/utils/explain-plan-util';
+import {PersistentConfig} from '../../../../../Yasgui/packages/yasqe/src';
 
 export class ExplainPlanPlugin implements YasrPlugin {
   // @ts-ignore
@@ -120,6 +121,10 @@ export class ExplainPlanPlugin implements YasrPlugin {
         }
       }, 0);
     }
+  }
+
+  applyTheme(_persistentConfig: PersistentConfig) {
+    this.draw(_persistentConfig)
   }
 
   private removeHeaderReplacement(): void {

@@ -12,6 +12,9 @@ export interface Plugin<Opts extends any> {
   getIcon(): Element | undefined;
   download?(filename?: string): DownloadInfo | undefined;
   helpReference?: string;
+
+  // Called when the theme changes
+  applyTheme?(persistentConfig: any): void;
 }
 export interface DownloadInfo {
   contentType: string;
