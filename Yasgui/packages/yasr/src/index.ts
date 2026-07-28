@@ -302,7 +302,7 @@ export class Yasr extends EventEmitter {
     }
 
     if (pluginToDraw) {
-      this.selectPlugin(pluginToDraw)
+      this.selectPlugin(pluginToDraw, true)
       this.updatePluginControlVisibility(true);
       this.drawnPlugin = pluginToDraw;
 
@@ -364,7 +364,7 @@ export class Yasr extends EventEmitter {
     }
     return {};
   }
-  public selectPlugin(plugin: string) {
+  public selectPlugin(plugin: string, skipDraw = false) {
     this.hideWarning();
     if (this.selectedPlugin === plugin) {
       // Don't re-render when selecting the same plugin. Also see #1893
@@ -377,9 +377,11 @@ export class Yasr extends EventEmitter {
       this.selectedPlugin = this.config.defaultPlugin;
     }
     this.storeConfig();
-    this.emit("change", this);
     this.updatePluginSelectors();
-    this.draw();
+    if (!skipDraw) {
+      this.emit("change", this);
+      this.draw();
+    }
   }
   private pluginSelectorsEl!: HTMLUListElement;
   getPluginSelectorsEl(): HTMLUListElement {
