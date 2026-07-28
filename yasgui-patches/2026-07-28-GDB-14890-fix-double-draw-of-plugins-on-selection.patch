@@ -1,0 +1,40 @@
+Index: Yasgui/packages/yasr/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/index.ts b/Yasgui/packages/yasr/src/index.ts
+--- a/Yasgui/packages/yasr/src/index.ts	(revision fd376bc22933d39bc9b26d46f2adff1033a5d163)
++++ b/Yasgui/packages/yasr/src/index.ts	(revision 0d915726f25d8b937eb2d38c8914d77c5e9a0b3d)
+@@ -302,7 +302,7 @@
+     }
+ 
+     if (pluginToDraw) {
+-      this.selectPlugin(pluginToDraw)
++      this.selectPlugin(pluginToDraw, true)
+       this.updatePluginControlVisibility(true);
+       this.drawnPlugin = pluginToDraw;
+ 
+@@ -364,7 +364,7 @@
+     }
+     return {};
+   }
+-  public selectPlugin(plugin: string) {
++  public selectPlugin(plugin: string, skipDraw = false) {
+     this.hideWarning();
+     if (this.selectedPlugin === plugin) {
+       // Don't re-render when selecting the same plugin. Also see #1893
+@@ -377,9 +377,11 @@
+       this.selectedPlugin = this.config.defaultPlugin;
+     }
+     this.storeConfig();
+-    this.emit("change", this);
+     this.updatePluginSelectors();
+-    this.draw();
++    if (!skipDraw) {
++      this.emit("change", this);
++      this.draw();
++    }
+   }
+   private pluginSelectorsEl!: HTMLUListElement;
+   getPluginSelectorsEl(): HTMLUListElement {
