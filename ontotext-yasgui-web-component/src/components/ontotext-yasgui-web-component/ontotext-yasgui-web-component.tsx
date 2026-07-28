@@ -129,6 +129,9 @@ export class OntotextYasguiWebComponent {
 
   @Watch('language')
   languageChanged(newLang: string) {
+    if (newLang === this.language) {
+      return;
+    }
     this.translationService.setLanguage(newLang);
     this.getOntotextYasgui()
       .then((ontotextYasgui) => {
