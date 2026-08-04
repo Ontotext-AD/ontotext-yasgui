@@ -1,0 +1,16 @@
+Index: Yasgui/packages/yasr/src/parsers/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasr/src/parsers/index.ts b/Yasgui/packages/yasr/src/parsers/index.ts
+--- a/Yasgui/packages/yasr/src/parsers/index.ts	(revision 440275294ae545efa3df204aa04f0cdbc2544c79)
++++ b/Yasgui/packages/yasr/src/parsers/index.ts	(revision 0bc25202c67f4ec77a1c5fa50a61046edb04f3a4)
+@@ -23,6 +23,7 @@
+     type: "uri" | "literal" | "typed-literal" | "bnode";
+     datatype?: string;
+     "xml:lang"?: string;
++    "its:dir"?: string;
+   }
+   export interface Binding {
+     [varname: string]: BindingValue;

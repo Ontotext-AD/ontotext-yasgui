@@ -108,9 +108,9 @@ export const genericConfig: webpack.Configuration = {
   devtool: isDev ? "inline-source-map" : "source-map",
   cache: isDev,
   optimization: {
-    minimize: true, //If you're debugging the production build, set this to false
+    minimize: false, //If you're debugging the production build, set this to false
     //that'll speed up the build process quite a bit
-    minimizer: isDev
+    minimizer: true
       ? []
       : [
           new TerserPlugin({
@@ -123,7 +123,7 @@ export const genericConfig: webpack.Configuration = {
     maxEntrypointSize: 3000000,
     maxAssetSize: 3000000
   },
-  mode: isDev ? "development" : "production",
+  mode: true ? "development" : "production",
   module: {
     rules: [
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
