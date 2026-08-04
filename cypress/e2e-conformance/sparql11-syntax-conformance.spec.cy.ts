@@ -1,16 +1,13 @@
-import {ManifestGroup, SyntaxConformanceSteps} from '../steps/syntax-conformance-steps';
+import {SyntaxConformanceSteps} from '../steps/syntax-conformance-steps';
 
-describe.skip('W3C SPARQL 1.1 Syntax Conformance – UI Error Indicators', () => {
-  const SUITE_ID = 'sparql11';
-  let suiteManifest: ManifestGroup;
+const SUITE_ID = 'sparql11';
+
+// Read at definition time, so that every W3C test file can get its own `it()`.
+const suiteManifest = SyntaxConformanceSteps.getManifest(SUITE_ID);
+
+describe('W3C SPARQL 1.1 Syntax Conformance – UI Error Indicators', () => {
 
   before(() => {
-    SyntaxConformanceSteps.loadManifests((manifests) => {
-      suiteManifest = manifests.find((m) => m.manifestId === SUITE_ID);
-    });
-  });
-
-  beforeEach(() => {
     SyntaxConformanceSteps.setup();
   });
 
@@ -18,26 +15,11 @@ describe.skip('W3C SPARQL 1.1 Syntax Conformance – UI Error Indicators', () =>
     expect(suiteManifest, `Missing tests for suite: ${SUITE_ID}`).to.exist;
   });
 
-  it('positive tests should show no syntax errors in the editor', function () {
-    if (!suiteManifest) {
-      this.skip();
-    }
-    if (suiteManifest.positiveTests.length === 0) {
-      this.skip();
-    }
-
-    SyntaxConformanceSteps.runPositiveTests(suiteManifest.positiveTests);
+  describe('positive tests', () => {
+    SyntaxConformanceSteps.definePositiveTests(suiteManifest?.positiveTests);
   });
 
-  it('negative tests should show syntax errors in the editor', function () {
-    if (!suiteManifest) {
-      this.skip();
-    }
-    if (suiteManifest.negativeTests.length === 0) {
-      this.skip();
-    }
-
-    SyntaxConformanceSteps.runNegativeTests(suiteManifest.negativeTests);
+  describe('negative tests', () => {
+    SyntaxConformanceSteps.defineNegativeTests(suiteManifest?.negativeTests);
   });
 });
-
