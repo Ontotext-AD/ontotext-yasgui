@@ -1,0 +1,59 @@
+Index: Yasgui/packages/yasqe/grammar/tokenizer.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/tokenizer.ts b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+--- a/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision f6020a534b61bddce057584902de75825066492e)
++++ b/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision 903220e46d880b9f65caedf640dbdbc1424d2007)
+@@ -61,6 +61,7 @@
+   valuesVarCount: number;         // number of variables declared in VALUES
+   valuesVarNames: Set<string>;    // variable names declared in VALUES (for duplicate detection)
+   valuesTupleCount: number;       // number of values in current data tuple
++  valuesSkipNext: boolean;        // skip next token in VALUES tuple (after ^^)
+   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
+   tripleTermDepth: number;
+   // BIND variable scoping
+@@ -1143,11 +1144,24 @@
+                     " values but " + state.valuesVarCount + " variables declared";
+                 }
+                 state.valuesClause = "data";
+-              } else if (tokenCat !== ")" && state.tripleTermDepth === 0) {
++                state.valuesSkipNext = false;
++              } else if (state.tripleTermDepth === 0) {
+                 // Count each top-level value in the tuple.
+                 // <<( at depth 0 counts as one value (the whole triple term);
+                 // tokens inside <<(...)>> (depth > 0) are not counted.
+-                state.valuesTupleCount++;
++                // LANGTAG and ^^ (with its following IRI) are part of the
++                // preceding rdfLiteral and should not be counted separately.
++                if (state.valuesSkipNext) {
++                  // This token follows ^^ so it's the datatype IRI — skip it
++                  state.valuesSkipNext = false;
++                } else if (tokenCat === 'LANGTAG') {
++                  // Language tag is part of the preceding string literal — skip
++                } else if (tokenCat === '^^') {
++                  // Datatype marker — skip this and the next token (the datatype IRI)
++                  state.valuesSkipNext = true;
++                } else {
++                  state.valuesTupleCount++;
++                }
+               }
+             }
+ 
+@@ -1446,6 +1460,7 @@
+         valuesVarCount: s.valuesVarCount,
+         valuesVarNames: new Set(s.valuesVarNames),
+         valuesTupleCount: s.valuesTupleCount,
++        valuesSkipNext: s.valuesSkipNext,
+         bindScopeStack: s.bindScopeStack.map(scope => new Set(scope)),
+         inBind: s.inBind,
+         bindParenDepth: s.bindParenDepth,
+@@ -1506,6 +1521,7 @@
+         valuesVarCount: 0,
+         valuesVarNames: new Set(),
+         valuesTupleCount: 0,
++        valuesSkipNext: false,
+         bindScopeStack: [new Set()],
+         inBind: false,
+         bindParenDepth: 0,
