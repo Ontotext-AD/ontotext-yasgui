@@ -16,18 +16,21 @@ export interface ManifestGroup {
 export class SyntaxConformanceSteps {
 
   /**
-   * Loads all manifest test data via the Cypress task and stores the result
-   * into the provided setter. Should be called from a `before()` hook.
+   * Returns the manifest of a single suite, or undefined when that suite yielded no tests.
+   *
+   * The manifests are collected by the `setupNodeEvents` hook of the conformance config and
+   * handed over through `Cypress.env`, so that they can be read while the spec files are still
+   * being defined - that is when the `it()` per W3C test file gets created.
    */
-  static loadManifests(setter: (manifests: ManifestGroup[]) => void): void {
-    cy.task('readAllManifestTests').then((result: ManifestGroup[]) => {
-      setter(result);
-    });
+  static getManifest(suiteId: string): ManifestGroup | undefined {
+    const manifests = (Cypress.env('conformanceManifests') || []) as ManifestGroup[];
+    return manifests.find((manifest) => manifest.manifestId === suiteId);
   }
 
   /**
    * Visits the conformance page and waits for the YASQE editor to be visible.
-   * Should be called from a `beforeEach()` hook.
+   * Should be called from a `before()` hook - the specs run with `testIsolation: false`, so a
+   * single page load is shared by all tests of a spec.
    */
   static setup(): void {
     SyntaxConformancePageSteps.visit();
@@ -57,72 +60,56 @@ export class SyntaxConformanceSteps {
   }
 
   /**
-   * Iterates over the provided positive tests and asserts that none of them
-   * show a syntax-error icon in the editor.
+   * Declares one Cypress test per entry, each asserting that the query is accepted by the
+   * grammar, so that no syntax-error icon shows up in the editor.
+   *
+   * Must be called while the spec is being defined, i.e. directly inside a `describe()` body.
    *
    * @param positiveTests - Tests that are expected to be accepted by the grammar.
+   * @param skippedRelativePaths - Relative paths of tests to be declared as skipped.
    */
-  static runPositiveTests(positiveTests: ConformanceTestEntry[]): void {
-    const failures: string[] = [];
-
-    let chain: Cypress.Chainable<any> = cy.wrap(null);
-    for (const test of positiveTests) {
-      chain = chain.then(() => {
-          Cypress.log({message: `${test.label ?? test.relativePath}`, displayName: 'Execute test', consoleProps: () => ({Label: test.label, RelativePath: test.relativePath})});
-          return SyntaxConformanceSteps.verifyQuery(test).then(({hasErrorIcon}) => {
-            if (hasErrorIcon) {
-              failures.push(
-                `${test.label} (${test.relativePath}): hasErrorIcon=${hasErrorIcon}`
-              );
-            }
-          });
-        }
-      );
-    }
-
-    chain.then(() => {
-      if (failures.length > 0) {
-        const total = positiveTests.length;
-        throw new Error(
-          `${failures.length}/${total} positive tests showed syntax errors:\n` + failures.join('\n')
-        );
-      }
+  static definePositiveTests(positiveTests: ConformanceTestEntry[] = [],
+                             skippedRelativePaths: Set<string> = new Set()): void {
+    SyntaxConformanceSteps.defineTests(positiveTests, skippedRelativePaths, 'should not be marked as invalid', (test) => {
+      SyntaxConformanceSteps.verifyQuery(test).then(({hasErrorIcon}) => {
+        expect(hasErrorIcon, `${test.relativePath} is valid, but the editor reports a syntax error`).to.be.false;
+      });
     });
   }
 
   /**
-   * Iterates over the provided negative tests and asserts that each one shows
-   * both a syntax-error icon and a tooltip in the editor.
+   * Declares one Cypress test per entry, each asserting that the query is rejected by the
+   * grammar, so that both a syntax-error icon and its tooltip show up in the editor.
+   *
+   * Must be called while the spec is being defined, i.e. directly inside a `describe()` body.
    *
    * @param negativeTests - Tests that are expected to be rejected by the grammar.
+   * @param skippedRelativePaths - Relative paths of tests to be declared as skipped.
    */
-  static runNegativeTests(negativeTests: ConformanceTestEntry[]): void {
-    const failures: string[] = [];
+  static defineNegativeTests(negativeTests: ConformanceTestEntry[] = [],
+                             skippedRelativePaths: Set<string> = new Set()): void {
+    SyntaxConformanceSteps.defineTests(negativeTests, skippedRelativePaths, 'should be marked as invalid', (test) => {
+      SyntaxConformanceSteps.verifyQuery(test).then(({hasErrorIcon, hasTooltip}) => {
+        expect(hasErrorIcon, `${test.relativePath} is invalid, but no syntax-error icon is shown`).to.be.true;
+        expect(hasTooltip, `${test.relativePath} shows a syntax-error icon without a tooltip`).to.be.true;
+      });
+    });
+  }
 
-    let chain: Cypress.Chainable<any> = cy.wrap(null);
-    for (const test of negativeTests) {
-      chain = chain.then(() => {
-          Cypress.log({message: `${test.label ?? test.relativePath}`, displayName: 'Execute test', consoleProps: () => ({Label: test.label, RelativePath: test.relativePath})});
-
-          return SyntaxConformanceSteps.verifyQuery(test).then(({hasErrorIcon, hasTooltip}) => {
-            if (!hasErrorIcon || !hasTooltip) {
-              failures.push(
-                `${test.label} (${test.relativePath}): ` +
-                `hasErrorIcon=${hasErrorIcon} hasTooltip=${hasTooltip}`
-              );
-            }
-          });
-        }
-      );
-    }
-
-    chain.then(() => {
-      if (failures.length > 0) {
-        const total = negativeTests.length;
-        throw new Error(
-          `${failures.length}/${total} negative tests did NOT show syntax errors:\n` + failures.join('\n')
-        );
-      }
+  /**
+   * Declares a Cypress test per entry, titled after the manifest label and the relative path of
+   * the W3C test file. Entries listed in <code>skippedRelativePaths</code> are declared through
+   * `it.skip`, so that they show up as skipped in the report instead of silently disappearing
+   * from the suite.
+   */
+  private static defineTests(tests: ConformanceTestEntry[],
+                             skippedRelativePaths: Set<string>,
+                             titleSuffix: string,
+                             verify: (test: ConformanceTestEntry) => void): void {
+    tests.forEach((test) => {
+      const title = `${test.label || test.relativePath} (${test.relativePath}) ${titleSuffix}`;
+      const declareTest = skippedRelativePaths.has(test.relativePath) ? it.skip : it;
+      declareTest(title, () => verify(test));
     });
   }
 }
