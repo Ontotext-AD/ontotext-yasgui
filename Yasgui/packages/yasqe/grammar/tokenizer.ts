@@ -90,28 +90,29 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
   const ll1_table = grammar.table;
 
   const HEX = "[0-9A-Fa-f]";
-  // SPARQL 1.2 §19.3 Codepoint Escapes (\uXXXX / \UXXXXXXXX).
-  // Escapes that appear inside a single token (IRIs, prefixed names, strings,
-  // variable names) are accepted directly by the terminal regexes via the
-  // UCHAR pattern below.  Escapes that produce whitespace, delimiters, or
-  // keyword characters (and therefore change token boundaries) are handled
-  // by a parallel preprocessed buffer in tokenBase — see
-  // preprocessLineWithMapping — which keeps stream.string untouched so that
-  // CodeMirror position tracking (stream.pos, eol(), token boundaries)
-  // remains correct.
+  // SPARQL 1.2 §19.2 numeric escapes (\uXXXX / \UXXXXXXXX).
+  // Unlike SPARQL 1.1, these are NOT expanded in a pre-tokenization pass over
+  // the whole query.  UCHAR occurs only in IRI_REF and in the four
+  // STRING_LITERAL productions, so an escape can never form a keyword,
+  // whitespace, a delimiter, a variable name or a prefixed name.  Escapes are
+  // also not re-scanned after substitution, which is why the terminals below
+  // match them verbatim instead of decoding them.
   const UCHAR = "(\\\\u" + HEX + "{4}|\\\\U" + HEX + "{8})";
 
   const IRI_REF = '<([^<>"`|{}^\\\x00-\x20]|' + UCHAR + ')*>';
   const PN_CHARS_BASE =
     "[A-Za-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD]";
-  const PN_CHARS_U = PN_CHARS_BASE + "|_|" + UCHAR;
+  // PN_CHARS_U ::= PN_CHARS_BASE | '_' — deliberately without UCHAR: numeric
+  // escapes are not permitted in prefixed names, variable names or blank node
+  // labels (only reserved character escapes are, via PN_LOCAL_ESC).
+  const PN_CHARS_U = PN_CHARS_BASE + "|_";
 
   const PN_CHARS = "(" + PN_CHARS_U + "|-|[0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040])";
   const VARNAME = "(" + PN_CHARS_U + "|[0-9])" + "(" + PN_CHARS_U + "|[0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040])*";
   const VAR1 = "\\?" + VARNAME;
   const VAR2 = "\\$" + VARNAME;
 
-  const PN_PREFIX = "(" + PN_CHARS_BASE + "|" + UCHAR + ")(((" + PN_CHARS + ")|\\.)*(" + PN_CHARS + "))?";
+  const PN_PREFIX = "(" + PN_CHARS_BASE + ")(((" + PN_CHARS + ")|\\.)*(" + PN_CHARS + "))?";
 
   const PERCENT = "(%" + HEX + HEX + ")";
   const PN_LOCAL_ESC = "(\\\\[_~\\.\\-!\\$&'\\(\\)\\*\\+,;=/\\?#@%])";
@@ -140,15 +141,12 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
 
   const ECHAR = "\\\\[tbnrf\\\\\"']";
 
-  //unicode escape sequences (SPARQL 1.2 §19.3 codepoint escapes) are accepted
-  //in the terminal regexes (IRI_REF, PN_CHARS, string literals, etc.) via the
-  //UCHAR pattern defined above.  The 'unicode' variable below is the more
-  //restrictive variant used inside string-literal regexes (validates the \U
-  //range to U+0000–U+10FFFF).
-  const hex4 = HEX + "{4}";
-  const unicode = "(\\\\u" + hex4 + "|\\\\U00(10|0" + HEX + ")" + hex4 + ")";
-  const STRING_LITERAL1 = "'(([^\\x27\\x5C\\x0A\\x0D])|" + ECHAR + "|" + unicode + ")*'";
-  const STRING_LITERAL2 = '"(([^\\x22\\x5C\\x0A\\x0D])|' + ECHAR + "|" + unicode + ')*"';
+  // String literals accept numeric escapes through the same UCHAR pattern as
+  // IRI_REF.  The value range (no surrogates, nothing above U+10FFFF) is not
+  // expressed here but validated per token by findInvalidNumericEscape, so that
+  // an out-of-range escape reports a specific error instead of failing to lex.
+  const STRING_LITERAL1 = "'(([^\\x27\\x5C\\x0A\\x0D])|" + ECHAR + "|" + UCHAR + ")*'";
+  const STRING_LITERAL2 = '"(([^\\x22\\x5C\\x0A\\x0D])|' + ECHAR + "|" + UCHAR + ')*"';
 
   const STRING_LITERAL_LONG: {
     [key: string]: {
@@ -161,12 +159,12 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
     SINGLE: {
       CAT: "STRING_LITERAL_LONG1",
       QUOTES: "'''",
-      CONTENTS: "(('|'')?([^'\\\\]|" + ECHAR + "|" + unicode + "))*"
+      CONTENTS: "(('|'')?([^'\\\\]|" + ECHAR + "|" + UCHAR + "))*"
     },
     DOUBLE: {
       CAT: "STRING_LITERAL_LONG2",
       QUOTES: '"""',
-      CONTENTS: '(("|"")?([^"\\\\]|' + ECHAR + "|" + unicode + "))*"
+      CONTENTS: '(("|"")?([^"\\\\]|' + ECHAR + "|" + UCHAR + "))*"
     }
   };
   for (const key in STRING_LITERAL_LONG) {
@@ -372,102 +370,47 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
     return possibles;
   }
 
-  /**
-   * Result of preprocessing a single line for SPARQL 1.2 §19.3 codepoint
-   * escapes.  Contains the decoded text together with bidirectional position
-   * mappings so that stream.pos can be translated between original and
-   * preprocessed coordinates without altering stream.string length.
-   */
-  interface PreprocResult {
-    /** Decoded line text (may be shorter than the original). */
-    text: string;
-    /** Original line text. */
-    origLine: string;
-    /** Maps each preprocessed char-index (+ end sentinel) → original index. */
-    toOrigPos: number[];
-    /** Maps each original char-index (+ end sentinel) → preprocessed index. */
-    origToPreproc: number[];
-  }
+  /** Token categories whose grammar production allows UCHAR. */
+  const UCHAR_TOKEN_CATS = new Set([
+    "IRI_REF",
+    "STRING_LITERAL1",
+    "STRING_LITERAL2",
+    "STRING_LITERAL_LONG1",
+    "STRING_LITERAL_LONG2"
+  ]);
 
   /**
-   * SPARQL 1.2 §19.3 — expand \uXXXX / \UXXXXXXXX escapes in a single
-   * left-to-right pass and build position mappings between the original
-   * and preprocessed strings.
+   * SPARQL 1.2 §19.2 — a numeric escape sequence must not produce a code point
+   * in the surrogate range U+D800–U+DFFF, nor a value above U+10FFFF.
    *
-   * Surrogate codepoints (U+D800–U+DFFF) and values above U+10FFFF are
-   * left unconverted (the grammar will reject them downstream).
+   * The token is scanned left-to-right the way the spec prescribes: a backslash
+   * that does not start a `\uXXXX` / `\UXXXXXXXX` sequence consumes the
+   * character following it, so the second backslash of `\\uD800` is ordinary
+   * text rather than the start of an escape.
    *
-   * Returns `null` when no escapes were expanded (the common case), so the
-   * caller can skip the swap/restore overhead entirely.
+   * Returns the offending escape sequence, or `undefined` when every escape in
+   * the token is in range.
    */
-  function preprocessLineWithMapping(original: string): PreprocResult | null {
-    const toOrigPos: number[] = [];
-    const origToPreproc: number[] = [];
-    let result = "";
-    let origIdx = 0;
-
-    while (origIdx < original.length) {
-      if (original[origIdx] === "\\") {
-        // Check for \uXXXX (6 chars total)
-        if (
-          original[origIdx + 1] === "u" &&
-          origIdx + 6 <= original.length
-        ) {
-          const hex = original.substring(origIdx + 2, origIdx + 6);
-          if (/^[0-9A-Fa-f]{4}$/.test(hex)) {
-            const cp = parseInt(hex, 16);
-            if (!(cp >= 0xD800 && cp <= 0xDFFF)) {
-              const decoded = String.fromCodePoint(cp);
-              const preprocStart = result.length;
-              for (let j = 0; j < decoded.length; j++) {
-                toOrigPos.push(origIdx);
-              }
-              result += decoded;
-              for (let j = 0; j < 6; j++) {
-                origToPreproc.push(preprocStart);
-              }
-              origIdx += 6;
-              continue;
-            }
-          }
-        }
-        // Check for \UXXXXXXXX (10 chars total)
-        if (
-          original[origIdx + 1] === "U" &&
-          origIdx + 10 <= original.length
-        ) {
-          const hex = original.substring(origIdx + 2, origIdx + 10);
-          if (/^[0-9A-Fa-f]{8}$/.test(hex)) {
-            const cp = parseInt(hex, 16);
-            if (cp <= 0x10FFFF && !(cp >= 0xD800 && cp <= 0xDFFF)) {
-              const decoded = String.fromCodePoint(cp);
-              const preprocStart = result.length;
-              for (let j = 0; j < decoded.length; j++) {
-                toOrigPos.push(origIdx);
-              }
-              result += decoded;
-              for (let j = 0; j < 10; j++) {
-                origToPreproc.push(preprocStart);
-              }
-              origIdx += 10;
-              continue;
-            }
-          }
-        }
+  function findInvalidNumericEscape(text: string): string | undefined {
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] !== "\\") continue;
+      let length: number;
+      if (text[i + 1] === "u" && /^[0-9A-Fa-f]{4}$/.test(text.substr(i + 2, 4))) {
+        length = 6;
+      } else if (text[i + 1] === "U" && /^[0-9A-Fa-f]{8}$/.test(text.substr(i + 2, 8))) {
+        length = 10;
+      } else {
+        // A string escape or reserved character escape — consumes one character
+        i++;
+        continue;
       }
-      // Regular character — identity mapping
-      origToPreproc.push(result.length);
-      toOrigPos.push(origIdx);
-      result += original[origIdx];
-      origIdx++;
+      const cp = parseInt(text.substr(i + 2, length - 2), 16);
+      if ((cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff) {
+        return text.substr(i, length);
+      }
+      i += length - 1;
     }
-    // End-of-string sentinel positions
-    origToPreproc.push(result.length);
-    toOrigPos.push(original.length);
-
-    if (result === original) return null;
-
-    return { text: result, origLine: original, toOrigPos, origToPreproc };
+    return undefined;
   }
 
   function tokenBase(stream: CodeMirror.StringStream, state: State) {
@@ -690,29 +633,9 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
     // - i.e. a definite break between tokens (for autocompleter)
     if (stream.pos == 0) {
       state.possibleCurrent = state.possibleNext;
-      // SPARQL 1.2 §19.3: preprocess codepoint escapes for this line.
-      // Build position mappings so we can swap to the preprocessed text for
-      // matching and restore the original before returning to CodeMirror.
-      if (stream.string.indexOf("\\u") !== -1 || stream.string.indexOf("\\U") !== -1) {
-        (state as any)._preprocData = preprocessLineWithMapping(stream.string);
-      } else {
-        (state as any)._preprocData = undefined;
-      }
-    }
-
-    // If escapes were expanded, temporarily swap stream.string to the
-    // preprocessed text so that regex matching operates on the decoded line.
-    // The original string and positions are restored in the finally block.
-    const preprocData: PreprocResult | undefined = (state as any)._preprocData;
-    if (preprocData) {
-      (stream as any).string = preprocData.text;
-      stream.pos = preprocData.origToPreproc[stream.pos];
-      stream.start = stream.pos;
     }
 
     const tokenOb = nextToken();
-
-    try {
 
     if (tokenOb.cat == "<invalid_token>") {
       // set error state, and
@@ -723,6 +646,24 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
       state.complete = false;
       // alert("Invalid:"+tokenOb.text);
       return tokenOb.style;
+    }
+    // SPARQL 1.2 §19.2 numeric escape range check.  This runs before the
+    // early return below because a long string literal reaches us in chunks and
+    // only its closing chunk is fed to the LL(1) parser.
+    if (state.OK && UCHAR_TOKEN_CATS.has(tokenOb.cat)) {
+      const badEscape = findInvalidNumericEscape(tokenOb.string);
+      if (badEscape) {
+        state.OK = false;
+        // Clearing OK skips the LL(1) loop below, so `state.complete` would
+        // otherwise keep the previous token's value — as the `<invalid_token>`
+        // branch above does, reject the token explicitly.
+        state.complete = false;
+        recordFailurePos();
+        state.errorMsg =
+          "Invalid numeric escape '" +
+          badEscape +
+          "': must not denote a Unicode surrogate or a code point above U+10FFFF";
+      }
     }
     if (tokenOb.cat === "WS" || tokenOb.cat === "COMMENT" || (tokenOb.quotePos && tokenOb.quotePos != "end")) {
       state.possibleCurrent = state.possibleNext;
@@ -994,8 +935,11 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
                   } else {
                     state.selectAliases.add(tokenOb.string);
                   }
-                } else {
-                  // Non-alias var — must be in GROUP BY if GROUP BY is present
+                } else if (!state.selectAliases.has(tokenOb.string)) {
+                  // Non-alias var — must be in GROUP BY if GROUP BY is present.
+                  // A var introduced by an earlier select expression in the same
+                  // SELECT clause is already in scope, so it is exempt
+                  // (e.g. SELECT (COUNT(?v) AS ?c) (?c + 1 AS ?cPlusOne)).
                   state.selectBareVars.add(tokenOb.string);
                 }
                 (state as any)._afterAS = false;
@@ -1250,19 +1194,6 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
                 }
               }
             }
-
-            // Unicode surrogate codepoint validation:
-            // \uD800-\uDFFF are surrogate codepoints and are invalid in SPARQL strings.
-            if (state.OK &&
-                (tokenCat === "STRING_LITERAL1" || tokenCat === "STRING_LITERAL2" ||
-                 tokenCat === "STRING_LITERAL_LONG_SINGLE" || tokenCat === "STRING_LITERAL_LONG_DOUBLE")) {
-              const surrogateMatch = tokenOb.string.match(/\\u[Dd][89A-Fa-f][0-9A-Fa-f]{2}/);
-              if (surrogateMatch) {
-                state.OK = false;
-                recordFailurePos();
-                state.errorMsg = "Invalid unicode surrogate codepoint escape: " + surrogateMatch[0];
-              }
-            }
           } else {
             state.OK = false;
             state.complete = false;
@@ -1321,20 +1252,6 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
     state.possibleNext = getPossibles(state.stack[state.stack.length - 1]);
 
     return tokenOb.style;
-
-    } finally {
-      // Restore the original line and translate positions back so that
-      // CodeMirror sees the unmodified string and correct char offsets.
-      if (preprocData) {
-        (stream as any).string = preprocData.origLine;
-        stream.pos = preprocData.toOrigPos[stream.pos] !== undefined
-          ? preprocData.toOrigPos[stream.pos]
-          : preprocData.origLine.length;
-        stream.start = preprocData.toOrigPos[stream.start] !== undefined
-          ? preprocData.toOrigPos[stream.start]
-          : 0;
-      }
-    }
   }
 
   const indentTop: { [symbol: string]: number } = {
@@ -1534,6 +1451,16 @@ export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode
         afterReifier: false,
         finalize: function() {
           if (!this.OK) return;
+          // The variable of a (expr AS v) select expression must not already be
+          // in-scope, and `GROUP BY ... v` / `GROUP BY ... (expr AS v)` both put
+          // v in scope — so an alias may never reuse a GROUP BY variable.
+          for (const alias of this.selectAliases) {
+            if (this.groupByVars.has(alias)) {
+              this.OK = false;
+              this.errorMsg = "SELECT alias " + alias + " is already in scope from GROUP BY";
+              return;
+            }
+          }
           // GROUP BY scoping
           if (this.hasGroupBy) {
             if (this.selectHasStar) {
