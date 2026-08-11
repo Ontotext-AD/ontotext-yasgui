@@ -139,7 +139,7 @@ describe('Download as', () => {
     DownloadAsPageSteps.openDownloadAsDropdown();
 
     // Then I expect to have more than one options
-    DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 8);
+    DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 5);
   });
 
   it('Should "Download as" dropdown be configured by external configuration', () => {
@@ -152,7 +152,7 @@ describe('Download as', () => {
     // And dropdown is opened.
     DownloadAsPageSteps.openDownloadAsDropdown();
 
-    // Then I expect to have exactly 3 options.
-    DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 3);
+    // Then I expect to have exactly 2 options.
+    DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 2);
   });
 });

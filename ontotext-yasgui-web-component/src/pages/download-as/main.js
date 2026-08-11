@@ -22,10 +22,6 @@ function setConfiguration() {
                 value: "application/sparql-results+json",
               },
               {
-                labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
-                value: "application/x-sparqlstar-results+json",
-              },
-              {
                 labelKey: "yasr.plugin_control.download_as.csv.label",
                 value: "text/csv",
               },
