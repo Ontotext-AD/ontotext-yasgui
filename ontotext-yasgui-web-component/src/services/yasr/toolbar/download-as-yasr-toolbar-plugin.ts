@@ -173,23 +173,14 @@ class ExtendedTableDownloadAsConfiguration extends DownloadAsPluginConfiguration
           labelKey: "yasr.plugin_control.download_as.sparql_results_json.select.label",
           value: "application/sparql-results+json",
         }, {
-          labelKey: "yasr.plugin_control.download_as.x_sparqlstar_results_json.label",
-          value: "application/x-sparqlstar-results+json",
-        }, {
           labelKey: 'yasr.plugin_control.download_as.sparql_results_xml.label',
           value: 'application/sparql-results+xml'
-        }, {
-          labelKey: 'yasr.plugin_control.download_as.x_sparqlstar_results_xml.label',
-          value: 'application/x-sparqlstar-results+xml'
         }, {
           labelKey: "yasr.plugin_control.download_as.csv.label",
           value: "text/csv",
         }, {
           labelKey: "yasr.plugin_control.download_as.tab_separated_values.label",
           value: "text/tab-separated-values",
-        }, {
-          labelKey: "yasr.plugin_control.download_as.x_tab_separated_values_star.label",
-          value: "text/x-tab-separated-values-star",
         }, {
           labelKey: "yasr.plugin_control.download_as.x_binary_rdf_results_table.label",
           value: "application/x-binary-rdf-results-table",
@@ -221,17 +212,11 @@ class ExtendedTableDownloadAsConfiguration extends DownloadAsPluginConfiguration
           labelKey: "yasr.plugin_control.download_as.triple.label",
           value: "text/turtle",
         }, {
-          labelKey: "yasr.plugin_control.download_as.triple_star.label",
-          value: "application/x-turtlestar",
-        }, {
           labelKey: "yasr.plugin_control.download_as.tri-x.label",
           value: "application/trix",
         }, {
           labelKey: "yasr.plugin_control.download_as.tri-g.label",
           value: "application/x-trig",
-        }, {
-          labelKey: "yasr.plugin_control.download_as.tri-g_star.label",
-          value: "application/x-trigstar",
         }, {
           labelKey: "yasr.plugin_control.download_as.binary.label",
           value: "application/x-binary-rdf",
