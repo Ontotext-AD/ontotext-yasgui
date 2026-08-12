@@ -4,6 +4,12 @@ export interface SyntaxCheckResult {
   /** 1-based line number where the first error was detected, or `null` if no error. */
   errorLine: number | null;
   errorMsg: string | null;
+  diagnostic: SyntaxDiagnostic | null;
+}
+
+export interface SyntaxDiagnostic {
+  messageLabelKey: string;
+  parameters?: {key: string; value: string}[];
 }
 
 export interface CodeMirrorMode {
@@ -23,7 +29,7 @@ export interface CodeMirrorStream {
 export interface CodeMirrorState {
   OK: boolean;
   complete: boolean;
-  errorMsg?: string;
+  diagnostic?: SyntaxDiagnostic;
 }
 
 /**
@@ -82,6 +88,7 @@ export function checkQuerySyntax(CodeMirror: CodeMirrorInstance, query: string):
 
   let errorLine: number | null = null;
   let errorMsg: string | null = null;
+  let diagnostic: SyntaxDiagnostic | null = null;
 
   for (let i = 0; i < lines.length; i++) {
     const stream = new CodeMirror.StringStream(lines[i], CodeMirror.defaults.tabSize);
@@ -95,7 +102,8 @@ export function checkQuerySyntax(CodeMirror: CodeMirrorInstance, query: string):
     }
     if (!state.OK && errorLine === null) {
       errorLine = i + 1;
-      errorMsg = state.errorMsg || 'Syntax error';
+      errorMsg = state.diagnostic?.messageLabelKey || 'Syntax error';
+      diagnostic = state.diagnostic || null;
     }
   }
 
@@ -104,7 +112,8 @@ export function checkQuerySyntax(CodeMirror: CodeMirrorInstance, query: string):
     (state as any).finalize();
     if (!state.OK && errorLine === null) {
       errorLine = lines.length;
-      errorMsg = state.errorMsg || 'Syntax error';
+      errorMsg = state.diagnostic?.messageLabelKey || 'Syntax error';
+      diagnostic = state.diagnostic || null;
     }
   }
 
@@ -112,7 +121,7 @@ export function checkQuerySyntax(CodeMirror: CodeMirrorInstance, query: string):
     valid: state.OK,
     complete: state.complete,
     errorLine,
-    errorMsg
+    errorMsg,
+    diagnostic
   };
 }
-
