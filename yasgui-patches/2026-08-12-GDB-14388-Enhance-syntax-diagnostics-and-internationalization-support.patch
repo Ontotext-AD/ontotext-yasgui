@@ -1,0 +1,926 @@
+Index: Yasgui/packages/yasqe/grammar/tokenizer.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/tokenizer.ts b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+--- a/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision 725bed5a5f8f6138093972e2a306041e66650ca0)
++++ b/Yasgui/packages/yasqe/grammar/tokenizer.ts	(revision 7e02300d3609df05059975c2c1d75c71e7619dc9)
+@@ -22,7 +22,7 @@
+   inPrefixDecl: boolean;
+   allowVars: boolean;
+   allowBnodes: boolean;
+-  hadDataBlock: boolean;  // tracks whether current operation had a DATA block (INSERT DATA / DELETE DATA)
++  hadDataBlock: boolean; // tracks whether current operation had a DATA block (INSERT DATA / DELETE DATA)
+   storeProperty: boolean;
+   OK: boolean;
+   possibleCurrent: string[];
+@@ -33,51 +33,63 @@
+   complete: boolean;
+   lastProperty: string;
+   lastPropertyIndex: number;
+-  errorMsg: string | undefined;
++  diagnostic: SyntaxDiagnostic | undefined;
+   lastPredicateOffset: number;
+   currentPnameNs: string | undefined;
+   possibleFullIri: boolean;
+   bnodeScopeStack: { ownLabels: Set<string>; childLabels: Set<string> }[];
+   // GROUP BY scoping: track non-aggregated SELECT variables and GROUP BY variables
+   inSelectClause: boolean;
+-  selectParenDepth: number;       // paren depth inside SELECT clause
+-  aggregateNesting: number;       // nesting depth inside aggregate functions (COUNT, SUM, etc.)
+-  aggParenStack: number[];        // stack of selectParenDepth values at which each aggregate '(' was pushed
+-  selectBareVars: Set<string>;    // bare ?var in SELECT not inside aggregate or (expr AS ?var)
+-  selectHasAggregate: boolean;    // whether SELECT clause contains any aggregate
+-  selectHasStar: boolean;         // whether SELECT clause used '*'
+-  selectAliases: Set<string>;     // alias names from (expr AS ?var) to detect duplicates
++  selectParenDepth: number; // paren depth inside SELECT clause
++  aggregateNesting: number; // nesting depth inside aggregate functions (COUNT, SUM, etc.)
++  aggParenStack: number[]; // stack of selectParenDepth values at which each aggregate '(' was pushed
++  selectBareVars: Set<string>; // bare ?var in SELECT not inside aggregate or (expr AS ?var)
++  selectHasAggregate: boolean; // whether SELECT clause contains any aggregate
++  selectHasStar: boolean; // whether SELECT clause used '*'
++  selectAliases: Set<string>; // alias names from (expr AS ?var) to detect duplicates
+   inGroupByClause: boolean;
+-  groupByVars: Set<string>;       // bare ?var in GROUP BY (at paren depth 0)
+-  groupByParenDepth: number;      // paren depth inside GROUP BY clause
+-  hasGroupBy: boolean;            // whether GROUP BY clause was seen
+-  subSelectDepth: number;         // depth of sub-SELECT nesting (to ignore inner SELECTs)
++  groupByVars: Set<string>; // bare ?var in GROUP BY (at paren depth 0)
++  groupByParenDepth: number; // paren depth inside GROUP BY clause
++  hasGroupBy: boolean; // whether GROUP BY clause was seen
++  subSelectDepth: number; // depth of sub-SELECT nesting (to ignore inner SELECTs)
+   subSelectProjectedVars: Set<string>; // vars projected by sub-SELECTs into outer scope
+-  inSubSelectClause: boolean;     // tracking inner SELECT clause vars
+-  subSelectParenDepth: number;    // paren depth inside inner SELECT clause
+-  afterSubSelectAS: boolean;      // whether we just saw AS in inner SELECT
++  inSubSelectClause: boolean; // tracking inner SELECT clause vars
++  subSelectParenDepth: number; // paren depth inside inner SELECT clause
++  afterSubSelectAS: boolean; // whether we just saw AS in inner SELECT
+   // VALUES arity checking
+   valuesClause: "vars" | "data" | "tuple" | undefined; // current phase in VALUES clause
+-  valuesVarCount: number;         // number of variables declared in VALUES
+-  valuesVarNames: Set<string>;    // variable names declared in VALUES (for duplicate detection)
+-  valuesTupleCount: number;       // number of values in current data tuple
+-  valuesSkipNext: boolean;        // skip next token in VALUES tuple (after ^^)
++  valuesVarCount: number; // number of variables declared in VALUES
++  valuesVarNames: Set<string>; // variable names declared in VALUES (for duplicate detection)
++  valuesTupleCount: number; // number of values in current data tuple
++  valuesSkipNext: boolean; // skip next token in VALUES tuple (after ^^)
+   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
+   tripleTermDepth: number;
+   // BIND variable scoping
+-  bindScopeStack: Set<string>[];  // stack of variable scopes for BIND checking
+-  inBind: boolean;                // whether we're inside a BIND clause
+-  bindParenDepth: number;         // paren nesting depth inside BIND
+-  afterBindAS: boolean;           // whether we just saw AS inside BIND
+-  inFilter: boolean;              // whether we're inside a FILTER expression
+-  filterParenDepth: number;       // paren nesting depth inside FILTER
++  bindScopeStack: Set<string>[]; // stack of variable scopes for BIND checking
++  inBind: boolean; // whether we're inside a BIND clause
++  bindParenDepth: number; // paren nesting depth inside BIND
++  afterBindAS: boolean; // whether we just saw AS inside BIND
++  inFilter: boolean; // whether we're inside a FILTER expression
++  filterParenDepth: number; // paren nesting depth inside FILTER
+   // Property-path predicate tracking for annotation/reifier validation
+-  inVerbPath: boolean;            // whether we are currently parsing a verbPath predicate
+-  verbPathIsComplex: boolean;     // whether the current verbPath has operators (/, |, +, *, ?, ^) making it a complex path
+-  afterReifier: boolean;          // whether a named reifier (~) was just consumed before an annotation block
++  inVerbPath: boolean; // whether we are currently parsing a verbPath predicate
++  verbPathIsComplex: boolean; // whether the current verbPath has operators (/, |, +, *, ?, ^) making it a complex path
++  afterReifier: boolean; // whether a named reifier (~) was just consumed before an annotation block
+   // End-of-query semantic validation (called after all tokens processed)
+   finalize: () => void;
+ }
++
++export interface SyntaxDiagnostic {
++  messageLabelKey: string;
++  parameters?: { key: string; value: string }[];
++}
++
++function createSyntaxDiagnostic(
++  messageLabelKey: string,
++  parameters?: { key: string; value: string }[]
++): SyntaxDiagnostic {
++  return { messageLabelKey, parameters };
++}
+ export interface Token {
+   quotePos: "end" | "start" | "content" | undefined;
+   cat: string;
+@@ -85,7 +97,7 @@
+   string: string;
+   start: number;
+ }
+-export default function(config: CodeMirror.EditorConfiguration): CodeMirror.Mode<State> {
++export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mode<State> {
+   const grammar = require("./_tokenizer-table.js");
+   const ll1_table = grammar.table;
+ 
+@@ -99,7 +111,7 @@
+   // match them verbatim instead of decoding them.
+   const UCHAR = "(\\\\u" + HEX + "{4}|\\\\U" + HEX + "{8})";
+ 
+-  const IRI_REF = '<([^<>"`|{}^\\\x00-\x20]|' + UCHAR + ')*>';
++  const IRI_REF = '<([^<>"`|{}^\\\x00-\x20]|' + UCHAR + ")*>";
+   const PN_CHARS_BASE =
+     "[A-Za-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD]";
+   // PN_CHARS_U ::= PN_CHARS_BASE | '_' — deliberately without UCHAR: numeric
+@@ -159,13 +171,13 @@
+     SINGLE: {
+       CAT: "STRING_LITERAL_LONG1",
+       QUOTES: "'''",
+-      CONTENTS: "(('|'')?([^'\\\\]|" + ECHAR + "|" + UCHAR + "))*"
++      CONTENTS: "(('|'')?([^'\\\\]|" + ECHAR + "|" + UCHAR + "))*",
+     },
+     DOUBLE: {
+       CAT: "STRING_LITERAL_LONG2",
+       QUOTES: '"""',
+-      CONTENTS: '(("|"")?([^"\\\\]|' + ECHAR + "|" + UCHAR + "))*"
+-    }
++      CONTENTS: '(("|"")?([^"\\\\]|' + ECHAR + "|" + UCHAR + "))*",
++    },
+   };
+   for (const key in STRING_LITERAL_LONG) {
+     STRING_LITERAL_LONG[key].COMPLETE =
+@@ -190,23 +202,23 @@
+       complete: {
+         name: "STRING_LITERAL_LONG_" + key,
+         regex: new RegExp("^" + STRING_LITERAL_LONG[key].COMPLETE),
+-        style: "string"
++        style: "string",
+       },
+       contents: {
+         name: "STRING_LITERAL_LONG_" + key,
+         regex: new RegExp("^" + STRING_LITERAL_LONG[key].CONTENTS),
+-        style: "string"
++        style: "string",
+       },
+       closing: {
+         name: "STRING_LITERAL_LONG_" + key,
+         regex: new RegExp("^" + STRING_LITERAL_LONG[key].CONTENTS + STRING_LITERAL_LONG[key].QUOTES),
+-        style: "string"
++        style: "string",
+       },
+       quotes: {
+         name: "STRING_LITERAL_LONG_QUOTES_" + key,
+         regex: new RegExp("^" + STRING_LITERAL_LONG[key].QUOTES),
+-        style: "string"
+-      }
++        style: "string",
++      },
+     };
+   }
+ 
+@@ -221,91 +233,91 @@
+     {
+       name: "WS",
+       regex: new RegExp("^" + WS + "+"),
+-      style: "ws"
++      style: "ws",
+     },
+ 
+     {
+       name: "COMMENT",
+       regex: new RegExp("^" + COMMENT),
+-      style: "comment"
++      style: "comment",
+     },
+ 
+     {
+       name: "IRI_REF",
+       regex: new RegExp("^" + IRI_REF),
+-      style: "variable-3"
++      style: "variable-3",
+     },
+ 
+     {
+       name: "VAR1",
+       regex: new RegExp("^" + VAR1),
+-      style: "atom"
++      style: "atom",
+     },
+ 
+     {
+       name: "VAR2",
+       regex: new RegExp("^" + VAR2),
+-      style: "atom"
++      style: "atom",
+     },
+ 
+     {
+       name: "LANGTAG",
+       regex: new RegExp("^" + LANGTAG),
+-      style: "meta"
++      style: "meta",
+     },
+ 
+     {
+       name: "DOUBLE",
+       regex: new RegExp("^" + DOUBLE),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "DECIMAL",
+       regex: new RegExp("^" + DECIMAL),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "INTEGER",
+       regex: new RegExp("^" + INTEGER),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "DOUBLE_POSITIVE",
+       regex: new RegExp("^" + DOUBLE_POSITIVE),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "DECIMAL_POSITIVE",
+       regex: new RegExp("^" + DECIMAL_POSITIVE),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "INTEGER_POSITIVE",
+       regex: new RegExp("^" + INTEGER_POSITIVE),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "DOUBLE_NEGATIVE",
+       regex: new RegExp("^" + DOUBLE_NEGATIVE),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "DECIMAL_NEGATIVE",
+       regex: new RegExp("^" + DECIMAL_NEGATIVE),
+-      style: "number"
++      style: "number",
+     },
+ 
+     {
+       name: "INTEGER_NEGATIVE",
+       regex: new RegExp("^" + INTEGER_NEGATIVE),
+-      style: "number"
++      style: "number",
+     },
+     //		stringLiteralLongRegex.SINGLE.complete,
+     //		stringLiteralLongRegex.DOUBLE.complete,
+@@ -315,46 +327,46 @@
+     {
+       name: "STRING_LITERAL1",
+       regex: new RegExp("^" + STRING_LITERAL1),
+-      style: "string"
++      style: "string",
+     },
+ 
+     {
+       name: "STRING_LITERAL2",
+       regex: new RegExp("^" + STRING_LITERAL2),
+-      style: "string"
++      style: "string",
+     },
+ 
+     // Enclosed comments won't be highlighted
+     {
+       name: "NIL",
+       regex: new RegExp("^" + NIL),
+-      style: "punc"
++      style: "punc",
+     },
+ 
+     // Enclosed comments won't be highlighted
+     {
+       name: "ANON",
+       regex: new RegExp("^" + ANON),
+-      style: "punc"
++      style: "punc",
+     },
+ 
+     {
+       name: "PNAME_LN",
+       regex: new RegExp("^" + PNAME_LN),
+-      style: "string-2"
++      style: "string-2",
+     },
+ 
+     {
+       name: "PNAME_NS",
+       regex: new RegExp("^" + PNAME_NS),
+-      style: "string-2"
++      style: "string-2",
+     },
+ 
+     {
+       name: "BLANK_NODE_LABEL",
+       regex: new RegExp("^" + BLANK_NODE_LABEL),
+-      style: "string-2"
+-    }
++      style: "string-2",
++    },
+   ];
+ 
+   function getPossibles(symbol: string) {
+@@ -376,7 +388,7 @@
+     "STRING_LITERAL1",
+     "STRING_LITERAL2",
+     "STRING_LITERAL_LONG1",
+-    "STRING_LITERAL_LONG2"
++    "STRING_LITERAL_LONG2",
+   ]);
+ 
+   /**
+@@ -433,7 +445,7 @@
+             cat: STRING_LITERAL_LONG[state.inLiteral].CAT,
+             style: stringLiteralLongRegex[state.inLiteral].complete.style,
+             string: consumed[0],
+-            start: stream.start
++            start: stream.start,
+           };
+           if (closingQuotes) state.inLiteral = undefined;
+           return returnObj;
+@@ -452,7 +464,7 @@
+             cat: STRING_LITERAL_LONG[state.inLiteral].CAT,
+             style: stringLiteralLongRegex[state.inLiteral].complete.style,
+             string: remaining,
+-            start: stream.start
++            start: stream.start,
+           };
+         }
+       }
+@@ -475,7 +487,7 @@
+             style: stringLiteralLongRegex[quoteType].quotes.style,
+             string: consumed[0],
+             quotePos: quotePos,
+-            start: stream.start
++            start: stream.start,
+           };
+         }
+       }
+@@ -489,7 +501,7 @@
+             style: terminals[i].style,
+             string: consumed[0],
+             start: stream.start,
+-            quotePos: undefined
++            quotePos: undefined,
+           };
+         }
+       }
+@@ -502,7 +514,7 @@
+           style: "keyword",
+           string: consumed[0],
+           start: stream.start,
+-          quotePos: undefined
++          quotePos: undefined,
+         };
+ 
+       // Punctuation
+@@ -513,7 +525,7 @@
+           style: "punc",
+           string: consumed[0],
+           start: stream.start,
+-          quotePos: undefined
++          quotePos: undefined,
+         };
+ 
+       // Token is invalid
+@@ -524,7 +536,7 @@
+         style: "error",
+         string: consumed[0],
+         start: stream.start,
+-        quotePos: undefined
++        quotePos: undefined,
+       };
+     }
+ 
+@@ -604,14 +616,14 @@
+           // 1) Annotation/reifier after a complex property-path predicate is illegal.
+           if (state.verbPathIsComplex && !state.afterReifier) {
+             state.OK = false;
+-            state.errorMsg = "Annotation block is not allowed after a property-path predicate";
++            state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.annotation_after_property_path");
+           }
+           // 2) Anonymous annotation blocks (no preceding ~) are forbidden in
+           //    DELETE/INSERT template and DATA contexts (where bnodes are disallowed).
+           //    Named reifiers (~ :iri {| ... |}) ARE allowed.
+           if (!state.allowBnodes && !state.afterReifier) {
+             state.OK = false;
+-            state.errorMsg = "Anonymous annotation block is not allowed in a DELETE/INSERT template or DATA block";
++            state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.anonymous_annotation_disallowed");
+           }
+           state.afterReifier = false;
+           break;
+@@ -659,10 +671,9 @@
+         // branch above does, reject the token explicitly.
+         state.complete = false;
+         recordFailurePos();
+-        state.errorMsg =
+-          "Invalid numeric escape '" +
+-          badEscape +
+-          "': must not denote a Unicode surrogate or a code point above U+10FFFF";
++        state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.invalid_numeric_escape", [
++          { key: "escape", value: badEscape },
++        ]);
+       }
+     }
+     if (tokenOb.cat === "WS" || tokenOb.cat === "COMMENT" || (tokenOb.quotePos && tokenOb.quotePos != "end")) {
+@@ -726,19 +737,30 @@
+             // a reifier and its annotation block.  This prevents the flag from
+             // leaking into a later, unrelated annotation block and bypassing the
+             // anonymous-annotation / complex-path validation.
+-            if (state.afterReifier &&
+-                (tokenCat === "." || tokenCat === ";" || tokenCat === "," ||
+-                 tokenCat === "]" || tokenCat === "}" || tokenCat === ">>")) {
++            if (
++              state.afterReifier &&
++              (tokenCat === "." ||
++                tokenCat === ";" ||
++                tokenCat === "," ||
++                tokenCat === "]" ||
++                tokenCat === "}" ||
++                tokenCat === ">>")
++            ) {
+               state.afterReifier = false;
+             }
+ 
+             // Property-path complexity tracking:
+             // While parsing a verbPath, flag any operator that makes it a complex path
+             // (sequence /, alternation |, modifiers +/*/?, inverse ^).
+-            if (state.inVerbPath &&
+-                (tokenCat === "/" || tokenCat === "|" ||
+-                 tokenCat === "+" || tokenCat === "*" || tokenCat === "?" ||
+-                 tokenCat === "^")) {
++            if (
++              state.inVerbPath &&
++              (tokenCat === "/" ||
++                tokenCat === "|" ||
++                tokenCat === "+" ||
++                tokenCat === "*" ||
++                tokenCat === "?" ||
++                tokenCat === "^")
++            ) {
+               state.verbPathIsComplex = true;
+             }
+ 
+@@ -748,7 +770,9 @@
+             if (state.verbPathIsComplex && tokenCat === "~") {
+               state.OK = false;
+               recordFailurePos();
+-              state.errorMsg = "Annotation or reifier is not allowed after a property-path predicate";
++              state.diagnostic = createSyntaxDiagnostic(
++                "yasqe.check_syntax.error.annotation_or_reifier_after_property_path"
++              );
+             }
+ 
+             // Annotation blocks ({| ... |}) are forbidden in DELETE/INSERT template
+@@ -764,7 +788,9 @@
+                 if (state.prefixes[prefNs] === undefined) {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg = "Prefix '" + prefNs + "' is not defined";
++                  state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.prefix_not_defined", [
++                    { key: "prefix", value: prefNs },
++                  ]);
+                 }
+               }
+             }
+@@ -788,10 +814,14 @@
+                   parentScope.childLabels.add(label);
+                 }
+               }
+-            } else if (state.allowVars &&
+-                       (tokenCat === "OPTIONAL" || tokenCat === "GRAPH" ||
+-                        tokenCat === "UNION" || tokenCat === "MINUS" ||
+-                        tokenCat === "SERVICE")) {
++            } else if (
++              state.allowVars &&
++              (tokenCat === "OPTIONAL" ||
++                tokenCat === "GRAPH" ||
++                tokenCat === "UNION" ||
++                tokenCat === "MINUS" ||
++                tokenCat === "SERVICE")
++            ) {
+               // These keywords break the current BGP. Seal any blank node
+               // labels from the current BGP so they cannot be reused in
+               // subsequent BGPs within the same group.
+@@ -800,8 +830,12 @@
+                 currentScope.childLabels.add(label);
+               }
+               currentScope.ownLabels.clear();
+-            } else if (tokenCat === "WHERE" && state.allowVars && !state.hadDataBlock &&
+-                       state.bnodeScopeStack.length === 1) {
++            } else if (
++              tokenCat === "WHERE" &&
++              state.allowVars &&
++              !state.hadDataBlock &&
++              state.bnodeScopeStack.length === 1
++            ) {
+               // In non-DATA UPDATE (INSERT/DELETE template ... WHERE ...),
+               // blank node labels in the template and WHERE clause are independent:
+               // template blank nodes create fresh blank nodes per solution, so
+@@ -837,8 +871,10 @@
+                   // In query/template context, check ancestors for reuse across
+                   // group pattern boundaries (both ownLabels and childLabels)
+                   for (let si = 0; si < state.bnodeScopeStack.length - 1; si++) {
+-                    if (state.bnodeScopeStack[si].ownLabels.has(label) ||
+-                        state.bnodeScopeStack[si].childLabels.has(label)) {
++                    if (
++                      state.bnodeScopeStack[si].ownLabels.has(label) ||
++                      state.bnodeScopeStack[si].childLabels.has(label)
++                    ) {
+                       crossScopeBadLabel = true;
+                       break;
+                     }
+@@ -852,15 +888,17 @@
+                   // labels within the same operation can be reused freely.
+                   // Only check the root scope's childLabels, which holds labels
+                   // sealed by ';' from prior operations.
+-                  if (state.bnodeScopeStack.length > 0 &&
+-                      state.bnodeScopeStack[0].childLabels.has(label)) {
++                  if (state.bnodeScopeStack.length > 0 && state.bnodeScopeStack[0].childLabels.has(label)) {
+                     crossScopeBadLabel = true;
+                   }
+                 }
+                 if (crossScopeBadLabel) {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg = "Blank node label '" + label + "' is used across group pattern boundaries";
++                  state.diagnostic = createSyntaxDiagnostic(
++                    "yasqe.check_syntax.error.blank_node_label_across_group_boundaries",
++                    [{ key: "label", value: label }]
++                  );
+                 }
+                 currentScope.ownLabels.add(label);
+               }
+@@ -869,9 +907,7 @@
+             // GROUP BY variable scoping
+             // Track SELECT variables, aggregate usage, and GROUP BY variables
+             // to validate that non-aggregated SELECT variables appear in GROUP BY.
+-            const AGGREGATE_KEYWORDS = new Set([
+-              "COUNT", "SUM", "MIN", "MAX", "AVG", "SAMPLE", "GROUP_CONCAT"
+-            ]);
++            const AGGREGATE_KEYWORDS = new Set(["COUNT", "SUM", "MIN", "MAX", "AVG", "SAMPLE", "GROUP_CONCAT"]);
+ 
+             if (tokenCat === "SELECT" && state.subSelectDepth === 0) {
+               state.inSelectClause = true;
+@@ -896,7 +932,7 @@
+                 if (state.aggregateNesting > 0) {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg = "Nested aggregate functions are not allowed";
++                  state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.nested_aggregate");
+                 }
+                 state.aggregateNesting++;
+                 state.selectHasAggregate = true;
+@@ -908,8 +944,10 @@
+                 state.selectParenDepth++;
+               } else if (tokenCat === ")") {
+                 // Close an aggregate if this ) matches the top of the aggregate paren stack
+-                if (state.aggParenStack.length > 0 &&
+-                    state.aggParenStack[state.aggParenStack.length - 1] === state.selectParenDepth) {
++                if (
++                  state.aggParenStack.length > 0 &&
++                  state.aggParenStack[state.aggParenStack.length - 1] === state.selectParenDepth
++                ) {
+                   state.aggParenStack.pop();
+                   if (state.aggregateNesting > 0) state.aggregateNesting--;
+                 }
+@@ -924,14 +962,15 @@
+               // Track vars in SELECT that are NOT inside aggregate functions
+               // and NOT alias vars (the var after AS keyword).
+               // These must appear in GROUP BY when GROUP BY is present.
+-              if ((tokenCat === "VAR1" || tokenCat === "VAR2") &&
+-                  state.aggregateNesting === 0) {
++              if ((tokenCat === "VAR1" || tokenCat === "VAR2") && state.aggregateNesting === 0) {
+                 if ((state as any)._afterAS) {
+                   // This is an alias variable (expr AS ?var) — check for duplicates
+                   if (state.selectAliases.has(tokenOb.string)) {
+                     state.OK = false;
+                     recordFailurePos();
+-                    state.errorMsg = "Duplicate alias " + tokenOb.string + " in SELECT";
++                    state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.duplicate_select_alias", [
++                      { key: "variable", value: tokenOb.string },
++                    ]);
+                   } else {
+                     state.selectAliases.add(tokenOb.string);
+                   }
+@@ -979,12 +1018,10 @@
+               } else if (tokenCat === ")") {
+                 state.subSelectParenDepth--;
+               }
+-              if ((tokenCat === "VAR1" || tokenCat === "VAR2") &&
+-                  state.subSelectParenDepth === 0) {
++              if ((tokenCat === "VAR1" || tokenCat === "VAR2") && state.subSelectParenDepth === 0) {
+                 // Bare var in inner SELECT — projected to outer scope
+                 state.subSelectProjectedVars.add(tokenOb.string);
+-              } else if ((tokenCat === "VAR1" || tokenCat === "VAR2") &&
+-                         state.afterSubSelectAS) {
++              } else if ((tokenCat === "VAR1" || tokenCat === "VAR2") && state.afterSubSelectAS) {
+                 // Alias var in inner SELECT — projected to outer scope
+                 state.subSelectProjectedVars.add(tokenOb.string);
+                 state.afterSubSelectAS = false;
+@@ -1014,7 +1051,7 @@
+               // Bare vars at paren depth 0 are direct GROUP BY vars.
+               // Also, AS alias vars in GROUP BY expressions like (expr AS ?var)
+               // are valid grouped variables.
+-              if ((tokenCat === "VAR1" || tokenCat === "VAR2")) {
++              if (tokenCat === "VAR1" || tokenCat === "VAR2") {
+                 if (state.groupByParenDepth === 0 || (state as any)._groupByAfterAS) {
+                   state.groupByVars.add(tokenOb.string);
+                 }
+@@ -1025,9 +1062,14 @@
+                 (state as any)._groupByAfterAS = false;
+               }
+               // GROUP BY clause ends at HAVING, ORDER, LIMIT, OFFSET, VALUES, or }
+-              if (tokenCat === "HAVING" || tokenCat === "ORDER" ||
+-                  tokenCat === "LIMIT" || tokenCat === "OFFSET" ||
+-                  tokenCat === "VALUES" || tokenCat === "}") {
++              if (
++                tokenCat === "HAVING" ||
++                tokenCat === "ORDER" ||
++                tokenCat === "LIMIT" ||
++                tokenCat === "OFFSET" ||
++                tokenCat === "VALUES" ||
++                tokenCat === "}"
++              ) {
+                 state.inGroupByClause = false;
+               }
+             }
+@@ -1047,7 +1089,9 @@
+                 if (state.valuesVarNames.has(tokenOb.string)) {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg = "Duplicate variable " + tokenOb.string + " in VALUES variable list";
++                  state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.duplicate_values_variable", [
++                    { key: "variable", value: tokenOb.string },
++                  ]);
+                 } else {
+                   state.valuesVarNames.add(tokenOb.string);
+                 }
+@@ -1073,8 +1117,9 @@
+                 if (state.valuesVarCount !== 0) {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg = "VALUES NIL binding has 0 values but " +
+-                    state.valuesVarCount + " variables declared";
++                  state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.values_nil_arity_mismatch", [
++                    { key: "variableCount", value: String(state.valuesVarCount) },
++                  ]);
+                 }
+               }
+               // '{' just opens the data block, skip
+@@ -1084,8 +1129,10 @@
+                 if (state.valuesTupleCount !== state.valuesVarCount) {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg = "VALUES binding has " + state.valuesTupleCount +
+-                    " values but " + state.valuesVarCount + " variables declared";
++                  state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.values_arity_mismatch", [
++                    { key: "valueCount", value: String(state.valuesTupleCount) },
++                    { key: "variableCount", value: String(state.valuesVarCount) },
++                  ]);
+                 }
+                 state.valuesClause = "data";
+                 state.valuesSkipNext = false;
+@@ -1098,9 +1145,9 @@
+                 if (state.valuesSkipNext) {
+                   // This token follows ^^ so it's the datatype IRI — skip it
+                   state.valuesSkipNext = false;
+-                } else if (tokenCat === 'LANGTAG') {
++                } else if (tokenCat === "LANGTAG") {
+                   // Language tag is part of the preceding string literal — skip
+-                } else if (tokenCat === '^^') {
++                } else if (tokenCat === "^^") {
+                   // Datatype marker — skip this and the next token (the datatype IRI)
+                   state.valuesSkipNext = true;
+                 } else {
+@@ -1164,7 +1211,10 @@
+                   if (currentScope.has(tokenOb.string)) {
+                     state.OK = false;
+                     recordFailurePos();
+-                    state.errorMsg = "BIND variable " + tokenOb.string + " is already in scope";
++                    state.diagnostic = createSyntaxDiagnostic(
++                      "yasqe.check_syntax.error.bind_variable_already_in_scope",
++                      [{ key: "variable", value: tokenOb.string }]
++                    );
+                   }
+                   state.afterBindAS = false;
+                 } else {
+@@ -1189,8 +1239,9 @@
+                 if (dir !== "ltr" && dir !== "rtl") {
+                   state.OK = false;
+                   recordFailurePos();
+-                  state.errorMsg =
+-                    "Invalid base direction '" + dirMatch[1] + "': must be 'ltr' or 'rtl'";
++                  state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.invalid_base_direction", [
++                    { key: "direction", value: dirMatch[1] },
++                  ]);
+                 }
+               }
+             }
+@@ -1270,7 +1321,7 @@
+     propertyList: 1,
+     propertyListPath: 1,
+     propertyListPathNotEmpty: 1,
+-    "?[verb,objectList]": 1
++    "?[verb,objectList]": 1,
+     //		"?[or([verbPath, verbSimple]),objectList]": 1,
+   };
+ 
+@@ -1280,7 +1331,7 @@
+     ")": 1,
+     "{": -1,
+     "(": -1,
+-    "[": -1
++    "[": -1,
+     //		"*[;,?[or([verbPath,verbSimple]),objectList]]": 1,
+   };
+ 
+@@ -1327,7 +1378,7 @@
+   return {
+     token: tokenBase,
+     // Provide a copyState method to create a deep copy of the state object
+-    copyState: function(s: State): State {
++    copyState: function (s: State): State {
+       return {
+         tokenize: s.tokenize,
+         OK: s.OK,
+@@ -1349,10 +1400,15 @@
+         prefixes: Object.assign({}, s.prefixes),
+         variables: Object.assign({}, s.variables),
+         currentPnameNs: s.currentPnameNs,
+-        errorMsg: s.errorMsg,
++        diagnostic: s.diagnostic
++          ? {
++              messageLabelKey: s.diagnostic.messageLabelKey,
++              parameters: s.diagnostic.parameters?.map((parameter) => ({ ...parameter })),
++            }
++          : undefined,
+         inPrefixDecl: s.inPrefixDecl,
+         possibleFullIri: s.possibleFullIri,
+-        bnodeScopeStack: s.bnodeScopeStack.map(scope => ({
++        bnodeScopeStack: s.bnodeScopeStack.map((scope) => ({
+           ownLabels: new Set(scope.ownLabels),
+           childLabels: new Set(scope.childLabels),
+         })),
+@@ -1378,7 +1434,7 @@
+         valuesVarNames: new Set(s.valuesVarNames),
+         valuesTupleCount: s.valuesTupleCount,
+         valuesSkipNext: s.valuesSkipNext,
+-        bindScopeStack: s.bindScopeStack.map(scope => new Set(scope)),
++        bindScopeStack: s.bindScopeStack.map((scope) => new Set(scope)),
+         inBind: s.inBind,
+         bindParenDepth: s.bindParenDepth,
+         afterBindAS: s.afterBindAS,
+@@ -1391,7 +1447,7 @@
+         finalize: s.finalize,
+       };
+     },
+-    startState: function(): State {
++    startState: function (): State {
+       return {
+         tokenize: tokenBase,
+         OK: true,
+@@ -1413,7 +1469,7 @@
+         prefixes: {},
+         variables: {},
+         currentPnameNs: undefined,
+-        errorMsg: undefined,
++        diagnostic: undefined,
+         inPrefixDecl: false,
+         possibleFullIri: false,
+         bnodeScopeStack: [{ ownLabels: new Set(), childLabels: new Set() }],
+@@ -1449,7 +1505,7 @@
+         inVerbPath: false,
+         verbPathIsComplex: false,
+         afterReifier: false,
+-        finalize: function() {
++        finalize: function () {
+           if (!this.OK) return;
+           // The variable of a (expr AS v) select expression must not already be
+           // in-scope, and `GROUP BY ... v` / `GROUP BY ... (expr AS v)` both put
+@@ -1457,7 +1513,9 @@
+           for (const alias of this.selectAliases) {
+             if (this.groupByVars.has(alias)) {
+               this.OK = false;
+-              this.errorMsg = "SELECT alias " + alias + " is already in scope from GROUP BY";
++              this.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.select_alias_in_group_by_scope", [
++                { key: "alias", value: alias },
++              ]);
+               return;
+             }
+           }
+@@ -1467,7 +1525,10 @@
+               for (const v in this.variables) {
+                 if (!this.groupByVars.has(v)) {
+                   this.OK = false;
+-                  this.errorMsg = "Variable " + v + " is projected by SELECT * but not present in GROUP BY";
++                  this.diagnostic = createSyntaxDiagnostic(
++                    "yasqe.check_syntax.error.select_star_variable_not_in_group_by",
++                    [{ key: "variable", value: v }]
++                  );
+                   return;
+                 }
+               }
+@@ -1475,7 +1536,9 @@
+               for (const v of this.selectBareVars) {
+                 if (!this.groupByVars.has(v)) {
+                   this.OK = false;
+-                  this.errorMsg = "Variable " + v + " is used in SELECT but not in GROUP BY";
++                  this.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.select_variable_not_in_group_by", [
++                    { key: "variable", value: v },
++                  ]);
+                   return;
+                 }
+               }
+@@ -1483,22 +1546,27 @@
+           } else if (this.selectHasAggregate && this.selectBareVars.size > 0) {
+             const firstVar = this.selectBareVars.values().next().value;
+             this.OK = false;
+-            this.errorMsg = "Variable " + firstVar + " is used in SELECT with aggregates but without GROUP BY";
++            this.diagnostic = createSyntaxDiagnostic(
++              "yasqe.check_syntax.error.select_aggregate_variable_without_group_by",
++              [{ key: "variable", value: firstVar }]
++            );
+             return;
+           }
+           // SELECT alias vs sub-SELECT projection conflicts
+           for (const alias of this.selectAliases) {
+             if (this.subSelectProjectedVars.has(alias)) {
+               this.OK = false;
+-              this.errorMsg = "SELECT alias " + alias + " conflicts with variable projected by sub-SELECT";
++              this.diagnostic = createSyntaxDiagnostic(
++                "yasqe.check_syntax.error.select_alias_conflicts_subselect_variable",
++                [{ key: "alias", value: alias }]
++              );
+               return;
+             }
+           }
+-        }
++        },
+       };
+     },
+     indent: indent,
+-    electricChars: "}])"
++    electricChars: "}])",
+   };
+ }
+-
+Index: Yasgui/packages/yasqe/src/index.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+--- a/Yasgui/packages/yasqe/src/index.ts	(revision 725bed5a5f8f6138093972e2a306041e66650ca0)
++++ b/Yasgui/packages/yasqe/src/index.ts	(revision 7e02300d3609df05059975c2c1d75c71e7619dc9)
+@@ -979,6 +979,13 @@
+     this.config.syntaxErrorCheck = isEnabled;
+     this.checkSyntax();
+   }
++
++  private getSyntaxDiagnosticMessage(diagnostic: TokenizerState["diagnostic"]): string | undefined {
++    if (!diagnostic) return undefined;
++
++    return escape(this.translationService.translate(diagnostic.messageLabelKey, diagnostic.parameters));
++  }
++
+   public checkSyntax() {
+     this.queryValid = true;
+ 
+@@ -1015,8 +1022,9 @@
+           return;
+         }
+         const warningEl = drawSvgStringAsElement(imgs.warning);
+-        if (state.errorMsg) {
+-          tooltip(this, warningEl, escape(token.state.errorMsg));
++        const diagnosticMessage = this.getSyntaxDiagnosticMessage(token.state.diagnostic);
++        if (diagnosticMessage) {
++          tooltip(this, warningEl, diagnosticMessage);
+         } else if (state.possibleCurrent && state.possibleCurrent.length > 0) {
+           var expectedEncoded: string[] = [];
+           state.possibleCurrent.forEach(function (expected) {
+@@ -1046,8 +1054,9 @@
+       if (state.OK == false) {
+         if (this.config.syntaxErrorCheck) {
+           const warningEl = drawSvgStringAsElement(imgs.warning);
+-          if (state.errorMsg) {
+-            tooltip(this, warningEl, escape(state.errorMsg));
++          const diagnosticMessage = this.getSyntaxDiagnosticMessage(state.diagnostic);
++          if (diagnosticMessage) {
++            tooltip(this, warningEl, diagnosticMessage);
+           }
+           warningEl.className = "parseErrorIcon";
+           // Place the marker on the last non-empty line so that trailing
