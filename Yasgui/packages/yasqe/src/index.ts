@@ -979,6 +979,13 @@ export class Yasqe extends CodeMirror {
     this.config.syntaxErrorCheck = isEnabled;
     this.checkSyntax();
   }
+
+  private getSyntaxDiagnosticMessage(diagnostic: TokenizerState["diagnostic"]): string | undefined {
+    if (!diagnostic) return undefined;
+
+    return escape(this.translationService.translate(diagnostic.messageLabelKey, diagnostic.parameters));
+  }
+
   public checkSyntax() {
     this.queryValid = true;
 
@@ -1015,8 +1022,9 @@ export class Yasqe extends CodeMirror {
           return;
         }
         const warningEl = drawSvgStringAsElement(imgs.warning);
-        if (state.errorMsg) {
-          tooltip(this, warningEl, escape(token.state.errorMsg));
+        const diagnosticMessage = this.getSyntaxDiagnosticMessage(token.state.diagnostic);
+        if (diagnosticMessage) {
+          tooltip(this, warningEl, diagnosticMessage);
         } else if (state.possibleCurrent && state.possibleCurrent.length > 0) {
           var expectedEncoded: string[] = [];
           state.possibleCurrent.forEach(function (expected) {
@@ -1046,8 +1054,9 @@ export class Yasqe extends CodeMirror {
       if (state.OK == false) {
         if (this.config.syntaxErrorCheck) {
           const warningEl = drawSvgStringAsElement(imgs.warning);
-          if (state.errorMsg) {
-            tooltip(this, warningEl, escape(state.errorMsg));
+          const diagnosticMessage = this.getSyntaxDiagnosticMessage(state.diagnostic);
+          if (diagnosticMessage) {
+            tooltip(this, warningEl, diagnosticMessage);
           }
           warningEl.className = "parseErrorIcon";
           // Place the marker on the last non-empty line so that trailing

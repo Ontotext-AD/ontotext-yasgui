@@ -13,6 +13,17 @@ describe('Languages', () => {
 
   describe('Ontotext-yasgui-web-component internationalization support', () => {
 
+    it('Should translate parameterized syntax diagnostics', () => {
+      YasqeSteps.setQueryInEditor('SELECT * WHERE { ?s missing:value ?o }');
+      YasqeSteps.getEditor().find('.parseErrorIcon').trigger('mouseover');
+      YasqeSteps.getEditor().find('.yasqe_tooltip').should('contain', "Le préfixe 'missing' n’est pas défini.");
+
+      LanguagesSteps.switchToEn();
+      YasqeSteps.setQueryInEditor('SELECT * WHERE { ?s missing:value ?o }');
+      YasqeSteps.getEditor().find('.parseErrorIcon').trigger('mouseover');
+      YasqeSteps.getEditor().find('.yasqe_tooltip').should('contain', "Prefix 'missing' is not defined.");
+    });
+
     it('Should labels be translated to different languages', () => {
       // I expect to see the button "editor only" to be translated to the default English language.
       ToolbarPageSteps.getYasqeModeButton().contains('Éditeur seulement');
