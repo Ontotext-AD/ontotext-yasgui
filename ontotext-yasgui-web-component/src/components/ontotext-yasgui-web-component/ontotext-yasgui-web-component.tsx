@@ -706,40 +706,18 @@ export class OntotextYasguiWebComponent {
             // catch this to avoid unhandled rejection
           });
           break;
-        case 'explain_query': {
-          const query = ontotextYasgui.getQuery();
-
-          if (query.startsWith(this.llmQueryOnlyComment)) {
-            return;
-          }
-          if (query.startsWith(this.llmResultOnlyComment)) {
-            ontotextYasgui.setQuery(query.replace(this.llmResultOnlyComment, this.llmQueryOnlyComment));
-          } else {
-            ontotextYasgui.setQuery(`${this.llmQueryOnlyComment}\n${query}`);
-          }
-
+        case 'explain_query':
+          this.applyQueryLLMComment(ontotextYasgui, this.llmQueryOnlyComment);
           ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
           });
           break;
-        }
-
-        case 'explain_results': {
-          const query = ontotextYasgui.getQuery();
-
-          if (query.startsWith(this.llmResultOnlyComment)) {
-            return;
-          }
-          if (query.startsWith(this.llmQueryOnlyComment)) {
-            ontotextYasgui.setQuery(query.replace(this.llmQueryOnlyComment, this.llmResultOnlyComment));
-          } else {
-            ontotextYasgui.setQuery(`${this.llmResultOnlyComment}\n${query}`);
-          }
+        case 'explain_results':
+          this.applyQueryLLMComment(ontotextYasgui, this.llmResultOnlyComment);
           ontotextYasgui.query(undefined, EXPLAIN_PLAN_TYPE.LLM_EXPLAIN).catch(() => {
             // catch this to avoid unhandled rejection
           });
           break;
-        }
       }
     });
   }
@@ -837,6 +815,18 @@ export class OntotextYasguiWebComponent {
   @Listen('internalKeyboardShortcutsClickedEvent')
   onShortcutsOpenEvent(_event: CustomEvent<InternalKeyboardShortcutsClickedEvent>) {
     this.showKeyboardShortcutsDialog = !this.showKeyboardShortcutsDialog;
+  }
+
+  /**
+   * Adds the LLM comment in the query, or replaces it if one is already present.
+   * Doesn't do anything if the query already contains the LLM comment.
+   */
+  private applyQueryLLMComment(ontotextYasgui: OntotextYasgui, llmComment: string): void {
+    const query = ontotextYasgui.getQuery();
+    if (query.startsWith(llmComment)) {
+      return;
+    }
+    ontotextYasgui.setQuery(`${llmComment}\n${this.removeQueryLLMComments(query)}`);
   }
 
   private removeQueryLLMComments(userQuery: string): string {
