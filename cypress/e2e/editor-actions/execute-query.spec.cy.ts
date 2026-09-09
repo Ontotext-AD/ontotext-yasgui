@@ -66,6 +66,50 @@ describe('Execute query action', () => {
     });
   });
 
+  it('Should be able to execute LLM explain query twice in a row', () => {
+    // Given I'm on the page
+    ActionsPageSteps.visit();
+    // When I select the LLM explain query option
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    YasqeSteps.selectRunDropdownMenuOption(2);
+    // Then I expect the query to be executed with the explain query comment
+    cy.wait('@query-1_0_11_6').its('request.body').should('contain', 'gpt-query-only');
+    YasrSteps.getTableResults().should('have.length', 6);
+    // When I select the same option a second time
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    YasqeSteps.selectRunDropdownMenuOption(2);
+    // Then I expect the query to be executed again
+    cy.wait('@query-1_0_11_6').its('request.body').should('contain', 'gpt-query-only');
+    // And the explain query comment should not be duplicated
+    YasqeSteps.getQuery().then((query) => {
+      expect(query.split('# :gpt-query-only:')).to.have.length(2);
+    });
+  });
+
+  it('Should be able to execute LLM explain results twice in a row', () => {
+    // Given I'm on the page
+    ActionsPageSteps.visit();
+    // When I select the LLM explain results option
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    YasqeSteps.selectRunDropdownMenuOption(3);
+    // Then I expect the query to be executed with the explain results comment
+    cy.wait('@query-1_0_11_6').its('request.body').should('contain', 'gpt-result-only');
+    YasrSteps.getTableResults().should('have.length', 6);
+    // When I select the same option a second time
+    YasqeSteps.openRunSplitMenu();
+    YasqeSteps.getRunDropdownMenu().should('have.class', 'open').and('be.visible');
+    YasqeSteps.selectRunDropdownMenuOption(3);
+    // Then I expect the query to be executed again
+    cy.wait('@query-1_0_11_6').its('request.body').should('contain', 'gpt-result-only');
+    // And the explain results comment should not be duplicated
+    YasqeSteps.getQuery().then((query) => {
+      expect(query.split('# :gpt-result-only:')).to.have.length(2);
+    });
+  });
+
   it('Should be able to execute LLM explain results', () => {
     // Given I'm on the page
     ActionsPageSteps.visit();
