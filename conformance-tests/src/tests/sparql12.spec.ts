@@ -23,32 +23,15 @@ const SUITES: Suite = {
 /**
  * Positive tests that the grammar currently rejects but should accept.
  * These cover SPARQL 1.2 features not yet implemented in the tokenizer.
- * Each entry has a comment explaining why it is skipped.
+  * Each entry needs a comment explaining why it is skipped.
  */
-const SKIPPED_POSITIVE_TESTS = new Set<string>([
-  'codepoint-escapes/codepoint-esc-08.rq',
-  'codepoint-escapes/codepoint-esc-09.rq',
-  'grouping/select-variable-reuse.rq'
-]);
+const SKIPPED_POSITIVE_TESTS = new Set<string>([]);
 
 /**
  * Negative tests that the grammar currently accepts but should reject.
- * Split into two groups:
- *
- * A) Semantic constraints beyond LL(1): structurally valid SPARQL that
- *    violates a prose rule the context-free grammar cannot express.
- *
- * B) Unimplemented features: the grammar hasn't been extended yet so it
- *    cannot reject the invalid syntax either.
+ * Each entry needs a comment explaining why it is skipped.
  */
-const SKIPPED_NEGATIVE_TESTS = new Set<string>([
-  'codepoint-escapes/codepoint-esc-01-bad.rq',
-  'codepoint-escapes/codepoint-esc-03-bad.rq',
-  'codepoint-escapes/surrogate-esc-05-bad.rq',
-  'syntax/group-by-scope-bad-1.rq',
-  'syntax/group-by-scope-bad-2.rq',
-  'syntax/group-by-scope-bad-3.rq',
-]);
+const SKIPPED_NEGATIVE_TESTS = new Set<string>([]);
 
 let CodeMirror: CodeMirrorInstance;
 
