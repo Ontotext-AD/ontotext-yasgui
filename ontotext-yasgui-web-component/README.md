@@ -217,6 +217,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
 | 1.5+                          | 3.3+      | 11.3+           |
 | 1.6+                          | 3.4+      | 11.4+           |
 | 1.7+                          | 3.5+      | 11.5+           |
+| 1.8+                          | 4.0+      | 12.0+           |
 
 #### How the component version is bumped
 
