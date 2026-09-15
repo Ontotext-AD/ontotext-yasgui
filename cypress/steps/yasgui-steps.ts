@@ -52,6 +52,10 @@ export class YasguiSteps {
     return cy.get('.ontotext-yasgui-tooltip');
   }
 
+  static getTooltipContent() {
+    return YasguiSteps.getTooltipRoot().find('.tooltip-box');
+  }
+
   static getTabName(tabIndex = 0) {
     return YasguiSteps.getTab(tabIndex).get('.preview-value');
   }
