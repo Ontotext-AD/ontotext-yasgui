@@ -1,6 +1,7 @@
 import ActionsPageSteps from '../../steps/pages/actions-page-steps';
 import {YasqeSteps} from '../../steps/yasqe-steps';
 import {YasguiFloatingTooltipSteps} from '../../steps/yasgui-floating-tooltip-steps';
+import {YasguiSteps} from '../../steps/yasgui-steps';
 
 describe('Saved query tooltip', () => {
   it('should show tooltip with saved query name', () => {
@@ -9,14 +10,15 @@ describe('Saved query tooltip', () => {
 
     // WHEN: I hover over a saved query.
     YasqeSteps.showSavedQueries();
-    YasqeSteps.hoverSavedQuery();
+    YasqeSteps.hoverSavedQuery(0);
     // THEN: I see a tooltip displaying the query name.
-    YasguiFloatingTooltipSteps.getTooltipElement().should('be.visible');
-    YasguiFloatingTooltipSteps.getTooltipElement().should('have.text', 'Add statements');
+    YasguiSteps.getTooltipContent().should('be.visible');
+    YasguiSteps.getTooltipContent().should('have.text', 'Add statements');
+    YasqeSteps.unhoverSavedQuery(0);
 
     // WHEN: I hover over another saved query.
     YasqeSteps.hoverSavedQuery(1);
     // THEN: I see a tooltip displaying the second query name.
-    YasguiFloatingTooltipSteps.getTooltipElement().should('have.text', 'Clear graph');
+    YasguiSteps.getTooltipContent().should('have.text', 'Clear graph');
   });
 });

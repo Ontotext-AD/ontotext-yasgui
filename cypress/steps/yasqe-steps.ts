@@ -190,6 +190,7 @@ export class YasqeSteps {
   static showSavedQueries(index = 0) {
     // When more than one yasgui tabs are opened, then these buttons are the same number as the tabs
     this.getShowSavedQueriesButton().eq(index).click();
+    this.getShowSavedQueriesButton().eq(index).trigger('mouseleave');
   }
 
   static getFullscreenButton() {
@@ -223,7 +224,11 @@ export class YasqeSteps {
   }
 
   static hoverSavedQuery(index = 0) {
-    YasqeSteps.getSavedQuery(index).trigger('mouseenter');
+    YasqeSteps.getSavedQuery(index).trigger('mouseover');
+  }
+
+  static unhoverSavedQuery(index = 0) {
+    YasqeSteps.getSavedQuery(index).trigger('mouseleave');
   }
 
   static getTabQuery(tabIndex: number) {

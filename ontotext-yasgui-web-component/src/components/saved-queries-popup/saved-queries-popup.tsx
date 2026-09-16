@@ -7,7 +7,6 @@ import {
 } from "../../models/saved-query-configuration";
 import {TranslationService} from "../../services/translation.service";
 import {ServiceFactory} from "../../services/service-factory";
-import {YasguiFloatingTooltipService} from '../../services/yasgui-floating-tooltip-service';
 
 @Component({
   tag: 'saved-queries-popup',
@@ -16,7 +15,6 @@ import {YasguiFloatingTooltipService} from '../../services/yasgui-floating-toolt
 })
 export class SavedQueriesPopup {
   private translationService: TranslationService;
-  private ontotextYasguiTooltipService: YasguiFloatingTooltipService;
 
   @Element() hostElement: HTMLElement;
 
@@ -73,39 +71,14 @@ export class SavedQueriesPopup {
     this.internalSaveQuerySelectedEvent.emit(selectedQuery);
   }
 
-  /**
-   * Displays a tooltip for the element that triggered the event.
-   *
-   * @param event The mouse event originating from the tooltip target element.
-   * @param text The text content to display in the tooltip.
-   */
-  private showTooltip(event: UIEvent, text: string): void {
-    this.ontotextYasguiTooltipService.show(event.currentTarget as HTMLElement, text, 'top');
-  }
-
-  /**
-   * Hides the currently displayed tooltip.
-   */
-  private hideTooltip(): void {
-    this.ontotextYasguiTooltipService.hide();
-  }
-
   componentWillLoad(): void {
     // TranslationService is injected here because the service factory is not available
     // in the constructor.
     this.translationService = this.serviceFactory.get(TranslationService);
-    this.ontotextYasguiTooltipService = this.serviceFactory.get(YasguiFloatingTooltipService);
   }
 
   componentDidRender(): void {
     this.setPopupPosition();
-  }
-
-  /**
-   * Cleans up component resources when the component is removed from the DOM.
-   */
-  disconnectedCallback(): void {
-    this.ontotextYasguiTooltipService.hide();
   }
 
   onEdit(evt: MouseEvent, selectedQuery: SaveQueryData): void {
@@ -151,29 +124,28 @@ export class SavedQueriesPopup {
         <div class="saved-queries-popup">
           <ul>
             {this.config.savedQueriesList.map((savedQuery) => (
-              <li class="saved-query">
-                <a class="saved-query-link"
-                   onMouseEnter={(event) => this.showTooltip(event, savedQuery.queryName)}
-                   onMouseLeave={() => this.hideTooltip()}
-                   onFocus={(event) => this.showTooltip(event, savedQuery.queryName)}
-                   onBlur={() => this.ontotextYasguiTooltipService.hide()}
-                   onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
-                <span class="saved-query-actions">
+              <yasgui-tooltip placement="top" key={savedQuery.queryName}
+                              yasgui-data-tooltip={savedQuery.queryName}>
+                <li class="saved-query">
+                  <a class="saved-query-link"
+                     onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
+                  <span class="saved-query-actions">
                   {!savedQuery.readonly ?
                     <button class="saved-query-action edit-saved-query ri-edit-line"
                             title={this.translationService.translate('yasqe.actions.saved_query_dialog.edit.button.tooltip')}
                             onClick={(evt) => this.onEdit(evt, savedQuery)}></button>
                     : ''}
-                  {!savedQuery.readonly ?
-                    <button class="saved-query-action delete-saved-query ri-delete-bin-6-line"
-                            title={this.translationService.translate('yasqe.actions.saved_query_dialog.delete.button.tooltip')}
-                            onClick={(evt) => this.onDelete(evt, savedQuery)}></button>
-                    : ''}
-                  <button class="saved-query-action share-saved-query ri-links-line"
-                          title={this.translationService.translate('yasqe.actions.saved_query_dialog.share.button.tooltip')}
-                          onClick={(evt) => this.onShare(evt, savedQuery)}></button>
-                </span>
-              </li>
+                    {!savedQuery.readonly ?
+                      <button class="saved-query-action delete-saved-query ri-delete-bin-6-line"
+                              title={this.translationService.translate('yasqe.actions.saved_query_dialog.delete.button.tooltip')}
+                              onClick={(evt) => this.onDelete(evt, savedQuery)}></button>
+                      : ''}
+                    <button class="saved-query-action share-saved-query ri-links-line"
+                            title={this.translationService.translate('yasqe.actions.saved_query_dialog.share.button.tooltip')}
+                            onClick={(evt) => this.onShare(evt, savedQuery)}></button>
+                  </span>
+                </li>
+              </yasgui-tooltip>
             ))}
           </ul>
         </div>
