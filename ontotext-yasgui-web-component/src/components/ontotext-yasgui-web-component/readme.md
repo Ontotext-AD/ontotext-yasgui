@@ -268,6 +268,7 @@ graph TD;
   ontotext-yasgui --> copy-resource-link-dialog
   ontotext-yasgui --> keyboard-shortcuts-dialog
   save-query-dialog --> yasgui-tooltip
+  saved-queries-popup --> yasgui-tooltip
   share-query-dialog --> copy-link-dialog
   copy-link-dialog --> ontotext-dialog-web-component
   copy-resource-link-dialog --> copy-link-dialog

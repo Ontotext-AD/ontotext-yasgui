@@ -30,9 +30,14 @@
 
  - [ontotext-yasgui](../ontotext-yasgui-web-component)
 
+### Depends on
+
+- [yasgui-tooltip](../ontotext-tooltip-web-component)
+
 ### Graph
 ```mermaid
 graph TD;
+  saved-queries-popup --> yasgui-tooltip
   ontotext-yasgui --> saved-queries-popup
   style saved-queries-popup fill:#f9f,stroke:#333,stroke-width:4px
 ```
