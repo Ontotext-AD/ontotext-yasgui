@@ -108,10 +108,11 @@ pipeline {
                         export NO_COLOR=1
 
                         # 1. Start the app in the background
-                        npm run start &
+                        rm -f stencil.log
+                        (npm run start 2>&1 | tee stencil.log) &
 
-                        # 2. Wait for the app
-                        sleep 5
+                        # 2. Wait for the first Stencil build to finish; the dev server responds before the bundles are ready
+                        timeout 600 sh -c 'until grep -qs "build finished" stencil.log; do sleep 2; done'
 
                         # 3. Run Cypress
                         npm run cy:run-conformance
@@ -140,10 +141,11 @@ pipeline {
                                 export NO_COLOR=1
 
                                 # 1. Start the app in the background
-                                npm run start &
+                                rm -f stencil.log
+                                (npm run start 2>&1 | tee stencil.log) &
 
-                                # 2. Wait for the app
-                                sleep 5
+                                # 2. Wait for the first Stencil build to finish; the dev server responds before the bundles are ready
+                                timeout 600 sh -c 'until grep -qs "build finished" stencil.log; do sleep 2; done'
 
                                 # 3. Run Cypress
                                 npm run cy:run
