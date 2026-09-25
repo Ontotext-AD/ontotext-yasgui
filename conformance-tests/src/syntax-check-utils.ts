@@ -48,25 +48,11 @@ export interface CodeMirrorInstance {
   defineMode(name: string, factory: unknown): void;
 }
 
-export interface InitGrammarOptions {
-  silent?: boolean;
-
-  [key: string]: unknown;
-}
-
 /**
- * Builds the SPARQL grammar tokenizer and registers it as a CodeMirror mode
- * named `'sparqlGrammarTest'`.
- *
- * @throws {Error} If the grammar build step fails.
+ * Registers the SPARQL grammar tokenizer as a CodeMirror mode named `'sparqlGrammarTest'`.
+ * The tokenizer is built once by the Jest global setup (see `jest-global-setup.ts`).
  */
-export function initGrammar(options: InitGrammarOptions = {}): CodeMirrorInstance {
-  const buildGrammar = require('./build-grammar').default || require('./build-grammar');
-  const success = buildGrammar({silent: true, ...options});
-  if (!success) {
-    throw new Error('Grammar build failed');
-  }
-
+export function initGrammar(): CodeMirrorInstance {
   const CodeMirror: CodeMirrorInstance = require('codemirror/addon/runmode/runmode.node.js');
   const sparqlGrammarTestModeFactory = require('./grammar-build/tokenizer.js').default;
   CodeMirror.defineMode('sparqlGrammarTest', sparqlGrammarTestModeFactory);
