@@ -8,6 +8,7 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "globalSetup": "<rootDir>/src/jest-global-setup.ts",
     "setupFilesAfterEnv": [
       "jest-expect-message"
     ],
