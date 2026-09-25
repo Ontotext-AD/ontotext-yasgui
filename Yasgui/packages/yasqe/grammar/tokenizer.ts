@@ -75,6 +75,7 @@ export interface State {
   inVerbPath: boolean; // whether we are currently parsing a verbPath predicate
   verbPathIsComplex: boolean; // whether the current verbPath has operators (/, |, +, *, ?, ^) making it a complex path
   afterReifier: boolean; // whether a named reifier (~) was just consumed before an annotation block
+  verbPathIsComplexStack: boolean[]; // verbPathIsComplex of the enclosing triples, saved when entering annotation blocks
   // End-of-query semantic validation (called after all tokens processed)
   finalize: () => void;
 }
@@ -570,7 +571,10 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
     // Some fake non-terminals are just there to have side-effect on state
     // - i.e. allow or disallow variables and bnodes in certain non-nesting
     // contexts
-    function setSideConditions(topSymbol: string) {
+    function setSideConditions(topSymbol: string, expansion: string[]) {
+      // The stack symbol below the just-pushed expansion tells which rule the
+      // expanded non-terminal belongs to (e.g. ">>" for a reified triple).
+      const symbolBelowExpansion = state.stack[state.stack.length - 1 - expansion.length];
       if (topSymbol === "prefixDecl") {
         state.inPrefixDecl = true;
       } else {
@@ -603,13 +607,43 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
           state.inVerbPath = false;
           state.verbPathIsComplex = false;
           break;
+        case "verb":
+          // Predicate of a non-path triple (templates, DATA blocks). The verb
+          // inside a reified triple (<< s p o >>) belongs to the enclosing triple's
+          // object, so it must not reset that triple's path tracking.
+          if (symbolBelowExpansion !== "reifiedTripleObject") {
+            state.verbPathIsComplex = false;
+          }
+          break;
         case "objectListPath":
           // Verb is fully consumed; lock in what we found
           state.inVerbPath = false;
           break;
         case "reifier":
-          // A named reifier (~) is about to be consumed before an annotation block
+          // The optional reifier inside << s p o ~r >> is not subject to the
+          // property-path restriction: the verb of a reified triple is never a path.
+          if (symbolBelowExpansion === ">>") break;
+          // A reifier (~) after a triple is illegal when the predicate is a complex path.
+          if (state.verbPathIsComplex) {
+            state.OK = false;
+            recordFailurePos();
+            state.diagnostic = createSyntaxDiagnostic(
+              "yasqe.check_syntax.error.annotation_or_reifier_after_property_path"
+            );
+          }
+          // A reifier (~) is about to be consumed before an annotation block
           state.afterReifier = true;
+          break;
+        case "?reifier":
+        case "?varOrReifierId":
+          // A reified triple without a reifier (<< s p o >>) or a reifier without an
+          // identifier (~) allocates a fresh blank node, which is forbidden in
+          // DELETE templates, DELETE WHERE and DELETE DATA.
+          if (expansion.length === 0 && !state.allowBnodes) {
+            state.OK = false;
+            recordFailurePos();
+            state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.anonymous_reifier_disallowed");
+          }
           break;
         case "annotationBlock":
         case "annotationBlockPath":
@@ -626,6 +660,8 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
             state.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.anonymous_annotation_disallowed");
           }
           state.afterReifier = false;
+          // Predicates inside the block must not affect the enclosing triple; restored on "|}"
+          state.verbPathIsComplexStack.push(state.verbPathIsComplex);
           break;
       }
     }
@@ -744,6 +780,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
                 tokenCat === "," ||
                 tokenCat === "]" ||
                 tokenCat === "}" ||
+                tokenCat === "|}" ||
                 tokenCat === ">>")
             ) {
               state.afterReifier = false;
@@ -764,15 +801,9 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
               state.verbPathIsComplex = true;
             }
 
-            // Annotation/reifier after a complex property-path predicate is illegal.
-            // SPARQL 1.2 only allows annotations when the predicate is a simple IRI,
-            // 'a', or a variable — not a property-path expression.
-            if (state.verbPathIsComplex && tokenCat === "~") {
-              state.OK = false;
-              recordFailurePos();
-              state.diagnostic = createSyntaxDiagnostic(
-                "yasqe.check_syntax.error.annotation_or_reifier_after_property_path"
-              );
+            // Leaving an annotation block: restore the enclosing triple's path tracking
+            if (tokenCat === "|}" && state.verbPathIsComplexStack.length > 0) {
+              state.verbPathIsComplex = state.verbPathIsComplexStack.pop()!;
             }
 
             // Annotation blocks ({| ... |}) are forbidden in DELETE/INSERT template
@@ -1261,7 +1292,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
               state.stack.push(nextSymbols[i]);
             }
             // Peform any non-grammatical side-effects
-            setSideConditions(topSymbol);
+            setSideConditions(topSymbol, nextSymbols);
           } else {
             // No match in table - fail
             state.OK = false;
@@ -1444,6 +1475,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         inVerbPath: s.inVerbPath,
         verbPathIsComplex: s.verbPathIsComplex,
         afterReifier: s.afterReifier,
+        verbPathIsComplexStack: s.verbPathIsComplexStack.slice(),
         finalize: s.finalize,
       };
     },
@@ -1505,6 +1537,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         inVerbPath: false,
         verbPathIsComplex: false,
         afterReifier: false,
+        verbPathIsComplexStack: [],
         finalize: function () {
           if (!this.OK) return;
           // The variable of a (expr AS v) select expression must not already be

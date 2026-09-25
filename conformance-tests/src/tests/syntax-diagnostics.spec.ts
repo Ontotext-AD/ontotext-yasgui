@@ -30,6 +30,58 @@ describe('YASQE syntax diagnostics', () => {
     });
   });
 
+  describe('reifiers and annotations after property paths', () => {
+    const prefix = 'PREFIX : <http://example.com/>\n';
+
+    it.each([
+      ['a reified triple after a sequence path in a previous triple', 'SELECT * WHERE { ?x :a/:b ?y . << :s :p :o ~:r >> :q ?z }'],
+      ['a nested reified triple after an alternative path', 'SELECT * WHERE { ?x :a|:b ?y . << << ?h :p ?s ~?own >> :q ?pl ~?acc >> :r ?e }'],
+      ['a reified triple as the object of an inverse path', 'SELECT * WHERE { ?x ^:a << :s :p :o ~:r >> }'],
+      ['a reifier after a simple predicate that follows a path in an annotation block', 'SELECT * WHERE { ?x :p ?y {| :q/:r ?z |} ~:t }'],
+      ['an annotation block after a simple predicate that follows a path in an annotation block', 'SELECT * WHERE { ?x :p ?y {| :q/:r ?z |} {| :a :b |} }']
+    ])('accepts %s', (_, query) => {
+      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(true);
+    });
+
+    it.each([
+      ['a reifier', 'SELECT * WHERE { ?x :a/:b ?y ~:r }', 'yasqe.check_syntax.error.annotation_or_reifier_after_property_path'],
+      ['a reifier after a reified triple object', 'SELECT * WHERE { ?x :a/:b << :s :p :o ~:r >> ~:t }', 'yasqe.check_syntax.error.annotation_or_reifier_after_property_path'],
+      ['an annotation block', 'SELECT * WHERE { ?x :a/:b ?y {| :c :d |} }', 'yasqe.check_syntax.error.annotation_after_property_path'],
+      ['a reifier inside an annotation block', 'SELECT * WHERE { ?x :p ?y {| :q/:r ?z ~:t |} }', 'yasqe.check_syntax.error.annotation_or_reifier_after_property_path']
+    ])('rejects %s directly after a property path', (_, query, messageLabelKey) => {
+      const result = checkQuerySyntax(CodeMirror, prefix + query);
+      expect(result.valid).toBe(false);
+      expect(result.diagnostic).toEqual({messageLabelKey});
+    });
+  });
+
+  describe('reifiers and annotations where blank nodes are disallowed', () => {
+    const prefix = 'PREFIX : <http://example.com/>\n';
+
+    it.each([
+      ['a named reifier with an annotation block', 'DELETE DATA { :s :p :o ~:r {| :a :b |} }'],
+      ['a reified triple with a named reifier', 'DELETE DATA { << :s :p :o ~:r >> :q :z }'],
+      ['an anonymous annotation block in INSERT DATA', 'INSERT DATA { :s :p :o {| :a :b |} }'],
+      ['a reifier without an identifier in INSERT DATA', 'INSERT DATA { :s :p :o ~ {| :a :b |} }'],
+      ['a reified triple without a reifier in INSERT DATA', 'INSERT DATA { << :s :p :o >> :q :z }']
+    ])('accepts %s', (_, query) => {
+      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(true);
+    });
+
+    it.each([
+      ['an anonymous annotation block after a nested annotation block that ends with a reifier', 'DELETE DATA { :s :p :o ~:r {| :a :b ~:r2 |} {| :c :d |} }', 'yasqe.check_syntax.error.anonymous_annotation_disallowed'],
+      ['the same in DELETE WHERE', 'DELETE WHERE { :s :p :o ~:r {| :a :b ~:r2 |} {| :c :d |} }', 'yasqe.check_syntax.error.anonymous_annotation_disallowed'],
+      ['a reifier without an identifier', 'DELETE DATA { :s :p :o ~ }', 'yasqe.check_syntax.error.anonymous_reifier_disallowed'],
+      ['a reifier without an identifier before an annotation block', 'DELETE DATA { :s :p :o ~ {| :a :b |} }', 'yasqe.check_syntax.error.anonymous_reifier_disallowed'],
+      ['a reified triple without a reifier', 'DELETE DATA { << :s :p :o >> :q :z }', 'yasqe.check_syntax.error.anonymous_reifier_disallowed'],
+      ['a reified triple with a reifier without an identifier', 'DELETE WHERE { << ?s ?p ?o ~ >> :q ?z }', 'yasqe.check_syntax.error.anonymous_reifier_disallowed']
+    ])('rejects %s', (_, query, messageLabelKey) => {
+      const result = checkQuerySyntax(CodeMirror, prefix + query);
+      expect(result.valid).toBe(false);
+      expect(result.diagnostic).toEqual({messageLabelKey});
+    });
+  });
+
   it('keeps English and French syntax diagnostic catalogs in sync', () => {
     const localeDirectory = path.resolve(__dirname, '../../../ontotext-yasgui-web-component/src/i18n');
     const syntaxKeys = (locale: string) => Object.keys(JSON.parse(fs.readFileSync(
@@ -41,6 +93,7 @@ describe('YASQE syntax diagnostics', () => {
       'yasqe.check_syntax.error.annotation_after_property_path',
       'yasqe.check_syntax.error.annotation_or_reifier_after_property_path',
       'yasqe.check_syntax.error.anonymous_annotation_disallowed',
+      'yasqe.check_syntax.error.anonymous_reifier_disallowed',
       'yasqe.check_syntax.error.bind_variable_already_in_scope',
       'yasqe.check_syntax.error.blank_node_label_across_group_boundaries',
       'yasqe.check_syntax.error.duplicate_select_alias',

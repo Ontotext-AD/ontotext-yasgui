@@ -63,6 +63,7 @@
   "yasqe.check_syntax.error.invalid_line.prefix": "This line is invalid. Expected: ",
   "yasqe.check_syntax.error.annotation_after_property_path": "Annotation block is not allowed after a property-path predicate.",
   "yasqe.check_syntax.error.anonymous_annotation_disallowed": "Anonymous annotation block is not allowed in a DELETE/INSERT template or DATA block.",
+  "yasqe.check_syntax.error.anonymous_reifier_disallowed": "Reified triple or reifier without an identifier is not allowed in a DELETE template, DELETE WHERE or DELETE DATA block.",
   "yasqe.check_syntax.error.invalid_numeric_escape": "Invalid numeric escape '{{escape}}': it must not denote a Unicode surrogate or a code point above U+10FFFF.",
   "yasqe.check_syntax.error.annotation_or_reifier_after_property_path": "Annotation or reifier is not allowed after a property-path predicate.",
   "yasqe.check_syntax.error.prefix_not_defined": "Prefix '{{prefix}}' is not defined.",

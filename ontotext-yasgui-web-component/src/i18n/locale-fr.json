@@ -63,6 +63,7 @@
   "yasqe.check_syntax.error.invalid_line.prefix": "Cette ligne n'est pas valide. Attendu: ",
   "yasqe.check_syntax.error.annotation_after_property_path": "Un bloc d’annotation n’est pas autorisé après un prédicat de chemin de propriété.",
   "yasqe.check_syntax.error.anonymous_annotation_disallowed": "Un bloc d’annotation anonyme n’est pas autorisé dans un modèle DELETE/INSERT ou un bloc DATA.",
+  "yasqe.check_syntax.error.anonymous_reifier_disallowed": "Un triplet réifié ou un réificateur sans identifiant n’est pas autorisé dans un modèle DELETE, un bloc DELETE WHERE ou DELETE DATA.",
   "yasqe.check_syntax.error.invalid_numeric_escape": "L’échappement numérique '{{escape}}' n’est pas valide : il ne doit pas désigner un substitut Unicode ni un point de code supérieur à U+10FFFF.",
   "yasqe.check_syntax.error.annotation_or_reifier_after_property_path": "Une annotation ou un réificateur n’est pas autorisé après un prédicat de chemin de propriété.",
   "yasqe.check_syntax.error.prefix_not_defined": "Le préfixe '{{prefix}}' n’est pas défini.",
