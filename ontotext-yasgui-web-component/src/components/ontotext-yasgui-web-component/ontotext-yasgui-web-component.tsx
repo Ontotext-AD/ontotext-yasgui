@@ -1169,6 +1169,7 @@ export class OntotextYasguiWebComponent {
             placement="left"
             show-on-click={true}>
             <button class="btn-orientation icon-columns red"
+                    aria-label={this.resolveOrientationButtonTooltip()}
                     onClick={() => this.changeOrientation()}>&nbsp;</button>
           </yasgui-tooltip>
         </div>

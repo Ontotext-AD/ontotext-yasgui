@@ -39,7 +39,6 @@ export class ExtendedTabListEl extends TabListEl {
     // use the id for the tabpanel which is tabId to set the actual tab id
     renameElement.id = TAB_ID_PREFIX + this.tabId;
     renameElement.translationService = this.translationService;
-    renameElement.setAttribute("aria-controls", this.tabId); // respective tabPanel id
     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
     renameElement.addEventListener("blur", this.renameElementOnBlurHandler.bind(this));
