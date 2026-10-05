@@ -49,6 +49,13 @@ export class TabListEl {
       this.tabEl.children[0].setAttribute("tabindex", "-1");
     }
   }
+  /**
+   * Links the tab to its tab panel. The panel is drawn lazily when the tab is shown for the first time,
+   * so the tab references it only after it exists.
+   */
+  public linkTabPanel() {
+    this.tabEl?.children[0]?.setAttribute("aria-controls", this.tabId);
+  }
   public rename(name: string) {
     if (this.nameEl) {
       this.nameEl.textContent = name;
@@ -58,12 +65,15 @@ export class TabListEl {
     if (isValid) {
       removeClass(this.tabEl, "query-invalid");
       if (this.tabEl) {
-          this.tabEl.removeAttribute("title");
+        this.tabEl.removeAttribute("title");
       }
     } else {
       addClass(this.tabEl, "query-invalid");
       if (this.tabEl) {
-          this.tabEl.setAttribute("title", this.translationService.translate("yasqe.tab_list.new_tab.query_invalid.warning.message"));
+        this.tabEl.setAttribute(
+          "title",
+          this.translationService.translate("yasqe.tab_list.new_tab.query_invalid.warning.message")
+        );
       }
     }
   }
@@ -94,7 +104,6 @@ export class TabListEl {
     tabLinkEl.setAttribute("role", "tab");
     tabLinkEl.href = "#" + this.tabId;
     tabLinkEl.id = "tab-" + this.tabId; // use the id for the tabpanel which is tabId to set the actual tab id
-    tabLinkEl.setAttribute("aria-controls", this.tabId); // respective tabPanel id
     tabLinkEl.addEventListener("blur", () => {
       if (!this.tabEl) return;
       if (this.tabEl.classList.contains("active")) {

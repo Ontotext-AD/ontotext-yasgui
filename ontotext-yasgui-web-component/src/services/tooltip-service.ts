@@ -33,7 +33,6 @@ export class TooltipService {
   private static updateTooltipData(element: HTMLElement, tooltip?: string): void {
     if (tooltip) {
       element.setAttribute('yasgui-data-tooltip', tooltip);
-      element.setAttribute("aria-label", tooltip);
     }
   }
 

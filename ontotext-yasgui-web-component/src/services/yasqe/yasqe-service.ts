@@ -38,16 +38,13 @@ export class YasqeService {
 
   private onLanguageChange(_currentLang: string) {
     let button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.CREATE_SAVED_QUERY)}`) as HTMLElement;
-    let tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip);
+    this.updateLabel(button, 'yasqe.actions.save_query.button.tooltip');
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHOW_SAVED_QUERIES)}`) as HTMLElement;
-    tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip);
+    this.updateLabel(button, 'yasqe.actions.show_saved_queries.button.tooltip');
 
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
-    tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
-    TooltipService.updateTooltip(button, tooltip);
+    this.updateLabel(button, 'yasqe.actions.share_query.button.tooltip');
 
     const ontotextYasgui = this.yasguiBuilder.getInstance();
     const yasqe = ontotextYasgui?.getYasqe();
@@ -63,6 +60,24 @@ export class YasqeService {
         this.updateSameAsElement(sameAsButtonTooltipEl, sameAsValue, inferredValue);
       }
     }
+  }
+
+  /**
+   * Sets the translated label as both tooltip and accessible name of an icon-only button.
+   */
+  private updateLabel(button: HTMLElement, labelKey: string): void {
+    if (!button) {
+      return;
+    }
+    const label = this.translationService.translate(labelKey);
+    button.setAttribute('aria-label', label);
+    TooltipService.updateTooltip(button, label);
+  }
+
+  private addLabelledTooltip(button: HTMLElement, labelKey: string): HTMLElement {
+    const tooltipElement = TooltipService.addTooltip(button);
+    this.updateLabel(button, labelKey);
+    return tooltipElement;
   }
 
   private static initPluginButtonNameToClassNameMapping() {
@@ -152,8 +167,7 @@ export class YasqeService {
     buttonElement.addEventListener('click', handleShowSavedQuery);
     yasqe.addDestroyCallback(() => buttonElement.removeEventListener('click', handleShowSavedQuery));
 
-    const tooltip = this.translationService.translate('yasqe.actions.show_saved_queries.button.tooltip');
-    return TooltipService.addTooltip(buttonElement, tooltip);
+    return this.addLabelledTooltip(buttonElement, 'yasqe.actions.show_saved_queries.button.tooltip');
   }
 
   private buildCreateSaveQueryButton(yasqe: Yasqe): HTMLElement {
@@ -164,8 +178,7 @@ export class YasqeService {
     buttonElement.addEventListener('click', handleCreateSaveQuery);
     yasqe.addDestroyCallback(() => buttonElement.removeEventListener('click', handleCreateSaveQuery));
 
-    const tooltip = this.translationService.translate('yasqe.actions.save_query.button.tooltip');
-    return TooltipService.addTooltip(buttonElement, tooltip);
+    return this.addLabelledTooltip(buttonElement, 'yasqe.actions.save_query.button.tooltip');
   }
 
   private buildShareQueryButton(yasqe: Yasqe): HTMLElement {
@@ -176,8 +189,7 @@ export class YasqeService {
     buttonElement.addEventListener('click', handleShareQuery);
     yasqe.addDestroyCallback(() => buttonElement.removeEventListener('click', handleShareQuery));
 
-    const tooltip = this.translationService.translate('yasqe.actions.share_query.button.tooltip');
-    return TooltipService.addTooltip(buttonElement, tooltip);
+    return this.addLabelledTooltip(buttonElement, 'yasqe.actions.share_query.button.tooltip');
   }
 
   private buildInferAndSameAsButtons(yasguiConfiguration: YasguiConfiguration, yasqe: Yasqe): HTMLElement[] {
@@ -243,7 +255,10 @@ export class YasqeService {
   private updateSameAsElement(sameAsTooltipElement: HTMLElement, sameAs: boolean, inferred: boolean): void {
     const sameAsButtonElement = sameAsTooltipElement.querySelector('button');
     const sameAsTitleLabelKey = inferred ? `yasqe.actions.expand_results_same_as.${sameAs}.button.tooltip` : 'yasqe.actions.expand_results_same_as.disable.button.tooltip';
-    TooltipService.updateTooltip(sameAsButtonElement, this.translationService.translate(sameAsTitleLabelKey))
+    TooltipService.updateTooltip(sameAsButtonElement, this.translationService.translate(sameAsTitleLabelKey));
+    sameAsButtonElement.setAttribute('aria-label', this.translationService.translate('yasqe.actions.expand_results_same_as.button.label'));
+    sameAsButtonElement.setAttribute('aria-pressed', `${sameAs}`);
+    sameAsButtonElement.removeAttribute('aria-disabled');
     sameAsButtonElement.classList.remove('icon-same-as-on', 'icon-same-as-off', 'disabled');
     if (sameAs) {
       sameAsButtonElement.classList.add('icon-same-as-on');
@@ -253,13 +268,16 @@ export class YasqeService {
     if (!inferred) {
       // Disables the same as button. The Disabled attribute is not used because it stops firing events and breaks the button tooltip.
       sameAsButtonElement.classList.add('disabled');
+      sameAsButtonElement.setAttribute('aria-disabled', 'true');
     }
   }
 
   private updateInferredElement(inferredElement: HTMLElement, sameAsElement: HTMLElement, inferred: boolean, sameAs: boolean): void {
     const inferredButtonElement = inferredElement.querySelector('button');
     const inferredButtonTitle = this.translationService.translate(`yasqe.actions.include_inferred.${inferred}.button.tooltip`);
-    TooltipService.updateTooltip(inferredButtonElement, inferredButtonTitle)
+    TooltipService.updateTooltip(inferredButtonElement, inferredButtonTitle);
+    inferredButtonElement.setAttribute('aria-label', this.translationService.translate('yasqe.actions.include_inferred.button.label'));
+    inferredButtonElement.setAttribute('aria-pressed', `${inferred}`);
     inferredButtonElement.classList.remove('icon-inferred-on', 'icon-inferred-off');
     if (inferred) {
       inferredButtonElement.classList.add('icon-inferred-on');

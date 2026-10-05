@@ -183,9 +183,23 @@ export class Yasqe extends CodeMirror {
     if (this.config.resizeable) this.drawResizer();
     this.drawKeyboardShortcutsButton();
     this.drawAbortQueryButton();
+    this.initScreenReaderLabel();
     if (this.config.collapsePrefixesOnLoad) this.collapsePrefixes(true);
     this.registerEventListeners();
   }
+  private initScreenReaderLabel() {
+    this.updateScreenReaderLabel();
+    this.subscriptions.push(
+      this.translationService.subscribeForLanguageChange({
+        name: "ScreenReaderLabelLanguageChangeObserver",
+        notify: this.updateScreenReaderLabel,
+      })
+    );
+  }
+  private updateScreenReaderLabel = () => {
+    // Gives the hidden CodeMirror input an accessible name.
+    this.setOption("screenReaderLabel", this.translationService.translate("yasqe.editor.screen_reader.label"));
+  };
   private handleHashChange = () => {
     this.config.consumeShareLink?.(this);
   };

@@ -1,0 +1,133 @@
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+index eeb2dcd..22520a1 100644
+--- a/Yasgui/packages/yasgui/src/Tab.ts
++++ b/Yasgui/packages/yasgui/src/Tab.ts
+@@ -131,6 +131,7 @@ export class Tab extends EventEmitter {
+     this.emit("yasqeReady", this, this.getYasqe());
+     this.initYasr();
+     this.yasgui._setPanel(this.persistentJson.id, this.rootEl);
++    this.getTabListEl()?.linkTabPanel();
+   }
+   public hide() {
+     removeClass(this.rootEl, "active");
+@@ -685,13 +686,13 @@ export class Tab extends EventEmitter {
+     yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
+     yasrConf.showQueryLoader = this.yasgui.config.yasr.showQueryLoader;
+     yasrConf.clearState = this.yasgui.config.clearState;
+-    yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
++    yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan;
+     yasrConf.tabId = this.getId();
+     yasrConf.fullscreen = this.yasgui.config.yasr.fullscreen;
+     yasrConf.showFullscreenButton = this.yasgui.config.yasr.showFullscreenButton;
+     yasrConf.themeName = this.yasgui.config.yasr.themeName;
+     if (this.yasgui.config.yasr.selectedPlugin != null) {
+-        yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
++      yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
+     }
+ 
+     if (this.yasqe) {
+diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
+index d93f319..2a3451f 100644
+--- a/Yasgui/packages/yasgui/src/TabElements.ts
++++ b/Yasgui/packages/yasgui/src/TabElements.ts
+@@ -49,6 +49,13 @@ export class TabListEl {
+       this.tabEl.children[0].setAttribute("tabindex", "-1");
+     }
+   }
++  /**
++   * Links the tab to its tab panel. The panel is drawn lazily when the tab is shown for the first time,
++   * so the tab references it only after it exists.
++   */
++  public linkTabPanel() {
++    this.tabEl?.children[0]?.setAttribute("aria-controls", this.tabId);
++  }
+   public rename(name: string) {
+     if (this.nameEl) {
+       this.nameEl.textContent = name;
+@@ -58,12 +65,15 @@ export class TabListEl {
+     if (isValid) {
+       removeClass(this.tabEl, "query-invalid");
+       if (this.tabEl) {
+-          this.tabEl.removeAttribute("title");
++        this.tabEl.removeAttribute("title");
+       }
+     } else {
+       addClass(this.tabEl, "query-invalid");
+       if (this.tabEl) {
+-          this.tabEl.setAttribute("title", this.translationService.translate("yasqe.tab_list.new_tab.query_invalid.warning.message"));
++        this.tabEl.setAttribute(
++          "title",
++          this.translationService.translate("yasqe.tab_list.new_tab.query_invalid.warning.message")
++        );
+       }
+     }
+   }
+@@ -94,7 +104,6 @@ export class TabListEl {
+     tabLinkEl.setAttribute("role", "tab");
+     tabLinkEl.href = "#" + this.tabId;
+     tabLinkEl.id = "tab-" + this.tabId; // use the id for the tabpanel which is tabId to set the actual tab id
+-    tabLinkEl.setAttribute("aria-controls", this.tabId); // respective tabPanel id
+     tabLinkEl.addEventListener("blur", () => {
+       if (!this.tabEl) return;
+       if (this.tabEl.classList.contains("active")) {
+diff --git a/Yasgui/packages/yasgui/src/extended-TabElements.ts b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+index c465704..88f5a75 100644
+--- a/Yasgui/packages/yasgui/src/extended-TabElements.ts
++++ b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+@@ -39,7 +39,6 @@ export class ExtendedTabListEl extends TabListEl {
+     // use the id for the tabpanel which is tabId to set the actual tab id
+     renameElement.id = TAB_ID_PREFIX + this.tabId;
+     renameElement.translationService = this.translationService;
+-    renameElement.setAttribute("aria-controls", this.tabId); // respective tabPanel id
+     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
+     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
+     renameElement.addEventListener("blur", this.renameElementOnBlurHandler.bind(this));
+diff --git a/Yasgui/packages/yasqe/src/CodeMirror.ts b/Yasgui/packages/yasqe/src/CodeMirror.ts
+index ee97e46..6d327ad 100644
+--- a/Yasgui/packages/yasqe/src/CodeMirror.ts
++++ b/Yasgui/packages/yasqe/src/CodeMirror.ts
+@@ -22,7 +22,7 @@ require("codemirror/addon/hint/show-hint.js");
+ require("codemirror/addon/search/searchcursor.js");
+ require("codemirror/addon/search/match-highlighter.js");
+ require("codemirror/addon/edit/matchbrackets.js");
+-require('codemirror/addon/edit/closebrackets.js');
++require("codemirror/addon/edit/closebrackets.js");
+ require("codemirror/addon/runmode/runmode.js");
+ require("codemirror/lib/codemirror.css");
+ require("codemirror/addon/fold/foldgutter.css");
+@@ -48,6 +48,7 @@ interface CodeMirror extends Omit<CmEditor, "getOption" | "setOption" | "on" | "
+    */
+   getOption(opt: "queryType"): TokenizerState["queryType"];
+   setOption(opt: "queryType", val: TokenizerState["queryType"]): void;
++  setOption(opt: "screenReaderLabel", val: string): void;
+ 
+   foldCode(firstPrefixLine: number, prefix: string, collapse: "fold" | "unfold"): void;
+ }
+diff --git a/Yasgui/packages/yasqe/src/index.ts b/Yasgui/packages/yasqe/src/index.ts
+index 8e9467b..aae8217 100644
+--- a/Yasgui/packages/yasqe/src/index.ts
++++ b/Yasgui/packages/yasqe/src/index.ts
+@@ -183,9 +183,23 @@ export class Yasqe extends CodeMirror {
+     if (this.config.resizeable) this.drawResizer();
+     this.drawKeyboardShortcutsButton();
+     this.drawAbortQueryButton();
++    this.initScreenReaderLabel();
+     if (this.config.collapsePrefixesOnLoad) this.collapsePrefixes(true);
+     this.registerEventListeners();
+   }
++  private initScreenReaderLabel() {
++    this.updateScreenReaderLabel();
++    this.subscriptions.push(
++      this.translationService.subscribeForLanguageChange({
++        name: "ScreenReaderLabelLanguageChangeObserver",
++        notify: this.updateScreenReaderLabel,
++      })
++    );
++  }
++  private updateScreenReaderLabel = () => {
++    // Gives the hidden CodeMirror input an accessible name.
++    this.setOption("screenReaderLabel", this.translationService.translate("yasqe.editor.screen_reader.label"));
++  };
+   private handleHashChange = () => {
+     this.config.consumeShareLink?.(this);
+   };

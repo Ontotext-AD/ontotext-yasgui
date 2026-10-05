@@ -22,7 +22,7 @@ require("codemirror/addon/hint/show-hint.js");
 require("codemirror/addon/search/searchcursor.js");
 require("codemirror/addon/search/match-highlighter.js");
 require("codemirror/addon/edit/matchbrackets.js");
-require('codemirror/addon/edit/closebrackets.js');
+require("codemirror/addon/edit/closebrackets.js");
 require("codemirror/addon/runmode/runmode.js");
 require("codemirror/lib/codemirror.css");
 require("codemirror/addon/fold/foldgutter.css");
@@ -48,6 +48,7 @@ interface CodeMirror extends Omit<CmEditor, "getOption" | "setOption" | "on" | "
    */
   getOption(opt: "queryType"): TokenizerState["queryType"];
   setOption(opt: "queryType", val: TokenizerState["queryType"]): void;
+  setOption(opt: "screenReaderLabel", val: string): void;
 
   foldCode(firstPrefixLine: number, prefix: string, collapse: "fold" | "unfold"): void;
 }

@@ -131,6 +131,7 @@ export class Tab extends EventEmitter {
     this.emit("yasqeReady", this, this.getYasqe());
     this.initYasr();
     this.yasgui._setPanel(this.persistentJson.id, this.rootEl);
+    this.getTabListEl()?.linkTabPanel();
   }
   public hide() {
     removeClass(this.rootEl, "active");
@@ -685,13 +686,13 @@ export class Tab extends EventEmitter {
     yasrConf.showResultInfo = this.yasgui.config.yasr.showResultInfo;
     yasrConf.showQueryLoader = this.yasgui.config.yasr.showQueryLoader;
     yasrConf.clearState = this.yasgui.config.clearState;
-    yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan
+    yasrConf.isExplainPlan = this.yasgui.config.yasr.isExplainPlan;
     yasrConf.tabId = this.getId();
     yasrConf.fullscreen = this.yasgui.config.yasr.fullscreen;
     yasrConf.showFullscreenButton = this.yasgui.config.yasr.showFullscreenButton;
     yasrConf.themeName = this.yasgui.config.yasr.themeName;
     if (this.yasgui.config.yasr.selectedPlugin != null) {
-        yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
+      yasrConf.selectedPlugin = this.yasgui.config.yasr.selectedPlugin;
     }
 
     if (this.yasqe) {
