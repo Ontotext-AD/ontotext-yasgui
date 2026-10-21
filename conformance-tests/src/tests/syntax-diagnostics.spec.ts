@@ -82,6 +82,45 @@ describe('YASQE syntax diagnostics', () => {
     });
   });
 
+  describe('trailing VALUES variable scoping', () => {
+    const prefix = 'PREFIX : <http://example.com/>\n';
+
+    it('rejects a SELECT alias that reuses a trailing VALUES variable', () => {
+      const result = checkQuerySyntax(CodeMirror, prefix + 'SELECT (1 AS ?c) WHERE { ?s :p ?o } VALUES ?c { 1 }');
+      expect(result.valid).toBe(false);
+      expect(result.diagnostic).toEqual({
+        messageLabelKey: 'yasqe.check_syntax.error.select_alias_in_values_scope',
+        parameters: [{key: 'alias', value: '?c'}]
+      });
+    });
+
+    it('still requires a variable bound by a VALUES block inside WHERE to be grouped', () => {
+      const result = checkQuerySyntax(CodeMirror, prefix + 'SELECT ?s ?v WHERE { ?s :p ?o VALUES ?v { 1 } } GROUP BY ?s');
+      expect(result.valid).toBe(false);
+      expect(result.diagnostic).toEqual({
+        messageLabelKey: 'yasqe.check_syntax.error.select_variable_not_in_group_by',
+        parameters: [{key: 'variable', value: '?v'}]
+      });
+    });
+
+    it.each([
+      ['in the projection of a grouped query', 'SELECT ?s ?v WHERE { ?s :p ?o } GROUP BY ?s VALUES ?v { 1 }'],
+      ['in a select expression of a grouped query', 'SELECT ?s (?v + 1 AS ?w) WHERE { ?s :p ?o } GROUP BY ?s VALUES (?v ?u) { (1 2) }'],
+      ['next to an aggregate without GROUP BY', 'SELECT ?v (COUNT(*) AS ?c) WHERE { ?s :p ?o } VALUES ?v { 1 }']
+    ])('accepts a trailing VALUES variable %s', (_, query) => {
+      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(true);
+    });
+
+    it('does not let a sub-SELECT trailing VALUES variable satisfy the outer GROUP BY', () => {
+      const result = checkQuerySyntax(CodeMirror, prefix + 'SELECT ?s ?v WHERE { { SELECT ?s { ?s :p ?o } VALUES ?v { 1 } } } GROUP BY ?s');
+      expect(result.valid).toBe(false);
+      expect(result.diagnostic).toEqual({
+        messageLabelKey: 'yasqe.check_syntax.error.select_variable_not_in_group_by',
+        parameters: [{key: 'variable', value: '?v'}]
+      });
+    });
+  });
+
   it('keeps English and French syntax diagnostic catalogs in sync', () => {
     const localeDirectory = path.resolve(__dirname, '../../../ontotext-yasgui-web-component/src/i18n');
     const syntaxKeys = (locale: string) => Object.keys(JSON.parse(fs.readFileSync(
@@ -106,6 +145,7 @@ describe('YASQE syntax diagnostics', () => {
       'yasqe.check_syntax.error.select_aggregate_variable_without_group_by',
       'yasqe.check_syntax.error.select_alias_conflicts_subselect_variable',
       'yasqe.check_syntax.error.select_alias_in_group_by_scope',
+      'yasqe.check_syntax.error.select_alias_in_values_scope',
       'yasqe.check_syntax.error.select_star_variable_not_in_group_by',
       'yasqe.check_syntax.error.select_variable_not_in_group_by',
       'yasqe.check_syntax.error.values_arity_mismatch',

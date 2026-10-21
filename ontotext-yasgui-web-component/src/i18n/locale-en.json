@@ -76,6 +76,7 @@
   "yasqe.check_syntax.error.bind_variable_already_in_scope": "BIND variable {{variable}} is already in scope.",
   "yasqe.check_syntax.error.invalid_base_direction": "Invalid base direction '{{direction}}': it must be 'ltr' or 'rtl'.",
   "yasqe.check_syntax.error.select_alias_in_group_by_scope": "SELECT alias {{alias}} is already in scope from GROUP BY.",
+  "yasqe.check_syntax.error.select_alias_in_values_scope": "SELECT alias {{alias}} is already in scope from the trailing VALUES clause.",
   "yasqe.check_syntax.error.select_star_variable_not_in_group_by": "Variable {{variable}} is projected by SELECT * but is not present in GROUP BY.",
   "yasqe.check_syntax.error.select_variable_not_in_group_by": "Variable {{variable}} is used in SELECT but is not in GROUP BY.",
   "yasqe.check_syntax.error.select_aggregate_variable_without_group_by": "Variable {{variable}} is used in SELECT with aggregates but without GROUP BY.",
