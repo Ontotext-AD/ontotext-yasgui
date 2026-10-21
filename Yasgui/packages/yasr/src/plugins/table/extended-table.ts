@@ -208,7 +208,7 @@ export class ExtendedTable extends Table {
       } else if (typeCount == 1) {
         bindingTypes[variable] = Object.keys(types)[0];
       } else {
-        console.log('Mapping bindings to types failed. Multiple types for a variable found', types, variable);
+        console.warn('Mapping bindings to types failed. Multiple types for a variable found', types, variable);
       }
     });
     return bindingTypes;
@@ -303,9 +303,9 @@ export class ExtendedTable extends Table {
     return element.scrollWidth > element.clientWidth;
   }
 
-  private dataTableClickHandler(event) {
+  private dataTableClickHandler(event: MouseEvent) {
     if (this.isCompactViewActive()) {
-      let literalElement = event.target.closest('.literal-cell p');
+      let literalElement = (event.target as HTMLElement).closest<HTMLElement>('.literal-cell p');
       if (literalElement && this.isTextEllipsized(literalElement)) {
         // Adding the "expanded-literal" class will prevent the value from being truncated with ellipses.
         literalElement.classList.add('expanded-literal');
@@ -319,9 +319,9 @@ export class ExtendedTable extends Table {
     return !!this.persistentConfig.isEllipsed;
   }
 
-  private tableMouseoverHandler(event): void {
+  private tableMouseoverHandler(event: MouseEvent): void {
     if (this.isCompactViewActive()) {
-      let literalElement = event.target.closest('.literal-cell p');
+      let literalElement = (event.target as HTMLElement).closest<HTMLElement>('.literal-cell p');
       if (literalElement && this.isTextEllipsized(literalElement)) {
         // Adding the 'expandable-literal' class will change cursor to point when literal is hovered.
         literalElement.classList.add('expandable-literal');
@@ -329,10 +329,11 @@ export class ExtendedTable extends Table {
     }
   }
 
-  private tableMouseoutHandler(event): void {
-    if (this.isCompactViewActive() && event.target.matches('.expandable-literal')) {
+  private tableMouseoutHandler(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (this.isCompactViewActive() && target.matches('.expandable-literal')) {
       // Remove pointer cursor when mouse leaves the cell
-      event.target.classList.remove('expandable-literal');
+      target.classList.remove('expandable-literal');
     }
   }
 

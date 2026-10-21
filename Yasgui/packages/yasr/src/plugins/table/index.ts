@@ -392,14 +392,14 @@ export default class Table implements Plugin<PluginConfig> {
     // Store in persistentConfig
     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
     // Update the table
-    this.draw(this.persistentConfig);
+    void this.draw(this.persistentConfig);
     this.yasr.storePluginConfig("table", this.persistentConfig);
   };
   protected handleSetEllipsisToggle = (event: Event) => {
     // Store in persistentConfig
     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
     // Update the table
-    this.draw(this.persistentConfig);
+    void this.draw(this.persistentConfig);
     this.yasr.storePluginConfig("table", this.persistentConfig);
   };
   /**

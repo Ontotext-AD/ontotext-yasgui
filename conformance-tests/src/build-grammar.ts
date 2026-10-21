@@ -26,7 +26,6 @@ interface BuildOptions {
 export default function buildGrammar(options: BuildOptions = {}): boolean {
   const { silent = false } = options;
   const log = silent ? (..._args: unknown[]) => {} : console.log;
-  const error = silent ? (..._args: unknown[]) => {} : console.error;
 
   const scriptDir = __dirname;
   const grammarSrc = path.join(scriptDir, "..", "..", "Yasgui", "packages", "yasqe", "grammar");
@@ -53,7 +52,9 @@ export default function buildGrammar(options: BuildOptions = {}): boolean {
 
     return true;
   } catch (err) {
-    error("Build failed:", (err as Error).message);
+    // Failures are reported even when silent: in silent mode tsc's output is piped, so this is the only place it shows.
+    const { stdout, stderr } = err as { stdout?: Buffer; stderr?: Buffer };
+    console.error("Build failed:", (err as Error).message, stdout?.toString() ?? "", stderr?.toString() ?? "");
     return false;
   }
 }
