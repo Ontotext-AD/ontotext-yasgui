@@ -1,0 +1,409 @@
+diff --git a/Yasgui/packages/yasgui/src/Tab.ts b/Yasgui/packages/yasgui/src/Tab.ts
+index 22520a1..4ed4e66 100644
+--- a/Yasgui/packages/yasgui/src/Tab.ts
++++ b/Yasgui/packages/yasgui/src/Tab.ts
+@@ -162,6 +162,8 @@ export class Tab extends EventEmitter {
+       return;
+     }
+     const closeTab = () => {
++      // Checked before another tab is selected, as selecting it may focus its editor
++      const tabHadFocus = !!this.getTabListEl()?.tabEl?.contains(document.activeElement);
+       if (this.yasqe) this.yasqe.abortQuery();
+       if (this.yasgui.getTab() === this) {
+         //it's the active tab
+@@ -181,6 +183,10 @@ export class Tab extends EventEmitter {
+       delete this.yasgui._tabs[this.persistentJson.id];
+       // Calls the yasqe destroy method to unsubscribe all resources.
+       this.yasqe?.destroy();
++      // Keep the keyboard focus in the tab list when the focused tab is closed
++      if (tabHadFocus) {
++        this.yasgui.tabElements.focusSelectedTab();
++      }
+     };
+     if (confirm) {
+       let closeTabWarningMessage = "";
+diff --git a/Yasgui/packages/yasgui/src/TabElements.scss b/Yasgui/packages/yasgui/src/TabElements.scss
+index 6c66bdb..cbcfcea 100644
+--- a/Yasgui/packages/yasgui/src/TabElements.scss
++++ b/Yasgui/packages/yasgui/src/TabElements.scss
+@@ -8,6 +8,10 @@ $minTabHeight: 35px;
+     }
+     display: flex;
+     flex-wrap: wrap;
++    // The tab list is outside of the layout, so the add tab button follows the last tab, when the tabs wrap
++    .tabs {
++      display: contents;
++    }
+     a {
+       cursor: pointer;
+       display: flex;
+diff --git a/Yasgui/packages/yasgui/src/TabElements.ts b/Yasgui/packages/yasgui/src/TabElements.ts
+index 2a3451f..b9751c8 100644
+--- a/Yasgui/packages/yasgui/src/TabElements.ts
++++ b/Yasgui/packages/yasgui/src/TabElements.ts
+@@ -56,6 +56,14 @@ export class TabListEl {
+   public linkTabPanel() {
+     this.tabEl?.children[0]?.setAttribute("aria-controls", this.tabId);
+   }
++  /**
++   * Selects the tab from the keyboard. The focus stays on the tab, so the user can keep navigating the tab list,
++   * even if the editor of the selected tab is focused automatically.
++   */
++  protected selectWithKeyboard() {
++    this.yasgui.selectTabId(this.tabId);
++    this.tabList.focusSelectedTab();
++  }
+   public rename(name: string) {
+     if (this.nameEl) {
+       this.nameEl.textContent = name;
+@@ -93,6 +101,10 @@ export class TabListEl {
+     addClass(this.tabEl, "tab");
+     this.tabEl.addEventListener("keydown", (e: KeyboardEvent) => {
+       if (e.code === "Delete") handleDeleteTab();
++      if (e.code === "Space" && !hasClass(this.tabEl, "renaming")) {
++        e.preventDefault();
++        this.selectWithKeyboard();
++      }
+     });
+ 
+     const handleDeleteTab = (e?: MouseEvent) => {
+@@ -104,22 +116,6 @@ export class TabListEl {
+     tabLinkEl.setAttribute("role", "tab");
+     tabLinkEl.href = "#" + this.tabId;
+     tabLinkEl.id = "tab-" + this.tabId; // use the id for the tabpanel which is tabId to set the actual tab id
+-    tabLinkEl.addEventListener("blur", () => {
+-      if (!this.tabEl) return;
+-      if (this.tabEl.classList.contains("active")) {
+-        tabLinkEl.setAttribute("tabindex", "0");
+-      } else {
+-        tabLinkEl.setAttribute("tabindex", "-1");
+-      }
+-    });
+-    tabLinkEl.addEventListener("focus", () => {
+-      if (!this.tabEl) return;
+-      if (this.tabEl.classList.contains("active")) {
+-        const allTabs = Object.keys(this.tabList._tabs);
+-        const currentTabIndex = allTabs.indexOf(this.tabId);
+-        this.tabList.tabEntryIndex = currentTabIndex;
+-      }
+-    });
+     // if (this.yasgui.persistentConfig.tabIsActive(this.tabId)) {
+     //   this.yasgui.store.dispatch(selectTab(this.tabId))
+     // }
+@@ -193,14 +189,16 @@ export class TabList {
+   private _selectedTab?: string;
+   protected addTabEl?: HTMLDivElement;
+   public _tabs: { [tabId: string]: TabListEl } = {};
++  /**
++   * Holds the tab list and the add tab button. The button is outside the tab list, because a tab list may own only tabs.
++   */
++  private tabsBarEl?: HTMLDivElement;
+   public _tabsListEl?: HTMLDivElement;
+   public tabContextMenu?: TabContextMenu;
+-  public tabEntryIndex: number | undefined;
+ 
+   constructor(yasgui: Yasgui) {
+     this.yasgui = yasgui;
+     this.registerListeners();
+-    this.tabEntryIndex = this.getActiveIndex();
+   }
+   get(tabId: string) {
+     return this._tabs[tabId];
+@@ -237,44 +235,85 @@ export class TabList {
+     this._tabs[tab.getId()].setAsValid(data.valid);
+   }
+ 
+-  private getActiveIndex() {
++  protected isRenamingTab(): boolean {
++    return !!this._tabsListEl?.querySelector(".tab.renaming");
++  }
++  private getTabElements(): HTMLElement[] {
++    return Array.from(this._tabsListEl?.querySelectorAll<HTMLElement>("[role=tab]") || []);
++  }
++  /**
++   * Moves the focus to the given tab and makes it the only tab stop of the tab list (roving tabindex).
++   *
++   * @param tabElement - The element with the tab role to focus.
++   */
++  private focusTab(tabElement: HTMLElement) {
++    for (const tab of this.getTabElements()) {
++      tab.setAttribute("tabindex", tab === tabElement ? "0" : "-1");
++    }
++    tabElement.focus();
++  }
++  /**
++   * Moves the focus to the selected tab and makes it the only tab stop of the tab list.
++   */
++  public focusSelectedTab() {
+     if (!this._selectedTab) return;
+-    const allTabs = Object.keys(this._tabs);
+-    const currentTabIndex = allTabs.indexOf(this._selectedTab);
+-    return currentTabIndex;
++    const selectedTabElement = this._tabs[this._selectedTab]?.tabEl?.querySelector<HTMLElement>("[role=tab]");
++    if (selectedTabElement) {
++      this.focusTab(selectedTabElement);
++    }
+   }
+-  protected handleKeydownArrowKeys = (e: KeyboardEvent) => {
+-    if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
+-      if (!this._tabsListEl) return;
+-      const numOfChildren = this._tabsListEl.childElementCount;
+-      if (typeof this.tabEntryIndex !== "number") return;
+-      const tabEntryDiv = this._tabsListEl.children[this.tabEntryIndex];
+-      // If the current tab does not have active set its tabindex to -1
+-      if (!tabEntryDiv.classList.contains("active")) {
+-        tabEntryDiv.children[0].setAttribute("tabindex", "-1"); // cur tab removed from tab index
+-      }
+-      if (e.code === "ArrowLeft") {
+-        this.tabEntryIndex--;
+-        if (this.tabEntryIndex < 0) {
+-          this.tabEntryIndex = numOfChildren - 1;
+-        }
+-      }
+-      if (e.code === "ArrowRight") {
+-        this.tabEntryIndex++;
+-        if (this.tabEntryIndex >= numOfChildren) {
+-          this.tabEntryIndex = 0;
+-        }
+-      }
+-      const newTabEntryDiv = this._tabsListEl.children[this.tabEntryIndex];
+-      newTabEntryDiv.children[0].setAttribute("tabindex", "0");
+-      (newTabEntryDiv.children[0] as HTMLElement).focus(); // focus on the a tag inside the div for click event
++  /**
++   * Moves the focus between the tabs following the WAI-ARIA tabs pattern. A tab is selected with Enter or Space.
++   */
++  private handleTabListKeydown = (e: KeyboardEvent) => {
++    if (this.isRenamingTab()) return;
++    const tabs = this.getTabElements();
++    const currentIndex = tabs.findIndex((tab) => tab.contains(e.target as Node));
++    if (currentIndex < 0) return;
++    let newIndex: number;
++    switch (e.code) {
++      case "ArrowLeft":
++        newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
++        break;
++      case "ArrowRight":
++        newIndex = (currentIndex + 1) % tabs.length;
++        break;
++      case "Home":
++        newIndex = 0;
++        break;
++      case "End":
++        newIndex = tabs.length - 1;
++        break;
++      default:
++        return;
+     }
++    e.preventDefault();
++    this.focusTab(tabs[newIndex]);
++  };
++  /**
++   * When the focus leaves the tab list, the selected tab becomes the only tab stop again,
++   * so tabbing back into the tab list focuses the selected tab.
++   */
++  private handleFocusOut = (e: FocusEvent) => {
++    // The focus stays where it was, when the whole window loses the focus
++    if (!document.hasFocus()) return;
++    if (this._tabsListEl?.contains(e.relatedTarget as Node)) return;
++    if (this._selectedTab) this.selectTab(this._selectedTab);
+   };
+   drawTabsList() {
++    this.tabsBarEl = document.createElement("div");
++    // The bar keeps the "tabsList" class, because the styles and the layout of the embedding pages rely on it
++    addClass(this.tabsBarEl, "tabsList");
++
+     this._tabsListEl = document.createElement("div");
+-    addClass(this._tabsListEl, "tabsList");
++    addClass(this._tabsListEl, "tabs");
+     this._tabsListEl.setAttribute("role", "tablist");
+-    this._tabsListEl.addEventListener("keydown", this.handleKeydownArrowKeys);
++    // Accessibility checkers detect keyboard support of a tab list only by an inline key handler attribute.
++    // The empty attribute is replaced by the handler property right away, so no inline code is executed.
++    this._tabsListEl.setAttribute("onkeydown", "");
++    this._tabsListEl.onkeydown = this.handleTabListKeydown;
++    this._tabsListEl.addEventListener("focusout", this.handleFocusOut);
++    this.tabsBarEl.appendChild(this._tabsListEl);
+ 
+     sortablejs.default.create(this._tabsListEl, {
+       group: "tabList",
+@@ -300,25 +339,16 @@ export class TabList {
+     addTabLink.title = addTabLabel;
+     addTabLink.setAttribute("aria-label", addTabLabel);
+     addTabLink.addEventListener("click", this.handleAddNewTab);
+-    addTabLink.addEventListener("focus", () => {
+-      // sets aria tabEntryIndex to active tab
+-      // this.tabEntryIndex = this.getActiveIndex();
+-      if (!this._tabsListEl) return;
+-      this.tabEntryIndex = this._tabsListEl.childElementCount - 1; // sets tabEntry to add tab, visually makes sense, not sure about accessibility-wise
+-    });
+-    addTabLink.addEventListener("blur", () => {
+-      addTabLink.setAttribute("tabindex", "0"); // maintains tabability
+-    });
+     const icon = document.createElement("i");
+     icon.className = "ri-add-circle-line";
+     addTabLink.prepend(icon);
+     this.addTabEl.appendChild(addTabLink);
+-    this._tabsListEl.appendChild(this.addTabEl);
++    this.tabsBarEl.appendChild(this.addTabEl);
+     this.tabContextMenu = TabContextMenu.get(
+       this.yasgui,
+-      this.yasgui.config.contextMenuContainer ? this.yasgui.config.contextMenuContainer : this._tabsListEl
++      this.yasgui.config.contextMenuContainer ? this.yasgui.config.contextMenuContainer : this.tabsBarEl
+     );
+-    return this._tabsListEl;
++    return this.tabsBarEl;
+   }
+   handleAddNewTab = (event: Event) => {
+     event.preventDefault();
+@@ -364,7 +394,7 @@ export class TabList {
+         this._tabs[this.yasgui.persistentConfig.getTabs()[index + 1]].tabEl || null
+       );
+     } else {
+-      this._tabsListEl?.insertBefore(this._tabs[tabId].draw(tabConf.name), this.addTabEl || null);
++      this._tabsListEl?.appendChild(this._tabs[tabId].draw(tabConf.name));
+     }
+   }
+   public destroy() {
+@@ -374,7 +404,8 @@ export class TabList {
+     }
+     this._tabs = {};
+     this.tabContextMenu?.destroy();
+-    this._tabsListEl?.remove();
++    this.tabsBarEl?.remove();
++    this.tabsBarEl = undefined;
+     this._tabsListEl = undefined;
+   }
+ }
+diff --git a/Yasgui/packages/yasgui/src/closeTabConfirmation.ts b/Yasgui/packages/yasgui/src/closeTabConfirmation.ts
+index c12168f..e445e14 100644
+--- a/Yasgui/packages/yasgui/src/closeTabConfirmation.ts
++++ b/Yasgui/packages/yasgui/src/closeTabConfirmation.ts
+@@ -4,6 +4,8 @@ export class CloseTabConfirmation {
+     private confirmationDialog: any;
+     private boundRejectHandler: Function;
+     private boundConfirmationHandler: Function;
++    // The element focused before the dialog was opened, usually the tab being closed
++    private previouslyFocusedElement: HTMLElement | null = null;
+ 
+     constructor(public translationService: TranslationService,
+                 public confirmationTitle: string,
+@@ -15,6 +17,7 @@ export class CloseTabConfirmation {
+     }
+ 
+     open() {
++        this.previouslyFocusedElement = document.activeElement as HTMLElement | null;
+         this.confirmationDialog.addEventListener("internalConfirmationRejectedEvent", this.boundRejectHandler);
+         this.confirmationDialog.addEventListener("internalConfirmationApprovedEvent", this.boundConfirmationHandler);
+         document.body.appendChild(this.confirmationDialog);
+@@ -43,5 +46,7 @@ export class CloseTabConfirmation {
+         this.confirmationDialog.removeEventListener('internalConfirmationRejectedEvent', this.boundRejectHandler);
+         this.confirmationDialog.removeEventListener('internalConfirmationApprovedEvent', this.boundConfirmationHandler);
+         this.confirmationDialog = null;
++        this.previouslyFocusedElement?.focus();
++        this.previouslyFocusedElement = null;
+     }
+ }
+diff --git a/Yasgui/packages/yasgui/src/extended-TabElements.ts b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+index 88f5a75..0d1ceb8 100644
+--- a/Yasgui/packages/yasgui/src/extended-TabElements.ts
++++ b/Yasgui/packages/yasgui/src/extended-TabElements.ts
+@@ -41,8 +41,6 @@ export class ExtendedTabListEl extends TabListEl {
+     renameElement.translationService = this.translationService;
+     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
+     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
+-    renameElement.addEventListener("blur", this.renameElementOnBlurHandler.bind(this));
+-    renameElement.addEventListener("focus", this.renameElementOnFocusHandler.bind(this));
+     renameElement.addEventListener("contextmenu", this.renameElementOpenContextMenuHandler.bind(this));
+     return renameElement;
+   }
+@@ -70,9 +68,9 @@ export class ExtendedTabListEl extends TabListEl {
+         this.handleDeleteTab();
+       }
+     }
+-    if (e.code === "Enter") {
++    if (e.code === "Enter" || (e.code === "Space" && !this.renameTabElement?.edit)) {
+       e.preventDefault();
+-      this.yasgui.selectTabId(this.tabId);
++      this.selectWithKeyboard();
+     }
+   }
+ 
+@@ -98,22 +96,6 @@ export class ExtendedTabListEl extends TabListEl {
+     }
+   }
+ 
+-  private renameElementOnBlurHandler(): void {
+-    if (!this.tabEl) return;
+-    if (this.tabEl.classList.contains("active")) {
+-      this.renameTabElement?.setAttribute("tabindex", "0");
+-    } else {
+-      this.renameTabElement?.setAttribute("tabindex", "-1");
+-    }
+-  }
+-
+-  private renameElementOnFocusHandler(): void {
+-    if (!this.tabEl) return;
+-    if (this.tabEl.classList.contains("active")) {
+-      this.tabList.tabEntryIndex = Object.keys(this.tabList._tabs).indexOf(this.tabId);
+-    }
+-  }
+-
+   private renameElementOpenContextMenuHandler(ev: MouseEvent): void {
+     // Close possible old
+     this.tabList.tabContextMenu?.closeConfigMenu();
+@@ -153,8 +135,6 @@ export class ExtendedTabListEl extends TabListEl {
+       "componentModeChanged",
+       this.renameElementComponentModeChangedHandler.bind(this)
+     );
+-    this.renameTabElement?.removeEventListener("blur", this.renameElementOnBlurHandler.bind(this));
+-    this.renameTabElement?.removeEventListener("focus", this.renameElementOnFocusHandler.bind(this));
+     this.renameTabElement?.removeEventListener("contextmenu", this.renameElementOpenContextMenuHandler.bind(this));
+     this.closeButton?.removeEventListener("click", this.closeButtonOnClickHandler.bind(this));
+     super.delete();
+@@ -171,42 +151,13 @@ export class ExtendedTabList extends TabList {
+         this._tabs[this.yasgui.persistentConfig.getTabs()[index + 1]].tabEl || null
+       );
+     } else {
+-      this._tabsListEl?.insertBefore(this._tabs[tabId].draw(tabConf.name), this.addTabEl || null);
++      this._tabsListEl?.appendChild(this._tabs[tabId].draw(tabConf.name));
+     }
+   }
+ 
+-  protected handleKeydownArrowKeys = (e: KeyboardEvent) => {
+-    if (Object.values(this._tabs).some((tabEl) => (tabEl as ExtendedTabListEl).renameTabElement?.edit)) {
+-      return;
+-    }
+-
+-    if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
+-      if (!this._tabsListEl) return;
+-      const numOfChildren = this._tabsListEl.childElementCount;
+-      if (typeof this.tabEntryIndex !== "number") return;
+-      const tabEntryDiv = this._tabsListEl.children[this.tabEntryIndex];
+-      // If the current tab does not have active set its tabindex to -1
+-      if (!tabEntryDiv.classList.contains("active")) {
+-        tabEntryDiv.setAttribute("tabindex", "-1"); // cur tab removed from tab index
+-      }
+-      if (e.code === "ArrowLeft") {
+-        this.tabEntryIndex--;
+-        if (this.tabEntryIndex < 0) {
+-          this.tabEntryIndex = numOfChildren - 1;
+-        }
+-      }
+-      if (e.code === "ArrowRight") {
+-        this.tabEntryIndex++;
+-        if (this.tabEntryIndex >= numOfChildren) {
+-          this.tabEntryIndex = 0;
+-        }
+-      }
+-      const newTabEntryDiv = this._tabsListEl.children[this.tabEntryIndex];
+-      newTabEntryDiv.setAttribute("tabindex", "0");
+-      // focus on the tab
+-      (newTabEntryDiv as HTMLElement).focus();
+-    }
+-  };
++  protected isRenamingTab(): boolean {
++    return Object.values(this._tabs).some((tabEl) => (tabEl as ExtendedTabListEl).renameTabElement?.edit);
++  }
+ 
+   public deriveTabOrderFromEls() {
+     const tabs: string[] = [];
