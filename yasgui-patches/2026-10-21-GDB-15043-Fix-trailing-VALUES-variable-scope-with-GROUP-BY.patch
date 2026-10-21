@@ -1,0 +1,210 @@
+diff --git a/Yasgui/packages/yasqe/grammar/tokenizer.ts b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+index b24bdc1..e1bfef7 100644
+--- a/Yasgui/packages/yasqe/grammar/tokenizer.ts
++++ b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+@@ -51,7 +51,7 @@ export interface State {
+   groupByVars: Set<string>; // bare ?var in GROUP BY (at paren depth 0)
+   groupByParenDepth: number; // paren depth inside GROUP BY clause
+   hasGroupBy: boolean; // whether GROUP BY clause was seen
+-  subSelectDepth: number; // depth of sub-SELECT nesting (to ignore inner SELECTs)
++  braceDepth: number; // depth of '{' nesting outside the SELECT clause; 0 means the outer query level (inner SELECTs are deeper)
+   subSelectProjectedVars: Set<string>; // vars projected by sub-SELECTs into outer scope
+   inSubSelectClause: boolean; // tracking inner SELECT clause vars
+   subSelectParenDepth: number; // paren depth inside inner SELECT clause
+@@ -62,6 +62,8 @@ export interface State {
+   valuesVarNames: Set<string>; // variable names declared in VALUES (for duplicate detection)
+   valuesTupleCount: number; // number of values in current data tuple
+   valuesSkipNext: boolean; // skip next token in VALUES tuple (after ^^)
++  valuesIsTrailing: boolean; // whether the current VALUES clause is the outer query's trailing ValuesClause
++  trailingValuesVars: Set<string>; // vars of the outer query's trailing VALUES — in scope before SELECT expressions
+   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
+   tripleTermDepth: number;
+   // BIND variable scoping
+@@ -940,7 +942,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+             // to validate that non-aggregated SELECT variables appear in GROUP BY.
+             const AGGREGATE_KEYWORDS = new Set(["COUNT", "SUM", "MIN", "MAX", "AVG", "SAMPLE", "GROUP_CONCAT"]);
+ 
+-            if (tokenCat === "SELECT" && state.subSelectDepth === 0) {
++            if (tokenCat === "SELECT" && state.braceDepth === 0) {
+               state.inSelectClause = true;
+               state.selectParenDepth = 0;
+               state.aggregateNesting = 0;
+@@ -951,7 +953,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+               state.selectAliases = new Set();
+               state.hasGroupBy = false;
+               state.groupByVars = new Set();
+-            } else if (state.inSelectClause && state.subSelectDepth === 0) {
++            } else if (state.inSelectClause && state.braceDepth === 0) {
+               // Track SELECT * — only at paren depth 0 (not COUNT(*))
+               if (tokenCat === "*" && state.selectParenDepth === 0) {
+                 state.selectHasStar = true;
+@@ -1025,21 +1027,22 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+               }
+             }
+ 
+-            // Track sub-SELECT depth to avoid interfering with inner SELECTs
++            // Track '{' depth: checks scoped to the outer query run only at depth 0,
++            // so inner SELECTs and group graph patterns do not interfere with them
+             if (tokenCat === "{") {
+               if (!state.inSelectClause) {
+-                state.subSelectDepth++;
++                state.braceDepth++;
+               }
+             } else if (tokenCat === "}") {
+-              if (state.subSelectDepth > 0) {
+-                state.subSelectDepth--;
++              if (state.braceDepth > 0) {
++                state.braceDepth--;
+               }
+             }
+ 
+             // Track inner sub-SELECT projected variables.
+             // When a sub-SELECT projects a variable (bare or aliased), it becomes
+             // visible in the outer scope. The outer SELECT must not re-alias it.
+-            if (tokenCat === "SELECT" && state.subSelectDepth > 0) {
++            if (tokenCat === "SELECT" && state.braceDepth > 0) {
+               state.inSubSelectClause = true;
+               state.subSelectParenDepth = 0;
+               state.afterSubSelectAS = false;
+@@ -1067,13 +1070,13 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+             }
+ 
+             // Track GROUP BY clause
+-            if (tokenCat === "GROUP" && state.subSelectDepth === 0) {
++            if (tokenCat === "GROUP" && state.braceDepth === 0) {
+               // GROUP keyword seen — wait for BY
+               state.hasGroupBy = true;
+               state.inGroupByClause = true;
+               state.groupByParenDepth = 0;
+               (state as any)._groupByAfterAS = false;
+-            } else if (state.inGroupByClause && state.subSelectDepth === 0) {
++            } else if (state.inGroupByClause && state.braceDepth === 0) {
+               if (tokenCat === "(") {
+                 state.groupByParenDepth++;
+               } else if (tokenCat === ")") {
+@@ -1112,6 +1115,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+             // Triple terms <<(...)>> are a single dataBlockValue — tokens inside them are not counted.
+             if (tokenCat === "VALUES") {
+               state.valuesClause = "vars";
++              state.valuesIsTrailing = state.braceDepth === 0;
+               state.valuesVarCount = 0;
+               state.valuesVarNames = new Set();
+               state.valuesTupleCount = 0;
+@@ -1126,6 +1130,9 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+                 } else {
+                   state.valuesVarNames.add(tokenOb.string);
+                 }
++                if (state.valuesIsTrailing) {
++                  state.trailingValuesVars.add(tokenOb.string);
++                }
+                 state.valuesVarCount++;
+               } else if (tokenCat === ")") {
+                 // End of variable list, next should be '{'
+@@ -1455,7 +1462,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+         groupByVars: new Set(s.groupByVars),
+         groupByParenDepth: s.groupByParenDepth,
+         hasGroupBy: s.hasGroupBy,
+-        subSelectDepth: s.subSelectDepth,
++        braceDepth: s.braceDepth,
+         subSelectProjectedVars: new Set(s.subSelectProjectedVars),
+         inSubSelectClause: s.inSubSelectClause,
+         subSelectParenDepth: s.subSelectParenDepth,
+@@ -1465,6 +1472,8 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+         valuesVarNames: new Set(s.valuesVarNames),
+         valuesTupleCount: s.valuesTupleCount,
+         valuesSkipNext: s.valuesSkipNext,
++        valuesIsTrailing: s.valuesIsTrailing,
++        trailingValuesVars: new Set(s.trailingValuesVars),
+         bindScopeStack: s.bindScopeStack.map((scope) => new Set(scope)),
+         inBind: s.inBind,
+         bindParenDepth: s.bindParenDepth,
+@@ -1517,7 +1526,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+         groupByVars: new Set(),
+         groupByParenDepth: 0,
+         hasGroupBy: false,
+-        subSelectDepth: 0,
++        braceDepth: 0,
+         subSelectProjectedVars: new Set(),
+         inSubSelectClause: false,
+         subSelectParenDepth: 0,
+@@ -1527,6 +1536,8 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+         valuesVarNames: new Set(),
+         valuesTupleCount: 0,
+         valuesSkipNext: false,
++        valuesIsTrailing: false,
++        trailingValuesVars: new Set(),
+         bindScopeStack: [new Set()],
+         inBind: false,
+         bindParenDepth: 0,
+@@ -1543,20 +1554,28 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+           // The variable of a (expr AS v) select expression must not already be
+           // in-scope, and `GROUP BY ... v` / `GROUP BY ... (expr AS v)` both put
+           // v in scope — so an alias may never reuse a GROUP BY variable.
++          // The trailing VALUES clause is joined before the select expressions
++          // are evaluated, so its variables are in scope for every alias too.
++          const aliasScopes: [Set<string>, string][] = [
++            [this.groupByVars, "yasqe.check_syntax.error.select_alias_in_group_by_scope"],
++            [this.trailingValuesVars, "yasqe.check_syntax.error.select_alias_in_values_scope"],
++          ];
+           for (const alias of this.selectAliases) {
+-            if (this.groupByVars.has(alias)) {
+-              this.OK = false;
+-              this.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.select_alias_in_group_by_scope", [
+-                { key: "alias", value: alias },
+-              ]);
+-              return;
++            for (const [scope, messageLabelKey] of aliasScopes) {
++              if (scope.has(alias)) {
++                this.OK = false;
++                this.diagnostic = createSyntaxDiagnostic(messageLabelKey, [{ key: "alias", value: alias }]);
++                return;
++              }
+             }
+           }
+-          // GROUP BY scoping
++          // GROUP BY scoping. Trailing VALUES variables are joined after grouping,
++          // so they may be projected without appearing in GROUP BY.
++          const isInScopeAfterGrouping = (v: string) => this.groupByVars.has(v) || this.trailingValuesVars.has(v);
+           if (this.hasGroupBy) {
+             if (this.selectHasStar) {
+               for (const v in this.variables) {
+-                if (!this.groupByVars.has(v)) {
++                if (!isInScopeAfterGrouping(v)) {
+                   this.OK = false;
+                   this.diagnostic = createSyntaxDiagnostic(
+                     "yasqe.check_syntax.error.select_star_variable_not_in_group_by",
+@@ -1567,7 +1586,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+               }
+             } else {
+               for (const v of this.selectBareVars) {
+-                if (!this.groupByVars.has(v)) {
++                if (!isInScopeAfterGrouping(v)) {
+                   this.OK = false;
+                   this.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.select_variable_not_in_group_by", [
+                     { key: "variable", value: v },
+@@ -1576,14 +1595,17 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+                 }
+               }
+             }
+-          } else if (this.selectHasAggregate && this.selectBareVars.size > 0) {
+-            const firstVar = this.selectBareVars.values().next().value;
+-            this.OK = false;
+-            this.diagnostic = createSyntaxDiagnostic(
+-              "yasqe.check_syntax.error.select_aggregate_variable_without_group_by",
+-              [{ key: "variable", value: firstVar }]
+-            );
+-            return;
++          } else if (this.selectHasAggregate) {
++            for (const v of this.selectBareVars) {
++              if (!isInScopeAfterGrouping(v)) {
++                this.OK = false;
++                this.diagnostic = createSyntaxDiagnostic(
++                  "yasqe.check_syntax.error.select_aggregate_variable_without_group_by",
++                  [{ key: "variable", value: v }]
++                );
++                return;
++              }
++            }
+           }
+           // SELECT alias vs sub-SELECT projection conflicts
+           for (const alias of this.selectAliases) {
