@@ -34,6 +34,23 @@ export class KeyboardShortcutSteps {
     cy.get('body').type(`{${key}}`, {release});
   }
 
+  // Native key presses, so the browser moves the focus on Tab as it does for a real user.
+  static pressEscapeKey() {
+    cy.realPress('Escape');
+  }
+
+  static pressTabKey() {
+    cy.realPress('Tab');
+  }
+
+  static pressShiftTabKeys() {
+    cy.realPress(['Shift', 'Tab']);
+  }
+
+  static pressRightArrowKey() {
+    cy.realPress('ArrowRight');
+  }
+
   static clickOnDownArrow() {
     KeyboardShortcutSteps.press('downArrow');
   }

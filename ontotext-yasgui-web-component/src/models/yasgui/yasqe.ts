@@ -70,6 +70,8 @@ export interface Yasqe {
   setInfer: (infer: boolean) => void;
   setSameAs: (sameAs: boolean) => void;
   focus: () => void;
+  /** Returns the hidden textarea that receives the keyboard input of the editor. */
+  getInputField: () => HTMLTextAreaElement;
 }
 
 export class Doc {
