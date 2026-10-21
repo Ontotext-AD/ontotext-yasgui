@@ -1,0 +1,95 @@
+diff --git a/Yasgui/packages/yasqe/src/sparql.ts b/Yasgui/packages/yasqe/src/sparql.ts
+index 4256106..6a96a30 100644
+--- a/Yasgui/packages/yasqe/src/sparql.ts
++++ b/Yasgui/packages/yasqe/src/sparql.ts
+@@ -88,7 +88,7 @@ export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxCon
+   };
+ 
+   const calculateAffectedStatementsCount = () => {
+-    yasqe.config.getRepositoryStatementsCount().then((repositoryStatementsCount) => {
++    void yasqe.config.getRepositoryStatementsCount().then((repositoryStatementsCount) => {
+       if (initialRepositoryStatementsCount !== undefined && repositoryStatementsCount !== undefined) {
+         const affectedStatementsCount = repositoryStatementsCount - initialRepositoryStatementsCount;
+         yasqe.emit("countAffectedRepositoryStatementsChanged", affectedStatementsCount);
+@@ -242,7 +242,7 @@ export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void
+     (error) => {
+       // Nothing to do. In tab persistence "totalElements" will stay undefined.
+       // This will be taken into account when generating information message about the results.
+-      console.log(error);
++      console.warn(error);
+     }
+   ).finally(() => yasqe.emit("countQueryFinished"));
+ }
+diff --git a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+index dcfba2e..c7e38dc 100644
+--- a/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
++++ b/Yasgui/packages/yasr/src/plugins/table/extended-table.ts
+@@ -208,7 +208,7 @@ export class ExtendedTable extends Table {
+       } else if (typeCount == 1) {
+         bindingTypes[variable] = Object.keys(types)[0];
+       } else {
+-        console.log('Mapping bindings to types failed. Multiple types for a variable found', types, variable);
++        console.warn('Mapping bindings to types failed. Multiple types for a variable found', types, variable);
+       }
+     });
+     return bindingTypes;
+@@ -303,9 +303,9 @@ export class ExtendedTable extends Table {
+     return element.scrollWidth > element.clientWidth;
+   }
+ 
+-  private dataTableClickHandler(event) {
++  private dataTableClickHandler(event: MouseEvent) {
+     if (this.isCompactViewActive()) {
+-      let literalElement = event.target.closest('.literal-cell p');
++      let literalElement = (event.target as HTMLElement).closest<HTMLElement>('.literal-cell p');
+       if (literalElement && this.isTextEllipsized(literalElement)) {
+         // Adding the "expanded-literal" class will prevent the value from being truncated with ellipses.
+         literalElement.classList.add('expanded-literal');
+@@ -319,9 +319,9 @@ export class ExtendedTable extends Table {
+     return !!this.persistentConfig.isEllipsed;
+   }
+ 
+-  private tableMouseoverHandler(event): void {
++  private tableMouseoverHandler(event: MouseEvent): void {
+     if (this.isCompactViewActive()) {
+-      let literalElement = event.target.closest('.literal-cell p');
++      let literalElement = (event.target as HTMLElement).closest<HTMLElement>('.literal-cell p');
+       if (literalElement && this.isTextEllipsized(literalElement)) {
+         // Adding the 'expandable-literal' class will change cursor to point when literal is hovered.
+         literalElement.classList.add('expandable-literal');
+@@ -329,10 +329,11 @@ export class ExtendedTable extends Table {
+     }
+   }
+ 
+-  private tableMouseoutHandler(event): void {
+-    if (this.isCompactViewActive() && event.target.matches('.expandable-literal')) {
++  private tableMouseoutHandler(event: MouseEvent): void {
++    const target = event.target as HTMLElement;
++    if (this.isCompactViewActive() && target.matches('.expandable-literal')) {
+       // Remove pointer cursor when mouse leaves the cell
+-      event.target.classList.remove('expandable-literal');
++      target.classList.remove('expandable-literal');
+     }
+   }
+ 
+diff --git a/Yasgui/packages/yasr/src/plugins/table/index.ts b/Yasgui/packages/yasr/src/plugins/table/index.ts
+index 5491688..fcc7ade 100644
+--- a/Yasgui/packages/yasr/src/plugins/table/index.ts
++++ b/Yasgui/packages/yasr/src/plugins/table/index.ts
+@@ -392,14 +392,14 @@ export default class Table implements Plugin<PluginConfig> {
+     // Store in persistentConfig
+     this.persistentConfig.compact = (event.target as HTMLInputElement).checked;
+     // Update the table
+-    this.draw(this.persistentConfig);
++    void this.draw(this.persistentConfig);
+     this.yasr.storePluginConfig("table", this.persistentConfig);
+   };
+   protected handleSetEllipsisToggle = (event: Event) => {
+     // Store in persistentConfig
+     this.persistentConfig.isEllipsed = (event.target as HTMLInputElement).checked;
+     // Update the table
+-    this.draw(this.persistentConfig);
++    void this.draw(this.persistentConfig);
+     this.yasr.storePluginConfig("table", this.persistentConfig);
+   };
+   /**
