@@ -162,6 +162,8 @@ export class Tab extends EventEmitter {
       return;
     }
     const closeTab = () => {
+      // Checked before another tab is selected, as selecting it may focus its editor
+      const tabHadFocus = !!this.getTabListEl()?.tabEl?.contains(document.activeElement);
       if (this.yasqe) this.yasqe.abortQuery();
       if (this.yasgui.getTab() === this) {
         //it's the active tab
@@ -181,6 +183,10 @@ export class Tab extends EventEmitter {
       delete this.yasgui._tabs[this.persistentJson.id];
       // Calls the yasqe destroy method to unsubscribe all resources.
       this.yasqe?.destroy();
+      // Keep the keyboard focus in the tab list when the focused tab is closed
+      if (tabHadFocus) {
+        this.yasgui.tabElements.focusSelectedTab();
+      }
     };
     if (confirm) {
       let closeTabWarningMessage = "";

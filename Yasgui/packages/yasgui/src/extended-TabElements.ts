@@ -41,8 +41,6 @@ export class ExtendedTabListEl extends TabListEl {
     renameElement.translationService = this.translationService;
     renameElement.addEventListener("valueChanged", this.renameElementValueChangedHandler.bind(this));
     renameElement.addEventListener("componentModeChanged", this.renameElementComponentModeChangedHandler.bind(this));
-    renameElement.addEventListener("blur", this.renameElementOnBlurHandler.bind(this));
-    renameElement.addEventListener("focus", this.renameElementOnFocusHandler.bind(this));
     renameElement.addEventListener("contextmenu", this.renameElementOpenContextMenuHandler.bind(this));
     return renameElement;
   }
@@ -70,9 +68,9 @@ export class ExtendedTabListEl extends TabListEl {
         this.handleDeleteTab();
       }
     }
-    if (e.code === "Enter") {
+    if (e.code === "Enter" || (e.code === "Space" && !this.renameTabElement?.edit)) {
       e.preventDefault();
-      this.yasgui.selectTabId(this.tabId);
+      this.selectWithKeyboard();
     }
   }
 
@@ -95,22 +93,6 @@ export class ExtendedTabListEl extends TabListEl {
       addClass(this.closeButton, "hidden");
     } else {
       removeClass(this.closeButton, "hidden");
-    }
-  }
-
-  private renameElementOnBlurHandler(): void {
-    if (!this.tabEl) return;
-    if (this.tabEl.classList.contains("active")) {
-      this.renameTabElement?.setAttribute("tabindex", "0");
-    } else {
-      this.renameTabElement?.setAttribute("tabindex", "-1");
-    }
-  }
-
-  private renameElementOnFocusHandler(): void {
-    if (!this.tabEl) return;
-    if (this.tabEl.classList.contains("active")) {
-      this.tabList.tabEntryIndex = Object.keys(this.tabList._tabs).indexOf(this.tabId);
     }
   }
 
@@ -153,8 +135,6 @@ export class ExtendedTabListEl extends TabListEl {
       "componentModeChanged",
       this.renameElementComponentModeChangedHandler.bind(this)
     );
-    this.renameTabElement?.removeEventListener("blur", this.renameElementOnBlurHandler.bind(this));
-    this.renameTabElement?.removeEventListener("focus", this.renameElementOnFocusHandler.bind(this));
     this.renameTabElement?.removeEventListener("contextmenu", this.renameElementOpenContextMenuHandler.bind(this));
     this.closeButton?.removeEventListener("click", this.closeButtonOnClickHandler.bind(this));
     super.delete();
@@ -171,42 +151,13 @@ export class ExtendedTabList extends TabList {
         this._tabs[this.yasgui.persistentConfig.getTabs()[index + 1]].tabEl || null
       );
     } else {
-      this._tabsListEl?.insertBefore(this._tabs[tabId].draw(tabConf.name), this.addTabEl || null);
+      this._tabsListEl?.appendChild(this._tabs[tabId].draw(tabConf.name));
     }
   }
 
-  protected handleKeydownArrowKeys = (e: KeyboardEvent) => {
-    if (Object.values(this._tabs).some((tabEl) => (tabEl as ExtendedTabListEl).renameTabElement?.edit)) {
-      return;
-    }
-
-    if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
-      if (!this._tabsListEl) return;
-      const numOfChildren = this._tabsListEl.childElementCount;
-      if (typeof this.tabEntryIndex !== "number") return;
-      const tabEntryDiv = this._tabsListEl.children[this.tabEntryIndex];
-      // If the current tab does not have active set its tabindex to -1
-      if (!tabEntryDiv.classList.contains("active")) {
-        tabEntryDiv.setAttribute("tabindex", "-1"); // cur tab removed from tab index
-      }
-      if (e.code === "ArrowLeft") {
-        this.tabEntryIndex--;
-        if (this.tabEntryIndex < 0) {
-          this.tabEntryIndex = numOfChildren - 1;
-        }
-      }
-      if (e.code === "ArrowRight") {
-        this.tabEntryIndex++;
-        if (this.tabEntryIndex >= numOfChildren) {
-          this.tabEntryIndex = 0;
-        }
-      }
-      const newTabEntryDiv = this._tabsListEl.children[this.tabEntryIndex];
-      newTabEntryDiv.setAttribute("tabindex", "0");
-      // focus on the tab
-      (newTabEntryDiv as HTMLElement).focus();
-    }
-  };
+  protected isRenamingTab(): boolean {
+    return Object.values(this._tabs).some((tabEl) => (tabEl as ExtendedTabListEl).renameTabElement?.edit);
+  }
 
   public deriveTabOrderFromEls() {
     const tabs: string[] = [];

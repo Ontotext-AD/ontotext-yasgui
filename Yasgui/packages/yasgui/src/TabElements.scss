@@ -8,6 +8,10 @@ $minTabHeight: 35px;
     }
     display: flex;
     flex-wrap: wrap;
+    // The tab list is outside of the layout, so the add tab button follows the last tab, when the tabs wrap
+    .tabs {
+      display: contents;
+    }
     a {
       cursor: pointer;
       display: flex;

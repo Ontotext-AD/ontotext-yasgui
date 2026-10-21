@@ -278,6 +278,11 @@
         padding: 0.5em 1em;
         transform: none;
 
+        // The tab panel overlaps an outer outline, so the outline is drawn inside the button
+        &:focus-visible {
+          outline-offset: calc(-1 * var(--yasgui-focus-ring-width, 2px));
+        }
+
         &:hover {
           color: $color-ontotext-orange-dark;
 
@@ -828,6 +833,15 @@
 
   button, button:focus {
     outline: none;
+  }
+
+  // Shows the keyboard focus. Overrides the styles that remove the outline of the focused elements.
+  // The embedding page can style it with the --yasgui-focus-ring-* variables.
+  button, a[href], select, input[type=checkbox], input[type=radio], [tabindex]:not([tabindex="-1"]):not(textarea) {
+    &:focus-visible {
+      outline: var(--yasgui-focus-ring-width, 2px) var(--yasgui-focus-ring-style, solid) var(--yasgui-focus-ring-color, #{$color-onto-deep-blue}) !important;
+      outline-offset: var(--yasgui-focus-ring-offset, 2px);
+    }
   }
 
   .explainPlanQuery {

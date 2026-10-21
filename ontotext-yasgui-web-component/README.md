@@ -204,6 +204,25 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
     - Fallback behavior: If themeName is not provided or the required CSS rules for that theme are missing,
     CodeMirror/YASQE will automatically fall back to the default theme to ensure the editor remains readable.
     
+### Styling
+
+The keyboard focus outline of the component can be styled with CSS variables:
+
+| Variable                     | Default   |
+|------------------------------|-----------|
+| `--yasgui-focus-ring-color`  | `#000042` |
+| `--yasgui-focus-ring-width`  | `2px`     |
+| `--yasgui-focus-ring-style`  | `solid`   |
+| `--yasgui-focus-ring-offset` | `2px`     |
+
+The add tab button draws the outline inside, because the tab panel overlaps it, so it ignores `--yasgui-focus-ring-offset`.
+
+```CSS
+ontotext-yasgui {
+  --yasgui-focus-ring-color: #1a73e8;
+}
+```
+
 ### ontotext version and GraphDB Version Compatibility
 
 | ontotext-yasgui-web-component | Workbench | GraphDB Version |
