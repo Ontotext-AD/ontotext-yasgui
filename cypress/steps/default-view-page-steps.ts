@@ -11,6 +11,10 @@ export default class DefaultViewPageSteps {
     cy.get('#getQueryMode').click();
   }
 
+  static getQueryTypeButton() {
+    return cy.get('#getQueryType');
+  }
+
   static getQueryType() {
     cy.get('#getQueryType').click();
   }

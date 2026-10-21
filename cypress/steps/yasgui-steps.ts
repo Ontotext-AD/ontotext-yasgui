@@ -19,8 +19,32 @@ export class YasguiSteps {
     return this.getCurrentTab().find('[role=tab] > div');
   }
 
+  static getAddTabButton() {
+    return cy.get('button.addTab');
+  }
+
   static openANewTab() {
-    cy.get('button.addTab').click();
+    YasguiSteps.getAddTabButton().click();
+  }
+
+  static getTabList() {
+    return cy.get('[role=tablist]');
+  }
+
+  static getTabListTabs() {
+    return YasguiSteps.getTabList().find('[role=tab]');
+  }
+
+  static getTabListTab(index: number) {
+    return YasguiSteps.getTabListTabs().eq(index);
+  }
+
+  static getTabListTabStops() {
+    return YasguiSteps.getTabList().find('[tabindex="0"], button, a[href], input');
+  }
+
+  static focusCurrentTab() {
+    YasguiSteps.getCurrentTab().find('[role=tab]').focus();
   }
 
   static getTab(index: number) {

@@ -4,6 +4,8 @@ export class CloseTabConfirmation {
     private confirmationDialog: any;
     private boundRejectHandler: Function;
     private boundConfirmationHandler: Function;
+    // The element focused before the dialog was opened, usually the tab being closed
+    private previouslyFocusedElement: HTMLElement | null = null;
 
     constructor(public translationService: TranslationService,
                 public confirmationTitle: string,
@@ -15,6 +17,7 @@ export class CloseTabConfirmation {
     }
 
     open() {
+        this.previouslyFocusedElement = document.activeElement as HTMLElement | null;
         this.confirmationDialog.addEventListener("internalConfirmationRejectedEvent", this.boundRejectHandler);
         this.confirmationDialog.addEventListener("internalConfirmationApprovedEvent", this.boundConfirmationHandler);
         document.body.appendChild(this.confirmationDialog);
@@ -43,5 +46,7 @@ export class CloseTabConfirmation {
         this.confirmationDialog.removeEventListener('internalConfirmationRejectedEvent', this.boundRejectHandler);
         this.confirmationDialog.removeEventListener('internalConfirmationApprovedEvent', this.boundConfirmationHandler);
         this.confirmationDialog = null;
+        this.previouslyFocusedElement?.focus();
+        this.previouslyFocusedElement = null;
     }
 }
