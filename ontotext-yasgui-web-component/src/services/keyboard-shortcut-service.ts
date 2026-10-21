@@ -299,6 +299,17 @@ export class KeyboardShortcutService {
     return keyboardShortcut;
   }
 
+  private static createMoveFocusOutOfEditor(): KeyboardShortcutDescription {
+    const keyboardShortcut = new KeyboardShortcutDescription()
+    keyboardShortcut.NAME = KeyboardShortcutName.MOVE_FOCUS_OUT_OF_EDITOR;
+    keyboardShortcut.section = KEYBOARD_SHORTCUT_SECTIONS.TABS;
+    keyboardShortcut.executeFunction = () => {
+      // Nothing to do. The description only explains how to move the focus out of the editor, which
+      // YasqeService.makeEditorKeyboardAccessible handles.
+    };
+    return keyboardShortcut;
+  }
+
   private static initAllKeyboardShortcuts(): Map<string, CreateKeyboardShortcutFunction> {
     const keyboardShortcuts = new Map<string, CreateKeyboardShortcutFunction>();
     keyboardShortcuts.set(KeyboardShortcutName.TRIGGER_AUTOCOMPLETION, KeyboardShortcutService.createTriggerAutocomplete);
@@ -320,6 +331,7 @@ export class KeyboardShortcutService {
     keyboardShortcuts.set(KeyboardShortcutName.CLOSES_OTHER_TABS_BY_MOUSE_CLICK, KeyboardShortcutService.createCloseOtherTabsByMouseClick);
     keyboardShortcuts.set(KeyboardShortcutName.FULL_SCREEN, KeyboardShortcutService.createFullScreen);
     keyboardShortcuts.set(KeyboardShortcutName.ESC, KeyboardShortcutService.createEscape);
+    keyboardShortcuts.set(KeyboardShortcutName.MOVE_FOCUS_OUT_OF_EDITOR, KeyboardShortcutService.createMoveFocusOutOfEditor);
     return keyboardShortcuts;
   }
 }

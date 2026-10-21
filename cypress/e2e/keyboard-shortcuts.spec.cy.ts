@@ -26,7 +26,10 @@ describe('Keyboard Shortcuts', () => {
       // and have title
       KeyboardShortcutSteps.getInfoDialogTitle().should('have.text', 'Keyboard shortcuts');
       // and expect see information for all available actions.
-      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 19);
+      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 20);
+      // and expect to see how to move the focus out of the editor.
+      KeyboardShortcutSteps.getKeyboardShortcutDescriptions()
+        .should('contain.text', 'Press Esc, then Tab or Shift+Tab, to move the focus out of the editor');
     });
 
     it('should open dialog with information only for readonly keyboard shortcuts actions', () => {
@@ -41,7 +44,7 @@ describe('Keyboard Shortcuts', () => {
       KeyboardShortcutSteps.openInfoDialog();
 
       // Then I expect to see information for read only operations.
-      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 10);
+      KeyboardShortcutSteps.getKeyboardShortcutDescriptions().should('have.length', 11);
     });
   });
 

@@ -10,7 +10,24 @@ import {InternalCreateSavedQueryEvent} from '../../models/internal-events/intern
 import {YasguiBuilder} from '../yasgui/yasgui-builder';
 import {Yasqe} from '../../models/yasgui/yasqe';
 
+/** Keys that don't disarm Esc, so it can be followed by Shift+Tab. */
+const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta']);
+const EDITOR_DESCRIPTION_CLASS_NAME = 'yasqe-editor-description';
+
+/**
+ * A keydown event as CodeMirror passes it to its listeners.
+ */
+type CodeMirrorKeyboardEvent = KeyboardEvent & {
+  /** Set to make CodeMirror skip its own handling of the key, so the browser default runs. */
+  codemirrorIgnore?: boolean;
+};
+
 export class YasqeService {
+
+  private static editorDescriptionCounter = 0;
+
+  /** The editors already made keyboard accessible, as YASGUI reports an editor ready on every tab switch. */
+  private readonly keyboardAccessibleEditors = new WeakSet<Yasqe>();
 
   private eventService: EventService;
   private readonly yasguiBuilder: YasguiBuilder;
@@ -46,6 +63,9 @@ export class YasqeService {
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
     this.updateLabel(button, 'yasqe.actions.share_query.button.tooltip');
 
+    document.querySelectorAll(`.${EDITOR_DESCRIPTION_CLASS_NAME}`)
+      .forEach((description) => description.textContent = this.translationService.translate('yasqe.editor.screen_reader.description'));
+
     const ontotextYasgui = this.yasguiBuilder.getInstance();
     const yasqe = ontotextYasgui?.getYasqe();
     if (ontotextYasgui && yasqe) {
@@ -60,6 +80,54 @@ export class YasqeService {
         this.updateSameAsElement(sameAsButtonTooltipEl, sameAsValue, inferredValue);
       }
     }
+  }
+
+  /**
+   * Lets keyboard users move the focus out of the query editor, where Tab and Shift+Tab indent.
+   *
+   * Esc followed by Tab or Shift+Tab moves the focus out; any other key or a click in between cancels Esc. Esc keeps
+   * leaving the full screen mode and closing the autocompletion hints. Screen readers announce this as the
+   * description of the editor.
+   *
+   * @param yasqe - The editor. An undefined editor, or one already made keyboard accessible, is left as it is.
+   */
+  makeEditorKeyboardAccessible(yasqe: Yasqe | undefined): void {
+    if (!yasqe || this.keyboardAccessibleEditors.has(yasqe)) {
+      return;
+    }
+    this.keyboardAccessibleEditors.add(yasqe);
+    this.addFocusExit(yasqe);
+    this.addEditorDescription(yasqe);
+  }
+
+  private addFocusExit(yasqe: Yasqe): void {
+    let isFocusExitArmed = false;
+    const disarmFocusExit = () => isFocusExitArmed = false;
+    yasqe.on('keydown', (_yasqe: Yasqe, event: CodeMirrorKeyboardEvent) => {
+      if (event.key === 'Escape') {
+        isFocusExitArmed = true;
+        return;
+      }
+      if (MODIFIER_KEYS.has(event.key)) {
+        return;
+      }
+      if (isFocusExitArmed && event.key === 'Tab' && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        event.codemirrorIgnore = true;
+      }
+      isFocusExitArmed = false;
+    });
+    yasqe.on('blur', disarmFocusExit);
+    yasqe.on('mousedown', disarmFocusExit);
+  }
+
+  private addEditorDescription(yasqe: Yasqe): void {
+    const description = document.createElement('span');
+    description.id = `${EDITOR_DESCRIPTION_CLASS_NAME}-${++YasqeService.editorDescriptionCounter}`;
+    description.className = EDITOR_DESCRIPTION_CLASS_NAME;
+    description.hidden = true;
+    description.textContent = this.translationService.translate('yasqe.editor.screen_reader.description');
+    yasqe.rootEl.appendChild(description);
+    yasqe.getInputField().setAttribute('aria-describedby', description.id);
   }
 
   /**

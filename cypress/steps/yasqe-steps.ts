@@ -333,6 +333,22 @@ export class YasqeSteps {
     });
   }
 
+  static getEditorInput() {
+    return this.getCodeMirrorEl().find('textarea');
+  }
+
+  static getEditorDescription() {
+    return this.getEditorInput().invoke('attr', 'aria-describedby').then((descriptionId) => cy.get(`#${descriptionId}`));
+  }
+
+  static focusEditor() {
+    this.getCodeMirror().then((cm) => cm.focus());
+  }
+
+  static clickOnEditorLine(line: number) {
+    this.getCodeMirrorEl().find('.CodeMirror-line').eq(line - 1).realClick();
+  }
+
   static getYasqeHintsElement() {
     return YasqeSteps.getYasgui().find('.CodeMirror-hints');
   }
