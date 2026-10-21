@@ -76,6 +76,7 @@
   "yasqe.check_syntax.error.bind_variable_already_in_scope": "La variable BIND {{variable}} est déjà dans la portée.",
   "yasqe.check_syntax.error.invalid_base_direction": "La direction de base '{{direction}}' n’est pas valide : elle doit être 'ltr' ou 'rtl'.",
   "yasqe.check_syntax.error.select_alias_in_group_by_scope": "L’alias SELECT {{alias}} est déjà dans la portée de GROUP BY.",
+  "yasqe.check_syntax.error.select_alias_in_values_scope": "L’alias SELECT {{alias}} est déjà dans la portée de la clause VALUES finale.",
   "yasqe.check_syntax.error.select_star_variable_not_in_group_by": "La variable {{variable}} est projetée par SELECT * mais n’est pas présente dans GROUP BY.",
   "yasqe.check_syntax.error.select_variable_not_in_group_by": "La variable {{variable}} est utilisée dans SELECT mais pas dans GROUP BY.",
   "yasqe.check_syntax.error.select_aggregate_variable_without_group_by": "La variable {{variable}} est utilisée dans SELECT avec des agrégats mais sans GROUP BY.",
