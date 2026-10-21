@@ -59,6 +59,37 @@ pipeline {
             }
         }
 
+        stage('Validating Yasgui') {
+            agent {
+                docker {
+                    image env.NODE_IMAGE
+                    reuseNode true
+                    args '--entrypoint=""'
+                }
+            }
+
+            steps {
+                script {
+                    sh 'npm run validate:yasgui'
+                }
+            }
+        }
+
+        stage('Checking Yasgui patch') {
+            when {
+                changeRequest()
+            }
+
+            steps {
+                script {
+                    sh """
+                        git fetch --no-tags origin +refs/heads/${env.CHANGE_TARGET}:refs/remotes/origin/${env.CHANGE_TARGET}
+                        sh scripts/check-yasgui-patch.sh origin/${env.CHANGE_TARGET}
+                    """
+                }
+            }
+        }
+
         stage('Get conformance tests') {
             agent {
                 docker {

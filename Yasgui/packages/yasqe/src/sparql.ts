@@ -88,7 +88,7 @@ export async function executeUpdateModeQuery(yasqe: Yasqe, config?: YasqeAjaxCon
   };
 
   const calculateAffectedStatementsCount = () => {
-    yasqe.config.getRepositoryStatementsCount().then((repositoryStatementsCount) => {
+    void yasqe.config.getRepositoryStatementsCount().then((repositoryStatementsCount) => {
       if (initialRepositoryStatementsCount !== undefined && repositoryStatementsCount !== undefined) {
         const affectedStatementsCount = repositoryStatementsCount - initialRepositoryStatementsCount;
         yasqe.emit("countAffectedRepositoryStatementsChanged", affectedStatementsCount);
@@ -242,7 +242,7 @@ export function executeCountQuery(yasqe: Yasqe, config?: YasqeAjaxConfig): void 
     (error) => {
       // Nothing to do. In tab persistence "totalElements" will stay undefined.
       // This will be taken into account when generating information message about the results.
-      console.log(error);
+      console.warn(error);
     }
   ).finally(() => yasqe.emit("countQueryFinished"));
 }
