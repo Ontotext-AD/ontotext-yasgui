@@ -29,7 +29,8 @@ export enum KeyboardShortcutName {
   CLOSES_OTHER_TABS = 'closes_other_tabs',
   CLOSES_OTHER_TABS_BY_MOUSE_CLICK = 'closes_other_tabs_by_left_mouse_click',
   FULL_SCREEN = 'full_screen',
-  ESC = 'esc'
+  ESC = 'esc',
+  MOVE_FOCUS_OUT_OF_EDITOR = 'move_focus_out_of_editor'
 }
 
 export enum KEYBOARD_SHORTCUT_SECTIONS {

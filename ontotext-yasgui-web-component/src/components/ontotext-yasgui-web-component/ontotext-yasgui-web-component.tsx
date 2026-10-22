@@ -39,6 +39,7 @@ import {YasrService} from '../../services/yasr/yasr-service';
 import {PivotTablePlugin} from '../../plugins/yasr/pivot-table/pivot-table-plugin';
 import {ChartsPlugin} from '../../plugins/yasr/charts/charts-plugin';
 import {Tab} from '../../models/yasgui/tab';
+import {Yasqe} from '../../models/yasgui/yasqe';
 import {SavedQueryOpened} from '../../models/output-events/saved-query-opened';
 import {InternalRequestAbortedEvent} from '../../models/internal-events/internal-request-aborted-event';
 import {OngoingRequestsInfo} from '../../models/ongoing-requests-info';
@@ -85,6 +86,7 @@ export class OntotextYasguiWebComponent {
   private readonly yasguiBuilder: YasguiBuilder;
   private readonly ontotextYasguiService: OntotextYasguiService;
   private readonly notificationMessageService: NotificationMessageService;
+  private readonly yasqeService: YasqeService;
   private readonly llmResultOnlyComment = '# :gpt-result-only:';
   private readonly llmQueryOnlyComment = '# :gpt-query-only:';
   private defaultViewMode = RenderingMode.YASGUI;
@@ -104,6 +106,7 @@ export class OntotextYasguiWebComponent {
     this.yasguiBuilder = this.serviceFactory.get(YasguiBuilder);
     this.ontotextYasguiService = this.serviceFactory.get(OntotextYasguiService);
     this.notificationMessageService = this.serviceFactory.get(NotificationMessageService);
+    this.yasqeService = this.serviceFactory.get(YasqeService);
     this.initComponentTranslationHandlers();
   }
 
@@ -1003,8 +1006,9 @@ export class OntotextYasguiWebComponent {
   registerEventHandlers(yasguiConfiguration: YasguiConfiguration): void {
     let hint = undefined;
 
-    this.ontotextYasgui.getInstance().on('yasqeReady', (tab: Tab) => {
+    this.ontotextYasgui.getInstance().on('yasqeReady', (tab: Tab, yasqe?: Yasqe) => {
       this.ontotextYasgui.applyTheme(tab.getId());
+      this.yasqeService.makeEditorKeyboardAccessible(yasqe);
     });
 
     this.ontotextYasgui.getInstance().on('tabAdd', (_yasgui, _tab) => {
@@ -1111,6 +1115,9 @@ export class OntotextYasguiWebComponent {
       YasrService.registerPlugin(GeoPlugin.PLUGIN_NAME, GeoPlugin as any);
       this.ontotextYasgui = this.yasguiBuilder.build(this.hostElement, yasguiConfiguration);
       this.ontotextYasgui.applyTheme();
+      // * YASGUI reports the editor of the first tab ready before the event handlers are registered, so make it
+      // keyboard accessible here. The editors of the other tabs are handled on 'yasqeReady'.
+      this.yasqeService.makeEditorKeyboardAccessible(this.ontotextYasgui.getYasqe());
       this.registerEventHandlers(yasguiConfiguration);
       this.afterInit();
       const editorHeight = this.ontotextYasgui.getEditorHeight(this.ontotextYasgui.getTabId());

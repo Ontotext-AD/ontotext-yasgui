@@ -182,6 +182,7 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
   - closes_other_tabs_by_left_mouse_click
   - full_screen
   - esc
+  - move_focus_out_of_editor (only the description in the dialog; Esc followed by Tab or Shift+Tab always moves the focus out of the editor)
 - **themeName** (optional): Specifies the theme that YASQE should use: 
   - Must match a theme name recognized by CodeMirror (e.g., `dracula`, `monokai`). Theme CSS is required CodeMirror
   themes are entirely CSS-based, so the corresponding CSS must be loaded via `<link>`, import, or injected `<style>`
