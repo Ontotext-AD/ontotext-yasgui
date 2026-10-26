@@ -1,0 +1,269 @@
+diff --git a/Yasgui/package.json b/Yasgui/package.json
+index 0e48c7a..f11acc2 100644
+--- a/Yasgui/package.json
++++ b/Yasgui/package.json
+@@ -39,17 +39,7 @@
+   },
+   "lint-staged": {
+     "*.ts?(x)": [
+-      "prettier --parser typescript --write",
+       "eslint"
+-    ],
+-    "*.js": [
+-      "prettier --write"
+-    ],
+-    "*.css": [
+-      "prettier --parser css --write"
+-    ],
+-    "*.scss": [
+-      "prettier --parser scss --write"
+     ]
+   },
+   "husky": {
+diff --git a/Yasgui/packages/yasqe/grammar/_tokenizer-table.js b/Yasgui/packages/yasqe/grammar/_tokenizer-table.js
+index 65b66fb..534433f 100644
+--- a/Yasgui/packages/yasqe/grammar/_tokenizer-table.js
++++ b/Yasgui/packages/yasqe/grammar/_tokenizer-table.js
+@@ -209,8 +209,8 @@ module.exports = {table:
+      "INTEGER_NEGATIVE": ["dataBlockValue","*dataBlockValue"], 
+      "DECIMAL_NEGATIVE": ["dataBlockValue","*dataBlockValue"], 
+      "DOUBLE_NEGATIVE": ["dataBlockValue","*dataBlockValue"], 
+-     "}": [], 
+-     ")": []}, 
++     ")": [], 
++     "}": []}, 
+   "*datasetClause" : {
+      "FROM": ["datasetClause","*datasetClause"], 
+      "WHERE": [], 
+@@ -225,6 +225,7 @@ module.exports = {table:
+      "WHERE": [], 
+      "{": [], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "$": []}, 
+   "*graphNode" : {
+      "(": ["graphNode","*graphNode"], 
+@@ -355,6 +356,7 @@ module.exports = {table:
+      "PNAME_LN": ["groupCondition","*groupCondition"], 
+      "PNAME_NS": ["groupCondition","*groupCondition"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "ORDER": [], 
+@@ -430,6 +432,7 @@ module.exports = {table:
+      "PNAME_LN": ["havingCondition","*havingCondition"], 
+      "PNAME_NS": ["havingCondition","*havingCondition"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "ORDER": [], 
+@@ -619,6 +622,7 @@ module.exports = {table:
+      "PNAME_LN": ["orderCondition","*orderCondition"], 
+      "PNAME_NS": ["orderCondition","*orderCondition"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "$": [], 
+@@ -629,6 +633,7 @@ module.exports = {table:
+   "*var" : {
+      "VAR1": ["var","*var"], 
+      "VAR2": ["var","*var"], 
++     "{": [], 
+      ")": []}, 
+   "*varOrIRIref" : {
+      "VAR1": ["varOrIRIref","*varOrIRIref"], 
+@@ -645,6 +650,7 @@ module.exports = {table:
+      "{": [], 
+      "FROM": [], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "$": []}, 
+   "+graphNode" : {
+      "(": ["graphNode","*graphNode"], 
+@@ -1418,6 +1424,7 @@ module.exports = {table:
+   "?groupClause" : {
+      "GROUP": ["groupClause"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "ORDER": [], 
+@@ -1427,6 +1434,7 @@ module.exports = {table:
+   "?havingClause" : {
+      "HAVING": ["havingClause"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "ORDER": [], 
+@@ -1439,17 +1447,20 @@ module.exports = {table:
+   "?limitClause" : {
+      "LIMIT": ["limitClause"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "$": [], 
+      "}": []}, 
+   "?limitOffsetClauses" : {
+      "LIMIT": ["limitOffsetClauses"], 
+      "OFFSET": ["limitOffsetClauses"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "$": [], 
+      "}": []}, 
+   "?offsetClause" : {
+      "OFFSET": ["offsetClause"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "$": [], 
+      "}": []}, 
+   "?or([DISTINCT,REDUCED])" : {
+@@ -1570,6 +1581,7 @@ module.exports = {table:
+   "?orderClause" : {
+      "ORDER": ["orderClause"], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "$": [], 
+@@ -1713,6 +1725,7 @@ module.exports = {table:
+      "LIMIT": [], 
+      "OFFSET": [], 
+      "VALUES": [], 
++     "BINDINGS": [], 
+      "$": []}, 
+   "[!=,numericExpression]" : {
+      "!=": ["!=","numericExpression"]}, 
+@@ -4284,6 +4297,7 @@ module.exports = {table:
+      "HAVING": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
+      "GROUP": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
+      "VALUES": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
++     "BINDINGS": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
+      "$": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
+      "}": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"]}, 
+   "sourceSelector" : {
+@@ -4755,6 +4769,7 @@ module.exports = {table:
+      "PNAME_NS": ["relationalExpression"]}, 
+   "valuesClause" : {
+      "VALUES": ["VALUES","dataBlock"], 
++     "BINDINGS": ["BINDINGS","*var","{","*or([[(,*dataBlockValue,)],NIL])","}"], 
+      "$": [], 
+      "}": []}, 
+   "var" : {
+@@ -4827,7 +4842,7 @@ module.exports = {table:
+      "WHERE": ["?WHERE","groupGraphPattern"]}
+ },
+ 
+-keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|VERSION|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BIND|LANGMATCHES|LANGDIR|HASLANGDIR|LANG|HASLANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|ISNUMERIC|ISTRIPLE|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANGDIR|STRLANG|STRDT|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|STRLEN|STRUUID|STR|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|TRIPLE|SUBJECT|PREDICATE|OBJECT)/i ,
++keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|VERSION|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BINDINGS|BIND|LANGMATCHES|LANGDIR|HASLANGDIR|LANG|HASLANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|ISNUMERIC|ISTRIPLE|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANGDIR|STRLANG|STRDT|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|STRLEN|STRUUID|STR|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|TRIPLE|SUBJECT|PREDICATE|OBJECT)/i ,
+ 
+ punct:/^(\*|a|\.|\{\||\|\}|\{|\}|,|\(|\)>>|\)|;|\[|\]|\|\||&&|=|!=|!|<=|>=|<<\(|<<|>>|<|>|\+|-|\/|\^\^|\?|~|\||\^)/ ,
+ 
+diff --git a/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl b/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
+index 17e6263..ed8f6a5 100644
+--- a/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
++++ b/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
+@@ -149,15 +149,14 @@ limitClause ==>
+ offsetClause ==>
+ 	['OFFSET','INTEGER'].
+ 
+-%[28]
+-%bindingsClause ==>
+-%	['BINDINGS',*(var),'{',
+-%	   *(['(',*(bindingValue),')'] or 'NIL'),
+-%	   '}'].
+-%bindingsClause ==> [].
+-
+ %[28]
+ valuesClause ==> ['VALUES',dataBlock].
++% BINDINGS: the SPARQL 1.1 draft form of the trailing VALUES clause, still
++% accepted by GraphDB. Variables have no parentheses; every row has them.
++valuesClause ==>
++	['BINDINGS',*(var),'{',
++	   *(['(',*(dataBlockValue),')'] or 'NIL'),
++	   '}'].
+ valuesClause ==> [].
+ 
+ %[29]
+@@ -890,6 +889,7 @@ tm_keywords([
+ 'USING',
+ 'NAMED',
+ 'MINUS',
++'BINDINGS',     % Must appear before BIND
+ 'BIND',
+ 
+ 'LANGMATCHES',  % Must appear before LANG
+diff --git a/Yasgui/packages/yasqe/grammar/tokenizer.ts b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+index e1bfef7..5e50983 100644
+--- a/Yasgui/packages/yasqe/grammar/tokenizer.ts
++++ b/Yasgui/packages/yasqe/grammar/tokenizer.ts
+@@ -63,6 +63,7 @@ export interface State {
+   valuesTupleCount: number; // number of values in current data tuple
+   valuesSkipNext: boolean; // skip next token in VALUES tuple (after ^^)
+   valuesIsTrailing: boolean; // whether the current VALUES clause is the outer query's trailing ValuesClause
++  valuesIsBindings: boolean; // whether the current clause is the SPARQL 1.1 draft BINDINGS form (vars without parentheses)
+   trailingValuesVars: Set<string>; // vars of the outer query's trailing VALUES — in scope before SELECT expressions
+   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
+   tripleTermDepth: number;
+@@ -1095,13 +1096,14 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+               } else if (tokenCat !== "(" && tokenCat !== ")") {
+                 (state as any)._groupByAfterAS = false;
+               }
+-              // GROUP BY clause ends at HAVING, ORDER, LIMIT, OFFSET, VALUES, or }
++              // GROUP BY clause ends at HAVING, ORDER, LIMIT, OFFSET, VALUES, BINDINGS, or }
+               if (
+                 tokenCat === "HAVING" ||
+                 tokenCat === "ORDER" ||
+                 tokenCat === "LIMIT" ||
+                 tokenCat === "OFFSET" ||
+                 tokenCat === "VALUES" ||
++                tokenCat === "BINDINGS" ||
+                 tokenCat === "}"
+               ) {
+                 state.inGroupByClause = false;
+@@ -1110,12 +1112,14 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+ 
+             // VALUES arity checking
+             // Track: VALUES (var1 var2) { (val1 val2) (val1 val2) ... }
++            // and the draft form BINDINGS var1 var2 { (val1 val2) ... }, whose vars have no parentheses.
+             // The number of values in each tuple must match the variable count.
+             // State machine: undefined -> "vars" (after VALUES + '(') -> "data" (after ')' + '{') -> "tuple" (inside data tuple)
+             // Triple terms <<(...)>> are a single dataBlockValue — tokens inside them are not counted.
+-            if (tokenCat === "VALUES") {
++            if (tokenCat === "VALUES" || tokenCat === "BINDINGS") {
+               state.valuesClause = "vars";
+               state.valuesIsTrailing = state.braceDepth === 0;
++              state.valuesIsBindings = tokenCat === "BINDINGS";
+               state.valuesVarCount = 0;
+               state.valuesVarNames = new Set();
+               state.valuesTupleCount = 0;
+@@ -1138,8 +1142,9 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+                 // End of variable list, next should be '{'
+                 state.valuesClause = "data";
+               } else if (tokenCat === "{") {
+-                // Single-variable form: VALUES ?x { ... } — no arity to check
+-                state.valuesClause = undefined;
++                // BINDINGS ?x ?y { ... } — every row is a tuple to check.
++                // Single-variable form VALUES ?x { ... } — no arity to check.
++                state.valuesClause = state.valuesIsBindings ? "data" : undefined;
+               }
+               // '(' and NIL are just structural, skip
+             } else if (state.valuesClause === "data") {
+@@ -1473,6 +1478,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+         valuesTupleCount: s.valuesTupleCount,
+         valuesSkipNext: s.valuesSkipNext,
+         valuesIsTrailing: s.valuesIsTrailing,
++        valuesIsBindings: s.valuesIsBindings,
+         trailingValuesVars: new Set(s.trailingValuesVars),
+         bindScopeStack: s.bindScopeStack.map((scope) => new Set(scope)),
+         inBind: s.inBind,
+@@ -1537,6 +1543,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
+         valuesTupleCount: 0,
+         valuesSkipNext: false,
+         valuesIsTrailing: false,
++        valuesIsBindings: false,
+         trailingValuesVars: new Set(),
+         bindScopeStack: [new Set()],
+         inBind: false,
