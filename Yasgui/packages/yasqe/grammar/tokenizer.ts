@@ -63,6 +63,7 @@ export interface State {
   valuesTupleCount: number; // number of values in current data tuple
   valuesSkipNext: boolean; // skip next token in VALUES tuple (after ^^)
   valuesIsTrailing: boolean; // whether the current VALUES clause is the outer query's trailing ValuesClause
+  valuesIsBindings: boolean; // whether the current clause is the SPARQL 1.1 draft BINDINGS form (vars without parentheses)
   trailingValuesVars: Set<string>; // vars of the outer query's trailing VALUES — in scope before SELECT expressions
   // Triple term depth: tracks nesting inside <<(...)>> to suppress VALUES arity counting
   tripleTermDepth: number;
@@ -1095,13 +1096,14 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
               } else if (tokenCat !== "(" && tokenCat !== ")") {
                 (state as any)._groupByAfterAS = false;
               }
-              // GROUP BY clause ends at HAVING, ORDER, LIMIT, OFFSET, VALUES, or }
+              // GROUP BY clause ends at HAVING, ORDER, LIMIT, OFFSET, VALUES, BINDINGS, or }
               if (
                 tokenCat === "HAVING" ||
                 tokenCat === "ORDER" ||
                 tokenCat === "LIMIT" ||
                 tokenCat === "OFFSET" ||
                 tokenCat === "VALUES" ||
+                tokenCat === "BINDINGS" ||
                 tokenCat === "}"
               ) {
                 state.inGroupByClause = false;
@@ -1110,12 +1112,14 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
 
             // VALUES arity checking
             // Track: VALUES (var1 var2) { (val1 val2) (val1 val2) ... }
+            // and the draft form BINDINGS var1 var2 { (val1 val2) ... }, whose vars have no parentheses.
             // The number of values in each tuple must match the variable count.
             // State machine: undefined -> "vars" (after VALUES + '(') -> "data" (after ')' + '{') -> "tuple" (inside data tuple)
             // Triple terms <<(...)>> are a single dataBlockValue — tokens inside them are not counted.
-            if (tokenCat === "VALUES") {
+            if (tokenCat === "VALUES" || tokenCat === "BINDINGS") {
               state.valuesClause = "vars";
               state.valuesIsTrailing = state.braceDepth === 0;
+              state.valuesIsBindings = tokenCat === "BINDINGS";
               state.valuesVarCount = 0;
               state.valuesVarNames = new Set();
               state.valuesTupleCount = 0;
@@ -1138,8 +1142,9 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
                 // End of variable list, next should be '{'
                 state.valuesClause = "data";
               } else if (tokenCat === "{") {
-                // Single-variable form: VALUES ?x { ... } — no arity to check
-                state.valuesClause = undefined;
+                // BINDINGS ?x ?y { ... } — every row is a tuple to check.
+                // Single-variable form VALUES ?x { ... } — no arity to check.
+                state.valuesClause = state.valuesIsBindings ? "data" : undefined;
               }
               // '(' and NIL are just structural, skip
             } else if (state.valuesClause === "data") {
@@ -1473,6 +1478,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         valuesTupleCount: s.valuesTupleCount,
         valuesSkipNext: s.valuesSkipNext,
         valuesIsTrailing: s.valuesIsTrailing,
+        valuesIsBindings: s.valuesIsBindings,
         trailingValuesVars: new Set(s.trailingValuesVars),
         bindScopeStack: s.bindScopeStack.map((scope) => new Set(scope)),
         inBind: s.inBind,
@@ -1537,6 +1543,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         valuesTupleCount: 0,
         valuesSkipNext: false,
         valuesIsTrailing: false,
+        valuesIsBindings: false,
         trailingValuesVars: new Set(),
         bindScopeStack: [new Set()],
         inBind: false,

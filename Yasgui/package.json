@@ -39,17 +39,7 @@
   },
   "lint-staged": {
     "*.ts?(x)": [
-      "prettier --parser typescript --write",
       "eslint"
-    ],
-    "*.js": [
-      "prettier --write"
-    ],
-    "*.css": [
-      "prettier --parser css --write"
-    ],
-    "*.scss": [
-      "prettier --parser scss --write"
     ]
   },
   "husky": {
