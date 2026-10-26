@@ -209,8 +209,8 @@ module.exports = {table:
      "INTEGER_NEGATIVE": ["dataBlockValue","*dataBlockValue"], 
      "DECIMAL_NEGATIVE": ["dataBlockValue","*dataBlockValue"], 
      "DOUBLE_NEGATIVE": ["dataBlockValue","*dataBlockValue"], 
-     "}": [], 
-     ")": []}, 
+     ")": [], 
+     "}": []}, 
   "*datasetClause" : {
      "FROM": ["datasetClause","*datasetClause"], 
      "WHERE": [], 
@@ -225,6 +225,7 @@ module.exports = {table:
      "WHERE": [], 
      "{": [], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "$": []}, 
   "*graphNode" : {
      "(": ["graphNode","*graphNode"], 
@@ -355,6 +356,7 @@ module.exports = {table:
      "PNAME_LN": ["groupCondition","*groupCondition"], 
      "PNAME_NS": ["groupCondition","*groupCondition"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "LIMIT": [], 
      "OFFSET": [], 
      "ORDER": [], 
@@ -430,6 +432,7 @@ module.exports = {table:
      "PNAME_LN": ["havingCondition","*havingCondition"], 
      "PNAME_NS": ["havingCondition","*havingCondition"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "LIMIT": [], 
      "OFFSET": [], 
      "ORDER": [], 
@@ -619,6 +622,7 @@ module.exports = {table:
      "PNAME_LN": ["orderCondition","*orderCondition"], 
      "PNAME_NS": ["orderCondition","*orderCondition"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "LIMIT": [], 
      "OFFSET": [], 
      "$": [], 
@@ -629,6 +633,7 @@ module.exports = {table:
   "*var" : {
      "VAR1": ["var","*var"], 
      "VAR2": ["var","*var"], 
+     "{": [], 
      ")": []}, 
   "*varOrIRIref" : {
      "VAR1": ["varOrIRIref","*varOrIRIref"], 
@@ -645,6 +650,7 @@ module.exports = {table:
      "{": [], 
      "FROM": [], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "$": []}, 
   "+graphNode" : {
      "(": ["graphNode","*graphNode"], 
@@ -1418,6 +1424,7 @@ module.exports = {table:
   "?groupClause" : {
      "GROUP": ["groupClause"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "LIMIT": [], 
      "OFFSET": [], 
      "ORDER": [], 
@@ -1427,6 +1434,7 @@ module.exports = {table:
   "?havingClause" : {
      "HAVING": ["havingClause"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "LIMIT": [], 
      "OFFSET": [], 
      "ORDER": [], 
@@ -1439,17 +1447,20 @@ module.exports = {table:
   "?limitClause" : {
      "LIMIT": ["limitClause"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "$": [], 
      "}": []}, 
   "?limitOffsetClauses" : {
      "LIMIT": ["limitOffsetClauses"], 
      "OFFSET": ["limitOffsetClauses"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "$": [], 
      "}": []}, 
   "?offsetClause" : {
      "OFFSET": ["offsetClause"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "$": [], 
      "}": []}, 
   "?or([DISTINCT,REDUCED])" : {
@@ -1570,6 +1581,7 @@ module.exports = {table:
   "?orderClause" : {
      "ORDER": ["orderClause"], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "LIMIT": [], 
      "OFFSET": [], 
      "$": [], 
@@ -1713,6 +1725,7 @@ module.exports = {table:
      "LIMIT": [], 
      "OFFSET": [], 
      "VALUES": [], 
+     "BINDINGS": [], 
      "$": []}, 
   "[!=,numericExpression]" : {
      "!=": ["!=","numericExpression"]}, 
@@ -4284,6 +4297,7 @@ module.exports = {table:
      "HAVING": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
      "GROUP": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
      "VALUES": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
+     "BINDINGS": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
      "$": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"], 
      "}": ["?groupClause","?havingClause","?orderClause","?limitOffsetClauses"]}, 
   "sourceSelector" : {
@@ -4755,6 +4769,7 @@ module.exports = {table:
      "PNAME_NS": ["relationalExpression"]}, 
   "valuesClause" : {
      "VALUES": ["VALUES","dataBlock"], 
+     "BINDINGS": ["BINDINGS","*var","{","*or([[(,*dataBlockValue,)],NIL])","}"], 
      "$": [], 
      "}": []}, 
   "var" : {
@@ -4827,7 +4842,7 @@ module.exports = {table:
      "WHERE": ["?WHERE","groupGraphPattern"]}
 },
 
-keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|VERSION|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BIND|LANGMATCHES|LANGDIR|HASLANGDIR|LANG|HASLANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|ISNUMERIC|ISTRIPLE|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANGDIR|STRLANG|STRDT|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|STRLEN|STRUUID|STR|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|TRIPLE|SUBJECT|PREDICATE|OBJECT)/i ,
+keywords:/^(GROUP_CONCAT|DATATYPE|BASE|PREFIX|VERSION|SELECT|CONSTRUCT|DESCRIBE|ASK|FROM|NAMED|ORDER|BY|LIMIT|ASC|DESC|OFFSET|DISTINCT|REDUCED|WHERE|GRAPH|OPTIONAL|UNION|FILTER|GROUP|HAVING|AS|VALUES|LOAD|CLEAR|DROP|CREATE|MOVE|COPY|SILENT|INSERT|DELETE|DATA|WITH|TO|USING|NAMED|MINUS|BINDINGS|BIND|LANGMATCHES|LANGDIR|HASLANGDIR|LANG|HASLANG|BOUND|SAMETERM|ISIRI|ISURI|ISBLANK|ISLITERAL|ISNUMERIC|ISTRIPLE|REGEX|TRUE|FALSE|UNDEF|ADD|DEFAULT|ALL|SERVICE|INTO|IN|NOT|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANGDIR|STRLANG|STRDT|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|STRLEN|STRUUID|STR|SUBSTR|REPLACE|EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|SEPARATOR|TRIPLE|SUBJECT|PREDICATE|OBJECT)/i ,
 
 punct:/^(\*|a|\.|\{\||\|\}|\{|\}|,|\(|\)>>|\)|;|\[|\]|\|\||&&|=|!=|!|<=|>=|<<\(|<<|>>|<|>|\+|-|\/|\^\^|\?|~|\||\^)/ ,
 

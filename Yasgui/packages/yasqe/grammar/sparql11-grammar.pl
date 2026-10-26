@@ -150,14 +150,13 @@ offsetClause ==>
 	['OFFSET','INTEGER'].
 
 %[28]
-%bindingsClause ==>
-%	['BINDINGS',*(var),'{',
-%	   *(['(',*(bindingValue),')'] or 'NIL'),
-%	   '}'].
-%bindingsClause ==> [].
-
-%[28]
 valuesClause ==> ['VALUES',dataBlock].
+% BINDINGS: the SPARQL 1.1 draft form of the trailing VALUES clause, still
+% accepted by GraphDB. Variables have no parentheses; every row has them.
+valuesClause ==>
+	['BINDINGS',*(var),'{',
+	   *(['(',*(dataBlockValue),')'] or 'NIL'),
+	   '}'].
 valuesClause ==> [].
 
 %[29]
@@ -890,6 +889,7 @@ tm_keywords([
 'USING',
 'NAMED',
 'MINUS',
+'BINDINGS',     % Must appear before BIND
 'BIND',
 
 'LANGMATCHES',  % Must appear before LANG
