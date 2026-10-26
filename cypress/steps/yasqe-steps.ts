@@ -349,6 +349,30 @@ export class YasqeSteps {
     this.getCodeMirrorEl().find('.CodeMirror-line').eq(line - 1).realClick();
   }
 
+  static getKeywordTokens() {
+    return this.getCodeMirrorEl().find('.cm-keyword');
+  }
+
+  static getKeywordTokensContaining(text: string) {
+    return this.getKeywordTokens().filter(`:contains("${text}")`);
+  }
+
+  static getErrorTokens() {
+    return this.getCodeMirrorEl().find('.cm-error');
+  }
+
+  static getSyntaxErrorIcon() {
+    return this.getEditor().find('.parseErrorIcon');
+  }
+
+  static showSyntaxErrorTooltip() {
+    this.getSyntaxErrorIcon().trigger('mouseover');
+  }
+
+  static getSyntaxErrorTooltip() {
+    return this.getEditor().find('.yasqe_tooltip');
+  }
+
   static getYasqeHintsElement() {
     return YasqeSteps.getYasgui().find('.CodeMirror-hints');
   }
