@@ -31,7 +31,7 @@ describe('YASR toolbar', () => {
     // When I execute a query, so yasr toolbar to become visible.
     YasqeSteps.executeQuery();
 
-    YasrCustomElementSteps.getYasrToolbarElement(0).contains('Download as');
+    YasrCustomElementSteps.getYasrToolbarElement(0).find('.button-name').should('have.text', 'Download');
     // hidden pivot table download button
     YasrCustomElementSteps.getYasrToolbarElement(1).should('have.class', 'hidden');
     // hidden chart download button
