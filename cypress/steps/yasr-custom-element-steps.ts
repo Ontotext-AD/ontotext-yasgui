@@ -25,4 +25,8 @@ export class YasrCustomElementSteps {
   static getYasrToolbarElement(indexOfElement: number) {
     return YasrSteps.getYasrToolbar().find('.yasr-toolbar-element').eq(indexOfElement);
   }
+
+  static getYasrToolbarElementButtonName(indexOfElement: number) {
+    return this.getYasrToolbarElement(indexOfElement).find('.button-name');
+  }
 }
