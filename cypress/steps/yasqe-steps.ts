@@ -74,8 +74,12 @@ export class YasqeSteps {
     return cy.get('.ontotext-run-dropdown-menu');
   }
 
+  static getRunDropdownMenuOptions() {
+    return this.getRunDropdownMenu().find('.ontotext-run-dropdown-menu-item');
+  }
+
   static getRunDropdownMenuOption(index: number) {
-    return this.getRunDropdownMenu().find('.ontotext-run-dropdown-menu-item').eq(index);
+    return this.getRunDropdownMenuOptions().eq(index);
   }
 
   static selectRunDropdownMenuOption(index: number) {

@@ -25,6 +25,12 @@ export class QuerySplitButton {
 
     @State() querySplitOpen = false;
 
+    private toggleButton: HTMLButtonElement;
+    /**
+     * The option to focus once the menu is rendered open: 'first', 'last' or none.
+     */
+    private optionToFocusOnOpen: 'first' | 'last' | undefined;
+
     private runActions: RunAction[] = [
         {labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan'},
         {labelKey: 'yasqe.dropdown.run_query.option.llm_explain_all', value: 'explain_all'},
@@ -50,6 +56,15 @@ export class QuerySplitButton {
     onKeyDown(e: KeyboardEvent) {
         if (e.key === 'Escape' && this.querySplitOpen) {
             this.closeQuerySplitMenu();
+        }
+    }
+
+    componentDidRender(): void {
+        const options = this.getMenuOptions();
+        if (this.optionToFocusOnOpen && options.length) {
+            // The menu is positioned after it renders, so focusing must not scroll the page, which closes the menu.
+            options[this.optionToFocusOnOpen === 'first' ? 0 : options.length - 1].focus({preventScroll: true});
+            this.optionToFocusOnOpen = undefined;
         }
     }
 
@@ -106,9 +121,72 @@ export class QuerySplitButton {
         this.querySplitOpen ? this.closeQuerySplitMenu() : this.openQuerySplitMenu();
     };
 
-    private openQuerySplitMenu() {
+    private openQuerySplitMenu(optionToFocus: 'first' | 'last' = 'first') {
+        this.optionToFocusOnOpen = optionToFocus;
         this.querySplitOpen = true;
         this.positionDropdownMenu();
+    }
+
+    private onToggleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.openQuerySplitMenu(e.key === 'ArrowDown' ? 'first' : 'last');
+        } else if (e.key === 'Escape' && this.querySplitOpen) {
+            this.closeQuerySplitMenu();
+        }
+    };
+
+    /**
+     * Moves the focus between the options with the arrow, Home and End keys, runs the focused option with Enter or
+     * Space, closes the menu on Escape, returning the focus to the toggle, and closes it when Tab moves the focus out.
+     * Escape is handled here as well as on the window, because a host page may stop it before it reaches the window.
+     *
+     * @param e The keyboard event.
+     * @param action The value of the focused option.
+     */
+    private onOptionKeyDown(e: KeyboardEvent, action: string): void {
+        const options = this.getMenuOptions();
+        const index = options.indexOf(e.target as HTMLElement);
+        const focusOption = (optionIndex: number) => {
+            e.preventDefault();
+            options[(optionIndex + options.length) % options.length].focus();
+        };
+        switch (e.key) {
+            case 'ArrowDown':
+                focusOption(index + 1);
+                break;
+            case 'ArrowUp':
+                focusOption(index - 1);
+                break;
+            case 'Home':
+                focusOption(0);
+                break;
+            case 'End':
+                focusOption(options.length - 1);
+                break;
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                this.selectAction(action);
+                break;
+            case 'Escape':
+                this.closeQuerySplitMenu();
+                this.toggleButton.focus();
+                break;
+            case 'Tab':
+                this.closeQuerySplitMenu();
+                break;
+        }
+    }
+
+    private selectAction(action: string): void {
+        this.handleDropdownAction(action);
+        this.closeQuerySplitMenu();
+        this.toggleButton.focus();
+    }
+
+    private getMenuOptions(): HTMLElement[] {
+        return Array.from(this.hostElement.querySelectorAll('.ontotext-run-dropdown-menu-item'));
     }
 
     private closeQuerySplitMenu() {
@@ -136,7 +214,11 @@ export class QuerySplitButton {
                     type="button"
                     class={`yasqe_querySplitToggle ${caretClass}`}
                     aria-label={this.translationService.translate('yasqe.action.run_query.split.toggle.aria')}
+                    aria-haspopup="menu"
+                    aria-expanded={this.querySplitOpen ? 'true' : 'false'}
+                    ref={(el) => (this.toggleButton = el)}
                     onClick={this.toggleQuerySplitMenu}
+                    onKeyDown={this.onToggleKeyDown}
                 />
                 {this.querySplitOpen && (
                     <div class="yasqe-inline-dropdown ontotext-run-dropdown open">
@@ -145,11 +227,12 @@ export class QuerySplitButton {
                                     <div
                                         class="ontotext-run-dropdown-menu-item"
                                         role="menuitem"
+                                        tabindex="-1"
                                         onClick={(ev) => {
                                             ev.preventDefault();
-                                            this.handleDropdownAction(item.value);
-                                            this.closeQuerySplitMenu();
+                                            this.selectAction(item.value);
                                         }}
+                                        onKeyDown={(ev) => this.onOptionKeyDown(ev, item.value)}
                                     >
                   <span class="ontotext-run-dropdown-menu-item__label">
                     {this.translationService.translate(item.labelKey)}
