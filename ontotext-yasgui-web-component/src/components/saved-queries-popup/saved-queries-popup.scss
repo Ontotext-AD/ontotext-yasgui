@@ -35,10 +35,10 @@
         padding: 5px 0;
         list-style-type: none;
 
-        &:hover {
+        &:hover, &:has(:focus-visible) {
 
           .saved-query-actions {
-            display: block;
+            opacity: 1;
           }
         }
 
@@ -54,7 +54,8 @@
         }
 
         .saved-query-actions {
-          display: none;
+          // Hidden with opacity rather than display, so the actions stay reachable with Tab.
+          opacity: 0;
           position: absolute;
           right: 0;
         }
@@ -63,10 +64,9 @@
           border: none;
           background-color: #fff;
           color: $color-ontotext-orange;
-          outline: none;
           cursor: pointer;
           font-size: 1em;
-          transition: all .15s ease-out;
+          transition: color .15s ease-out, transform .15s ease-out;
 
           &:hover {
             color: $color-ontotext-orange-dark;

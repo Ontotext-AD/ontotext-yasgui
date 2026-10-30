@@ -10,6 +10,10 @@ export class KeyboardShortcutSteps {
     return cy.get('.keyboard-shortcuts-dialog-wrapper .dialog');
   }
 
+  static getInfoDialogCloseButton() {
+    return KeyboardShortcutSteps.getInfoDialog().find('.close-button');
+  }
+
   static getInfoDialogTitle() {
     return KeyboardShortcutSteps.getInfoDialog().find('.dialog-title');
   }
@@ -37,6 +41,15 @@ export class KeyboardShortcutSteps {
   // Native key presses, so the browser moves the focus on Tab as it does for a real user.
   static pressEscapeKey() {
     cy.realPress('Escape');
+  }
+
+  /**
+   * Opens a dialog or a popup the way a keyboard user does: focuses its opener and presses Enter.
+   */
+  static openWithKeyboard(opener: Cypress.Chainable<JQuery<HTMLElement>>) {
+    opener.first().should('be.visible').focus();
+    cy.focused().should('have.prop', 'tagName', 'BUTTON');
+    cy.realPress('Enter');
   }
 
   static pressTabKey() {

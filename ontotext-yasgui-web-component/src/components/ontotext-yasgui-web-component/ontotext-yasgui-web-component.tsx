@@ -605,6 +605,8 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalEditSavedQueryEvent')
   editSavedQueryHandler(event: CustomEvent<SaveQueryData>) {
+    // The edit button goes away with the popup, so the dialog returns the focus to the button that opened the popup.
+    this.showSavedQueriesPopupTarget?.focus();
     this.savedQueryData = event.detail
     this.showSavedQueriesPopup = false;
     this.showSaveQueryDialog = true;
@@ -624,6 +626,7 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalConfirmationApprovedEvent')
   deleteSavedQueryHandler() {
+    this.showSavedQueriesPopupTarget?.focus();
     this.showConfirmationDialog = false;
     this.showSavedQueriesPopup = false;
     this.deleteSavedQuery.emit(this.deleteQueryData);
@@ -634,6 +637,7 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalConfirmationRejectedEvent')
   closeSavedQueryDeleteConfirmationHandler() {
+    this.showSavedQueriesPopupTarget?.focus();
     this.showConfirmationDialog = false;
     this.showSavedQueriesPopup = false;
     this.deleteQueryData = undefined;
@@ -652,6 +656,8 @@ export class OntotextYasguiWebComponent {
    */
   @Listen('internalSavedQuerySelectedForShareEvent')
   savedQuerySelectedForShareHandler(event: CustomEvent<SaveQueryData>) {
+    // The share button goes away with the popup, so the dialog returns the focus to the button that opened the popup.
+    this.showSavedQueriesPopupTarget?.focus();
     this.shareSavedQuery.emit(event.detail);
     this.showShareQueryDialog = true;
   }

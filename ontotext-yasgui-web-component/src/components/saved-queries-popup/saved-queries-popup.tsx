@@ -7,6 +7,7 @@ import {
 } from "../../models/saved-query-configuration";
 import {TranslationService} from "../../services/translation.service";
 import {ServiceFactory} from "../../services/service-factory";
+import {HtmlUtil} from '../../services/utils/html-util';
 
 @Component({
   tag: 'saved-queries-popup',
@@ -15,6 +16,7 @@ import {ServiceFactory} from "../../services/service-factory";
 })
 export class SavedQueriesPopup {
   private translationService: TranslationService;
+  private isSavedQueryFocused = false;
 
   @Element() hostElement: HTMLElement;
 
@@ -62,6 +64,7 @@ export class SavedQueriesPopup {
   @Listen('keydown', {target: "window"})
   keydownListener(ev: KeyboardEvent) {
     if (ev.key === 'Escape') {
+      this.config.popupTarget.focus();
       this.internalCloseSavedQueriesPopupEvent.emit();
     }
   }
@@ -71,14 +74,41 @@ export class SavedQueriesPopup {
     this.internalSaveQuerySelectedEvent.emit(selectedQuery);
   }
 
+  /**
+   * Opens the saved query on Enter or Space, and moves the focus between the saved queries with the arrow keys.
+   *
+   * @param evt The keyboard event.
+   * @param selectedQuery The saved query whose link has the focus.
+   */
+  onSavedQueryKeyDown(evt: KeyboardEvent, selectedQuery: SaveQueryData): void {
+    if (evt.key === 'Enter' || evt.key === ' ') {
+      evt.preventDefault();
+      this.config.popupTarget.focus();
+      this.onSelect(evt, selectedQuery);
+    } else if (evt.key === 'ArrowDown' || evt.key === 'ArrowUp') {
+      evt.preventDefault();
+      this.focusSiblingSavedQuery(evt.target as HTMLElement, evt.key === 'ArrowDown' ? 1 : -1);
+    }
+  }
+
   componentWillLoad(): void {
     // TranslationService is injected here because the service factory is not available
     // in the constructor.
     this.translationService = this.serviceFactory.get(TranslationService);
   }
 
+  componentDidLoad(): void {
+    this.hostElement.addEventListener('keydown', this.preventLeavingPopup);
+    this.focusFirstSavedQuery();
+  }
+
   componentDidRender(): void {
     this.setPopupPosition();
+    this.focusFirstSavedQuery();
+  }
+
+  disconnectedCallback(): void {
+    this.hostElement.removeEventListener('keydown', this.preventLeavingPopup);
   }
 
   onEdit(evt: MouseEvent, selectedQuery: SaveQueryData): void {
@@ -94,6 +124,32 @@ export class SavedQueriesPopup {
   onShare(evt: MouseEvent, selectedQuery: SaveQueryData): void {
     evt.stopPropagation();
     this.internalSavedQuerySelectedForShareEvent.emit(new DeleteQueryData(selectedQuery.queryName, selectedQuery.query, selectedQuery.isPublic));
+  }
+
+  private preventLeavingPopup = (ev: KeyboardEvent): void => {
+    HtmlUtil.preventLeavingDialog(this.hostElement, ev);
+  }
+
+  /**
+   * Focuses the first saved query once. The saved queries may arrive after the popup has opened, and the first query
+   * can't take the focus before its tooltip is hydrated.
+   */
+  private focusFirstSavedQuery(): void {
+    const firstSavedQueryLink = this.getSavedQueryLinks()[0];
+    if (!this.isSavedQueryFocused && firstSavedQueryLink) {
+      firstSavedQueryLink.focus();
+      this.isSavedQueryFocused = document.activeElement === firstSavedQueryLink;
+    }
+  }
+
+  private getSavedQueryLinks(): HTMLElement[] {
+    return Array.from(this.hostElement.querySelectorAll('.saved-query-link'));
+  }
+
+  private focusSiblingSavedQuery(savedQueryLink: HTMLElement, offset: number): void {
+    const savedQueryLinks = this.getSavedQueryLinks();
+    const index = savedQueryLinks.indexOf(savedQueryLink);
+    savedQueryLinks[(index + offset + savedQueryLinks.length) % savedQueryLinks.length].focus();
   }
 
   private setPopupPosition(): void {
@@ -127,20 +183,21 @@ export class SavedQueriesPopup {
               <yasgui-tooltip placement="top" key={savedQuery.queryName}
                               yasgui-data-tooltip={savedQuery.queryName}>
                 <li class="saved-query">
-                  <a class="saved-query-link"
-                     onClick={(evt) => this.onSelect(evt, savedQuery)}>{savedQuery.queryName}</a>
+                  <a class="saved-query-link" tabindex="0" role="button" data-cy="saved-queries-popup-query-link"
+                     onClick={(evt) => this.onSelect(evt, savedQuery)}
+                     onKeyDown={(evt) => this.onSavedQueryKeyDown(evt, savedQuery)}>{savedQuery.queryName}</a>
                   <span class="saved-query-actions">
                   {!savedQuery.readonly ?
-                    <button class="saved-query-action edit-saved-query ri-edit-line"
+                    <button class="saved-query-action edit-saved-query ri-edit-line" data-cy="saved-queries-popup-edit-button"
                             title={this.translationService.translate('yasqe.actions.saved_query_dialog.edit.button.tooltip')}
                             onClick={(evt) => this.onEdit(evt, savedQuery)}></button>
                     : ''}
                     {!savedQuery.readonly ?
-                      <button class="saved-query-action delete-saved-query ri-delete-bin-6-line"
+                      <button class="saved-query-action delete-saved-query ri-delete-bin-6-line" data-cy="saved-queries-popup-delete-button"
                               title={this.translationService.translate('yasqe.actions.saved_query_dialog.delete.button.tooltip')}
                               onClick={(evt) => this.onDelete(evt, savedQuery)}></button>
                       : ''}
-                    <button class="saved-query-action share-saved-query ri-links-line"
+                    <button class="saved-query-action share-saved-query ri-links-line" data-cy="saved-queries-popup-share-button"
                             title={this.translationService.translate('yasqe.actions.saved_query_dialog.share.button.tooltip')}
                             onClick={(evt) => this.onShare(evt, savedQuery)}></button>
                   </span>
