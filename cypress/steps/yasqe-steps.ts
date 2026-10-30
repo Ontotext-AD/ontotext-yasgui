@@ -139,6 +139,14 @@ export class YasqeSteps {
     this.getSaveQueryButton().click({force: true});
   }
 
+  static getSaveQueryDialogCloseButton() {
+    return cy.getByDataSelector('save-query-dialog-close-button');
+  }
+
+  static getSaveQueryDialogCancelButton() {
+    return cy.getByDataSelector('save-query-dialog-cancel-button');
+  }
+
   static getQueryField() {
     return this.getSaveQueryDialog().find('#query');
   }
@@ -217,6 +225,22 @@ export class YasqeSteps {
 
   static getSavedQuery(index = 0) {
     return this.getSavedQueries().eq(index);
+  }
+
+  static getSavedQueryLinks() {
+    return cy.getByDataSelector('saved-queries-popup-query-link');
+  }
+
+  static getSavedQueryLink(index = 0) {
+    return this.getSavedQueryLinks().eq(index);
+  }
+
+  static getSavedQueryEditButton(index: number) {
+    return this.getSavedQuery(index).find('[data-cy=saved-queries-popup-edit-button]');
+  }
+
+  static getSavedQueryShareButton(index: number) {
+    return this.getSavedQuery(index).find('[data-cy=saved-queries-popup-share-button]');
   }
 
   static selectSavedQuery(index: number) {

@@ -1,4 +1,4 @@
-const INTERACTIVE_ELEMENTS_SELECTOR = 'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+const INTERACTIVE_ELEMENTS_SELECTOR = 'button:not([disabled]), [href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export class HtmlUtil {
 
@@ -85,14 +85,11 @@ export class HtmlUtil {
    * @param activeElementSelector - The CSS selector for identifying focusable elements.
    */
   static focusNextElement(parentElement: HTMLElement, activeElementSelector = INTERACTIVE_ELEMENTS_SELECTOR): void {
-    const focusableElements: any [] = Array.from(parentElement.querySelectorAll(activeElementSelector));
+    const focusableElements = HtmlUtil.getFocusableElements(parentElement, activeElementSelector);
     if (focusableElements.length > 0) {
-      const currentIndex = focusableElements.indexOf(document.activeElement);
+      const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
       const nextIndex = (currentIndex + 1) % focusableElements.length;
-      const nextActiveElement = focusableElements[nextIndex] as HTMLElement;
-      if (nextActiveElement) {
-        nextActiveElement.focus();
-      }
+      focusableElements[nextIndex].focus();
     }
   }
 
@@ -103,15 +100,49 @@ export class HtmlUtil {
    * @param activeElementSelector - The CSS selector for identifying focusable elements.
    */
   static focusPreviousElement(parentElement: HTMLElement, activeElementSelector = INTERACTIVE_ELEMENTS_SELECTOR): void {
-    const focusableElements: any[] = Array.from(parentElement.querySelectorAll(activeElementSelector));
+    const focusableElements = HtmlUtil.getFocusableElements(parentElement, activeElementSelector);
     if (focusableElements.length > 0) {
-      const currentIndex = focusableElements.indexOf(document.activeElement);
+      const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
       const previousIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
-      const previousActiveElement = focusableElements[previousIndex] as HTMLElement;
-      if (previousActiveElement) {
-        previousActiveElement.focus();
-      }
+      focusableElements[previousIndex].focus();
     }
+  }
+
+  /**
+   * Focuses the first focusable element within a dialog, in the order Tab moves through them.
+   *
+   * @param parentElement - The parent element containing the focusable elements.
+   */
+  static focusFirstElement(parentElement: HTMLElement): void {
+    HtmlUtil.getFocusableElements(parentElement, INTERACTIVE_ELEMENTS_SELECTOR)[0]?.focus();
+  }
+
+  /**
+   * Moves the focus back to the element that had it before a dialog opened, if that element is still on the page.
+   *
+   * @param opener - The element that had the focus when the dialog opened.
+   */
+  static restoreFocus(opener: Element): void {
+    if (opener instanceof HTMLElement && opener !== document.body && opener.isConnected) {
+      opener.focus();
+    }
+  }
+
+  /**
+   * Returns the focusable elements in Tab order, with the dialog header controls last.
+   *
+   * @param parentElement - The parent element containing the focusable elements.
+   * @param activeElementSelector - The CSS selector for identifying focusable elements.
+   *
+   * @return the focusable elements, in the order Tab moves through them.
+   */
+  private static getFocusableElements(parentElement: HTMLElement, activeElementSelector: string): HTMLElement[] {
+    const focusableElements: HTMLElement[] = Array.from(parentElement.querySelectorAll(activeElementSelector));
+    const isInHeader = (element: HTMLElement) => !!element.closest('.dialog-header');
+    return [
+      ...focusableElements.filter((element) => !isInHeader(element)),
+      ...focusableElements.filter(isInHeader)
+    ];
   }
 
   static  preventLeavingDialog(hostElement: HTMLElement, ev: KeyboardEvent) {

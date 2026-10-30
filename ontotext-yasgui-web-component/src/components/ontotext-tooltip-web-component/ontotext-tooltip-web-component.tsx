@@ -30,6 +30,12 @@ export class OntotextTooltipWebComponent {
 
   private onMouseOver: ((e: MouseEvent) => void) | null = null;
   private onMouseLeave: ((e: MouseEvent) => void) | null = null;
+  private onFocusOut: ((e: FocusEvent) => void) | null = null;
+  private onClick: ((e: MouseEvent) => void) | null = null;
+  /**
+   * Whether the tooltip was shown by a keyboard click (Enter or Space), which no mouseleave will hide.
+   */
+  private isShownByKeyboard = false;
   private onDocClick: ((e: MouseEvent) => void) | null = null;
 
   private unsubscriptions: Array<() => void> = [];
@@ -82,6 +88,7 @@ export class OntotextTooltipWebComponent {
     this.popperEl = null;
     this.boxEl = null;
     this.arrowEl = null;
+    this.isShownByKeyboard = false;
   };
 
   componentDidLoad() {
@@ -110,9 +117,29 @@ export class OntotextTooltipWebComponent {
       this.onMouseLeave = null;
     });
 
+    this.onFocusOut = (e: FocusEvent) => {
+      const to = e.relatedTarget as Node | null;
+      if (this.isShownByKeyboard && (!to || !this.el.contains(to))) {
+        this.hide();
+      }
+    };
+    this.el.addEventListener('focusout', this.onFocusOut);
+    this.unsubscriptions.push(() => {
+      this.el.removeEventListener('focusout', this.onFocusOut);
+      this.onFocusOut = null;
+    });
+
     if (this.showOnClick) {
-      this.el.addEventListener('click', this.show);
-      this.unsubscriptions.push(() => this.el.removeEventListener('click', this.show));
+      this.onClick = (e: MouseEvent) => {
+        this.show();
+        // A click fired by Enter or Space has no pointer clicks, so its detail is 0.
+        this.isShownByKeyboard = e.detail === 0;
+      };
+      this.el.addEventListener('click', this.onClick);
+      this.unsubscriptions.push(() => {
+        this.el.removeEventListener('click', this.onClick);
+        this.onClick = null;
+      });
     }
   }
 
