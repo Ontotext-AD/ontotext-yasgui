@@ -4,6 +4,8 @@ export interface State {
   inLiteral: "SINGLE" | "DOUBLE" | undefined;
   errorStartPos: number | undefined;
   errorEndPos: number | undefined;
+  line: number; // 0-based index of the line being tokenized; -1 before the first line
+  errorLine: number | undefined; // 0-based line that a diagnostic raised by finalize() points at
   queryType:
     | "SELECT"
     | "CONSTRUCT"
@@ -43,10 +45,11 @@ export interface State {
   selectParenDepth: number; // paren depth inside SELECT clause
   aggregateNesting: number; // nesting depth inside aggregate functions (COUNT, SUM, etc.)
   aggParenStack: number[]; // stack of selectParenDepth values at which each aggregate '(' was pushed
-  selectBareVars: Set<string>; // bare ?var in SELECT not inside aggregate or (expr AS ?var)
+  selectBareVars: Map<string, number>; // bare ?var in SELECT not inside aggregate or (expr AS ?var), to the line of its first occurrence
   selectHasAggregate: boolean; // whether SELECT clause contains any aggregate
   selectHasStar: boolean; // whether SELECT clause used '*'
-  selectAliases: Set<string>; // alias names from (expr AS ?var) to detect duplicates
+  selectStarLine: number | undefined; // line of the SELECT clause's '*'
+  selectAliases: Map<string, number>; // alias names from (expr AS ?var) to detect duplicates, to the line of the alias
   inGroupByClause: boolean;
   groupByVars: Set<string>; // bare ?var in GROUP BY (at paren depth 0)
   groupByParenDepth: number; // paren depth inside GROUP BY clause
@@ -684,6 +687,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
     // - i.e. a definite break between tokens (for autocompleter)
     if (stream.pos == 0) {
       state.possibleCurrent = state.possibleNext;
+      state.line++;
     }
 
     const tokenOb = nextToken();
@@ -948,16 +952,18 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
               state.selectParenDepth = 0;
               state.aggregateNesting = 0;
               state.aggParenStack = [];
-              state.selectBareVars = new Set();
+              state.selectBareVars = new Map();
               state.selectHasAggregate = false;
               state.selectHasStar = false;
-              state.selectAliases = new Set();
+              state.selectStarLine = undefined;
+              state.selectAliases = new Map();
               state.hasGroupBy = false;
               state.groupByVars = new Set();
             } else if (state.inSelectClause && state.braceDepth === 0) {
               // Track SELECT * — only at paren depth 0 (not COUNT(*))
               if (tokenCat === "*" && state.selectParenDepth === 0) {
                 state.selectHasStar = true;
+                state.selectStarLine = state.line;
               }
 
               // Track aggregate keywords
@@ -1006,14 +1012,14 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
                       { key: "variable", value: tokenOb.string },
                     ]);
                   } else {
-                    state.selectAliases.add(tokenOb.string);
+                    state.selectAliases.set(tokenOb.string, state.line);
                   }
                 } else if (!state.selectAliases.has(tokenOb.string)) {
                   // Non-alias var — must be in GROUP BY if GROUP BY is present.
                   // A var introduced by an earlier select expression in the same
                   // SELECT clause is already in scope, so it is exempt
                   // (e.g. SELECT (COUNT(?v) AS ?c) (?c + 1 AS ?cPlusOne)).
-                  state.selectBareVars.add(tokenOb.string);
+                  if (!state.selectBareVars.has(tokenOb.string)) state.selectBareVars.set(tokenOb.string, state.line);
                 }
                 (state as any)._afterAS = false;
               } else if (tokenCat === "AS") {
@@ -1420,6 +1426,10 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
 
   return {
     token: tokenBase,
+    // CodeMirror calls this instead of token() for empty lines.
+    blankLine: function (state: State) {
+      state.line++;
+    },
     // Provide a copyState method to create a deep copy of the state object
     copyState: function (s: State): State {
       return {
@@ -1428,6 +1438,8 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         complete: s.complete,
         errorStartPos: s.errorStartPos,
         errorEndPos: s.errorEndPos,
+        line: s.line,
+        errorLine: s.errorLine,
         queryType: s.queryType,
         possibleCurrent: s.possibleCurrent.slice(),
         possibleNext: s.possibleNext.slice(),
@@ -1459,10 +1471,11 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         selectParenDepth: s.selectParenDepth,
         aggregateNesting: s.aggregateNesting,
         aggParenStack: s.aggParenStack.slice(),
-        selectBareVars: new Set(s.selectBareVars),
+        selectBareVars: new Map(s.selectBareVars),
         selectHasAggregate: s.selectHasAggregate,
         selectHasStar: s.selectHasStar,
-        selectAliases: new Set(s.selectAliases),
+        selectStarLine: s.selectStarLine,
+        selectAliases: new Map(s.selectAliases),
         inGroupByClause: s.inGroupByClause,
         groupByVars: new Set(s.groupByVars),
         groupByParenDepth: s.groupByParenDepth,
@@ -1501,6 +1514,8 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         complete: grammar.acceptEmpty,
         errorStartPos: undefined,
         errorEndPos: undefined,
+        line: -1,
+        errorLine: undefined,
         queryType: undefined,
         possibleCurrent: getPossibles(grammar.startSymbol),
         possibleNext: getPossibles(grammar.startSymbol),
@@ -1524,10 +1539,11 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
         selectParenDepth: 0,
         aggregateNesting: 0,
         aggParenStack: [],
-        selectBareVars: new Set(),
+        selectBareVars: new Map(),
         selectHasAggregate: false,
         selectHasStar: false,
-        selectAliases: new Set(),
+        selectStarLine: undefined,
+        selectAliases: new Map(),
         inGroupByClause: false,
         groupByVars: new Set(),
         groupByParenDepth: 0,
@@ -1567,10 +1583,11 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
             [this.groupByVars, "yasqe.check_syntax.error.select_alias_in_group_by_scope"],
             [this.trailingValuesVars, "yasqe.check_syntax.error.select_alias_in_values_scope"],
           ];
-          for (const alias of this.selectAliases) {
+          for (const [alias, aliasLine] of this.selectAliases) {
             for (const [scope, messageLabelKey] of aliasScopes) {
               if (scope.has(alias)) {
                 this.OK = false;
+                this.errorLine = aliasLine;
                 this.diagnostic = createSyntaxDiagnostic(messageLabelKey, [{ key: "alias", value: alias }]);
                 return;
               }
@@ -1584,6 +1601,7 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
               for (const v in this.variables) {
                 if (!isInScopeAfterGrouping(v)) {
                   this.OK = false;
+                  this.errorLine = this.selectStarLine;
                   this.diagnostic = createSyntaxDiagnostic(
                     "yasqe.check_syntax.error.select_star_variable_not_in_group_by",
                     [{ key: "variable", value: v }]
@@ -1592,9 +1610,10 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
                 }
               }
             } else {
-              for (const v of this.selectBareVars) {
+              for (const [v, varLine] of this.selectBareVars) {
                 if (!isInScopeAfterGrouping(v)) {
                   this.OK = false;
+                  this.errorLine = varLine;
                   this.diagnostic = createSyntaxDiagnostic("yasqe.check_syntax.error.select_variable_not_in_group_by", [
                     { key: "variable", value: v },
                   ]);
@@ -1603,9 +1622,10 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
               }
             }
           } else if (this.selectHasAggregate) {
-            for (const v of this.selectBareVars) {
+            for (const [v, varLine] of this.selectBareVars) {
               if (!isInScopeAfterGrouping(v)) {
                 this.OK = false;
+                this.errorLine = varLine;
                 this.diagnostic = createSyntaxDiagnostic(
                   "yasqe.check_syntax.error.select_aggregate_variable_without_group_by",
                   [{ key: "variable", value: v }]
@@ -1615,9 +1635,10 @@ export default function (config: CodeMirror.EditorConfiguration): CodeMirror.Mod
             }
           }
           // SELECT alias vs sub-SELECT projection conflicts
-          for (const alias of this.selectAliases) {
+          for (const [alias, aliasLine] of this.selectAliases) {
             if (this.subSelectProjectedVars.has(alias)) {
               this.OK = false;
+              this.errorLine = aliasLine;
               this.diagnostic = createSyntaxDiagnostic(
                 "yasqe.check_syntax.error.select_alias_conflicts_subselect_variable",
                 [{ key: "alias", value: alias }]
