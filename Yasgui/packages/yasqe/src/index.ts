@@ -1073,11 +1073,14 @@ export class Yasqe extends CodeMirror {
             tooltip(this, warningEl, diagnosticMessage);
           }
           warningEl.className = "parseErrorIcon";
-          // Place the marker on the last non-empty line so that trailing
-          // blank lines don't push the error icon away from the query body.
-          let errorLine = l - 1;
-          while (errorLine > 0 && this.getDoc().getLine(errorLine).trim().length === 0) {
-            errorLine--;
+          let errorLine = state.errorLine;
+          if (errorLine === undefined) {
+            // No line known: use the last non-empty line, so that trailing
+            // blank lines don't push the error icon away from the query body.
+            errorLine = l - 1;
+            while (errorLine > 0 && this.getDoc().getLine(errorLine).trim().length === 0) {
+              errorLine--;
+            }
           }
           this.setGutterMarker(errorLine, "gutterErrorBar", warningEl);
         }
