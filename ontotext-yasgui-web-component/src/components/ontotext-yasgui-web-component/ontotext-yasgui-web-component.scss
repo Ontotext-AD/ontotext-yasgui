@@ -162,6 +162,14 @@
         cursor: not-allowed;
         opacity: .65;
       }
+
+      /* Increase the z-index of the gutter wrapper when it is hovered to 5
+      This stacks the error tootip that is a child of the hovered .CodeMirror-gutter-wrapper
+      above all the other .CodeMirror-gutter-wrapper elements which z-index remains 4. 
+      This resolves the problem described in more detail in the issue tracker: "https://graphwise.atlassian.net/browse/GDB-15596" */
+      .CodeMirror-gutter-wrapper:hover{
+        z-index: 5;
+      }
     }
 
     .yasqe:not(.yasqe-fullscreen) .keyboard-shortcuts-dialog-button {
