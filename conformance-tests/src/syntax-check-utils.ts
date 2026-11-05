@@ -30,6 +30,8 @@ export interface CodeMirrorState {
   OK: boolean;
   complete: boolean;
   diagnostic?: SyntaxDiagnostic;
+  /** 0-based line that a diagnostic raised by `finalize()` points at. */
+  errorLine?: number;
 }
 
 /**
@@ -97,7 +99,7 @@ export function checkQuerySyntax(CodeMirror: CodeMirrorInstance, query: string):
   if ((state as any).finalize) {
     (state as any).finalize();
     if (!state.OK && errorLine === null) {
-      errorLine = lines.length;
+      errorLine = state.errorLine === undefined ? lines.length : state.errorLine + 1;
       errorMsg = state.diagnostic?.messageLabelKey || 'Syntax error';
       diagnostic = state.diagnostic || null;
     }

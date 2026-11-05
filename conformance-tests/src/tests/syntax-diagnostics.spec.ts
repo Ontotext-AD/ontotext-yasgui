@@ -121,6 +121,28 @@ describe('YASQE syntax diagnostics', () => {
     });
   });
 
+  describe('line of an end-of-query diagnostic', () => {
+    it('points at the SELECT line, not at trailing comments', () => {
+      const query = 'SELECT ?a WHERE { ?a ?p ?v } GROUP BY ?p\n\n\n#test-comment\n#test-comment-2\n\n';
+      const result = checkQuerySyntax(CodeMirror, query);
+      expect(result.diagnostic?.messageLabelKey).toBe('yasqe.check_syntax.error.select_variable_not_in_group_by');
+      expect(result.errorLine).toBe(1);
+    });
+
+    it.each([
+      ['an ungrouped variable', 'SELECT ?s\n\n  ?v\nWHERE { ?s ?p ?v }\nGROUP BY ?s', 3],
+      ['an ungrouped variable next to an aggregate', 'SELECT (COUNT(*) AS ?c)\n  ?v\nWHERE { ?s ?p ?v }', 2],
+      ['an ungrouped variable projected by *', 'SELECT\n*\nWHERE { ?s ?p ?v }\nGROUP BY ?s', 2],
+      ['an alias reusing a GROUP BY variable', 'SELECT ?s\n  (1 AS ?s)\nWHERE { ?s ?p ?v }\nGROUP BY ?s', 2],
+      ['an alias reusing a sub-SELECT variable', 'SELECT\n  (1 AS ?x)\nWHERE { { SELECT ?x { ?x ?p ?v } } }', 2],
+      ['an alias reusing a trailing VALUES variable', 'SELECT\n  (1 AS ?c)\nWHERE { ?s ?p ?o }\nVALUES ?c { 1 }', 2]
+    ])('points at the line of %s', (_, query, expectedLine) => {
+      const result = checkQuerySyntax(CodeMirror, query);
+      expect(result.valid).toBe(false);
+      expect(result.errorLine).toBe(expectedLine);
+    });
+  });
+
   describe('BINDINGS, the SPARQL 1.1 draft form of the trailing VALUES clause', () => {
     const prefix = 'PREFIX : <http://example.com/>\n';
 

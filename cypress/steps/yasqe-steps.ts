@@ -365,6 +365,13 @@ export class YasqeSteps {
     return this.getEditor().find('.parseErrorIcon');
   }
 
+  /**
+   * Returns the line number shown next to the syntax error icon.
+   */
+  static getSyntaxErrorIconLineNumber() {
+    return this.getSyntaxErrorIcon().closest('.CodeMirror-gutter-wrapper').find('.CodeMirror-linenumber');
+  }
+
   static showSyntaxErrorTooltip() {
     this.getSyntaxErrorIcon().trigger('mouseover');
   }
@@ -393,6 +400,18 @@ export class YasqeSteps {
     this.getCodeMirror().then((cm) => {
       cm.getDoc().setValue(query);
     })
+  }
+
+  /**
+   * Inserts text at the start of a line through the CodeMirror API.
+   *
+   * @param text - The text to insert.
+   * @param line - 1-based line to insert at.
+   */
+  static insertTextAtLineStart(text: string, line: number) {
+    this.getCodeMirror().then((cm) => {
+      cm.getDoc().replaceRange(text, {line: line - 1, ch: 0});
+    });
   }
 
   static writeInEditor(text: string, parseSpecialCharSequences = true) {
