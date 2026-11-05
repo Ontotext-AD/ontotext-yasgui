@@ -76,8 +76,11 @@ constructQuery ==>
          or
 	 [*(datasetClause),'WHERE','{',?(triplesTemplate),'}',solutionModifier]].
 
+% Not in spec: SPARQL 1.2 allows only VarOrIri as a DESCRIBE target. GraphDB
+% also describes triple terms, e.g. DESCRIBE <<( :s :p :o )>>, so we accept
+% them in the expression form (iri, Var or literal terms, no blank nodes).
 describeQuery ==>
-	['DESCRIBE',+(varOrIRIref) or '*',
+	['DESCRIBE',+(varOrIRIref or exprTripleTerm) or '*',
 	*(describeDatasetClause),?(whereClause),solutionModifier].
 
 askQuery ==>

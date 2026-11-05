@@ -219,6 +219,30 @@ describe('YASQE syntax diagnostics', () => {
     });
   });
 
+  describe('a triple term as a DESCRIBE target, a GraphDB extension of SPARQL 1.2', () => {
+    const prefix = 'VERSION "1.2"\nPREFIX : <http://example.org/>\n';
+
+    it.each([
+      ['the query from GDB-15621', 'DESCRIBE <<( :alice :knows :bob )>>'],
+      ['a literal object', 'DESCRIBE <<( :bob :age 30 )>>'],
+      ['the rdf:type shorthand', 'DESCRIBE <<( :alice a :Person )>>'],
+      ['a nested triple term', 'DESCRIBE <<( :alice :says <<( :bob :age 30 )>> )>>'],
+      ['variables bound in WHERE', 'DESCRIBE <<( ?s :knows ?o )>> WHERE { ?s :knows ?o }'],
+      ['other targets around it', 'DESCRIBE :alice <<( :alice :knows :bob )>> ?x WHERE { ?x :knows :bob }'],
+      ['a dataset clause and a solution modifier', 'DESCRIBE <<( :alice :knows :bob )>> FROM :g LIMIT 1']
+    ])('accepts %s', (_, query) => {
+      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(true);
+    });
+
+    it.each([
+      ['a blank node subject', 'DESCRIBE <<( _:b :knows :bob )>>'],
+      ['a missing object', 'DESCRIBE <<( :alice :knows )>>'],
+      ['a reified triple', 'DESCRIBE << :alice :knows :bob >>']
+    ])('rejects %s', (_, query) => {
+      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(false);
+    });
+  });
+
   it('keeps English and French syntax diagnostic catalogs in sync', () => {
     const localeDirectory = path.resolve(__dirname, '../../../ontotext-yasgui-web-component/src/i18n');
     const syntaxKeys = (locale: string) => Object.keys(JSON.parse(fs.readFileSync(
