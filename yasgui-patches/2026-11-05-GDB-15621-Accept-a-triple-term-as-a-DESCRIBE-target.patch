@@ -1,0 +1,189 @@
+Subject: [PATCH] GDB-15621: Accept a triple term as a DESCRIBE target
+---
+Index: Yasgui/packages/yasqe/grammar/_tokenizer-table.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/_tokenizer-table.js b/Yasgui/packages/yasqe/grammar/_tokenizer-table.js
+--- a/Yasgui/packages/yasqe/grammar/_tokenizer-table.js	(revision 0157f3597c0659a9dd96ec1b7661f7534db55862)
++++ b/Yasgui/packages/yasqe/grammar/_tokenizer-table.js	(revision b7d845f6f09255cab069ea75023a3184b032bb79)
+@@ -549,6 +549,24 @@
+      "WHERE": [], 
+      "{": [], 
+      "FROM": []}, 
++  "*or([varOrIRIref,exprTripleTerm])" : {
++     "<<(": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "VAR1": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "VAR2": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "IRI_REF": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "PNAME_LN": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "PNAME_NS": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "ORDER": [], 
++     "HAVING": [], 
++     "GROUP": [], 
++     "LIMIT": [], 
++     "OFFSET": [], 
++     "WHERE": [], 
++     "{": [], 
++     "FROM": [], 
++     "VALUES": [], 
++     "BINDINGS": [], 
++     "$": []}, 
+   "*orderCondition" : {
+      "ASC": ["orderCondition","*orderCondition"], 
+      "DESC": ["orderCondition","*orderCondition"], 
+@@ -635,23 +653,6 @@
+      "VAR2": ["var","*var"], 
+      "{": [], 
+      ")": []}, 
+-  "*varOrIRIref" : {
+-     "VAR1": ["varOrIRIref","*varOrIRIref"], 
+-     "VAR2": ["varOrIRIref","*varOrIRIref"], 
+-     "IRI_REF": ["varOrIRIref","*varOrIRIref"], 
+-     "PNAME_LN": ["varOrIRIref","*varOrIRIref"], 
+-     "PNAME_NS": ["varOrIRIref","*varOrIRIref"], 
+-     "ORDER": [], 
+-     "HAVING": [], 
+-     "GROUP": [], 
+-     "LIMIT": [], 
+-     "OFFSET": [], 
+-     "WHERE": [], 
+-     "{": [], 
+-     "FROM": [], 
+-     "VALUES": [], 
+-     "BINDINGS": [], 
+-     "$": []}, 
+   "+graphNode" : {
+      "(": ["graphNode","*graphNode"], 
+      "[": ["graphNode","*graphNode"], 
+@@ -822,6 +823,13 @@
+      "(": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"], 
+      "VAR1": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"], 
+      "VAR2": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"]}, 
++  "+or([varOrIRIref,exprTripleTerm])" : {
++     "<<(": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "VAR1": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "VAR2": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "IRI_REF": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "PNAME_LN": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
++     "PNAME_NS": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"]}, 
+   "+orderCondition" : {
+      "ASC": ["orderCondition","*orderCondition"], 
+      "DESC": ["orderCondition","*orderCondition"], 
+@@ -894,12 +902,6 @@
+      "IRI_REF": ["orderCondition","*orderCondition"], 
+      "PNAME_LN": ["orderCondition","*orderCondition"], 
+      "PNAME_NS": ["orderCondition","*orderCondition"]}, 
+-  "+varOrIRIref" : {
+-     "VAR1": ["varOrIRIref","*varOrIRIref"], 
+-     "VAR2": ["varOrIRIref","*varOrIRIref"], 
+-     "IRI_REF": ["varOrIRIref","*varOrIRIref"], 
+-     "PNAME_LN": ["varOrIRIref","*varOrIRIref"], 
+-     "PNAME_NS": ["varOrIRIref","*varOrIRIref"]}, 
+   "?." : {
+      ".": ["."], 
+      "<<": [], 
+@@ -2637,7 +2639,7 @@
+   "describeDatasetClause" : {
+      "FROM": ["FROM","or([defaultGraphClause,namedGraphClause])"]}, 
+   "describeQuery" : {
+-     "DESCRIBE": ["DESCRIBE","or([+varOrIRIref,*])","*describeDatasetClause","?whereClause","solutionModifier"]}, 
++     "DESCRIBE": ["DESCRIBE","or([+or([varOrIRIref,exprTripleTerm]),*])","*describeDatasetClause","?whereClause","solutionModifier"]}, 
+   "disallowBnodes" : {
+      "}": [], 
+      "GRAPH": [], 
+@@ -3594,12 +3596,13 @@
+      "VAR1": ["+or([var,[(,expression,AS,var,)]])"], 
+      "VAR2": ["+or([var,[(,expression,AS,var,)]])"], 
+      "*": ["*"]}, 
+-  "or([+varOrIRIref,*])" : {
+-     "VAR1": ["+varOrIRIref"], 
+-     "VAR2": ["+varOrIRIref"], 
+-     "IRI_REF": ["+varOrIRIref"], 
+-     "PNAME_LN": ["+varOrIRIref"], 
+-     "PNAME_NS": ["+varOrIRIref"], 
++  "or([+or([varOrIRIref,exprTripleTerm]),*])" : {
++     "<<(": ["+or([varOrIRIref,exprTripleTerm])"], 
++     "VAR1": ["+or([varOrIRIref,exprTripleTerm])"], 
++     "VAR2": ["+or([varOrIRIref,exprTripleTerm])"], 
++     "IRI_REF": ["+or([varOrIRIref,exprTripleTerm])"], 
++     "PNAME_LN": ["+or([varOrIRIref,exprTripleTerm])"], 
++     "PNAME_NS": ["+or([varOrIRIref,exprTripleTerm])"], 
+      "*": ["*"]}, 
+   "or([ASC,DESC])" : {
+      "ASC": ["ASC"], 
+@@ -3756,6 +3759,13 @@
+      "VAR1": ["var"], 
+      "VAR2": ["var"], 
+      "(": ["[(,expression,AS,var,)]"]}, 
++  "or([varOrIRIref,exprTripleTerm])" : {
++     "VAR1": ["varOrIRIref"], 
++     "VAR2": ["varOrIRIref"], 
++     "IRI_REF": ["varOrIRIref"], 
++     "PNAME_LN": ["varOrIRIref"], 
++     "PNAME_NS": ["varOrIRIref"], 
++     "<<(": ["exprTripleTerm"]}, 
+   "or([verbPath,verbSimple])" : {
+      "^": ["verbPath"], 
+      "a": ["verbPath"], 
+Index: Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl b/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl
+--- a/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl	(revision 0157f3597c0659a9dd96ec1b7661f7534db55862)
++++ b/Yasgui/packages/yasqe/grammar/sparql11-grammar.pl	(revision b7d845f6f09255cab069ea75023a3184b032bb79)
+@@ -76,8 +76,11 @@
+          or
+ 	 [*(datasetClause),'WHERE','{',?(triplesTemplate),'}',solutionModifier]].
+ 
++% Not in spec: SPARQL 1.2 allows only VarOrIri as a DESCRIBE target. GraphDB
++% also describes triple terms, e.g. DESCRIBE <<( :s :p :o )>>, so we accept
++% them in the expression form (iri, Var or literal terms, no blank nodes).
+ describeQuery ==>
+-	['DESCRIBE',+(varOrIRIref) or '*',
++	['DESCRIBE',+(varOrIRIref or exprTripleTerm) or '*',
+ 	*(describeDatasetClause),?(whereClause),solutionModifier].
+ 
+ askQuery ==>
+Index: conformance-tests/src/tests/syntax-diagnostics.spec.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/conformance-tests/src/tests/syntax-diagnostics.spec.ts b/conformance-tests/src/tests/syntax-diagnostics.spec.ts
+--- a/conformance-tests/src/tests/syntax-diagnostics.spec.ts	(revision 0157f3597c0659a9dd96ec1b7661f7534db55862)
++++ b/conformance-tests/src/tests/syntax-diagnostics.spec.ts	(revision b7d845f6f09255cab069ea75023a3184b032bb79)
+@@ -219,6 +219,30 @@
+     });
+   });
+ 
++  describe('a triple term as a DESCRIBE target, a GraphDB extension of SPARQL 1.2', () => {
++    const prefix = 'VERSION "1.2"\nPREFIX : <http://example.org/>\n';
++
++    it.each([
++      ['the query from GDB-15621', 'DESCRIBE <<( :alice :knows :bob )>>'],
++      ['a literal object', 'DESCRIBE <<( :bob :age 30 )>>'],
++      ['the rdf:type shorthand', 'DESCRIBE <<( :alice a :Person )>>'],
++      ['a nested triple term', 'DESCRIBE <<( :alice :says <<( :bob :age 30 )>> )>>'],
++      ['variables bound in WHERE', 'DESCRIBE <<( ?s :knows ?o )>> WHERE { ?s :knows ?o }'],
++      ['other targets around it', 'DESCRIBE :alice <<( :alice :knows :bob )>> ?x WHERE { ?x :knows :bob }'],
++      ['a dataset clause and a solution modifier', 'DESCRIBE <<( :alice :knows :bob )>> FROM :g LIMIT 1']
++    ])('accepts %s', (_, query) => {
++      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(true);
++    });
++
++    it.each([
++      ['a blank node subject', 'DESCRIBE <<( _:b :knows :bob )>>'],
++      ['a missing object', 'DESCRIBE <<( :alice :knows )>>'],
++      ['a reified triple', 'DESCRIBE << :alice :knows :bob >>']
++    ])('rejects %s', (_, query) => {
++      expect(checkQuerySyntax(CodeMirror, prefix + query).valid).toBe(false);
++    });
++  });
++
+   it('keeps English and French syntax diagnostic catalogs in sync', () => {
+     const localeDirectory = path.resolve(__dirname, '../../../ontotext-yasgui-web-component/src/i18n');
+     const syntaxKeys = (locale: string) => Object.keys(JSON.parse(fs.readFileSync(
