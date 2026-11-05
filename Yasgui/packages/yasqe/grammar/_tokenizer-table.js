@@ -549,6 +549,24 @@ module.exports = {table:
      "WHERE": [], 
      "{": [], 
      "FROM": []}, 
+  "*or([varOrIRIref,exprTripleTerm])" : {
+     "<<(": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "VAR1": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "VAR2": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "IRI_REF": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "PNAME_LN": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "PNAME_NS": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "ORDER": [], 
+     "HAVING": [], 
+     "GROUP": [], 
+     "LIMIT": [], 
+     "OFFSET": [], 
+     "WHERE": [], 
+     "{": [], 
+     "FROM": [], 
+     "VALUES": [], 
+     "BINDINGS": [], 
+     "$": []}, 
   "*orderCondition" : {
      "ASC": ["orderCondition","*orderCondition"], 
      "DESC": ["orderCondition","*orderCondition"], 
@@ -635,23 +653,6 @@ module.exports = {table:
      "VAR2": ["var","*var"], 
      "{": [], 
      ")": []}, 
-  "*varOrIRIref" : {
-     "VAR1": ["varOrIRIref","*varOrIRIref"], 
-     "VAR2": ["varOrIRIref","*varOrIRIref"], 
-     "IRI_REF": ["varOrIRIref","*varOrIRIref"], 
-     "PNAME_LN": ["varOrIRIref","*varOrIRIref"], 
-     "PNAME_NS": ["varOrIRIref","*varOrIRIref"], 
-     "ORDER": [], 
-     "HAVING": [], 
-     "GROUP": [], 
-     "LIMIT": [], 
-     "OFFSET": [], 
-     "WHERE": [], 
-     "{": [], 
-     "FROM": [], 
-     "VALUES": [], 
-     "BINDINGS": [], 
-     "$": []}, 
   "+graphNode" : {
      "(": ["graphNode","*graphNode"], 
      "[": ["graphNode","*graphNode"], 
@@ -822,6 +823,13 @@ module.exports = {table:
      "(": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"], 
      "VAR1": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"], 
      "VAR2": ["or([var,[(,expression,AS,var,)]])","*or([var,[(,expression,AS,var,)]])"]}, 
+  "+or([varOrIRIref,exprTripleTerm])" : {
+     "<<(": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "VAR1": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "VAR2": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "IRI_REF": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "PNAME_LN": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"], 
+     "PNAME_NS": ["or([varOrIRIref,exprTripleTerm])","*or([varOrIRIref,exprTripleTerm])"]}, 
   "+orderCondition" : {
      "ASC": ["orderCondition","*orderCondition"], 
      "DESC": ["orderCondition","*orderCondition"], 
@@ -894,12 +902,6 @@ module.exports = {table:
      "IRI_REF": ["orderCondition","*orderCondition"], 
      "PNAME_LN": ["orderCondition","*orderCondition"], 
      "PNAME_NS": ["orderCondition","*orderCondition"]}, 
-  "+varOrIRIref" : {
-     "VAR1": ["varOrIRIref","*varOrIRIref"], 
-     "VAR2": ["varOrIRIref","*varOrIRIref"], 
-     "IRI_REF": ["varOrIRIref","*varOrIRIref"], 
-     "PNAME_LN": ["varOrIRIref","*varOrIRIref"], 
-     "PNAME_NS": ["varOrIRIref","*varOrIRIref"]}, 
   "?." : {
      ".": ["."], 
      "<<": [], 
@@ -2637,7 +2639,7 @@ module.exports = {table:
   "describeDatasetClause" : {
      "FROM": ["FROM","or([defaultGraphClause,namedGraphClause])"]}, 
   "describeQuery" : {
-     "DESCRIBE": ["DESCRIBE","or([+varOrIRIref,*])","*describeDatasetClause","?whereClause","solutionModifier"]}, 
+     "DESCRIBE": ["DESCRIBE","or([+or([varOrIRIref,exprTripleTerm]),*])","*describeDatasetClause","?whereClause","solutionModifier"]}, 
   "disallowBnodes" : {
      "}": [], 
      "GRAPH": [], 
@@ -3594,12 +3596,13 @@ module.exports = {table:
      "VAR1": ["+or([var,[(,expression,AS,var,)]])"], 
      "VAR2": ["+or([var,[(,expression,AS,var,)]])"], 
      "*": ["*"]}, 
-  "or([+varOrIRIref,*])" : {
-     "VAR1": ["+varOrIRIref"], 
-     "VAR2": ["+varOrIRIref"], 
-     "IRI_REF": ["+varOrIRIref"], 
-     "PNAME_LN": ["+varOrIRIref"], 
-     "PNAME_NS": ["+varOrIRIref"], 
+  "or([+or([varOrIRIref,exprTripleTerm]),*])" : {
+     "<<(": ["+or([varOrIRIref,exprTripleTerm])"], 
+     "VAR1": ["+or([varOrIRIref,exprTripleTerm])"], 
+     "VAR2": ["+or([varOrIRIref,exprTripleTerm])"], 
+     "IRI_REF": ["+or([varOrIRIref,exprTripleTerm])"], 
+     "PNAME_LN": ["+or([varOrIRIref,exprTripleTerm])"], 
+     "PNAME_NS": ["+or([varOrIRIref,exprTripleTerm])"], 
      "*": ["*"]}, 
   "or([ASC,DESC])" : {
      "ASC": ["ASC"], 
@@ -3756,6 +3759,13 @@ module.exports = {table:
      "VAR1": ["var"], 
      "VAR2": ["var"], 
      "(": ["[(,expression,AS,var,)]"]}, 
+  "or([varOrIRIref,exprTripleTerm])" : {
+     "VAR1": ["varOrIRIref"], 
+     "VAR2": ["varOrIRIref"], 
+     "IRI_REF": ["varOrIRIref"], 
+     "PNAME_LN": ["varOrIRIref"], 
+     "PNAME_NS": ["varOrIRIref"], 
+     "<<(": ["exprTripleTerm"]}, 
   "or([verbPath,verbSimple])" : {
      "^": ["verbPath"], 
      "a": ["verbPath"], 
