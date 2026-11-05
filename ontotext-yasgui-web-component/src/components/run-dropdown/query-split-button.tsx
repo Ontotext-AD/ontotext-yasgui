@@ -30,6 +30,10 @@ export class QuerySplitButton {
      * The option to focus once the menu is rendered open: 'first', 'last' or none.
      */
     private optionToFocusOnOpen: 'first' | 'last' | undefined;
+    /**
+     * Whether the menu has just been opened and must be positioned once it is rendered.
+     */
+    private shouldPositionMenuOnRender = false;
 
     private runActions: RunAction[] = [
         {labelKey: 'yasqe.dropdown.run_query.option.explain_query_plan', value: 'explain_plan'},
@@ -60,6 +64,10 @@ export class QuerySplitButton {
     }
 
     componentDidRender(): void {
+        if (this.shouldPositionMenuOnRender && this.querySplitOpen) {
+            this.shouldPositionMenuOnRender = false;
+            this.positionDropdownMenu();
+        }
         if (this.optionToFocusOnOpen && this.getMenuOptions().length) {
             this.focusMenuOption(this.optionToFocusOnOpen);
             this.optionToFocusOnOpen = undefined;
@@ -79,46 +87,45 @@ export class QuerySplitButton {
         }
     }
 
+    /**
+     * Positions the open menu under the toggle, or above it in fullscreen.
+     */
     private positionDropdownMenu(): void {
-       const splitButtonTopMargin = window.getComputedStyle(document.querySelector('.yasqe_queryButton')).marginTop;
-       const splitButtonTopMarginValue = parseFloat(splitButtonTopMargin) || 0;
-       const fullscreenButtonDropdownGap = 2; // Gap between the top of the button and dropdown in fullscreen mode
-       const distanceFromEditorRightEdge = 33; // Distance from the right edge of the editor to the dropdown right edge
-        // Using setTimeout to ensure the dropdown is re-rendered after calculating its position
-        setTimeout(() => {
-            const button = this.hostElement.querySelector('.yasqe_querySplitWrapper') as HTMLElement;
-            const dropdown = this.hostElement.querySelector('.ontotext-run-dropdown-menu.open') as HTMLElement;
+        const button = this.hostElement.querySelector('.yasqe_querySplitWrapper') as HTMLElement;
+        const dropdown = this.hostElement.querySelector('.ontotext-run-dropdown-menu.open') as HTMLElement;
+        if (!button || !dropdown) {
+            return;
+        }
+        const splitButtonTopMargin = window.getComputedStyle(document.querySelector('.yasqe_queryButton')).marginTop;
+        const splitButtonTopMarginValue = parseFloat(splitButtonTopMargin) || 0;
+        const fullscreenButtonDropdownGap = 2; // Gap between the top of the button and dropdown in fullscreen mode
+        const distanceFromEditorRightEdge = 33; // Distance from the right edge of the editor to the dropdown right edge
+        const host = this.hostElement.closest('.yasgui-host-element') as HTMLElement | null;
+        const isModeYasgui =
+            !!host &&
+            host.classList.contains('orientation-horizontal') &&
+            host.classList.contains('mode-yasgui');
+        const buttonRect = this.hostElement.getBoundingClientRect();
+        const isFullscreen = this.yasqe.classList.contains('yasqe-fullscreen');
+        const buttonGroup = window.getComputedStyle(document.querySelector('.yasqe_buttons'));
+        // Convert the string value (like "10 px") to a number and default to 0 if not a number
+        const buttonGroupRight = buttonGroup.right !== 'auto' ? parseFloat(buttonGroup.right) || 0 : 0;
 
-            if (button && dropdown) {
-              const host = this.hostElement.closest('.yasgui-host-element') as HTMLElement | null;
-              const isModeYasgui =
-                !!host &&
-                host.classList.contains('orientation-horizontal') &&
-                host.classList.contains('mode-yasgui');
-                const buttonRect = this.hostElement.getBoundingClientRect();
-                const isFullscreen = this.yasqe.classList.contains('yasqe-fullscreen');
-                const buttonGroup = window.getComputedStyle(document.querySelector('.yasqe_buttons'));
-                // Convert the string value (like "10 px") to a number and default to 0 if not a number
-                const buttonGroupRight = buttonGroup.right !== 'auto' ? parseFloat(buttonGroup.right) || 0 : 0;
+        dropdown.style.position = 'fixed';
+        if (!isModeYasgui) {
+            const baseRight = (parseFloat(dropdown.style.right) || 0) + buttonGroupRight + distanceFromEditorRightEdge;
+            dropdown.style.right = `${baseRight}px`;
+        } else {
+            dropdown.style.removeProperty('right');
+        }
+        const dropdownHeight = dropdown.getBoundingClientRect().height;
 
-                dropdown.style.position = 'fixed';
-                if (!isModeYasgui) {
-                  const baseRight = (parseFloat(dropdown.style.right) || 0) + buttonGroupRight + distanceFromEditorRightEdge;
-                  dropdown.style.right = `${baseRight}px`;
-                } else {
-                  dropdown.style.removeProperty('right');
-                }
-                const dropdownRect = dropdown.getBoundingClientRect();
-                const dropdownHeight = dropdownRect.height;
-
-                if (isFullscreen) {
-                  dropdown.style.top = `${buttonRect.top - dropdownHeight + splitButtonTopMarginValue}px`;
-                    dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
-                } else {
-                    dropdown.style.top = `${buttonRect.bottom + fullscreenButtonDropdownGap}px`;
-                }
-            }
-        });
+        if (isFullscreen) {
+            dropdown.style.top = `${buttonRect.top - dropdownHeight + splitButtonTopMarginValue}px`;
+            dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
+        } else {
+            dropdown.style.top = `${buttonRect.bottom + fullscreenButtonDropdownGap}px`;
+        }
     }
 
     private toggleQuerySplitMenu = () => {
@@ -128,7 +135,7 @@ export class QuerySplitButton {
     private openQuerySplitMenu(optionToFocus: 'first' | 'last' = 'first') {
         this.optionToFocusOnOpen = optionToFocus;
         this.querySplitOpen = true;
-        this.positionDropdownMenu();
+        this.shouldPositionMenuOnRender = true;
     }
 
     private onToggleKeyDown = (e: KeyboardEvent) => {
