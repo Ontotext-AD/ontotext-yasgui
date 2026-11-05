@@ -33,7 +33,7 @@ Run from the repo root.
 | Typecheck + lint Yasgui | `npm run validate:yasgui` |
 | Check the Yasgui patch | `npm run check:yasgui-patch -- main` |
 | Conformance unit tests (Jest) | `npm run test:conformance` |
-| Cypress, one spec | `npx cypress run --spec cypress/e2e/<spec>.spec.cy.ts --browser chrome` |
+| Cypress, one spec | `npx cypress run --spec cypress/e2e/<spec>.spec.cy.ts --browser electron` |
 | Cypress, interactive | `npm run cy:open` |
 | Clean everything | `npm run clean` |
 

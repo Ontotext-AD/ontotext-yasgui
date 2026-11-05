@@ -66,7 +66,7 @@ npm run lint
 npm run validate:yasgui       # typecheck + lint of Yasgui/, after any change there
 npm run build                 # required after any change in Yasgui/
 npm run test:conformance      # if the grammar or tokenizer changed — see grammar.md
-npx cypress run --spec <the specs for the touched feature> --browser chrome   # with `npm run start` running
+npx cypress run --spec <the specs for the touched feature> --browser electron   # with `npm run start` running
 ```
 
 Don't run or fix `cypress/e2e-flaky/` specs as part of verifying a change.

@@ -62,7 +62,7 @@ query-split-button {
     color: $color-onto-black;
     cursor: pointer;
 
-    &:hover {
+    &:hover, &:focus-visible {
       background-color: $color-onto-hover-gray;
       color: $color-onto-black;
       text-decoration: none;
