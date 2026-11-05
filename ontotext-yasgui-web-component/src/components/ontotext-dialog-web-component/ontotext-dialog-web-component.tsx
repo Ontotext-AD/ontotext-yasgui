@@ -18,6 +18,14 @@ export class OntotextDialogWebComponent {
 
   private documentOverflow: string
   private closeButton: HTMLButtonElement;
+  /**
+   * The element that had the focus when the dialog opened. The focus returns to it when the dialog closes.
+   */
+  private opener: Element;
+  private focusFrameId: number;
+  private preventLeavingDialog = (ev: KeyboardEvent): void => {
+    HtmlUtil.preventLeavingDialog(this.hostElement, ev);
+  }
 
   @Element() hostElement: HTMLElement;
 
@@ -34,23 +42,26 @@ export class OntotextDialogWebComponent {
     }
   }
 
+  componentWillLoad(): void {
+    this.opener = document.activeElement;
+  }
+
   componentDidLoad(): void {
     if (this.config.hideScroll === undefined || this.config.hideScroll) {
       this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
     }
-    this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
-    this.closeButton.focus();
+    this.hostElement.addEventListener('keydown', this.preventLeavingDialog);
+    // The dialog can't take the focus until the component that renders it is hydrated, which happens after this hook.
+    this.focusFrameId = requestAnimationFrame(() => HtmlUtil.focusFirstElement(this.hostElement));
   }
 
   disconnectedCallback() {
-    this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
+    cancelAnimationFrame(this.focusFrameId);
+    this.hostElement.removeEventListener('keydown', this.preventLeavingDialog);
     if (this.config.hideScroll === undefined || this.config.hideScroll) {
       HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
     }
-  }
-
-  private preventLeavingDialog(ev: KeyboardEvent) {
-    HtmlUtil.preventLeavingDialog(this.hostElement, ev);
+    HtmlUtil.restoreFocus(this.opener);
   }
 
   render() {

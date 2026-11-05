@@ -23,7 +23,10 @@ export class SaveQueryDialog {
   private translationService: TranslationService;
 
   private documentOverflow: string
-  private cancelButton: HTMLButtonElement;
+  /**
+   * The element that had the focus when the dialog opened. The focus returns to it when the dialog closes.
+   */
+  private opener: Element;
 
   @Element() hostElement: HTMLElement;
 
@@ -79,6 +82,7 @@ export class SaveQueryDialog {
   }
 
   componentWillLoad(): void {
+    this.opener = document.activeElement;
     // TranslationService is injected here because the service factory is not available
     // in the constructor.
     this.translationService = this.serviceFactory.get(TranslationService);
@@ -95,12 +99,13 @@ export class SaveQueryDialog {
   componentDidLoad(): void {
     this.documentOverflow = HtmlUtil.hideDocumentBodyOverflow();
     this.hostElement.addEventListener('keydown', this.preventLeavingDialog.bind(this));
-    this.cancelButton.focus();
+    HtmlUtil.focusFirstElement(this.hostElement);
   }
 
   disconnectedCallback() {
     HtmlUtil.setDocumentBodyOverflow(this.documentOverflow);
     this.hostElement.removeEventListener('keydown', this.preventLeavingDialog.bind(this));
+    HtmlUtil.restoreFocus(this.opener);
   }
 
   onClose(evt: MouseEvent): void {
@@ -187,7 +192,7 @@ export class SaveQueryDialog {
             <div class="dialog-header">
               <h3
                 class="dialog-title">{this.translationService.translate(this.isNew ? 'yasqe.actions.save_query.dialog.title' : 'yasqe.actions.edit_query.dialog.title')}</h3>
-              <button class="close-button ri-close-line" onClick={(evt) => this.onClose(evt)}></button>
+              <button class="close-button ri-close-line" data-cy="save-query-dialog-close-button" onClick={(evt) => this.onClose(evt)}></button>
             </div>
             <div class="dialog-body">
 
@@ -223,9 +228,8 @@ export class SaveQueryDialog {
 
             </div>
             <div class="dialog-footer">
-              <button class="cancel-button"
-                      onClick={(evt) => this.onClose(evt)}
-                      ref={(el) => (this.cancelButton = el)}>{this.translationService.translate('yasqe.actions.save_query.dialog.cancel.button')}</button>
+              <button class="cancel-button" data-cy="save-query-dialog-cancel-button"
+                      onClick={(evt) => this.onClose(evt)}>{this.translationService.translate('yasqe.actions.save_query.dialog.cancel.button')}</button>
               <button class="ok-button" disabled={!this.isSaveAllowed}
                       onClick={(evt) => this.onCreate(evt)}>{this.translationService.translate(this.isNew ? 'yasqe.actions.save_query.dialog.create.button' : 'yasqe.actions.save_query.dialog.save.button')}</button>
             </div>

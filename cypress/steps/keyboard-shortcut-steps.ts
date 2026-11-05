@@ -10,6 +10,10 @@ export class KeyboardShortcutSteps {
     return cy.get('.keyboard-shortcuts-dialog-wrapper .dialog');
   }
 
+  static getInfoDialogCloseButton() {
+    return KeyboardShortcutSteps.getInfoDialog().find('.close-button');
+  }
+
   static getInfoDialogTitle() {
     return KeyboardShortcutSteps.getInfoDialog().find('.dialog-title');
   }
@@ -39,6 +43,15 @@ export class KeyboardShortcutSteps {
     cy.realPress('Escape');
   }
 
+  /**
+   * Opens a dialog or a popup the way a keyboard user does: focuses its opener and presses Enter.
+   */
+  static openWithKeyboard(opener: Cypress.Chainable<JQuery<HTMLElement>>) {
+    opener.first().should('be.visible').focus();
+    cy.focused().should('have.prop', 'tagName', 'BUTTON');
+    cy.realPress('Enter');
+  }
+
   static pressTabKey() {
     cy.realPress('Tab');
   }
@@ -49,6 +62,33 @@ export class KeyboardShortcutSteps {
 
   static pressRightArrowKey() {
     cy.realPress('ArrowRight');
+  }
+
+  static pressDownArrowKey() {
+    cy.realPress('ArrowDown');
+  }
+
+  static pressUpArrowKey() {
+    cy.realPress('ArrowUp');
+  }
+
+  static pressHomeKey() {
+    cy.realPress('Home');
+  }
+
+  static pressEndKey() {
+    cy.realPress('End');
+  }
+
+  static pressEnterKey() {
+    cy.realPress('Enter');
+  }
+
+  /**
+   * Types the text into the focused element with native key presses.
+   */
+  static typeText(text: string) {
+    cy.realType(text);
   }
 
   static clickOnDownArrow() {

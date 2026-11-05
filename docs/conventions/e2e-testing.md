@@ -48,11 +48,12 @@ response is stubbed.
 Run **one spec, or a part of one** — not the whole suite locally (it takes about 15 minutes):
 
 ```bash
-npx cypress run --spec cypress/e2e/keyboard-shortcuts.spec.cy.ts --browser chrome --config video=false,retries=0
+npx cypress run --spec cypress/e2e/keyboard-shortcuts.spec.cy.ts --browser electron --config video=false,retries=0
 npm run cy:open                 # interactive
 ```
 
-The `cy:run*` scripts run whole suites and are for CI. Don't run or fix `cypress/e2e-flaky/` specs as part of
+Use Electron, the browser CI runs: it is an older Chromium, and some focus and scroll behavior differs from a current
+Chrome. The `cy:run*` scripts run whole suites and are for CI. Don't run or fix `cypress/e2e-flaky/` specs as part of
 verifying a change.
 
 ## 3. Directory structure
