@@ -96,8 +96,8 @@ expansion based on state.
 - **A multi-token term counts as one value** in arity checks: `"a"@en--ltr`, `"1"^^xsd:int` (`valuesSkipNext`),
   and a whole `<<( … )>>` (`tripleTermDepth`).
 - **Counters change per construct**: increment on open and decrement on the matching close.
-- **End-of-query rules** (GROUP BY scope, unclosed constructs) live in `finalize()`. Their error points at the last
-  non-empty line, not EOF.
+- **End-of-query rules** (GROUP BY scope, SELECT alias conflicts) live in `finalize()`. Set `errorLine` to the line of
+  the offending term (lines are counted in `state.line`); without it the editor falls back to the last non-empty line.
 - **A new diagnostic** is a `SyntaxDiagnostic` with a `messageLabelKey` and parameters, never a literal string. Add
   the key to both `ontotext-yasgui-web-component/src/i18n/locale-en.json` and `locale-fr.json`;
   `syntax-diagnostics.spec.ts` fails when they differ.
