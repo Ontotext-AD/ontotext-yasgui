@@ -63,6 +63,13 @@ export class YasqeService {
     button = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.SHARE_QUERY)}`) as HTMLElement;
     this.updateLabel(button, 'yasqe.actions.share_query.button.tooltip');
 
+    const fullscreenButton = document.querySelector(`.${YasqeService.getActionButtonClassName(YasqeButtonName.FULLSCREEN)}`) as HTMLElement;
+    if (fullscreenButton) {
+      const isFullscreen = fullscreenButton.closest('.yasqe-fullscreen') !== null;
+      const labelKey = isFullscreen ? 'yasqe.actions.fullscreen.exit.button.tooltip' : 'yasqe.actions.fullscreen.enter.button.tooltip';
+      this.updateLabel(fullscreenButton, labelKey);
+    }
+
     document.querySelectorAll(`.${EDITOR_DESCRIPTION_CLASS_NAME}`)
       .forEach((description) => description.textContent = this.translationService.translate('yasqe.editor.screen_reader.description'));
 
@@ -202,10 +209,15 @@ export class YasqeService {
     const buttonElement = document.createElement('button');
     buttonElement.className = `${YasqeService.getActionButtonClassName(YasqeButtonName.FULLSCREEN)} custom-button`;
 
-    const updateIcon = () => {
+    const tooltipElement = TooltipService.addTooltip(buttonElement, undefined, 'top');
+
+    const updateIconAndLabel = () => {
       const isFullscreen = yasqe.rootEl.classList.contains('yasqe-fullscreen');
       buttonElement.classList.toggle('ri-fullscreen-line', !isFullscreen);
       buttonElement.classList.toggle('ri-fullscreen-exit-line', isFullscreen);
+
+      const labelKey = isFullscreen ? 'yasqe.actions.fullscreen.exit.button.tooltip' : 'yasqe.actions.fullscreen.enter.button.tooltip';
+      this.updateLabel(buttonElement, labelKey);
     };
 
     const handleFullscreen = () => {
@@ -214,7 +226,7 @@ export class YasqeService {
     }
     buttonElement.addEventListener('click', handleFullscreen);
 
-    const observer = new MutationObserver(updateIcon);
+    const observer = new MutationObserver(updateIconAndLabel);
     observer.observe(yasqe.rootEl, {
       attributes: true,
       attributeFilter: ['class']
@@ -223,8 +235,8 @@ export class YasqeService {
       buttonElement.removeEventListener('click', handleFullscreen);
       observer.disconnect();
     });
-    updateIcon();
-    return buttonElement;
+    updateIconAndLabel();
+    return tooltipElement;
   }
 
   private buildShowSavedQueriesButton(yasqe: Yasqe): HTMLElement {
