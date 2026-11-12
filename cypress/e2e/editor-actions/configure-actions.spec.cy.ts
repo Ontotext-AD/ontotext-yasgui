@@ -13,7 +13,7 @@ describe('Configure editor actions', () => {
 
     it('Should see all custom actions by default in particular order', () => {
         YasqeSteps.getActionButtons().should('have.length', 6);
-        YasqeSteps.getActionButtonTooltip(0).should('have.attr', 'yasgui-data-tooltip', 'Open in full screen');
+        YasqeSteps.getActionButtonTooltip(0).should('have.attr', 'yasgui-data-tooltip', 'Enter full screen');
         YasqeSteps.getActionButtonTooltip(1).should('have.attr', 'yasgui-data-tooltip', 'Create saved query');
         YasqeSteps.getActionButtonTooltip(2).should('have.attr', 'yasgui-data-tooltip', 'Show saved queries');
         YasqeSteps.getActionButtonTooltip(3).should('have.attr', 'yasgui-data-tooltip', 'Get URL to current query');
