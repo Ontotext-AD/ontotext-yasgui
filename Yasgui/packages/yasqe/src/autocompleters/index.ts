@@ -394,7 +394,11 @@ export const fetchFromLov = (
         }
         return [];
       },
-      (_e) => {
+      (e) => {
+        // LOV answers 404 for terms it doesn't know, e.g. from a custom ontology
+        if (e.status === 404) {
+          return [];
+        }
         yasqe.showNotification(notificationKey, "yasqe.autocomplete.notification.error.failed_fetching_suggestions");
       }
     );

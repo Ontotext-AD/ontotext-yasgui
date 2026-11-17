@@ -446,6 +446,14 @@ export class YasqeSteps {
     this.getEditor().find('textarea').type(text, {force: true, parseSpecialCharSequences})
   }
 
+  static triggerAutocomplete() {
+    this.writeInEditor('{alt}{enter}');
+  }
+
+  static getAutocompleteNotification(type: 'property' | 'class') {
+    return this.getEditor().find(`.notification.notif_autocomplete_${type}`);
+  }
+
   static setCursorOnLine(line: number) {
     this.getCodeMirror().then((cm) => {
       cm.getDoc().setCursor(--line);
