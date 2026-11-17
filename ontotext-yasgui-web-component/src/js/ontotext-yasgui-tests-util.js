@@ -205,5 +205,29 @@ const autocompleteResponse = {
         "value": "rdf",
         "description": "http://www.w3.org/1999/02/22-rdf-syntax-ns#<b>r</b>est"
       }]
+  },
+  'publicationD': {
+    "suggestions":
+      [{
+        "type": "uri",
+        "value": "http://example.com/ontology/dcp#publicationDate",
+        "description": "http://example.com/ontology/dcp#<b>publicationD</b>ate"
+      }]
+  },
+  'featureC': {
+    "suggestions":
+      [{
+        "type": "uri",
+        "value": "http://www.geonames.org/ontology#featureClass",
+        "description": "http://www.geonames.org/ontology#<b>featureC</b>lass"
+      }]
+  },
+  'geonames': {
+    "suggestions":
+      [{
+        "type": "uri",
+        "value": "http://www.geonames.org/ontology#featureClass",
+        "description": "http://www.<b>geonames</b>.org/ontology#featureClass"
+      }]
   }
 }
