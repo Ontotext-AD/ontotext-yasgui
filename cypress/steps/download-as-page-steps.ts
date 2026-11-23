@@ -30,6 +30,10 @@ export class DownloadAsPageSteps {
     DownloadAsPageSteps.getDownloadAsDropdown().click();
   }
 
+  static getDownloadAsMenu() {
+    return DownloadAsPageSteps.getDownloadAsDropdown().find('[data-cy=ontotext-dropdown-menu]');
+  }
+
   static getDownloadAsOption(label: string) {
     return DownloadAsPageSteps.getDownloadAsDropdown().find(`.ontotext-dropdown-menu-item:contains(${label})`)
   }
