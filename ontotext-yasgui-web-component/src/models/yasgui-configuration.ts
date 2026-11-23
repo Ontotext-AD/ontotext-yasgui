@@ -112,6 +112,10 @@ export interface YasguiConfiguration {
      * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized
      */
     yasrFullscreen: boolean;
+    /**
+     * Determines whether the query editor is focused when the component loads and whenever a tab is shown.
+     */
+    autofocus: boolean;
     yasqe?: YasqeConfiguration;
     yasr: YasrConfiguration;
   };
@@ -402,6 +406,7 @@ export const defaultYasguiConfig: Record<string, any> = {
     };
   },
   yasrFullscreen: false,
+  autofocus: true,
 }
 
 export const defaultYasqeConfig: Partial<YasqeDefaultConfiguration> = {

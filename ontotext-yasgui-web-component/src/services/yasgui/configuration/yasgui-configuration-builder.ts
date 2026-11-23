@@ -100,7 +100,8 @@ export class YasguiConfigurationBuilder {
         showFullscreenButton: externalConfiguration.showFullscreenButton ?? defaultYasrConfig.showFullscreenButton,
         themeName: externalConfiguration.themeName ?? DEFAULT_THEME
       },
-      yasrFullscreen: externalConfiguration.yasrFullscreen ?? defaultYasguiConfig.yasrFullscreen
+      yasrFullscreen: externalConfiguration.yasrFullscreen ?? defaultYasguiConfig.yasrFullscreen,
+      autofocus: externalConfiguration.autofocus !== undefined ? externalConfiguration.autofocus : defaultYasguiConfig.autofocus
     };
     config.yasguiConfig.requestConfig.endpoint = externalConfiguration.endpoint || defaultYasguiConfig.endpoint;
     config.yasguiConfig.requestConfig.method = externalConfiguration.method || defaultYasguiConfig.method;
