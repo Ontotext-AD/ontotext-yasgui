@@ -365,6 +365,10 @@ export class YasqeSteps {
     return this.getCodeMirrorEl().find('textarea');
   }
 
+  static getFocusedElementInEditor() {
+    return this.getCodeMirrorEl().find(':focus');
+  }
+
   static getEditorDescription() {
     return this.getEditorInput().invoke('attr', 'aria-describedby').then((descriptionId) => cy.get(`#${descriptionId}`));
   }

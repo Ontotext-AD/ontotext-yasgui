@@ -359,6 +359,13 @@ export interface ExternalYasguiConfiguration {
    * Determines whether YASR should be rendered in fullscreen mode by default when the component is initialized.
    */
   yasrFullscreen?: boolean;
+
+  /**
+   * Determines whether the query editor is focused when the component loads and whenever a tab is shown.
+   * Default is true. Set it to false to leave the focus where the user put it: the editor traps the Tab key for
+   * indentation, so a focused editor keeps keyboard users from the rest of the page until they press Esc.
+   */
+  autofocus?: boolean;
 }
 
 export type AutocompleteLoader = () => any;

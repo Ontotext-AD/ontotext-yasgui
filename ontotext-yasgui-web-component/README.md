@@ -126,6 +126,9 @@ The "config" value of "ngce-prop-config" or "[config]" is an object with followi
        allowEscape: boolean
     }
    ```
+- **autofocus**: If true, the query editor is focused when the component loads and whenever a tab is shown. Set it to
+  false to keep the focus where the user put it: on page load the focus stays at the start of the page, and selecting or
+  opening a tab leaves the focus on the tab list. Default value is true.
 - **yasqeMode**: There are three options:
    - WRITE - the query can be edited;
    - READ - the editor is read-only, but the query can be copied;
