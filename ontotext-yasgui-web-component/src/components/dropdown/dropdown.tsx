@@ -21,6 +21,15 @@ export class Dropdown {
 
   @Event() valueChanged: EventEmitter<InternalDropdownValueSelectedEvent>;
 
+  private buttonElement: HTMLButtonElement;
+  private menuElement: HTMLDivElement;
+
+  componentDidRender(): void {
+    if (this.open) {
+      this.alignMenuWithButtonRightEdge();
+    }
+  }
+
   /**
    * Handles the Escape key keydown event and closes the dialog.
    * @param ev The keyboard event.
@@ -53,10 +62,13 @@ export class Dropdown {
         yasgui-data-tooltip={showToolbar ? this.translate(this.nameLabelKey) : ''}>
         <div class='ontotext-dropdown'>
           <button class={dropdownButtonClass}
+                  ref={(element) => this.buttonElement = element}
                   onClick={() => this.toggleComponent()}>
             <span class='button-name'>{this.translate(this.nameLabelKey)}</span>
           </button>
-          <div class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}>
+          <div class={`ontotext-dropdown-menu ${this.open ? 'open' : 'closed'}`}
+               data-cy='ontotext-dropdown-menu'
+               ref={(element) => this.menuElement = element}>
             {this.items && this.items.map(item =>
               <a href="#" class='ontotext-dropdown-menu-item' onClick={() => this.onSelect(item.value)}>
                 {this.translate(item.labelKey)}
@@ -70,6 +82,24 @@ export class Dropdown {
   private onSelect(value: string) {
     this.open = false;
     this.valueChanged.emit(new InternalDropdownValueSelectedEvent(value));
+  }
+
+  /**
+   * Lines the right edge of the open menu up with the right edge of the button, so the menu opens to the left and
+   * doesn't overflow the page at the right end of the YASR toolbar. A dropdown near the left edge would overflow to
+   * the left instead: there is none today.
+   *
+   * The menu keeps its static position and is shifted with a margin. Anchoring it with CSS would need a positioned
+   * ancestor inside the YASR toolbar, which clips its overflow, and the menu would be cut off.
+   */
+  private alignMenuWithButtonRightEdge(): void {
+    if (!this.buttonElement || !this.menuElement) {
+      return;
+    }
+    // Measure the menu without the offset of the previous opening.
+    this.menuElement.style.marginLeft = '0';
+    const offset = this.buttonElement.getBoundingClientRect().right - this.menuElement.getBoundingClientRect().right;
+    this.menuElement.style.marginLeft = `${offset}px`;
   }
 
   private toggleComponent(): void {

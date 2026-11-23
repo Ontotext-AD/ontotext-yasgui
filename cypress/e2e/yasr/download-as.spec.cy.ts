@@ -49,6 +49,17 @@ describe('Download as', () => {
       DownloadAsPageSteps.getDropdownAsIcon().should('be.visible');
     });
 
+    it('should open the menu to the left, inside the results header', () => {
+      verifyMenuOpensToTheLeftInsideTheResultsHeader();
+    });
+
+    it('should open the menu to the left, inside the results header, when the screen is small', () => {
+      // Given the screen is less than 768px, so the button shows only its icon
+      cy.viewport(767, 750);
+
+      verifyMenuOpensToTheLeftInsideTheResultsHeader();
+    });
+
     it('should icon be visible when screen is small', () => {
       // When execute a query which returns results.
       YasqeSteps.executeQuery();
@@ -156,3 +167,53 @@ describe('Download as', () => {
     DownloadAsPageSteps.getDownloadAsOptions().should('have.length', 2);
   });
 });
+
+function verifyMenuOpensToTheLeftInsideTheResultsHeader() {
+  // Given I have executed a query which returns results
+  YasqeSteps.executeQuery();
+  DownloadAsPageSteps.getDownloadAsDropdown().should('be.visible');
+  // And I know how wide the page is
+  cy.document().its('documentElement.scrollWidth').then((pageWidthBeforeOpening) => {
+    // When I open the "Download as" dropdown
+    DownloadAsPageSteps.openDownloadAsDropdown();
+
+    // Then I expect the menu to be visible
+    DownloadAsPageSteps.getDownloadAsMenu().should('be.visible');
+    // And its right edge to line up with the right edge of the button
+    verifyMenuIsRightAlignedWithButton();
+    // And the menu to stay inside the results header
+    verifyMenuIsInsideResultsHeader();
+    // And its last option not to be clipped, so it can be picked
+    verifyLastOptionIsNotClipped();
+    // And the page not to get wider
+    cy.document().its('documentElement.scrollWidth').should('eq', pageWidthBeforeOpening);
+  });
+}
+
+function verifyMenuIsRightAlignedWithButton() {
+  DownloadAsPageSteps.getDownloadAsDropdownButton().then(($button) => {
+    const buttonRight = $button[0].getBoundingClientRect().right;
+    DownloadAsPageSteps.getDownloadAsMenu().should(($menu) => {
+      expect($menu[0].getBoundingClientRect().right).to.be.closeTo(buttonRight, 1);
+    });
+  });
+}
+
+function verifyMenuIsInsideResultsHeader() {
+  YasrSteps.getResultHeader().then(($header) => {
+    const headerRect = $header[0].getBoundingClientRect();
+    DownloadAsPageSteps.getDownloadAsMenu().should(($menu) => {
+      const menuRect = $menu[0].getBoundingClientRect();
+      expect(menuRect.left).to.be.at.least(headerRect.left);
+      expect(menuRect.right).to.be.at.most(headerRect.right);
+    });
+  });
+}
+
+function verifyLastOptionIsNotClipped() {
+  DownloadAsPageSteps.getDownloadAsOptions().last().should(($option) => {
+    const rect = $option[0].getBoundingClientRect();
+    const topmostElement = $option[0].ownerDocument.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    expect($option[0].contains(topmostElement), 'the option is the topmost element at its centre').to.be.true;
+  });
+}
