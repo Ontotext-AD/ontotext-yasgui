@@ -7,7 +7,7 @@
     "build": "sh scripts/build.sh",
     "start": "cd ontotext-yasgui-web-component && npm run start",
     "version-all": "sh scripts/version.sh ${ReleaseVersion}",
-    "publish": "sh scripts/publish.sh ${NPM_TOKEN}",
+    "publish": "sh scripts/publish.sh",
     "clean": "sh scripts/clean.sh",
     "lint": "cd ontotext-yasgui-web-component && npm run lint",
     "lint:fix": "cd ontotext-yasgui-web-component && npm run lint:fix",
