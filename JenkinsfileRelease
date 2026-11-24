@@ -88,7 +88,8 @@ pipeline {
                             ]
                         ]) {
                             sh "echo //registry.npmjs.org/:_authToken=\${NPM_TOKEN} > .npmrc"
-                            sh "npm whoami || echo 'whoami failed'"
+                            // Fail fast on an expired or revoked token, before the release is committed and tagged.
+                            sh "npm whoami"
                             sh "npm run publish"
                         }
                     }
@@ -150,6 +151,14 @@ pipeline {
 
             script {
                 performCleanup()
+
+                if (params.NOTIFY_SLACK && params.SLACK_CHANNEL?.trim()) {
+                    try {
+                        slack.notifyResult(channel: params.SLACK_CHANNEL, color: 'danger', message: "Release of ontotext-yasgui v${params.RELEASE_VERSION} failed: ${env.BUILD_URL}")
+                    } catch (e) {
+                        echo "Slack notification failed: ${e.getMessage()}"
+                    }
+                }
             }
         }
     }
