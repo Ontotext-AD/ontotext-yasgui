@@ -83,7 +83,7 @@ pipeline {
                             [
                                 credentialsId: 'ksm-jenkins',
                                 secrets: [
-                                    [destination: 'env', envVar: 'NPM_TOKEN', filePath: '', notation: 'keeper://FcbEgbi287PN2yx_3uCz4Q/field/note'],
+                                    [destination: 'env', envVar: 'NPM_TOKEN', filePath: '', notation: 'keeper://SOk7ZAed8BMKXMUkqxnHTA/field/note'],
                                 ]
                             ]
                         ]) {
